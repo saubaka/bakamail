@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "sourceProject": "../1",
+  "files": [
+    {
+      "id": "application-base",
+      "source": "../1/app/static/styles/app.css",
+      "target": "web/src/styles/vendor/project1-app.css",
+      "runtime": true,
+      "order": 1,
+      "lines": 8168,
+      "sha256": "bd6c6311c0f65210a1f1efd2942aec98095a836df362918d31a0e48dcedf2150"
+    },
+    {
+      "id": "small-window-authority",
+      "source": "../1/app/static/styles/small-window-theme.css",
+      "target": "web/src/styles/vendor/project1-small-window-theme.css",
+      "runtime": true,
+      "order": 2,
+      "lines": 755,
+      "sha256": "70daf3f608fe5f665a2c795d1d5558c3e5a4a559162ff787290cbd56fda7cdfd"
+    },
+    {
+      "id": "phase-2-prototype",
+      "source": "../1/docs/phase-2/prototype/styles.css",
+      "target": "web/src/styles/vendor/project1-prototype.css",
+      "runtime": false,
+      "order": 0,
+      "lines": 561,
+      "sha256": "bc7c7229be487744afdc282487a47a9458807d60fa380b5642b33ab1a64f8542"
+    }
+  ]
+}

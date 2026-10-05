@@ -1,0 +1,69 @@
+name: bakamail
+
+# 部署说明（服务器 green-2C4G）：
+#   1. cp bakamail.env.example bakamail.env 并按需修改
+#   2. docker compose up -d --build
+#   3. 在 1Panel 建「反向代理」网站 mail.saubaka.com → http://127.0.0.1:8790
+#
+# 端口只绑回环，公网访问全部经 openresty。
+# 首次启用日志挂载前运行 scripts/deploy-green.mjs 安装采集目录与任务。
+
+services:
+  bakamail:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: bakamail:local
+    container_name: bakamail
+    restart: unless-stopped
+    # Reap subprocess descendants after bounded CLI termination.
+    init: true
+    env_file:
+      - ./bakamail.env
+    environment:
+      HOST: 0.0.0.0
+      PORT: "8790"
+      # 容器内直连邮局，用 1panel-network 的别名，不绕公网
+      MAIL_HOST: maddymail
+      MAIL_HOSTNAME: mail.saubaka.com
+      MAIL_IMAP_PORT: "993"
+      MAIL_SMTP_PORT: "465"
+      MADDY_RUNNER: local
+      MADDY_BIN: /usr/local/bin/maddy
+      MADDY_DATA_DIR: /data
+      MAIL_LOG_SNAPSHOT_PATH: /mail-logs/maddy.json
+      DATA_DIR: /app/data
+    ports:
+      - "127.0.0.1:8790:8790"
+    volumes:
+      # 账号生命周期命令要读写 maddy 的凭据库与邮箱库
+      - maddydata:/data
+      # BakaMail 自己的 SQLite（管理员、邀请码、日志、草稿、通讯录）
+      - bakamail-data:/app/data
+      - type: bind
+        source: /root/mail/bakamail-mail-logs
+        target: /mail-logs
+        read_only: true
+        bind:
+          create_host_path: false
+    networks:
+      - 1panel-network
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:8790/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  maddydata:
+    external: true
+  bakamail-data:
+
+networks:
+  1panel-network:
+    external: true

@@ -1,0 +1,41 @@
+/* Local visual revision. Keep the captured project-1 sheets byte-identical. */
+:root {
+  --line-blue: #dceaf7;
+  --line-blue-strong: #bed8ef;
+  --border: var(--line-blue);
+  --border-strong: var(--line-blue-strong);
+  --silver-mist: var(--line-blue);
+  --blue-200: #d3e5f6;
+  --blue-300: var(--line-blue-strong);
+  --action-blue: #e5effb;
+  --action-blue-hover: #d9e9fa;
+  --action-blue-ink: var(--graphite-blue);
+}
+.button--primary,
+.button--primary:hover {
+  border-color: var(--line-blue-strong) !important;
+  background: var(--action-blue) !important;
+  color: var(--graphite-blue) !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+.button--primary:hover { background: var(--action-blue-hover) !important; }
+.button:hover, .button:focus-visible,
+input:focus, select:focus, textarea:focus,
+.admin-nav-item.is-active, .admin-nav-item:hover {
+  border-color: var(--line-blue-strong) !important;
+}
+:focus-visible { outline-color: var(--line-blue-strong) !important; }
+.motion-outline, .motion-outline__path {
+  --component-motion-color: var(--line-blue-strong);
+  color: var(--line-blue-strong) !important;
+}
+.motion-outline__path { stroke: var(--line-blue-strong) !important; }
+.window-symbol, .window-symbol::before, .window-symbol::after,
+.window-symbol i { border-color: var(--line-blue-strong) !important; }
+.window-symbol { color: var(--line-blue-strong) !important; }
+.button--loading i { border-color: var(--line-blue) !important; border-top-color: var(--line-blue-strong) !important; }
+#app :is(.button, .icon-button, input, select, textarea):focus-visible,
+#app :is(input, select, textarea):focus {
+  border-color: var(--line-blue-strong) !important;
+  box-shadow: 0 0 0 3px var(--cloud-blue) !important;
+}

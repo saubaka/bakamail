@@ -1,0 +1,64 @@
+<!doctype html>
+<html
+  lang="zh-CN"
+  data-motion="system"
+  data-font-style="cloud-rounded"
+  data-page-transition="stretch"
+  data-dialog-style="soft"
+  data-dialog-accent="#526FA6"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="connect-src 'self'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#F7F9FC" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>BakaMail</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div id="app"></div>
+    <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+    <script>
+      /*
+       * 资源自愈：如果某个 JS/CSS 加载失败（例如站点被临时停用、容器重启期间
+       * 收到过 404，浏览器把 404 缓存住了），就用带时间戳的地址重试一次，
+       * 绕过缓存里的坏响应。正常情况这段代码不会做任何事。
+       */
+      (function () {
+        var retried = false;
+        function retry(node, factory) {
+          if (retried || !node || !node.src || node.src.indexOf("retry=") !== -1) return;
+          if (node.src.indexOf("/assets/") === -1) return;
+          retried = true;
+          factory(node.src + (node.src.indexOf("?") === -1 ? "?" : "&") + "retry=" + Date.now());
+        }
+        window.addEventListener(
+          "error",
+          function (event) {
+            var target = event.target;
+            if (!target) return;
+            if (target.tagName === "SCRIPT") {
+              retry(target, function (url) {
+                var script = document.createElement("script");
+                script.type = "module";
+                script.src = url;
+                document.head.appendChild(script);
+              });
+            } else if (target.tagName === "LINK" && (target.rel === "stylesheet" || !target.rel)) {
+              retry(target, function (url) {
+                var link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = url;
+                document.head.appendChild(link);
+              });
+            }
+          },
+          true,
+        );
+      })();
+    </script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

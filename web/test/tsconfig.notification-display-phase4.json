@@ -1,0 +1,8 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": { "types": ["vite/client", "node"] },
+  "include": [
+    "../src/**/*.ts", "../src/**/*.vue", "fixtures/admin-entry-fixture.ts",
+    "notification-display-editor-phase4.test.ts", "notification-display-preview-phase4.test.ts"
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.notification-display-phase4.json",
+  "include": ["../src/**/*.ts", "../src/**/*.vue", "fixtures/admin-entry-fixture.ts", "fixtures/workspace-fixture.ts", "fixtures/notification-display-phase5-fixture.ts", "notification-display-entry-phase5.test.ts"]
+}
