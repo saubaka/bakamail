@@ -1,7 +1,22 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 import { runInNewContext } from "node:vm";
+
+test("所有页面不再显示开发者署名后缀，共用邮箱页脚保留年份与项目版权", () => {
+  const walk = (directory: URL) => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      const path = new URL(entry.name + (entry.isDirectory() ? "/" : ""), directory);
+      if (entry.isDirectory()) walk(path);
+      else if (entry.isFile() && entry.name.endsWith(".vue")) {
+        assert.doesNotMatch(readFileSync(path, "utf8"), /·\s*由\s*Saubaka\s*开发/i, path.pathname);
+      }
+    }
+  };
+  walk(new URL("../src/", import.meta.url));
+  const workspace = readFileSync(new URL("../src/components/MailWorkspace.vue", import.meta.url), "utf8");
+  assert.match(workspace, /<footer class="workspace-copyright">© \{\{ new Date\(\)\.getFullYear\(\) \}\} BakaMail<\/footer>/);
+});
 
 test("HTML 初始标题统一为 Baka Mail，脚本执行前也不出现旧名称", () => {
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");

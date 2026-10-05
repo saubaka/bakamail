@@ -88,7 +88,7 @@
         </router-view>
       </div>
     </div>
-    <footer class="workspace-copyright">© {{ new Date().getFullYear() }} BakaMail · 由 Saubaka 开发</footer>
+    <footer class="workspace-copyright">© {{ new Date().getFullYear() }} BakaMail</footer>
     <span class="workspace-route-status" role="status" aria-live="polite" aria-atomic="true">{{ routeAnnouncement }}</span>
     <button v-if="!isDesktop && dockHidden && !menuOpen" class="dock-reveal" type="button" aria-label="显示邮箱导航" @click="revealDock"><span aria-hidden="true"></span></button>
     <nav v-if="!isDesktop" class="mail-bottom-dock" :class="{ 'is-scroll-hidden': dockHidden && !menuOpen }" :inert="dockHidden && !menuOpen" :aria-hidden="dockHidden && !menuOpen" aria-label="邮箱底部导航" @focusin="revealDock">
