@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BakaMail 显示时长联合验收</title></head>
+<body>
+  <main id="main-content" tabindex="-1" style="max-width:860px;margin:110px auto 32px;padding:24px">
+    <h1 style="font-size:24px">BakaMail · 显示时长联合验收</h1>
+    <p>真实中央运行时、CSS动画与单调时钟；仅一次性模拟数据，不连接邮局。</p>
+    <div id="fixture-controls" style="display:flex;flex-wrap:wrap;gap:12px;margin:24px 0"></div>
+    <p id="fixture-status" role="status"></p>
+    <h2 style="font-size:18px">测量结果</h2>
+    <pre id="phase6-results" style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px"></pre>
+    <details><summary>动画、阶段及原生激活事件</summary><pre id="phase6-events" style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px"></pre></details>
+  </main>
+  <div id="toast-region" aria-live="polite" aria-atomic="false"></div>
+  <script type="module" src="./notification-display-phase6-fixture.ts"></script>
+</body>
+</html>

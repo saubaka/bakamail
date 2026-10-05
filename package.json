@@ -1,0 +1,33 @@
+{
+  "name": "bakamail",
+  "version": "0.1.2",
+  "private": true,
+  "type": "module",
+  "description": "Webmail + admin console for the self-hosted Maddy mail server",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "sync:bakagit": "node scripts/sync-bakagit.mjs",
+    "check:bakagit": "node scripts/sync-bakagit.mjs --check",
+    "test:bakagit": "node --test scripts/test/sync-bakagit.test.mjs",
+    "dev:server": "node --watch server/src/index.ts",
+    "dev:web": "npm run dev --workspace web",
+    "build": "npm run build --workspace web",
+    "typecheck": "npm run typecheck --workspace server && npm run typecheck --workspace web",
+    "start": "node server/src/index.ts",
+    "check:styles": "node scripts/verify-style-contract.mjs && node scripts/audit-project1-prototype.mjs",
+    "audit:prototype": "node scripts/audit-project1-prototype.mjs --strict",
+    "check:css": "npm run check:styles",
+    "check:leak": "sh scripts/verify-no-protocol-leak.sh",
+    "check": "npm run check:styles && npm run check:leak",
+    "test": "node --test 'server/test/**/*.test.ts' 'web/test/**/*.test.ts'"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "postcss": "^8.5.28"
+  }
+}

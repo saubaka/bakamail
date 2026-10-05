@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BakaMail 通知计时隔离验收</title></head>
+<body>
+  <main id="main-content" tabindex="-1" style="max-width:760px;margin:120px auto 32px;padding:24px">
+    <h1 style="font-size:24px">BakaMail · 通知计时隔离验收</h1>
+    <p>真实通知控制器与主题。仅模拟任务，不调用 API、不操作邮件、不保存配置。</p>
+    <div id="fixture-controls" style="display:flex;flex-wrap:wrap;gap:12px;margin:24px 0"></div>
+    <p id="fixture-status"></p>
+    <details><summary>阶段与计时证据</summary><pre id="fixture-evidence" style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px"></pre></details>
+  </main>
+  <div id="toast-region" aria-live="polite" aria-atomic="false"></div>
+  <script type="module" src="./notification-display-phase3-fixture.ts"></script>
+</body>
+</html>

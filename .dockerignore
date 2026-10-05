@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+# Retain content-hashed assets for already-open production tabs.
+data
+.env
+**/.env
+**/*.db
+**/*.db-shm
+**/*.db-wal
+deploy/bakamail.env
+.git
+.DS_Store
+*.log
+docs/handoff/conversation.md
+docs/handoff/session-visible.jsonl
+docs/handoff/session-manifest.json
+bakagit

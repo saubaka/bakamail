@@ -1,0 +1,153 @@
+/* One persistent canvas: a desktop rail and the existing mobile liquid dock share one navigation DOM. */
+/* The workspace already reserves dock/safe-area space; don't add the legacy body spacer again. */
+body:has(.mail-workspace) { padding-bottom: 0; }
+.mail-workspace { --workspace-sidebar-width:0px; display:flex; flex-direction:column; height: 100svh; min-width: 0; background: var(--fog-white); overflow: hidden; }
+.mail-workspace.is-desktop-layout { --workspace-sidebar-width:72px; }
+.mail-workspace.is-desktop-layout.is-desktop-sidebar-expanded { --workspace-sidebar-width:244px; }
+.workspace-header { flex:none; display:grid; grid-template-columns:48px minmax(0,1fr) 48px; align-items:end; min-height:54px; padding:8px 16px 0; }
+.workspace-brand { display:grid; place-items:center; min-width:0; min-height:42px; font-size:16px; font-weight:550; letter-spacing:.12em; color:var(--graphite-blue); }
+.workspace-header:not(:has(.desktop-sidebar-toggle)) { grid-template-columns:1fr; }
+.workspace-header-spacer { width:42px; height:42px; }
+.desktop-sidebar-toggle { display:grid; place-items:center; width:42px; height:42px; padding:0; border:1px solid var(--line-blue); border-radius:13px; background:var(--surface); color:var(--text-soft); cursor:pointer; transition:border-color 180ms ease,box-shadow 220ms ease,color 180ms ease,transform 180ms var(--ease); }
+.desktop-sidebar-toggle:hover { border-color:var(--line-blue-strong); color:var(--graphite-blue); box-shadow:var(--shadow-sm); }
+.desktop-sidebar-toggle:active { transform:scale(.96); }
+.desktop-sidebar-toggle:focus-visible { outline:2px solid var(--line-blue-strong); outline-offset:2px; }
+.desktop-sidebar-toggle svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; }
+.desktop-sidebar-toggle-icon path { transform-box:fill-box; transform-origin:center; transition:transform 260ms cubic-bezier(.22,.85,.25,1),opacity 160ms ease; }
+.desktop-sidebar-toggle-icon.is-expanded .desktop-sidebar-toggle-icon__top { transform:translate3d(-1px,2.2px,0) rotate(-18deg) scaleX(.76); }
+.desktop-sidebar-toggle-icon.is-expanded .desktop-sidebar-toggle-icon__middle { transform:translate3d(-1.5px,0,0) scaleX(.9); }
+.desktop-sidebar-toggle-icon.is-expanded .desktop-sidebar-toggle-icon__bottom { transform:translate3d(-1px,-2.2px,0) rotate(18deg) scaleX(.76); }
+.workspace-body { flex:1; min-height:0; min-width:0; display:grid; grid-template-columns:var(--workspace-sidebar-width) minmax(0,1fr); transition:grid-template-columns 280ms cubic-bezier(.22,.85,.25,1); }
+.workspace-content { position:relative; flex:1; min-height:0; height:auto; min-width:0; display:grid; overflow:hidden; overscroll-behavior:contain; }
+.workspace-route-panel { grid-area:1/1; min-width:0; min-height:0; height:100%; max-height:100%; overflow:auto; overscroll-behavior:contain; backface-visibility:hidden; transform-origin:center; }
+.workspace-content .mail-shell { grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); height: 100%; min-height: 0; max-width: 1600px; margin: 0 auto; padding: 14px 24px 12px; gap: 18px; grid-template-rows: minmax(0, 1fr); }
+.mail-view-canvas { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.workspace-content .mail-view-canvas .mail-shell { height: auto; flex: 1 1 0; width: 100%; }
+.mail-view-canvas > .mail-page-error { flex: none; max-height: 96px; overflow: auto; }
+.workspace-content .mail-pane--list { align-self: start; height: fit-content; max-height: 100%; min-height: 150px; position: relative; }
+.workspace-content .mail-pane--list > .motion-outline { display: none; }
+.workspace-content .mail-pane--list .mail-pane__body { min-height: 0; flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding: 8px; }
+.workspace-content .mail-pane--reader { display: flex; }
+.workspace-content .mail-utility-shell { width: 100%; max-width: 1120px; margin: 0 auto; padding: 32px 24px calc(112px + env(safe-area-inset-bottom)); }
+.workspace-content .mail-utility-shell h1 { font-size: clamp(24px, 2.6vw, 32px); }
+.workspace-content #main-content:focus { outline: none !important; }
+.workspace-content .mail-shell.is-reading .mail-pane--list { display: flex; }
+.workspace-content .mail-reader__back { display: none; }
+.mail-bottom-dock { position: fixed; left: 50%; bottom: calc(62px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 90; display: flex; gap: 4px; padding: 6px; border: 1px solid var(--line-blue); background:var(--surface); border-radius: 28px; box-shadow:var(--shadow-float); isolation: isolate; transition:transform 300ms cubic-bezier(.18,.82,.22,1),opacity 200ms ease; }
+.mail-bottom-dock.is-scroll-hidden { transform:translate(-50%,calc(100% + 78px)) scale(.06,.35); opacity:0; pointer-events:none; transition-timing-function:cubic-bezier(.45,0,.8,.25),ease; }
+.mail-bottom-dock { animation:dock-reader-in 360ms cubic-bezier(.18,.82,.22,1); }
+@keyframes dock-reader-in { 0% { opacity:0; transform:translate(-50%,22px) scale(.055,.35); } 28% { opacity:1; } 75% { transform:translate(-50%,-2px) scale(1.025,1.015); } 100% { opacity:1; transform:translateX(-50%); } }
+.workspace-copyright { flex:none; padding:4px 18px calc(12px + env(safe-area-inset-bottom)); font-size:12px; line-height:20px; color:var(--text-soft); text-align:center; }
+.dock-reveal { position:fixed; z-index:89; left:50%; bottom:calc(56px + env(safe-area-inset-bottom)); transform:translateX(-50%); width:60px; height:20px; padding:6px; border:0; background:transparent; cursor:pointer; }
+.dock-reveal span { display:block; height:4px; width:36px; margin:auto; border-radius:4px; background:var(--line-blue-strong); }
+.dock-item { display: grid; place-items: center; width: 80px; min-height: 42px; padding: 8px 12px; border: 0; border-radius: 22px; color: var(--text-soft); font: inherit; font-size: 13px; background: transparent; cursor: pointer; }
+.dock-item.is-current, .dock-item[aria-expanded="true"] { color: var(--graphite-blue); font-weight: 600; }
+.dock-item:disabled { opacity: .5; cursor: default; }
+.dock-active-pill { position: absolute; left: 6px; top: 6px; width: 80px; height: 42px; border-radius: 22px; background: transparent; z-index: -1; transition: transform 420ms cubic-bezier(.22,.85,.25,1); pointer-events: none; }
+.dock-item:focus-visible, .dock-menu :is(button,a):focus-visible { outline: 2px solid var(--line-blue-strong); outline-offset: -2px; }
+.dock-backdrop { position: fixed; inset: 0; z-index: 70; border: 0; background: color-mix(in srgb, var(--fog-white) 45%, transparent); cursor: default; }
+.dock-menu { position: fixed; bottom: calc(140px + env(safe-area-inset-bottom)); z-index: 80; display: flex; flex-direction: column; max-height: calc(100svh - 182px - env(safe-area-inset-bottom)); border: 1px solid transparent; border-radius: 24px; background: var(--surface); box-shadow: var(--shadow-float); transform-origin: var(--menu-origin-x) bottom; will-change: transform, opacity; animation: dock-menu-in 360ms cubic-bezier(.18,.82,.22,1) both; }
+.dock-menu::after { content: ""; position: absolute; left: calc(var(--menu-origin-x) - 9px); bottom: -10px; width: 18px; height: 18px; transform: rotate(45deg); border-right: 1px solid var(--line-blue-strong); border-bottom: 1px solid var(--line-blue-strong); border-radius: 0 0 7px 0; background: var(--surface); pointer-events: none; }
+.dock-menu::after { display:none; }
+.dock-menu.is-closing { animation: dock-menu-out 240ms cubic-bezier(.45,0,.8,.25) both; pointer-events: none; }
+.dock-menu.is-desktop-sidebar { position:relative; inset:auto; z-index:10; width:100%; height:100%; max-height:none; border:0; border-right:1px solid var(--line-blue); border-radius:0; background:color-mix(in srgb,var(--surface) 92%,var(--fog-white)); box-shadow:none; transform:none; transform-origin:center; will-change:auto; animation:none; overflow:hidden; }
+.dock-menu.is-desktop-sidebar::after { display:none; }
+.dock-menu.is-desktop-sidebar .dock-menu-scroll { flex:1; padding:12px 14px 14px; overflow-x:hidden; }
+.dock-menu.is-desktop-sidebar .dock-compose { display:flex; align-items:center; justify-content:flex-start; gap:10px; padding:0 13px; white-space:nowrap; overflow:hidden; }
+.dock-compose-icon { flex:none; display:grid; place-items:center; width:20px; font-size:20px; line-height:1; font-weight:400; }
+.desktop-sidebar-label { min-width:0; overflow:hidden; white-space:nowrap; opacity:1; transition:opacity 150ms ease,max-width 260ms cubic-bezier(.22,.85,.25,1),margin 260ms cubic-bezier(.22,.85,.25,1); }
+.mail-workspace.is-desktop-layout:not(.is-desktop-sidebar-expanded) .dock-menu-scroll { padding-inline:10px; }
+.mail-workspace.is-desktop-layout:not(.is-desktop-sidebar-expanded) .dock-compose { justify-content:center; padding-inline:0; }
+.mail-workspace.is-desktop-layout:not(.is-desktop-sidebar-expanded) .desktop-sidebar-label,
+.mail-workspace.is-desktop-layout:not(.is-desktop-sidebar-expanded) .dock-account-copy { max-width:0; margin:0; opacity:0; pointer-events:none; }
+.mail-workspace.is-desktop-layout:not(.is-desktop-sidebar-expanded) .dock-navigation-item { justify-content:center; gap:0; padding-inline:0; }
+.mail-workspace.is-desktop-layout:not(.is-desktop-sidebar-expanded) .dock-account { flex-direction:column; padding:10px; }
+.mail-workspace.is-desktop-layout:not(.is-desktop-sidebar-expanded) .dock-account-identity { justify-content:center; }
+.mail-workspace.is-desktop-layout:not(.is-desktop-sidebar-expanded) .dock-signout { width:42px; padding:0; justify-content:center; }
+.dock-menu-heading { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; font-size: 13px; font-weight: 600; flex: none; }
+.dock-close { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--line-blue); border-radius: 11px; background: var(--fog-white); color: var(--text-soft); font-size: 22px; cursor: pointer; }
+.dock-menu-scroll { min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 0 14px 14px; scrollbar-width: thin; }
+.dock-compose { width: 100%; min-height: 46px; margin: 0 0 12px; border: 1px solid var(--line-blue); border-radius: 13px; background: var(--cloud-blue); color: var(--graphite-blue); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.dock-navigation { position: relative; isolation: isolate; display: grid; grid-auto-rows: 40px; gap: 4px; }
+.dock-navigation-highlight { position: absolute; left: 0; top: 0; width:0; height:0; border-radius: 12px; background: transparent; border: 0; opacity:0; z-index: 0; pointer-events: none; will-change:transform; transition:transform 420ms cubic-bezier(.22,.85,.25,1),opacity 120ms ease; }
+.dock-navigation-highlight.is-ready { opacity:1; }
+.dock-navigation-item { position:relative; z-index:1; display: flex; gap: 12px; align-items: center; padding: 8px 14px; border: 0; border-radius: 12px; background: transparent; font: inherit; font-size: 13px; color: var(--text-soft); cursor: pointer; text-align: left; transition:color 180ms ease,transform 220ms cubic-bezier(.22,.85,.25,1),box-shadow 180ms ease; }
+.dock-navigation-item[aria-current="page"] { color: var(--graphite-blue); font-weight: 600; }
+.dock-navigation-item:hover { background:transparent; box-shadow:inset 0 0 0 1px var(--line-blue); transform:translateX(2px); }
+.dock-navigation-item:active { transform:translateX(1px) scale(.985); }
+.dock-navigation-item svg { width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+.desktop-folder-trigger { position:relative; display:grid; place-items:center; width:44px; height:42px; max-height:42px; margin:12px auto 0; padding:0; border:1px solid var(--line-blue); border-radius:13px; background:transparent; color:var(--text-soft); cursor:pointer; overflow:visible; transform-origin:center top; transition:max-height 260ms cubic-bezier(.22,.85,.25,1),margin 260ms cubic-bezier(.22,.85,.25,1),border-color 180ms ease,color 180ms ease,box-shadow 220ms ease,transform 260ms cubic-bezier(.22,.85,.25,1),opacity 140ms ease,visibility 0s linear 0s; }
+.desktop-folder-trigger.is-hidden { max-height:0; margin-top:0; border-color:transparent; opacity:0; visibility:hidden; pointer-events:none; transform:translateY(-8px) scale(.7); transition-delay:0s,0s,0s,0s,0s,0s,0s,180ms; }
+.desktop-folder-trigger:hover { border-color:var(--line-blue-strong); color:var(--graphite-blue); box-shadow:var(--shadow-sm); }
+.desktop-folder-trigger:active { transform:scale(.96); }
+.desktop-folder-trigger:focus-visible { outline:2px solid var(--line-blue-strong); outline-offset:2px; }
+.desktop-folder-trigger svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.65; stroke-linecap:round; stroke-linejoin:round; }
+.desktop-folder-count { position:absolute; right:-3px; top:-5px; display:grid; place-items:center; min-width:18px; height:18px; padding:0 4px; border:1px solid var(--line-blue-strong); border-radius:10px; background:var(--surface); color:var(--graphite-blue); font-size:9px; font-weight:650; line-height:1; box-shadow:0 2px 8px color-mix(in srgb,var(--graphite-blue) 10%,transparent); }
+.dock-folder-host { max-height:1200px; margin-top:14px; border-top:1px solid var(--line-blue); padding-top:10px; opacity:1; visibility:visible; transform:none; transform-origin:center top; transition:max-height 300ms cubic-bezier(.22,.85,.25,1),margin 260ms cubic-bezier(.22,.85,.25,1),padding 260ms cubic-bezier(.22,.85,.25,1),border-color 160ms ease,opacity 180ms ease 70ms,transform 300ms cubic-bezier(.22,.85,.25,1),visibility 0s linear 0s; }
+.mail-workspace.is-desktop-layout:not(.is-desktop-sidebar-expanded) .dock-folder-host { max-height:0; margin-top:0; padding-top:0; border-color:transparent; opacity:0; visibility:hidden; overflow:hidden; pointer-events:none; transform:translateY(-10px) scale(.94,.86); transition-delay:0s,0s,0s,0s,0s,0s,260ms; }
+.dock-folder-host:empty { display: none; }
+.dock-folder-host .mail-pane--folders { display: flex !important; border: 0; border-radius: 0; box-shadow: none; background: transparent; }
+.dock-folder-host .motion-outline { display: none; }
+.dock-folder-host .mail-pane__head { border: 0; background: transparent; padding: 4px 8px 8px; }
+.dock-folder-host .mail-pane__body { padding: 0; overflow: visible; }
+.dock-folder-host .folder-item { font-size: 12px; padding: 9px 12px; border-radius: 12px; }
+.dock-account { display: flex; gap: 10px; align-items: center; justify-content: space-between; border-top: 1px solid var(--line-blue); padding: 12px 14px; flex: none; min-width: 0; }
+.dock-account-identity { display:flex; align-items:center; gap:9px; min-width:0; }
+.dock-account-icon { flex:none; display:grid!important; place-items:center; width:30px; height:30px; border:1px solid var(--line-blue); border-radius:11px; background:var(--surface); }
+.dock-account-icon svg,.dock-signout svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.65; stroke-linecap:round; stroke-linejoin:round; }
+.dock-account-copy { min-width:0; max-width:150px; transition:opacity 150ms ease,max-width 260ms cubic-bezier(.22,.85,.25,1); }
+.dock-account-copy span { display: block; color: var(--text-soft); font-size: 10px; }
+.dock-account-copy strong { display: block; color: var(--graphite-blue); font-size: 12px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dock-signout { flex: none; display:flex; align-items:center; gap:6px; min-width:42px; height:36px; border: 1px solid var(--line-blue); border-radius: 10px; background: var(--fog-white); color: var(--text-soft); padding: 0 10px; font: inherit; font-size: 11px; cursor: pointer; overflow:hidden; }
+.dock-signout svg { display:none; flex:none; }
+.is-desktop-sidebar .dock-signout svg { display:block; }
+.mail-panel-enter-active { z-index:2; transition:opacity 240ms ease,transform 300ms cubic-bezier(.2,.82,.24,1),filter 220ms ease; will-change:transform,opacity,filter; }
+.mail-panel-leave-active { z-index:1; pointer-events:none; transition:opacity 150ms ease,transform 220ms cubic-bezier(.4,0,.65,1),filter 150ms ease; will-change:transform,opacity,filter; }
+.mail-panel-enter-from,.mail-panel-leave-to { opacity:0; filter:blur(2px); }
+.mail-workspace[data-panel-direction="forward"] .mail-panel-enter-from { transform:translate3d(18px,0,0); }
+.mail-workspace[data-panel-direction="forward"] .mail-panel-leave-to { transform:translate3d(-10px,0,0); }
+.mail-workspace[data-panel-direction="backward"] .mail-panel-enter-from { transform:translate3d(-18px,0,0); }
+.mail-workspace[data-panel-direction="backward"] .mail-panel-leave-to { transform:translate3d(10px,0,0); }
+.mail-workspace[data-panel-direction="neutral"] .mail-panel-enter-from { transform:translate3d(0,6px,0); }
+.mail-workspace[data-panel-direction="neutral"] .mail-panel-leave-to { transform:translate3d(0,-4px,0); }
+.workspace-route-status { position:fixed; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+@keyframes dock-menu-in { 0% { opacity:0; transform:translate3d(0,44px,0) scale(.045,.03); } 18% { opacity:1; } 72% { transform:translate3d(0,-2px,0) scale(1.012,1.008); } 100% { opacity:1; transform:translate3d(0,0,0) scale(1); } }
+@keyframes dock-menu-out { 0% { opacity:1; transform:translate3d(0,0,0) scale(1); } 32% { opacity:1; transform:translate3d(0,6px,0) scale(.92,.95); } 100% { opacity:0; transform:translate3d(0,44px,0) scale(.045,.03); } }
+.mail-bulk-slot { flex: none; display: grid; grid-template-rows: 0fr; transition: grid-template-rows 200ms cubic-bezier(.2,.8,.25,1); }
+.mail-bulk-slot.is-open { grid-template-rows: 1fr; }
+.mail-bulk-clip { min-height: 0; overflow: hidden; }
+.mail-bulk-slot .mail-bulk-actions { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 6px; padding: 8px 12px; margin: 0; border-bottom: 1px solid var(--line-blue); opacity: 0; transform: translate3d(0,-6px,0); transition: opacity 160ms ease, transform 200ms var(--ease); }
+.mail-bulk-slot.is-open .mail-bulk-actions { opacity: 1; transform: none; }
+.mail-bulk-actions .button { min-width: 0; min-height: 34px; padding: 6px 4px; font-size: 12px; white-space: nowrap; }
+.mail-list .mail-row { opacity: 1; transform: none; filter: none; transition: opacity 260ms ease, transform 420ms var(--ease), filter 260ms ease, background 180ms ease; border: 1px solid var(--line-blue); border-radius: 13px; margin-bottom: 6px; background: var(--surface); }
+.mail-list .mail-row[data-row-reveal="outside"]:not(:focus-within) { opacity: 0; transform: translateY(var(--row-offset, 12px)); filter: blur(2px); }
+.mail-list .mail-row[data-row-reveal="visible"] { animation: mail-row-arrive 340ms var(--ease) both; }
+@keyframes mail-row-arrive { from { opacity:0; transform:translateY(var(--row-offset,12px)); } to { opacity:1; transform:none; } }
+.mail-list .mail-row__line,.mail-list .mail-row__marks { min-width:0; }
+.mail-list .mail-row__subject { min-width:0; flex:1; }
+.mail-count-line { display:none; }
+.mail-list-end { padding: 10px; font-size: 11px; line-height: 1.7; color: var(--text-soft); text-align: center; }
+@media (min-width: 901px) and (max-width: 1179px) {
+  .mail-workspace.is-desktop-sidebar-expanded .mail-search-form { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .mail-workspace.is-desktop-sidebar-expanded .mail-search-query { grid-column:1 / -1; }
+}
+@media (max-width: 900px) {
+  .workspace-header { grid-template-columns:1fr; padding-inline:20px; }
+  .workspace-body { grid-template-columns:minmax(0,1fr); }
+  .workspace-content .mail-shell, .workspace-content .mail-shell.is-reading { grid-template-columns: minmax(0, 1fr); padding: 16px 12px 10px; gap: 0; }
+  .workspace-content .mail-pane--reader { display: none; }
+  .workspace-content .mail-shell.is-reading .mail-pane--reader { display: flex; }
+  .workspace-content .mail-shell.is-reading .mail-pane--list { display: none; }
+  .workspace-content .mail-utility-shell { padding: 24px 12px calc(112px + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mail-workspace *, .mail-workspace *::before { transition: none !important; animation: none !important; }
+  .mail-panel-enter-from,.mail-panel-leave-to { opacity:1; filter:none; transform:none!important; }
+  .mail-list .mail-row,.mail-list .mail-row[data-row-reveal="outside"]:not(:focus-within) { opacity: 1; transform: none; filter: none; animation:none; }
+}
+html:is([data-motion="reduce"], [data-performance="low"]) .mail-workspace *,
+html:is([data-motion="reduce"], [data-performance="low"]) .mail-workspace *::before { transition: none !important; animation: none !important; }
+html:is([data-motion="reduce"], [data-performance="low"]) .mail-panel-enter-from,
+html:is([data-motion="reduce"], [data-performance="low"]) .mail-panel-leave-to { opacity:1; filter:none; transform:none!important; }
+html:is([data-motion="reduce"], [data-performance="low"]) .mail-list .mail-row,
+html:is([data-motion="reduce"], [data-performance="low"]) .mail-list .mail-row[data-row-reveal="outside"] { opacity: 1; transform: none; filter: none; animation:none; }
