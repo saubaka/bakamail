@@ -14,6 +14,7 @@ process.env.HUMAN_CHECK_TEST_MODE = "1";
 process.env.COOKIE_SECURE = "0";
 process.env.MIN_FORM_SECONDS = "2";
 process.env.MADDY_RUNNER = "disabled";
+process.env.MAIL_DOMAIN = "example.test";
 process.env.BOOTSTRAP_ADMIN = "phase2-admin";
 process.env.BOOTSTRAP_ADMIN_PASSWORD = "isolated-test-only-2026";
 
@@ -172,7 +173,7 @@ test("换来源攻击同一账号会升级验证，但不永久锁账号；规�
   try {
     for (let i = 0; i < 3; i++) {
       const result = await request(app).post("/api/auth/login").set("x-real-ip", `198.51.100.${110 + i}`)
-        .send({ account: i === 0 ? " Risk-User " : "RISK-USER@saubaka.com", password: "test-only-wrong" });
+        .send({ account: i === 0 ? " Risk-User " : "RISK-USER@example.test", password: "test-only-wrong" });
       assert.equal(result.status, 401);
     }
     const source = "198.51.100.113";
@@ -180,7 +181,7 @@ test("换来源攻击同一账号会升级验证，但不永久锁账号；规�
       .send({ account: "risk-user", password: "test-only-wrong" });
     assert.equal(result.body.code, "human_required");
     assert.equal(calls, 3);
-    assert.equal(loginLimitState("mail-login", fingerprint("mail-login", source), "risk-user@saubaka.com").limited, false);
+    assert.equal(loginLimitState("mail-login", fingerprint("mail-login", source), "risk-user@example.test").limited, false);
     const verified = await request(app).post("/api/auth/login").set("x-real-ip", source)
       .send({ account: "risk-user", password: "test-only-wrong", ...await challenge(source, false) });
     assert.equal(verified.status, 401);
@@ -190,12 +191,12 @@ test("换来源攻击同一账号会升级验证，但不永久锁账号；规�
 
 test("密码喷洒换账号仍累计来源风险；成功只清理相同来源账号", () => {
   const identity = fingerprint("mail-login", "198.51.100.120");
-  for (let i = 0; i < 4; i++) recordLoginAttempt("mail-login", identity, `spray-${i}@saubaka.com`, false, "bad-credentials");
-  recordLoginAttempt("mail-login", identity, "spray-0@saubaka.com", true, "ok");
+  for (let i = 0; i < 4; i++) recordLoginAttempt("mail-login", identity, `spray-${i}@example.test`, false, "bad-credentials");
+  recordLoginAttempt("mail-login", identity, "spray-0@example.test", true, "ok");
   assert.equal(failureCount("mail-login", identity, 60000), 3);
   assert.equal(loginLimitState("mail-login", identity).requireHuman, true);
-  recordLoginAttempt("mail-login", identity, "spray-4@saubaka.com", false, "bad-credentials");
-  recordLoginAttempt("mail-login", identity, "spray-5@saubaka.com", false, "bad-credentials");
+  recordLoginAttempt("mail-login", identity, "spray-4@example.test", false, "bad-credentials");
+  recordLoginAttempt("mail-login", identity, "spray-5@example.test", false, "bad-credentials");
   assert.equal(loginLimitState("mail-login", identity).limited, true);
 });
 
@@ -287,14 +288,14 @@ test("管理员校验全站四槽与同来源两槽，过期预约可回收且�
 });
 
 test("注册跨来源同账号去重、全站四槽和断线后租约清理", () => {
-  const first = reserveLease("register", "reg-a", "same@saubaka.com", 4, 1); assert.ok(first);
-  assert.equal(reserveLease("register", "reg-b", "same@saubaka.com", 4, 1), null);
+  const first = reserveLease("register", "reg-a", "same@example.test", 4, 1); assert.ok(first);
+  assert.equal(reserveLease("register", "reg-b", "same@example.test", 4, 1), null);
   const others = Array.from({ length: 3 }, (_, i) => reserveLease("register", `reg-${i}`, `different-${i}`, 4, 1));
   assert.ok(others.every(Boolean)); assert.equal(reserveLease("register", "reg-extra", "extra", 4, 1), null);
   for (const id of [first, ...others]) releaseLease(id!);
-  const stale = reserveLease("register", "stale-reg", "same@saubaka.com", 4, 1); assert.ok(stale);
+  const stale = reserveLease("register", "stale-reg", "same@example.test", 4, 1); assert.ok(stale);
   db.prepare("update security_leases set expires_ms = ? where id = ?").run(Date.now() - 1, stale);
-  const restored = reserveLease("register", "restored-reg", "same@saubaka.com", 4, 1); assert.ok(restored); releaseLease(restored!);
+  const restored = reserveLease("register", "restored-reg", "same@example.test", 4, 1); assert.ok(restored); releaseLease(restored!);
 });
 
 test("匿名跨站提交/验证码获取拒绝，本站和无 Origin 的限流客户端保持兼容", async () => {
@@ -407,7 +408,7 @@ test("普通登录成功轮换会话、不连接真实邮局，邮局故障仍�
     assert.equal((await request(app).post("/api/auth/login").set("x-real-ip", source).send(data)).body.code, "login_rate_limited");
     assert.equal(failureCount("mail-login", identity, 60000), 0);
   } finally {
-    const rows = db.prepare("select id from mail_sessions where mailbox = 'session-good@saubaka.com'").all() as { id: string }[];
+    const rows = db.prepare("select id from mail_sessions where mailbox = 'session-good@example.test'").all() as { id: string }[];
     for (const row of rows) await dropSession(row.id);
     Object.assign(MailboxSession.prototype, original);
   }

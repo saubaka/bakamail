@@ -1,10 +1,12 @@
 /** Production router/components, simulated transports only. No real accounts or API fallback. */
 import { isUiConfig } from '../../../shared/notificationMotion.ts';
 import { copyUiConfigV2, defaultUiConfigV2, isUiConfigV2, applyLegacyMotionEdit, projectUiConfigV1 } from '../../../shared/notificationDisplay.ts';
+import { adminPathProblem } from '../../../shared/adminPaths.ts';
 const fixtureEntry = location.href;
 // Router replaces the visible path. Keep Vite full reloads on the mock entry, not production /index.
 import.meta.hot?.on('vite:beforeFullReload', () => { history.replaceState(null, '', fixtureEntry); });
 const initial = new URL(location.href).searchParams;
+let entrySettings = { adminBase: initial.get('entry') ?? '/bakaadmin', revision: 0 };
 let authenticated = initial.get("admin") === "1";
 let mailAuthenticated = initial.get("mail") === "1";
 let failRestore = false;
@@ -58,7 +60,8 @@ control('下次保存成功但回复丢失', () => { loseSaveReply = true; });
 control('公开配置断网开关', () => { failPublicConfig = !failPublicConfig; });
 control('公开配置重新校验', async () => { const { uiConfigClient } = await import('../../src/notificationConfig'); await uiConfigClient.refresh(true); });
 control('另一个管理员修改配置', () => { appearance.revision++; appearance.notificationMotion.stackMs = 555; });
-control('重新进入系统设置', async () => { const { router } = await import('../../src/router'); await router.push('/bakaadmin/overview'); await router.push('/bakaadmin/system'); });
+control('重新进入系统设置', async () => { const { router } = await import('../../src/router'); await router.push(`${entrySettings.adminBase}/overview`); await router.push(`${entrySettings.adminBase}/system`); });
+control('另一个管理员修改后台入口', () => { entrySettings = { adminBase: '/other-console', revision: entrySettings.revision + 1 }; });
 control('切换减少动画', async () => { const { applyMotionPreferences } = await import('../../src/motion'); applyMotionPreferences(document.documentElement.dataset.motion === 'reduce' ? 'system' : 'reduce', 'normal', false); });
 control('输出动画诊断', () => { const output = document.getElementById('motion-fixture-output') ?? document.createElement('pre'); output.id = 'motion-fixture-output';
   output.style.cssText = 'position:fixed;left:8px;bottom:8px;max-width:60vw;max-height:150px;overflow:auto;z-index:2001;background:white;font-size:10px';
@@ -71,6 +74,8 @@ window.fetch = async (input, options) => {
   // Deliberately no native fetch fallback, even for an unexpected endpoint.
   if (!raw.startsWith("/api/")) throw new Error("隔离验收禁止非模拟网络请求");
   const url = new URL(raw, location.origin), path = url.pathname;
+  if (path === '/api/installation') return ok({ initialized: true,
+    ...(url.searchParams.get('entry') === entrySettings.adminBase ? { entry: { ...entrySettings } } : {}) });
   if (path === '/api/ui-config') {
     publicReads++; sync(); if (failPublicConfig) throw new Error('模拟公开配置断网');
     const version = url.searchParams.get('schemaVersion') === '2' ? 2 : 1;
@@ -109,6 +114,18 @@ window.fetch = async (input, options) => {
     return authenticated ? ok(member()) : fail(401, "模拟管理员未登录或过期");
   }
   if (!authenticated) return fail(401, "模拟管理员未登录或过期");
+  if (path === '/api/admin/entry-settings') {
+    if (readOnly) return fail(403, '模拟角色无入口设置权限');
+    if (options?.method === 'PATCH') {
+      if (new Headers(options.headers).get('x-csrf-token') !== csrf) return fail(403, '模拟 CSRF 拒绝');
+      const body = JSON.parse(String(options.body));
+      if (body.revision !== entrySettings.revision) return fail(409, '入口已被修改，请重新读取');
+      const problem = adminPathProblem(body.adminBase);
+      if (problem) return fail(400, problem);
+      if (body.adminBase !== entrySettings.adminBase) entrySettings = { adminBase: body.adminBase, revision: entrySettings.revision + 1 };
+    }
+    return ok({ ...entrySettings });
+  }
   if (path === '/api/admin/appearance') {
     if (readOnly) return fail(403, '模拟角色没有系统写权限');
     if (failAppearanceRead) return fail(503, '模拟通知配置读取失败，禁止覆盖');
@@ -145,7 +162,7 @@ window.fetch = async (input, options) => {
 };
 
 const { router } = await import("../../src/router");
-await router.replace(initial.get("page") ?? "/bakaadmin");
+await router.replace(initial.get("page") ?? entrySettings.adminBase);
 await import("../../src/main");
 if (navigationDelay) {
   const { installNavigationContinuity } = await import('./navigation-continuity');

@@ -7,7 +7,7 @@ test("API 客户端只接受同源 /api/* 路径", () => {
     assert.doesNotThrow(() => assertApiPath(path));
   }
   for (const path of [
-    "https://mail.saubaka.com/api/mail", "//other.example/api/mail", "/admin/backup",
+    "https://mail.example.test/api/mail", "//other.example/api/mail", "/admin/backup",
     "/api/", "/api/../admin", "/api/%2e%2e/admin", "/api\\admin", "/api/mail#fragment",
   ]) {
     assert.throws(() => assertApiPath(path), TypeError, path);

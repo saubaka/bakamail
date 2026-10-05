@@ -11,8 +11,8 @@ import subprocess
 import tempfile
 import time
 
-CONTAINER = "1Panel-maddy-mail-izag"
-DIRECTORY = "/root/mail/bakamail-mail-logs"
+CONTAINER = os.environ.get("MADDY_CONTAINER", "maddy")
+DIRECTORY = os.environ.get("MAIL_LOG_DIRECTORY", "/root/mail/bakamail-mail-logs")
 MAX_BYTES = 2_000_000
 MAX_SNAPSHOT_BYTES = 2_500_000
 SENSITIVE = re.compile(r"password|passwd|credential|secret|token|authorization|\bauth\b|\b(?:body|subject|message-data)\s*[:=]", re.I)

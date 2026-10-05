@@ -6,7 +6,7 @@ import { withMailAbort, withMailDeadline } from "./deadline.ts";
 type SessionTimeouts = { connectionTimeoutMs?: number; authenticationTimeoutMs?: number };
 
 /**
- * 容器内连的是 maddymail 这个别名，证书却是给 mail.saubaka.com 签的。
+ * 容器内连的是 maddymail 这个别名，证书却是给 mail.example.test 签的。
  * 直接连别名会因主机名校验失败而拒绝连接；指定 servername 让 TLS 用
  * 真实主机名做 SNI 与证书校验，既连得上又不用关闭校验。
  */

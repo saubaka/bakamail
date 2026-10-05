@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { accountFailure, type AccountOperation } from "../mail/accountFailure.ts";
-import { config } from "../config.ts";
+import { appVersion, config } from "../config.ts";
 import { db, getIntSetting, getSetting, nowIso, setSetting } from "../db.ts";
 import {
   appendCookie,
@@ -885,7 +885,7 @@ adminRouter.get("/runner-status", requirePermission("mail.account.read"), (_requ
   ok(response, {
     runner: config.maddy.runner,
     ready: maddyRunnerReady(),
-    serviceVersion: process.env.npm_package_version ?? "0.1.0",
+    serviceVersion: appVersion,
     nodeVersion: process.version,
   });
 });

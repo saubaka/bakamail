@@ -7,6 +7,7 @@ import test from "node:test";
 process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "bakamail-security-"));
 process.env.SECRET_KEY = "test-secret-key-for-unit-tests";
 process.env.HUMAN_CHECK_TEST_MODE = "0";
+process.env.MAIL_DOMAIN = "example.test";
 
 const { issueHumanCheck, verifyHumanCheck, purgeExpiredChallenges } = await import(
   "../src/security/humanCheck.ts"
@@ -31,11 +32,11 @@ const { issueFormToken, consumeFormToken } = await import("../src/security/formT
 const { senderAddressAllowed } = await import("../src/mail/sender.ts");
 
 test("发件人限制为本人地址或同域加号别名", () => {
-  assert.equal(senderAddressAllowed("baka@saubaka.com", "baka@saubaka.com"), true);
-  assert.equal(senderAddressAllowed("baka@saubaka.com", "baka+notice@saubaka.com"), true);
-  assert.equal(senderAddressAllowed("baka@saubaka.com", "baka@evil.example"), false);
-  assert.equal(senderAddressAllowed("baka@saubaka.com", "other+notice@saubaka.com"), false);
-  assert.equal(senderAddressAllowed("baka@saubaka.com", "baka@saubaka.com@evil.example"), false);
+  assert.equal(senderAddressAllowed("baka@example.test", "baka@example.test"), true);
+  assert.equal(senderAddressAllowed("baka@example.test", "baka+notice@example.test"), true);
+  assert.equal(senderAddressAllowed("baka@example.test", "baka@evil.example"), false);
+  assert.equal(senderAddressAllowed("baka@example.test", "other+notice@example.test"), false);
+  assert.equal(senderAddressAllowed("baka@example.test", "baka@example.test@evil.example"), false);
 });
 
 test("验证码：错误答案被拒绝，正确路径一次性消费", () => {
@@ -89,7 +90,7 @@ test("来源地址优先取代理覆盖的真实地址，不信任客户端追�
 
 test("请求预算先预占，成功完成仍计入申请次数且不重复记行", () => {
   const identity = fingerprint("request-budget-" + Math.random(), "10.1.1.4");
-  const id = recordLoginAttempt("register", identity, "test@saubaka.com", false, "pending");
+  const id = recordLoginAttempt("register", identity, "test@example.test", false, "pending");
   assert.equal(attemptCount("register", identity, 60_000), 1);
   completeLoginAttempt(id, true, "created");
   assert.equal(attemptCount("register", identity, 60_000), 1);
@@ -99,11 +100,11 @@ test("请求预算先预占，成功完成仍计入申请次数且不重复记�
 test("登录限速：按请求方计数并触发锁定", () => {
   const identity = fingerprint("test-scope-" + Math.random(), "10.1.1.1");
   for (let i = 0; i < 4; i += 1) {
-    recordLoginAttempt("mail-login", identity, "me@saubaka.com", false, "bad");
+    recordLoginAttempt("mail-login", identity, "me@example.test", false, "bad");
   }
   assert.equal(failureCount("mail-login", identity, 60_000), 4);
   assert.equal(loginLimitState("mail-login", identity).limited, false);
-  recordLoginAttempt("mail-login", identity, "me@saubaka.com", false, "bad");
+  recordLoginAttempt("mail-login", identity, "me@example.test", false, "bad");
   const state = loginLimitState("mail-login", identity);
   assert.equal(state.limited, true);
   assert.ok(state.retryAfterSeconds > 0);
@@ -111,7 +112,7 @@ test("登录限速：按请求方计数并触发锁定", () => {
 
 test("登录限速：成功记录不参与失败计数", () => {
   const identity = fingerprint("test-scope-" + Math.random(), "10.1.1.2");
-  recordLoginAttempt("mail-login", identity, "me@saubaka.com", true, "ok");
+  recordLoginAttempt("mail-login", identity, "me@example.test", true, "ok");
   assert.equal(failureCount("mail-login", identity, 60_000), 0);
 });
 

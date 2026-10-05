@@ -18,7 +18,7 @@ const { createMailbox, listCredentials, maddyRunnerReady, MaddyError, runMaddy }
 test("MADDY_RUNNER=disabled 时账号管理被明确拒绝", async () => {
   assert.equal(maddyRunnerReady(), false);
   await assert.rejects(
-    () => createMailbox("someone@saubaka.com", "baka-mail-2026"),
+    () => createMailbox("someone@example.test", "baka-mail-2026"),
     (error: unknown) => {
       assert.ok(error instanceof MaddyError);
       assert.match(String((error as Error).message), /MADDY_RUNNER=disabled/);
@@ -88,7 +88,7 @@ process.env.FAKE_MADDY_FAIL_CREDS_REMOVE = ${JSON.stringify(rollbackFails ? "1" 
 const { createMailbox } = await import(${JSON.stringify(new URL("../src/mail/accounts.ts", import.meta.url).href)});
 const { readFileSync } = await import("node:fs");
 let error = "";
-try { await createMailbox("partial@saubaka.com", "strong-mail-2026"); }
+try { await createMailbox("partial@example.test", "strong-mail-2026"); }
 catch (caught) { error = String(caught && caught.message || caught); }
 console.log(JSON.stringify({
   error,
@@ -116,6 +116,6 @@ test("邮箱创建第二步失败时，确认删除刚建的凭据", async () =>
 test("凭据回滚也失败时，明确报告半成品而非假装已清理", async () => {
   const result = await failedMailboxCreate(true);
   assert.match(result.error, /回滚失败.*半成品/);
-  assert.match(result.credentials, /partial@saubaka.com/);
+  assert.match(result.credentials, /partial@example.test/);
   assert.equal(result.accounts, "");
 });

@@ -58,7 +58,7 @@ export async function sendMail(
     auth: { user: account, pass: password },
     tls: {
       rejectUnauthorized: config.mail.tlsRejectUnauthorized,
-      // 容器内连的是 maddymail 别名，证书给的是 mail.saubaka.com
+      // 容器内连的是 maddymail 别名，证书给的是 mail.example.test
       servername: config.mail.hostname,
     },
     connectionTimeout: 15_000,

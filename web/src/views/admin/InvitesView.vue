@@ -21,7 +21,7 @@
         </label>
         <label class="field">
           <span class="field__label">绑定域名（可留空）</span>
-          <input v-model="boundDomain" placeholder="saubaka.com" :disabled="creating || loading || revokingId !== null" />
+          <input v-model="boundDomain" placeholder="example.test" :disabled="creating || loading || revokingId !== null" />
         </label>
         <label class="field">
           <span class="field__label">有效期（小时）</span>

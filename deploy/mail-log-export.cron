@@ -1,2 +1,4 @@
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+MADDY_CONTAINER=maddy
+MAIL_LOG_DIRECTORY=/root/mail/bakamail-mail-logs
 * * * * * root /usr/bin/python3 /root/mail/export-bakamail-mail-logs.py >/dev/null 2>&1

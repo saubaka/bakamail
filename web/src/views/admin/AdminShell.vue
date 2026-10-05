@@ -16,7 +16,7 @@
       aria-label="后台导航"
       :inert="isCompact && !menuOpen"
     >
-      <router-link class="admin-brand" :to="ADMIN_PAGE_PATHS.overview">
+      <router-link class="admin-brand" :to="{ name: 'admin-overview' }">
         <span class="brand-mark"><span class="window-symbol" aria-hidden="true"><i></i><i></i></span></span>
         <span>BakaMail<small>邮局管理</small></span>
       </router-link>

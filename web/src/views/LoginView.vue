@@ -18,7 +18,7 @@
             autocomplete="username"
             autocapitalize="none"
             spellcheck="false"
-            placeholder="例如 me 或 me@saubaka.com"
+            placeholder="邮箱账号名或完整邮箱地址"
           />
         </label>
         <div class="login-password-group field--wide">

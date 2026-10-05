@@ -72,7 +72,7 @@
           </div>
         </div>
         <div class="baka-overview__quick-actions">
-          <router-link v-for="action in quickActions" :key="action.to" :to="action.to">
+          <router-link v-for="action in quickActions" :key="action.to.name" :to="action.to">
             <span aria-hidden="true">{{ action.icon }}</span>
             {{ action.label }}
             <span class="baka-overview__arrow" aria-hidden="true">↗</span>
@@ -130,10 +130,10 @@ const metrics = computed(() => {
   ];
 });
 const quickActions = computed(() => [
-  { to: ADMIN_PAGE_PATHS.accounts, label: "邮箱账号", icon: "☺", permission: "mail.account.read" },
-  { to: ADMIN_PAGE_PATHS.invites, label: "邀请码", icon: "✦", permission: "mail.invite.read" },
-  { to: ADMIN_PAGE_PATHS.mailOps, label: "邮件运维", icon: "✉", permission: "mail.queue.read" },
-  { to: ADMIN_PAGE_PATHS.security, label: "安全中心", icon: "◇", permission: "system.audit.read" },
+  { to: { name: 'admin-accounts' }, label: "邮箱账号", icon: "☺", permission: "mail.account.read" },
+  { to: { name: 'admin-invites' }, label: "邀请码", icon: "✦", permission: "mail.invite.read" },
+  { to: { name: 'admin-mail-ops' }, label: "邮件运维", icon: "✉", permission: "mail.queue.read" },
+  { to: { name: 'admin-security' }, label: "安全中心", icon: "◇", permission: "system.audit.read" },
 ].filter((action) => session.can(action.permission)));
 
 async function loadOverview(): Promise<void> {

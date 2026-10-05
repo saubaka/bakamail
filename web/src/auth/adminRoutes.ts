@@ -1,13 +1,14 @@
 import type { RouteRecordRaw } from "vue-router";
 import { ADMIN_LOGIN_PATH } from "../../../shared/adminPaths.ts";
 
-export const adminRoutes: RouteRecordRaw[] = [
-  { path: ADMIN_LOGIN_PATH, name: "admin-login", component: () => import("../views/admin/AdminLoginView.vue") },
+export function createAdminRoutes(base: string): RouteRecordRaw[] { return [
+  { path: base, name: "admin-login", component: () => import("../views/admin/AdminLoginView.vue") },
   {
-    path: ADMIN_LOGIN_PATH,
+    path: base,
+    name: "admin-workspace-root",
     meta: { auth: "admin" },
     component: () => import("../views/admin/AdminShell.vue"),
-    // No empty child: /bakaadmin belongs exclusively to the login record above.
+    // No empty child: the entry belongs exclusively to the login record above.
     children: [
       { path: "overview", name: "admin-overview", meta: { permission: "mail.account.read" }, component: () => import("../views/admin/OverviewView.vue") },
       { path: "accounts", name: "admin-accounts", meta: { permission: "mail.account.read" }, component: () => import("../views/admin/AccountsView.vue") },
@@ -18,4 +19,7 @@ export const adminRoutes: RouteRecordRaw[] = [
       { path: "system", name: "admin-system", meta: { permission: "system.admin.write" }, component: () => import("../views/admin/SystemView.vue") },
     ],
   },
-];
+]; }
+
+// Legacy matcher fixture; production registers only the server-resolved saved base.
+export const adminRoutes = createAdminRoutes(ADMIN_LOGIN_PATH);

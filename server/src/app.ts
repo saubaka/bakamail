@@ -12,6 +12,8 @@ import { isRetiredAdminPath } from "../../shared/adminPaths.ts";
 import { isTrustedProxyPeer } from "./security/identity.ts";
 import { requireSameOrigin } from "./security/origin.ts";
 import { SecurityBudgetError, rejectBudget } from "./security/abuse.ts";
+import { prepareInstallation, retiredInstallationPath, InstallationError } from "./admin/installation.ts";
+import { installationRouter, entrySettingsRouter } from "./routes/installation.ts";
 
 export type AppOptions = {
   /** 测试时关闭引导管理员创建，避免污染断言 */
@@ -57,6 +59,8 @@ export function createApp(options: AppOptions = {}): express.Express {
 
   app.use(["/api/auth", "/api/admin/auth/login", "/api/admin/human-check"], requireSameOrigin);
   app.use("/api/auth", authRouter);
+  app.use("/api", installationRouter);
+  app.use("/api/admin", entrySettingsRouter);
   app.use("/api/admin", adminRouter);
   app.use("/api", uiConfigRouter);
   app.use("/api", mailRouter);
@@ -67,7 +71,7 @@ export function createApp(options: AppOptions = {}): express.Express {
 
   // Retired page URLs must never reach static files or the generic SPA index fallback.
   app.use((request, response, next) => {
-    if (!isRetiredAdminPath(request.originalUrl)) { next(); return; }
+    if (!isRetiredAdminPath(request.originalUrl) && !retiredInstallationPath(request.originalUrl)) { next(); return; }
     response.status(404).setHeader("cache-control", "no-store");
     response.type("text/plain").send("Not Found");
   });
@@ -122,6 +126,7 @@ export function createApp(options: AppOptions = {}): express.Express {
       _next: express.NextFunction,
     ) => {
       if (response.headersSent) return;
+      if (error instanceof InstallationError) { fail(response, error.status, error.message); return; }
       if (error instanceof SecurityBudgetError) { rejectBudget(response, error.code, error.seconds); return; }
       if (error instanceof RequestBodyError) {
         if (error.closeConnection) response.setHeader("connection", "close");
@@ -142,5 +147,6 @@ export function createApp(options: AppOptions = {}): express.Express {
   if (options.bootstrapAdmin !== false) {
     ensureBootstrapAdmin(log);
   }
+  prepareInstallation(log);
   return app;
 }
