@@ -13,7 +13,7 @@ export const sourceFiles = [
   'deploy/Dockerfile', 'deploy/docker-compose.yml', 'deploy/bakamail.env.example',
   'deploy/export-mail-logs.py', 'deploy/mail-log-export.cron',
   'docs/project1-prototype-ledger.jsonl',
-  'scripts/audit-project1-prototype.mjs', 'scripts/deploy-green.mjs',
+  'scripts/audit-project1-prototype.mjs',
   'scripts/inventory-notification-display.mjs', 'scripts/preview-mock-api.mjs',
   'scripts/recover-auth-source.mjs', 'scripts/start-local.mjs',
   'scripts/sync-project1-styles.sh', 'scripts/upload-archive.mjs',

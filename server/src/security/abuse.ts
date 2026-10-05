@@ -5,6 +5,7 @@ import { sendJson } from "../http/kit.ts";
 
 export type BudgetPolicy = { sourceMinute: number; sourceHour: number; globalMinute: number; globalHour: number };
 export const SECURITY_BUDGETS = {
+  initialize: { sourceMinute: 5, sourceHour: 20, globalMinute: 20, globalHour: 100 },
   login: { sourceMinute: 20, sourceHour: 100, globalMinute: 200, globalHour: 2000 },
   challenge: { sourceMinute: 6, sourceHour: 30, globalMinute: 120, globalHour: 1000 },
   "form-token": { sourceMinute: 6, sourceHour: 30, globalMinute: 60, globalHour: 500 },

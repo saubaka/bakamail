@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import { parseLogLimit, readMailLogSnapshot, redactLogLine } from "../src/admin/mailLogs.ts";
 
-const container = "1Panel-maddy-mail-izag";
+const container = "maddy";
 const now = Date.now();
 const sample = () => ({ version: 1, container, source: "docker-logs", capturedAt: new Date(now).toISOString(), truncated: false, lines: ["delivery accepted", "password=hidden", "delivery complete"] });
 

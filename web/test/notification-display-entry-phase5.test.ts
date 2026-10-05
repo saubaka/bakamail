@@ -119,7 +119,7 @@ test('全入口不再允许无理由persistent；保留发送锁、人工确认�
   const inventory = spawnSync(process.execPath, [fileURLToPath(new URL('../../scripts/inventory-notification-display.mjs', import.meta.url)), '--summary'], { encoding: 'utf8' });
   assert.equal(inventory.status, 0, inventory.stderr);
   const sites = JSON.parse(inventory.stdout);
-  assert.equal(sites.files.length, 23); assert.equal(sites.total, 107); assert.deepEqual(sites.persistent, []);
+  assert.equal(sites.files.length, 25); assert.equal(sites.total, 111); assert.deepEqual(sites.persistent, []);
   assert.equal(sites.manualExceptions.length, 1);
   assert.equal(sites.manualExceptions[0].file, 'web/src/components/mail/ComposeDialog.vue');
   assert.equal(sites.manualExceptions[0].manualReason, 'delivery-unconfirmed');

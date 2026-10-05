@@ -63,7 +63,7 @@ try {
   await checkPort();
   console.log(`启动本地 BakaMail：${url}\n按 Control+C 停止；请保持此终端打开。`);
   const env = { ...process.env, HOST: '127.0.0.1', PORT: '8790', COOKIE_SECURE: '0',
-    MADDY_RUNNER: 'disabled', HUMAN_CHECK_TEST_MODE: '0' };
+    HUMAN_CHECK_TEST_MODE: '0' };
   // Observe failures immediately while health polling is still in progress.
   const server = run(process.execPath, ['server/src/index.ts'], env)
     .then(() => null, error => error);

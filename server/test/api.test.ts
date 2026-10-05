@@ -22,7 +22,7 @@ process.env.MADDY_BIN = join(here, "fixtures", "fake-maddy.sh");
 process.env.MADDY_DATA_DIR = stateDir;
 process.env.MAIL_LOG_SNAPSHOT_PATH = join(stateDir, "mail-log.json");
 process.env.FAKE_MADDY_STATE = stateDir;
-process.env.MAIL_DOMAIN = "saubaka.com";
+process.env.MAIL_DOMAIN = "example.test";
 // 指向一个必然拒绝连接的端口，让登录失败得又准又快
 process.env.MAIL_HOST = "127.0.0.1";
 process.env.MAIL_IMAP_PORT = "1";
@@ -52,8 +52,8 @@ async function adminLoginBody(username: string, password: string) {
   assert.equal(challenge.status, 200);
   return { username, password, humanNonce: challenge.body.data.nonce, humanAnswer: "ABCD" };
 }
-const contractSession = createMailSession("contract@saubaka.com", "test-fingerprint", "api-test");
-const mockMailbox = new MailboxSession(contractSession.id, "contract@saubaka.com", "not-used");
+const contractSession = createMailSession("contract@example.test", "test-fingerprint", "api-test");
+const mockMailbox = new MailboxSession(contractSession.id, "contract@example.test", "not-used");
 const folderRows = [
   { path: "INBOX", name: "INBOX", delimiter: "/", specialUse: "\\Inbox", subscribed: true, messages: 2, unseen: 1 },
   { path: "Projects", name: "Projects", delimiter: "/", specialUse: null, subscribed: true, messages: 0, unseen: 0 },
@@ -281,7 +281,7 @@ test("设置写入先完整校验，错误值不会部分保存", async () => {
 
 test("设置写入中途 SQLite 失败会整体回滚，不留下前面字段", async () => {
   db.exec(`create trigger reject_settings_second_field before insert on user_settings
-    when NEW.owner = 'contract@saubaka.com' and NEW.key = 'pageSize'
+    when NEW.owner = 'contract@example.test' and NEW.key = 'pageSize'
     begin select raise(abort, 'test settings fault'); end`);
   try {
     const response = await mailRequest("patch", "/api/settings")
@@ -328,46 +328,46 @@ test("普通删除找不到垃圾箱时返回冲突，不记录成功", async ()
 
 test("联系人新增及重复保存返回服务器确认的完整条目和同一编号", async () => {
   const first = await mailRequest("post", "/api/contacts")
-    .send({ name: "A".repeat(90), email: "CONTACT-QA@SAUBAKA.COM", note: "N".repeat(220) });
+    .send({ name: "A".repeat(90), email: "CONTACT-QA@EXAMPLE.TEST", note: "N".repeat(220) });
   assert.equal(first.status, 200);
-  assert.equal(first.body.data.saved, "contact-qa@saubaka.com");
+  assert.equal(first.body.data.saved, "contact-qa@example.test");
   const contact = first.body.data.contact;
   assert.ok(Number.isSafeInteger(contact.id) && contact.id > 0);
   assert.deepEqual(Object.keys(contact).sort(), ["email", "id", "name", "note"]);
   assert.equal(contact.name.length, 80);
   assert.equal(contact.note.length, 200);
   const updated = await mailRequest("post", "/api/contacts")
-    .send({ name: "已更新", email: "contact-qa@saubaka.com", note: "确认内容" });
+    .send({ name: "已更新", email: "contact-qa@example.test", note: "确认内容" });
   assert.equal(updated.status, 200);
   assert.equal(updated.body.data.contact.id, contact.id);
-  assert.deepEqual(updated.body.data.contact, { id: contact.id, name: "已更新", email: "contact-qa@saubaka.com", note: "确认内容" });
+  assert.deepEqual(updated.body.data.contact, { id: contact.id, name: "已更新", email: "contact-qa@example.test", note: "确认内容" });
 });
 
 test("联系人修改返回数据库真实条目，冲突不会覆盖已有联系人", async () => {
-  const first = await mailRequest("post", "/api/contacts").send({ name: "修改前", email: "patch-qa@saubaka.com", note: "" });
+  const first = await mailRequest("post", "/api/contacts").send({ name: "修改前", email: "patch-qa@example.test", note: "" });
   const id = first.body.data.contact.id;
   const patched = await mailRequest("patch", `/api/contacts/${id}`)
-    .send({ name: "修改后", email: "NEW-PATCH-QA@SAUBAKA.COM", note: "新备注" });
+    .send({ name: "修改后", email: "NEW-PATCH-QA@EXAMPLE.TEST", note: "新备注" });
   assert.equal(patched.status, 200);
   assert.equal(patched.body.data.updated, String(id));
-  assert.deepEqual(patched.body.data.contact, { id, name: "修改后", email: "new-patch-qa@saubaka.com", note: "新备注" });
+  assert.deepEqual(patched.body.data.contact, { id, name: "修改后", email: "new-patch-qa@example.test", note: "新备注" });
   const conflict = await mailRequest("patch", `/api/contacts/${id}`)
-    .send({ name: "不应保存", email: "contact-qa@saubaka.com", note: "" });
+    .send({ name: "不应保存", email: "contact-qa@example.test", note: "" });
   assert.equal(conflict.status, 409);
   const list = await mailRequest("get", "/api/contacts");
   assert.equal(list.body.data.contacts.find((row: { id: number }) => row.id === id).name, "修改后");
 });
 
 test("联系人读取、修改、删除按邮箱隔离，非法删除编号被拒绝", async () => {
-  const own = await mailRequest("post", "/api/contacts").send({ name: "私有", email: "private-qa@saubaka.com", note: "" });
+  const own = await mailRequest("post", "/api/contacts").send({ name: "私有", email: "private-qa@example.test", note: "" });
   const id = own.body.data.contact.id;
-  const other = createMailSession("other-contact@saubaka.com", "other-contact-fingerprint", "contact-test");
-  putSession(new MailboxSession(other.id, "other-contact@saubaka.com", "not-used"));
+  const other = createMailSession("other-contact@example.test", "other-contact-fingerprint", "contact-test");
+  putSession(new MailboxSession(other.id, "other-contact@example.test", "not-used"));
   const otherRequest = (method: "get" | "patch" | "delete", path: string) => request(app)[method](path)
     .set("Cookie", `${MAIL_COOKIE}=${other.token}`).set("x-csrf-token", other.csrfToken);
   const list = await otherRequest("get", "/api/contacts");
   assert.deepEqual(list.body.data.contacts, []);
-  const patch = await otherRequest("patch", `/api/contacts/${id}`).send({ name: "越权", email: "private-qa@saubaka.com", note: "" });
+  const patch = await otherRequest("patch", `/api/contacts/${id}`).send({ name: "越权", email: "private-qa@example.test", note: "" });
   assert.equal(patch.status, 404);
   assert.equal((await otherRequest("delete", `/api/contacts/${id}`)).status, 200);
   const stillOwned = await mailRequest("get", "/api/contacts");
@@ -383,22 +383,22 @@ test("联系人读取、修改、删除按邮箱隔离，非法删除编号被�
 test("联系人保存仍要求普通账号 CSRF，不因响应契约变化放宽权限", async () => {
   const rejected = await request(app).post("/api/contacts")
     .set("Cookie", `${MAIL_COOKIE}=${contractSession.token}`)
-    .send({ name: "不得保存", email: "csrf-contact@saubaka.com", note: "" });
+    .send({ name: "不得保存", email: "csrf-contact@example.test", note: "" });
   assert.equal(rejected.status, 403);
   const list = await mailRequest("get", "/api/contacts");
-  assert.equal(list.body.data.contacts.some((row: { email: string }) => row.email === "csrf-contact@saubaka.com"), false);
+  assert.equal(list.body.data.contacts.some((row: { email: string }) => row.email === "csrf-contact@example.test"), false);
 });
 
 test("发送未确认标记随本人草稿保存和读回，不暴露给其他账号", async () => {
-  const saved = await mailRequest("post", "/api/drafts").send({ payload: { to: "qa@saubaka.com", text: "本地草稿", deliveryUnconfirmed: true } });
+  const saved = await mailRequest("post", "/api/drafts").send({ payload: { to: "qa@example.test", text: "本地草稿", deliveryUnconfirmed: true } });
   assert.equal(saved.status, 200);
   const id = saved.body.data.id;
   const read = await mailRequest("get", "/api/drafts");
   const draft = read.body.data.drafts.find((item: { id: string }) => item.id === id);
   assert.equal(draft.deliveryUnconfirmed, true);
   assert.equal(draft.text, "本地草稿");
-  const other = createMailSession("draft-other@saubaka.com", "draft-other", "test");
-  putSession(new MailboxSession(other.id, "draft-other@saubaka.com", "never-used"));
+  const other = createMailSession("draft-other@example.test", "draft-other", "test");
+  putSession(new MailboxSession(other.id, "draft-other@example.test", "never-used"));
   const hidden = await request(app).get("/api/drafts").set("Cookie", `${MAIL_COOKIE}=${other.token}`);
   assert.equal(hidden.body.data.drafts.some((item: { id: string }) => item.id === id), false);
   await mailRequest("delete", `/api/drafts/${id}`);
@@ -424,7 +424,7 @@ test("邮局日志经后台鉴权、严格参数和快照校验返回，不把�
   assert.equal(missing.status, 200);
   assert.equal(missing.body.data.available, false);
   writeFileSync(process.env.MAIL_LOG_SNAPSHOT_PATH!, JSON.stringify({ version: 1,
-    container: "1Panel-maddy-mail-izag", source: "docker-logs", capturedAt: new Date().toISOString(),
+    container: "maddy", source: "docker-logs", capturedAt: new Date().toISOString(),
     truncated: false, lines: ["delivery accepted", "token=must-not-be-returned"] }));
   const logs = await admin.get("/api/admin/logs/mail?lines=10");
   assert.equal(logs.status, 200);
@@ -551,7 +551,7 @@ test("邀请码只能撤销一次，重复操作不会伪报成功", async () =>
     row.id === id && Boolean(row.revoked_at)));
 });
 
-async function inviteCode(address = "newbie@saubaka.com"): Promise<string> {
+async function inviteCode(address = "newbie@example.test"): Promise<string> {
   const response = await admin
     .post("/api/admin/invites")
     .set("x-csrf-token", adminCsrf)
@@ -591,7 +591,7 @@ test("邀请制注册：蜜罐字段被拒", async () => {
     .post("/api/auth/register")
     .send(await registerPayload(code, { website: "http://spam.example" }));
   assert.equal(response.status, 400);
-  assert.equal(fakeCredentials().includes("newbie@saubaka.com"), false);
+  assert.equal(fakeCredentials().includes("newbie@example.test"), false);
 });
 
 test("邀请制注册：提交过快被拒", async () => {
@@ -621,12 +621,12 @@ test("邀请制注册：无效邀请码被拒", async () => {
 });
 
 test("注册成功后凭据与邮箱都被创建（cred+imap-acct 两条命令）", async () => {
-  assert.equal(fakeCredentials().includes("newbie@saubaka.com"), true);
-  assert.equal(fakeAccounts().includes("newbie@saubaka.com"), true);
+  assert.equal(fakeCredentials().includes("newbie@example.test"), true);
+  assert.equal(fakeAccounts().includes("newbie@example.test"), true);
 });
 
 test("邀请码用过一次后失效", async () => {
-  const code = await inviteCode("second@saubaka.com");
+  const code = await inviteCode("second@example.test");
   const first = await request(app)
     .post("/api/auth/register")
     .send(await registerPayload(code, {}, "second"));
@@ -642,7 +642,7 @@ test("后台账号列表能看出凭据与邮箱是否成对", async () => {
   const response = await admin.get("/api/admin/accounts");
   assert.equal(response.status, 200);
   const rows = response.body.data.accounts as { mailbox: string; broken: boolean }[];
-  const newbie = rows.find((row) => row.mailbox === "newbie@saubaka.com");
+  const newbie = rows.find((row) => row.mailbox === "newbie@example.test");
   assert.ok(newbie);
   assert.equal(newbie?.broken, false);
 });
@@ -660,43 +660,43 @@ test("邮局列表失败时后台不把现有账号误报为空", async () => {
 });
 
 test("后台可以修复只有凭据或只有邮箱的半成品账号", async () => {
-  appendFileSync(join(stateDir, "credentials"), "credential-only@saubaka.com|existing-pass-2026\n");
+  appendFileSync(join(stateDir, "credentials"), "credential-only@example.test|existing-pass-2026\n");
   const mailboxRepair = await admin
     .post("/api/admin/accounts/repair")
     .set("x-csrf-token", adminCsrf)
-    .send({ account: "credential-only@saubaka.com", confirm: true });
+    .send({ account: "credential-only@example.test", confirm: true });
   assert.equal(mailboxRepair.status, 200);
   assert.deepEqual(mailboxRepair.body.data.repaired, ["mailbox"]);
-  assert.ok(fakeAccounts().includes("credential-only@saubaka.com"));
+  assert.ok(fakeAccounts().includes("credential-only@example.test"));
 
-  appendFileSync(join(stateDir, "accounts"), "mailbox-only@saubaka.com\n");
+  appendFileSync(join(stateDir, "accounts"), "mailbox-only@example.test\n");
   const credentialRepair = await admin
     .post("/api/admin/accounts/repair")
     .set("x-csrf-token", adminCsrf)
     .send({
-      account: "mailbox-only@saubaka.com",
+      account: "mailbox-only@example.test",
       password: "repaired-mail-2026",
       confirm: true,
     });
   assert.equal(credentialRepair.status, 200);
   assert.deepEqual(credentialRepair.body.data.repaired, ["credential"]);
-  assert.ok(fakeCredentials().includes("mailbox-only@saubaka.com"));
+  assert.ok(fakeCredentials().includes("mailbox-only@example.test"));
 });
 
 test("后台重置邮箱密码：需要显式确认，成功后写入新密码", async () => {
   const withoutConfirm = await admin
     .post("/api/admin/accounts/password")
     .set("x-csrf-token", adminCsrf)
-    .send({ account: "newbie@saubaka.com", password: "rotated-mail-2026" });
+    .send({ account: "newbie@example.test", password: "rotated-mail-2026" });
   assert.equal(withoutConfirm.status, 400);
 
   const confirmed = await admin
     .post("/api/admin/accounts/password")
     .set("x-csrf-token", adminCsrf)
-    .send({ account: "newbie@saubaka.com", password: "rotated-mail-2026", confirm: true });
+    .send({ account: "newbie@example.test", password: "rotated-mail-2026", confirm: true });
   assert.equal(confirmed.status, 200);
   const stored = readFileSync(join(stateDir, "credentials"), "utf8");
-  assert.match(stored, /newbie@saubaka\.com\|rotated-mail-2026/);
+  assert.match(stored, /newbie@example\.test\|rotated-mail-2026/);
 });
 
 test("后台重置密码会写审计日志", async () => {
@@ -709,7 +709,7 @@ test("弱密码被拒绝", async () => {
   const response = await admin
     .post("/api/admin/accounts/password")
     .set("x-csrf-token", adminCsrf)
-    .send({ account: "newbie@saubaka.com", password: "12345678", confirm: true });
+    .send({ account: "newbie@example.test", password: "12345678", confirm: true });
   assert.equal(response.status, 400);
   assert.match(String(response.body.error), /密码/);
 });
@@ -718,10 +718,10 @@ test("后台删除账号会同时清掉凭据与邮箱", async () => {
   const response = await admin
     .post("/api/admin/accounts/remove")
     .set("x-csrf-token", adminCsrf)
-    .send({ account: "newbie@saubaka.com", confirm: true });
+    .send({ account: "newbie@example.test", confirm: true });
   assert.equal(response.status, 200);
-  assert.equal(fakeCredentials().includes("newbie@saubaka.com"), false);
-  assert.equal(fakeAccounts().includes("newbie@saubaka.com"), false);
+  assert.equal(fakeCredentials().includes("newbie@example.test"), false);
+  assert.equal(fakeAccounts().includes("newbie@example.test"), false);
 });
 
 test("邮箱登录失败会被计数", async () => {
@@ -731,7 +731,7 @@ test("邮箱登录失败会被计数", async () => {
   for (let i = 0; i < 3; i += 1) {
     const response = await request(app)
       .post("/api/auth/login")
-      .send({ account: "me@saubaka.com", password: "wrong-password-1" });
+      .send({ account: "me@example.test", password: "wrong-password-1" });
     assert.equal(response.status, 401);
   }
   const logs = await admin.get("/api/admin/login-logs");
@@ -749,11 +749,11 @@ test("连续失败达到阈值后要求人机校验，未通过则 429", async (
   for (let i = 0; i < 6; i += 1) {
     await request(app)
       .post("/api/auth/login")
-      .send({ account: "me@saubaka.com", password: "wrong-password-1" });
+      .send({ account: "me@example.test", password: "wrong-password-1" });
   }
   const response = await request(app)
     .post("/api/auth/login")
-    .send({ account: "me@saubaka.com", password: "wrong-password-1" });
+    .send({ account: "me@example.test", password: "wrong-password-1" });
   assert.equal(response.status, 429);
   assert.equal(response.body.data.requireHuman, true);
   assert.equal(response.body.code, "human_required");
@@ -923,14 +923,14 @@ test("注册小时限额读取后台策略，成功记录也占预算", async ()
   const address = "198.51.100.31";
   const identity = fingerprint("register", address);
   setSetting("register_max_per_hour", "2");
-  recordLoginAttempt("register", identity, "qa1@saubaka.com", true, "created");
-  recordLoginAttempt("register", identity, "qa2@saubaka.com", true, "created");
+  recordLoginAttempt("register", identity, "qa1@example.test", true, "created");
+  recordLoginAttempt("register", identity, "qa2@example.test", true, "created");
   try {
     const response = await request(app).post("/api/auth/register")
       .set("x-real-ip", address).send({ account: "qa3" });
     assert.equal(response.status, 429);
     assert.equal(response.headers["retry-after"], "3600");
-    assert.equal(fakeCredentials().includes("qa3@saubaka.com"), false);
+    assert.equal(fakeCredentials().includes("qa3@example.test"), false);
   } finally {
     setSetting("register_max_per_hour", "100");
   }
@@ -951,9 +951,9 @@ test("24 小时注册预算包含过去小时外的成功及失败，不计更�
   const address = "198.51.100.61";
   const identity = fingerprint("register", address);
   setSetting("register_max_per_day", "2");
-  const old = recordLoginAttempt("register", identity, "old@saubaka.com", true, "created");
+  const old = recordLoginAttempt("register", identity, "old@example.test", true, "created");
   db.prepare("update login_logs set created_at = ? where id = ?").run(new Date(Date.now() - 25 * 3600_000).toISOString(), old);
-  const outsideHour = recordLoginAttempt("register", identity, "prior@saubaka.com", true, "created");
+  const outsideHour = recordLoginAttempt("register", identity, "prior@example.test", true, "created");
   db.prepare("update login_logs set created_at = ? where id = ?").run(new Date(Date.now() - 2 * 3600_000).toISOString(), outsideHour);
   try {
     const first = await request(app).post("/api/auth/register").set("x-real-ip", address)
@@ -964,7 +964,7 @@ test("24 小时注册预算包含过去小时外的成功及失败，不计更�
     assert.equal(second.status, 429);
     assert.ok(Number(second.headers["retry-after"]) > 0 && Number(second.headers["retry-after"]) <= 86400);
     assert.equal(second.body.data.window, "day");
-    assert.equal(fakeCredentials().includes("daily-qa@saubaka.com"), false);
+    assert.equal(fakeCredentials().includes("daily-qa@example.test"), false);
   } finally { setSetting("register_max_per_day", "1000"); }
 });
 
@@ -992,20 +992,20 @@ test("注册理由校验返回字段错误，不调用邮局创建账号", async
 });
 
 test("关闭注册即使有效邀请码也不能建号，不消费邀请码；重新开启可完成注册", async () => {
-  const code = await inviteCode("closed-qa@saubaka.com");
+  const code = await inviteCode("closed-qa@example.test");
   const payload = await registerPayload(code, {}, "closed-qa");
   setSetting("registration_mode", "closed");
   try {
     const blocked = await request(app).post("/api/auth/register").send(payload);
     assert.equal(blocked.status, 403);
     assert.equal(blocked.body.code, "registration_closed");
-    assert.equal(fakeCredentials().includes("closed-qa@saubaka.com"), false);
-    assert.equal(fakeAccounts().includes("closed-qa@saubaka.com"), false);
+    assert.equal(fakeCredentials().includes("closed-qa@example.test"), false);
+    assert.equal(fakeAccounts().includes("closed-qa@example.test"), false);
     setSetting("registration_mode", "invite");
     const opened = await request(app).post("/api/auth/register").send(payload);
     assert.equal(opened.status, 200);
-    assert.equal(fakeCredentials().includes("closed-qa@saubaka.com"), true);
-    assert.equal(fakeAccounts().includes("closed-qa@saubaka.com"), true);
+    assert.equal(fakeCredentials().includes("closed-qa@example.test"), true);
+    assert.equal(fakeAccounts().includes("closed-qa@example.test"), true);
   } finally { setSetting("registration_mode", "invite"); }
 });
 
@@ -1038,10 +1038,10 @@ test("重置申请的每小时三次限额包含成功请求", async () => {
   for (let count = 0; count < 3; count += 1) {
     const challenge = await request(app).get("/api/auth/human-check?purpose=password-reset").set("x-real-ip", address);
     const response = await request(app).post("/api/auth/password-reset").set("x-real-ip", address)
-      .send({ account: "qa@saubaka.com", humanNonce: challenge.body.data.nonce, humanAnswer: "ABCD" });
+      .send({ account: "qa@example.test", humanNonce: challenge.body.data.nonce, humanAnswer: "ABCD" });
     assert.equal(response.status, 200);
   }
-  const limited = await request(app).post("/api/auth/password-reset").set("x-real-ip", address).send({ account: "qa@saubaka.com" });
+  const limited = await request(app).post("/api/auth/password-reset").set("x-real-ip", address).send({ account: "qa@example.test" });
   assert.equal(limited.status, 429);
   assert.equal(limited.headers["retry-after"], "3600");
 });
@@ -1074,7 +1074,7 @@ test("同一未绑定邀请码并发注册时只能创建一个账号", async ()
 });
 
 test("注册失败确认账号已回滚后恢复邀请码，允许使用新表单重试", async () => {
-  const code = await inviteCode("invite-retry@saubaka.com");
+  const code = await inviteCode("invite-retry@example.test");
   process.env.FAKE_MADDY_FAIL_IMAP_CREATE = "1";
   try {
     const response = await request(app).post("/api/auth/register")
@@ -1084,7 +1084,7 @@ test("注册失败确认账号已回滚后恢复邀请码，允许使用新表�
   assert.equal(response.body.code, "mailbox_create_failed");
   assert.deepEqual(response.body.data, { inviteRestored: true, requiresAdminReview: false });
   assert.doesNotMatch(JSON.stringify(response.body), /forced mailbox creation failure/);
-    assert.equal(fakeCredentials().includes("invite-retry@saubaka.com"), false);
+    assert.equal(fakeCredentials().includes("invite-retry@example.test"), false);
   } finally {
     delete process.env.FAKE_MADDY_FAIL_IMAP_CREATE;
   }
@@ -1208,7 +1208,7 @@ function assertSafeAccountFailure(response: { status: number; body: any; headers
 
 test("后台创建的干净回滚与半成品失败均安全返回，半成品不会伪报已清理", async () => {
   for (const partial of [false, true]) {
-    const account = `qa-admin-create-${partial ? "partial" : "clean"}@saubaka.com`;
+    const account = `qa-admin-create-${partial ? "partial" : "clean"}@example.test`;
     const response = await withFakeFailures({ FAKE_MADDY_FAIL_IMAP_CREATE: "1",
       FAKE_MADDY_FAIL_CREDS_REMOVE: partial ? "1" : "0", FAKE_MADDY_FAIL_DETAIL: privateCommandDetail }, () =>
       admin.post("/api/admin/accounts").set("x-csrf-token", adminCsrf)
@@ -1222,13 +1222,13 @@ test("后台创建的干净回滚与半成品失败均安全返回，半成品�
 });
 
 test("后台修复预检失败与回滚失败不泄漏命令原文，权限及失败审计保留", async () => {
-  const preflightAccount = "qa-repair-preflight@saubaka.com";
+  const preflightAccount = "qa-repair-preflight@example.test";
   const preflight = await withFakeFailures({ FAKE_MADDY_FAIL_LIST: "1", FAKE_MADDY_FAIL_DETAIL: privateCommandDetail }, () =>
     admin.post("/api/admin/accounts/repair").set("x-csrf-token", adminCsrf)
       .send({ account: preflightAccount, password: "test-repair-pass-2026", confirm: true }).then(response => response));
   assertSafeAccountFailure(preflight, "repair", preflightAccount, "unconfirmed");
   assert.equal(fakeCredentials().includes(preflightAccount), false);
-  const partialAccount = "qa-repair-partial@saubaka.com";
+  const partialAccount = "qa-repair-partial@example.test";
   const partial = await withFakeFailures({ FAKE_MADDY_FAIL_IMAP_CREATE: "1", FAKE_MADDY_FAIL_CREDS_REMOVE: "1",
     FAKE_MADDY_FAIL_DETAIL: privateCommandDetail }, () =>
     admin.post("/api/admin/accounts/repair").set("x-csrf-token", adminCsrf)
@@ -1240,15 +1240,15 @@ test("后台修复预检失败与回滚失败不泄漏命令原文，权限及�
 });
 
 test("密码实际写入后命令报错，仍吊销目标全部会话并保留其他账号与草稿", async () => {
-  const account = "qa-password-uncertain@saubaka.com";
+  const account = "qa-password-uncertain@example.test";
   assert.equal((await admin.post("/api/admin/accounts").set("x-csrf-token", adminCsrf)
     .send({ account, password: "test-old-pass-2026" })).status, 200);
   const first = createMailSession(account, "qa-password-test", "fixture");
   const second = createMailSession(account, "qa-password-test", "fixture");
-  const other = createMailSession("qa-password-other@saubaka.com", "qa-password-test", "fixture");
+  const other = createMailSession("qa-password-other@example.test", "qa-password-test", "fixture");
   let closed = 0;
   for (const row of [first, second, other]) {
-    const mailbox = new MailboxSession(row.id, row === other ? "qa-password-other@saubaka.com" : account, "not-real");
+    const mailbox = new MailboxSession(row.id, row === other ? "qa-password-other@example.test" : account, "not-real");
     mailbox.close = async () => { if (row !== other) closed += 1; };
     putSession(mailbox);
   }
@@ -1261,7 +1261,7 @@ test("密码实际写入后命令报错，仍吊销目标全部会话并保留�
     assertSafeAccountFailure(response, "password", account, "unconfirmed");
     assert.equal(response.body.data.revokedSessions, 2);
     assert.match(response.body.error, /现有会话已下线/);
-    assert.match(readFileSync(join(stateDir, "credentials"), "utf8"), /qa-password-uncertain@saubaka\.com\|test-new-pass-2026/);
+    assert.match(readFileSync(join(stateDir, "credentials"), "utf8"), /qa-password-uncertain@example\.test\|test-new-pass-2026/);
     assert.equal(closed, 2);
     for (const row of [first, second]) { assert.equal(findMailSession(row.token), undefined); assert.equal(getSession(row.id), undefined); }
     assert.ok(findMailSession(other.token));
@@ -1277,7 +1277,7 @@ test("密码实际写入后命令报错，仍吊销目标全部会话并保留�
 });
 
 test("删除仅完成凭据阶段时明确半成品和已下线，不伪报完整删除", async () => {
-  const account = "qa-remove-partial@saubaka.com";
+  const account = "qa-remove-partial@example.test";
   assert.equal((await admin.post("/api/admin/accounts").set("x-csrf-token", adminCsrf)
     .send({ account, password: "test-delete-pass-2026" })).status, 200);
   const row = createMailSession(account, "qa-remove-test", "fixture");
@@ -1308,8 +1308,8 @@ test("删除仅完成凭据阶段时明确半成品和已下线，不伪报完�
 });
 
 test("管理员删除成功后清理目标账号的 BFF 私有数据，保留其他账号数据", async () => {
-  const target = "qa-purge-target@saubaka.com";
-  const other = "qa-purge-other@saubaka.com";
+  const target = "qa-purge-target@example.test";
+  const other = "qa-purge-other@example.test";
   const stamp = new Date().toISOString();
   assert.equal((await admin.post("/api/admin/accounts").set("x-csrf-token", adminCsrf)
     .send({ account: target, password: "test-purge-pass-2026" })).status, 200);
@@ -1347,7 +1347,7 @@ test("管理员删除成功后清理目标账号的 BFF 私有数据，保留其
 });
 
 test("邮箱已删而 BFF 清理失败时不伪报成功，残留在后台可见并可重试", async () => {
-  const account = "qa-purge-retry@saubaka.com";
+  const account = "qa-purge-retry@example.test";
   const stamp = new Date().toISOString();
   assert.equal((await admin.post("/api/admin/accounts").set("x-csrf-token", adminCsrf)
     .send({ account, password: "test-purge-pass-2026" })).status, 200);
@@ -1356,7 +1356,7 @@ test("邮箱已删而 BFF 清理失败时不伪报成功，残留在后台可见
   db.prepare("insert into user_settings (owner, key, value, updated_at) values (?, 'density', 'compact', ?)")
     .run(account, stamp);
   db.exec(`create trigger qa_purge_retry_fault before delete on user_settings
-    when OLD.owner = 'qa-purge-retry@saubaka.com'
+    when OLD.owner = 'qa-purge-retry@example.test'
     begin select raise(abort, 'private-sql-fault'); end`);
   try {
     const failed = await admin.post("/api/admin/accounts/remove").set("x-csrf-token", adminCsrf)
@@ -1389,9 +1389,9 @@ test("邮箱已删而 BFF 清理失败时不伪报成功，残留在后台可见
 test("密码重置和删除拒绝非法或外域目标，不调用账号管理或吊销其他会话", async () => {
   const credentials = readFileSync(join(stateDir, "credentials"), "utf8");
   const accounts = readFileSync(join(stateDir, "accounts"), "utf8");
-  const row = createMailSession("qa-validation-other@saubaka.com", "qa-validation", "fixture");
+  const row = createMailSession("qa-validation-other@example.test", "qa-validation", "fixture");
   try {
-    for (const account of ["qa@outside.test", "-bad@saubaka.com", "bad\ncontrol@saubaka.com", "--flag", "ab@saubaka.com"]) {
+    for (const account of ["qa@outside.test", "-bad@example.test", "bad\ncontrol@example.test", "--flag", "ab@example.test"]) {
       for (const action of ["password", "remove"]) {
         const response = await admin.post(`/api/admin/accounts/${action}`).set("x-csrf-token", adminCsrf)
           .send({ account, password: "test-valid-pass-2026", confirm: true });
@@ -1406,7 +1406,7 @@ test("密码重置和删除拒绝非法或外域目标，不调用账号管理�
 
 test("注册回滚未确认保留邀请码并要求人工核对，不泄漏 CLI 或密码", async () => {
   const account = "qa-register-partial";
-  const mailbox = `${account}@saubaka.com`;
+  const mailbox = `${account}@example.test`;
   const code = await inviteCode(mailbox);
   const response = await withFakeFailures({ FAKE_MADDY_FAIL_IMAP_CREATE: "1", FAKE_MADDY_FAIL_CREDS_REMOVE: "1",
     FAKE_MADDY_FAIL_DETAIL: privateCommandDetail }, async () =>

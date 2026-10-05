@@ -25,6 +25,15 @@ export function hashPassword(password: string): string {
   return ["scrypt", N, r, p, salt.toString("base64"), derived.toString("base64")].join("$");
 }
 
+/** Initialization must not stall the event loop; callers bound concurrent hash jobs. */
+export async function hashPasswordAsync(password: string): Promise<string> {
+  const salt = randomBytes(16);
+  const derived = await new Promise<Buffer>((resolve, reject) => {
+    scrypt(password.normalize("NFKC"), salt, KEY_LEN, { N, r, p, maxmem: MAX_MEM }, (error, result) => error ? reject(error) : resolve(result));
+  });
+  return ["scrypt", N, r, p, salt.toString("base64"), derived.toString("base64")].join("$");
+}
+
 export function verifyPassword(stored: string, password: string): boolean {
   const parts = stored.split("$");
   if (parts.length !== 6 || parts[0] !== "scrypt") return false;

@@ -143,23 +143,17 @@ export async function verifyAdminCredentials(
 
 /**
  * 只在库里一个管理员都没有时创建引导账号。
- * 没有配置密码时生成一个随机密码并在日志里打印一次。
+ * 仅供显式设置引导密码的隔离测试；正式新安装使用网页初始化。
  */
 export function ensureBootstrapAdmin(log: (message: string) => void): void {
   if (countAdmins() > 0) return;
+  if (process.env.NODE_ENV !== "test" || !config.bootstrap.password) return;
   const username = config.bootstrap.admin || "admin";
-  const password =
-    config.bootstrap.password ||
-    `bm-${Buffer.from(crypto.getRandomValues(new Uint8Array(9))).toString("base64url")}`;
+  const password = config.bootstrap.password;
   const created = createAdmin(username, password, "superadmin", "初始管理员");
   if (!created.ok) {
     log(`引导管理员创建失败：${created.error}`);
     return;
   }
-  if (config.bootstrap.password) {
-    log(`已创建引导管理员 ${username}（密码来自 BOOTSTRAP_ADMIN_PASSWORD）`);
-  } else {
-    log(`已创建引导管理员 ${username}，初始密码：${password}`);
-    log("请登录后台后立即修改密码，或设置 BOOTSTRAP_ADMIN_PASSWORD 后重建数据目录");
-  }
+  log(`已创建测试引导管理员 ${username}`);
 }

@@ -1,5 +1,6 @@
 <template>
   <div class="admin-system-grid">
+    <AdminEntrySettings />
     <NotificationAppearance />
     <section v-motion="{ kind: 'feature' }" class="admin-panel is-wide">
       <div class="panel-heading">
@@ -104,6 +105,7 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { ApiError, api, apiDownload, toast } from "../../api";
 import { useAdminSessionStore } from "../../stores/adminSession";
 import NotificationAppearance from '../../components/admin/NotificationAppearance.vue';
+import AdminEntrySettings from '../../components/admin/AdminEntrySettings.vue';
 
 type SiteSettings = {
   siteName: string;

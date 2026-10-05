@@ -15,13 +15,16 @@
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import BrandMark from "../components/BrandMark.vue";
-import { ADMIN_LOGIN_PATH, safeAdminDestination } from "../../../shared/adminPaths";
+import { adminPagePaths, adminPathProblem, safeAdminDestination } from "../../../shared/adminPaths";
 
 const route = useRoute();
 const router = useRouter();
 const destination = computed(() => {
   const candidate = typeof route.query.redirect === "string" ? route.query.redirect : "";
-  if (candidate === ADMIN_LOGIN_PATH || candidate.startsWith(`${ADMIN_LOGIN_PATH}/`) || candidate.startsWith(`${ADMIN_LOGIN_PATH}?`)) return safeAdminDestination(candidate, true);
+  const path = candidate.split(/[?#]/, 1)[0]!;
+  const base = `/${path.split('/')[1] ?? ''}`;
+  if (!adminPathProblem(base) && (path === base || Object.values(adminPagePaths(base)).includes(path))) return safeAdminDestination(candidate, true, base);
+  if (candidate === '/setup') return '/setup';
   return /^\/(?!\/)(?:$|\?|login(?:\?|$)|mail(?:\/|\?|$))/.test(candidate) && !candidate.includes("\\") ? candidate : "/";
 });
 

@@ -1,12 +1,12 @@
 name: bakamail
 
-# 部署说明（服务器 green-2C4G）：
+# 部署到已有 Maddy：
 #   1. cp bakamail.env.example bakamail.env 并按需修改
-#   2. docker compose up -d --build
-#   3. 在 1Panel 建「反向代理」网站 mail.saubaka.com → http://127.0.0.1:8790
+#   2. docker compose --env-file deploy/bakamail.env -f deploy/docker-compose.yml up -d --build
+#   3. 为实际网页域名设置 HTTPS 反向代理 → http://127.0.0.1:8790
 #
 # 端口只绑回环，公网访问全部经 openresty。
-# 首次启用日志挂载前运行 scripts/deploy-green.mjs 安装采集目录与任务。
+# 日志采集可选，不挂 Docker socket。目录默认创建为空，不代表采集成功。
 
 services:
   bakamail:
@@ -23,15 +23,10 @@ services:
     environment:
       HOST: 0.0.0.0
       PORT: "8790"
-      # 容器内直连邮局，用 1panel-network 的别名，不绕公网
-      MAIL_HOST: maddymail
-      MAIL_HOSTNAME: mail.saubaka.com
-      MAIL_IMAP_PORT: "993"
-      MAIL_SMTP_PORT: "465"
+      # MAIL_* 均从 env_file 读取，不覆盖操作者的实际域名/主机/端口。
       MADDY_RUNNER: local
       MADDY_BIN: /usr/local/bin/maddy
       MADDY_DATA_DIR: /data
-      MAIL_LOG_SNAPSHOT_PATH: /mail-logs/maddy.json
       DATA_DIR: /app/data
     ports:
       - "127.0.0.1:8790:8790"
@@ -41,13 +36,13 @@ services:
       # BakaMail 自己的 SQLite（管理员、邀请码、日志、草稿、通讯录）
       - bakamail-data:/app/data
       - type: bind
-        source: /root/mail/bakamail-mail-logs
+        source: ${MAIL_LOG_DIRECTORY:-./mail-logs}
         target: /mail-logs
         read_only: true
         bind:
-          create_host_path: false
+          create_host_path: true
     networks:
-      - 1panel-network
+      - mail-network
     healthcheck:
       test:
         - CMD
@@ -62,8 +57,10 @@ services:
 volumes:
   maddydata:
     external: true
+    name: ${MADDY_VOLUME:-maddydata}
   bakamail-data:
 
 networks:
-  1panel-network:
+  mail-network:
     external: true
+    name: ${MADDY_NETWORK:-mail-network}

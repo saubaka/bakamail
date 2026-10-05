@@ -97,7 +97,7 @@ test("更换邮箱账号后清空前一账号的邮件快照", async () => {
   const originalFetch = globalThis.fetch;
   setActivePinia(createPinia());
   const store = useMailboxStore();
-  let owner = "first@saubaka.com";
+  let owner = "first@example.test";
   globalThis.fetch = async (input) => String(input) === "/api/folders"
     ? reply({ account: owner, folders: [] })
     : reply({ items: [message(1)], nextBefore: null, total: 1 });
@@ -105,7 +105,7 @@ test("更换邮箱账号后清空前一账号的邮件快照", async () => {
     await store.loadFolders();
     await store.loadMessages("50");
     store.toggleSelect(1);
-    owner = "second@saubaka.com";
+    owner = "second@example.test";
     await store.loadFolders();
     assert.equal(store.account, owner);
     assert.equal(store.currentFolder, "INBOX");
@@ -125,14 +125,14 @@ test("退出或离开工作台后，迟到的文件夹响应不能写回旧账�
   try {
     const pending = store.loadFolders();
     store.clear();
-    finish?.(reply({ account: "old@saubaka.com", folders: [{ path: "INBOX", name: "INBOX" }] }));
+    finish?.(reply({ account: "old@example.test", folders: [{ path: "INBOX", name: "INBOX" }] }));
     await pending;
     assert.equal(store.account, "");
     assert.deepEqual(store.folders, []);
 
     const pendingAfterRouteChange = store.loadFolders();
     store.suspend();
-    finish?.(reply({ account: "old@saubaka.com", folders: [{ path: "INBOX", name: "INBOX" }] }));
+    finish?.(reply({ account: "old@example.test", folders: [{ path: "INBOX", name: "INBOX" }] }));
     await pendingAfterRouteChange;
     assert.equal(store.account, "");
     assert.deepEqual(store.folders, []);
@@ -211,7 +211,7 @@ test("文件夹改名确认后即使旧刷新迟到，也保留新名称并清�
   globalThis.fetch = async (input) => {
     if (String(input) === "/api/folders") {
       folderReads += 1;
-      if (folderReads === 1) return reply({ account: "user@saubaka.com", folders: oldFolders });
+      if (folderReads === 1) return reply({ account: "user@example.test", folders: oldFolders });
       return new Promise<Response>((resolve) => { finishOldFolders = resolve; });
     }
     return reply({ items: [message(7)], nextBefore: null, total: 1 });
@@ -226,7 +226,7 @@ test("文件夹改名确认后即使旧刷新迟到，也保留新名称并清�
     assert.deepEqual(store.messages, []);
     assert.equal(store.folders.some((folder) => folder.path === "Work"), false);
     assert.equal(store.folders.some((folder) => folder.path === "Projects"), true);
-    finishOldFolders?.(reply({ account: "user@saubaka.com", folders: oldFolders }));
+    finishOldFolders?.(reply({ account: "user@example.test", folders: oldFolders }));
     await staleRead;
     assert.equal(store.currentFolder, "Projects");
     assert.equal(store.folders.some((folder) => folder.path === "Work"), false);
@@ -242,7 +242,7 @@ test("文件夹写入确认后本地列表立即反映创建、订阅、清空�
   setActivePinia(createPinia());
   const store = useMailboxStore();
   globalThis.fetch = async (input) => String(input) === "/api/folders"
-    ? reply({ account: "user@saubaka.com", folders: [
+    ? reply({ account: "user@example.test", folders: [
       { path: "INBOX", name: "INBOX", specialUse: "\\Inbox", subscribed: true, messages: 0, unseen: 0 },
     ] })
     : reply({ items: [message(7)], nextBefore: null, total: 1 });

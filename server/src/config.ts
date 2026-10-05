@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const projectRoot = resolve(here, "..", "..");
+export const appVersion: string = JSON.parse(readFileSync(join(projectRoot, "package.json"), "utf8")).version;
 
 function readDotEnv(path: string): Record<string, string> {
   if (!existsSync(path)) return {};
@@ -82,23 +83,23 @@ export const config = {
   publicOrigin: env("PUBLIC_ORIGIN", ""),
 
   mail: {
-    host: env("MAIL_HOST", "maddymail"),
+    host: env("MAIL_HOST", "127.0.0.1"),
     /** 邮局自己的主机名，maddy 配置里的 $(hostname) 用它 */
-    hostname: env("MAIL_HOSTNAME", `mail.${env("MAIL_DOMAIN", "saubaka.com")}`),
+    hostname: env("MAIL_HOSTNAME", `mail.${env("MAIL_DOMAIN", "example.test")}`),
     imapPort: envInt("MAIL_IMAP_PORT", 993),
     smtpPort: envInt("MAIL_SMTP_PORT", 465),
     smtpAltPort: envInt("MAIL_SMTP_ALT_PORT", 587),
-    domain: env("MAIL_DOMAIN", "saubaka.com"),
+    domain: env("MAIL_DOMAIN", "example.test"),
     tlsRejectUnauthorized: envBool("MAIL_TLS_REJECT_UNAUTHORIZED", true),
     /** maddy 单封上限 32 MiB，实测 SIZE 33554432 */
     maxMessageBytes: 33_554_432,
   },
 
   maddy: {
-    runner: env("MADDY_RUNNER", "local") as "local" | "docker-exec" | "disabled",
+    runner: env("MADDY_RUNNER", "disabled") as "local" | "docker-exec" | "disabled",
     bin: env("MADDY_BIN", "/usr/local/bin/maddy"),
     dataDir: env("MADDY_DATA_DIR", "/data"),
-    container: env("MADDY_CONTAINER", "1Panel-maddy-mail-izag"),
+    container: env("MADDY_CONTAINER", "maddy"),
     logSnapshotPath: env("MAIL_LOG_SNAPSHOT_PATH", ""),
   },
 

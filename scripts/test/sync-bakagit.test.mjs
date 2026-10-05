@@ -120,7 +120,9 @@ test('parent release excludes nested mirror and local rules mandate sync/check',
   assert.match(agents, /npm run sync:bakagit/);
   assert.match(agents, /npm run check:bakagit/);
   assert.match(readFileSync(new URL('.dockerignore', root), 'utf8'), /^bakagit$/m);
-  assert.match(readFileSync(new URL('scripts/deploy-green.mjs', root), 'utf8'), /--exclude=\.\/bakagit/);
+  const releasePath = new URL('scripts/deploy-green.mjs', root);
+  if (existsSync(releasePath)) assert.match(readFileSync(releasePath, 'utf8'), /--exclude=\.\/bakagit/);
+  assert.equal(sourceFiles.includes('scripts/deploy-green.mjs'), false, '特定服务器发布脚本不得进入公共源码');
 });
 
 test('project versions, lockfile and Chinese changelog agree; publication rules are retained', () => {
