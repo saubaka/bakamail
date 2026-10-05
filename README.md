@@ -194,6 +194,6 @@ BAKAMAIL_PINNED_VENDOR=1 npm run check
 
 ## 版本与许可
 
-变更见 [CHANGELOG.md](CHANGELOG.md)。提交标题为版本号，正文使用简体中文简短条列；不会自动创建标签或 Release。
+变更见 [CHANGELOG.md](CHANGELOG.md)。
 
-当前未指定项目许可证。公开仓库不代表已授予开源许可；第三方软件遵循各自许可。
+公开仓库不代表已授予开源许可；第三方软件遵循各自许可。
