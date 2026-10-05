@@ -39,30 +39,8 @@ router.beforeEach(async (to) => {
   return true;
 });
 
-const routeTitles: Record<string, string> = {
-  intro: "自己的邮局，轻一点",
-  login: "登录邮箱",
-  register: "开通邮箱",
-  "password-reset": "申请重置密码",
-  unavailable: "暂时无法连接",
-  "not-found": "页面不存在",
-  mail: "邮箱",
-  "mail-search": "搜索邮件",
-  "mail-drafts": "草稿",
-  "mail-contacts": "联系人",
-  "mail-settings": "邮箱设置",
-  "admin-login": "后台登录",
-  "admin-overview": "后台概览",
-  "admin-accounts": "邮箱账号",
-  "admin-invites": "邀请码",
-  "admin-mail-ops": "邮件运维",
-  "admin-security": "安全中心",
-  "admin-admins": "管理员",
-  "admin-system": "系统设置",
-};
-
-router.afterEach((to) => {
-  document.title = `${routeTitles[String(to.name)] ?? "BakaMail"} · BakaMail`;
+router.afterEach(() => {
+  document.title = "Baka Mail";
   scheduleSessionCheck();
 });
 
