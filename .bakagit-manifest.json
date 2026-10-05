@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "d8de91dce3c9416a1d86d8d4a7a5142034cfbcafead3c660347aac03a4d56bc6",
+      "sha256": "74b3677c35c74c87a37cd37a22a60e61cace3505a8795afa50b16328a0af2ef6",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "d2171346982f0561b0777595001f29f5b156f3142b9b30a32da6c0832ac99cb0",
+      "sha256": "2dfa77aa666b8c56c7d5e764dc72796446565445a21d10d9af70bbfbfdef99a2",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "65642d727759f65916669393303d5b448dc34c385940aeab7b7b393a64cae710",
+      "sha256": "c32de5c06e727f43e58dc30b894a69cd836061d9696e464e5fde58522bf2283a",
       "executable": false
     },
     "README.md": {
@@ -138,7 +138,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "a02453da08901352f42afbcdec295d91647af99c67588fbcc310d6cea40dd623",
+      "sha256": "0b00ce0de888a6d38d94d9dd4ffbfa8dd96f923b4876850a757a10929dabb3e0",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -478,7 +478,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "2d99785dc7fa6e7633853bbe733226d1072017e2c6b89c2a0d9acc684c5d3779",
+      "sha256": "11a3845e0e90f3aa5ee9680287bb119ae36f138942ec1f2be3ae22aaade68e17",
       "executable": false
     },
     "web/src/admin/notificationAppearanceEditor.ts": {
@@ -638,7 +638,7 @@
     },
     "web/src/components/MailWorkspace.vue": {
       "source": "web/src/components/MailWorkspace.vue",
-      "sha256": "808e55d8925026f344f00907d857cb5f5dd2eca0a3e02f17966db8ac53d3c0b1",
+      "sha256": "174b7fabfd7cb1f9cd676cb11e0603770ebc1c7f817a2944ef3736a9fbc964b1",
       "executable": false
     },
     "web/src/components/PasswordField.vue": {
@@ -1313,7 +1313,7 @@
     },
     "web/test/site-title.test.ts": {
       "source": "web/test/site-title.test.ts",
-      "sha256": "8e3183da49a79d10fc6a7a361c85b1a82b52f3c20edeb6f430b26249feb472ff",
+      "sha256": "d2bab0d326c0b8bee094bd00885eb7ea2186a4ac30152f51e7289150de2f6f97",
       "executable": false
     },
     "web/test/tsconfig.notification-display-phase4.json": {
