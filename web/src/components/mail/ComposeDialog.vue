@@ -48,6 +48,7 @@ import { toast } from "../../api";
 import { closeDialog, confirmDialog, openDialog } from "../../dialog";
 import type { MessageDetail } from "../../mail/types";
 import { useComposeStore } from "../../stores/compose";
+import { bindComposeViewport } from "../../mail/composeViewport";
 
 type ReplyMode = "reply" | "reply-all" | "forward";
 type Contact = { name: string; email: string };
@@ -73,6 +74,7 @@ let active = true;
 let filePickVersion = 0;
 let closingVersion = 0;
 let closeFlight: Promise<boolean> | null = null;
+let releaseViewport: ((preserveGeometry?: boolean) => void) | null = null;
 
 watch(() => props.account, (account) => {
   closingVersion += 1;
@@ -81,6 +83,9 @@ watch(() => props.account, (account) => {
   store.bindOwner(account);
 }, { immediate: true, flush: "sync" });
 watch(() => store.isOpen, (isOpen) => {
+  // Freeze the measured bounds during the short exit instead of jumping below the keyboard.
+  releaseViewport?.(!isOpen); releaseViewport = null;
+  if (isOpen && dialogRef.value) releaseViewport = bindComposeViewport(dialogRef.value);
   if (!isOpen) { filePickVersion += 1; closeDialog(dialogRef.value); }
 }, { flush: "sync" });
 
@@ -171,9 +176,13 @@ function warnBeforeUnload(event: BeforeUnloadEvent): void {
   event.preventDefault();
   event.returnValue = "";
 }
-onMounted(() => window.addEventListener("beforeunload", warnBeforeUnload));
+onMounted(() => {
+  window.addEventListener("beforeunload", warnBeforeUnload);
+  if (store.isOpen && dialogRef.value) releaseViewport = bindComposeViewport(dialogRef.value);
+});
 onBeforeUnmount(() => {
   active = false;
+  releaseViewport?.(); releaseViewport = null;
   filePickVersion += 1;
   closingVersion += 1;
   store.detach(surface);

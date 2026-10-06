@@ -19,7 +19,7 @@ export const sourceFiles = [
   'scripts/sync-project1-styles.sh', 'scripts/upload-archive.mjs',
   'scripts/verify-css-parity.sh', 'scripts/verify-live.mjs',
   'scripts/verify-no-protocol-leak.sh', 'scripts/verify-style-contract.mjs',
-  'scripts/sync-bakagit.mjs',
+  'scripts/sync-bakagit.mjs', 'scripts/deployment-origin.mjs',
 ];
 export const publicTemplates = {
   'README.md': 'docs/github/README.md',

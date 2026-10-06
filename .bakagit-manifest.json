@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "74b3677c35c74c87a37cd37a22a60e61cace3505a8795afa50b16328a0af2ef6",
+      "sha256": "f196f6247b21a14bf4f89242fd90d93f39deeb76ce38ca7be4c9950c3e26388b",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "2dfa77aa666b8c56c7d5e764dc72796446565445a21d10d9af70bbfbfdef99a2",
+      "sha256": "62b47c002c0f3732f0e9a2cf7b5306b5c57df9770e196d445f550c5998ac73cc",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "c32de5c06e727f43e58dc30b894a69cd836061d9696e464e5fde58522bf2283a",
+      "sha256": "601dae1a8b3b15478636c4dd2c7179c28534e13cbf3b5187807bb48f14534b14",
       "executable": false
     },
     "README.md": {
@@ -74,6 +74,11 @@
     "scripts/audit-project1-prototype.mjs": {
       "source": "scripts/audit-project1-prototype.mjs",
       "sha256": "1674c598677e0937cc12e7b7ddcfe5ea00e6d23b91a5afffe464291cf061b7c0",
+      "executable": false
+    },
+    "scripts/deployment-origin.mjs": {
+      "source": "scripts/deployment-origin.mjs",
+      "sha256": "be7d706dcc9e373eb57d31c2940d74cca8b6003403a9fb865515071cb17f9bf2",
       "executable": false
     },
     "scripts/inventory-notification-display.mjs": {
@@ -98,13 +103,18 @@
     },
     "scripts/sync-bakagit.mjs": {
       "source": "scripts/sync-bakagit.mjs",
-      "sha256": "3a8599c1c80093e5aea6313175965022215a5b3aba0ea5e897f7a28cfe001980",
+      "sha256": "0b7f7bd552a14bc90a4a70a05b7ed400541dd3127b7de4a35aa9d18db2ad008f",
       "executable": false
     },
     "scripts/sync-project1-styles.sh": {
       "source": "scripts/sync-project1-styles.sh",
       "sha256": "85cb1e9e8bb1ffa552af0452edd97d293250f6aa5244992f15cade7cb5f63a1a",
       "executable": true
+    },
+    "scripts/test/deployment-origin.test.mjs": {
+      "source": "scripts/test/deployment-origin.test.mjs",
+      "sha256": "5f6b410901fed9f94552e182017f25c14bb4c565b7bfc15774ad769e85ad5510",
+      "executable": false
     },
     "scripts/test/sync-bakagit.test.mjs": {
       "source": "scripts/test/sync-bakagit.test.mjs",
@@ -138,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "0b00ce0de888a6d38d94d9dd4ffbfa8dd96f923b4876850a757a10929dabb3e0",
+      "sha256": "c108b466ba089b255ee1f81fac117c4466fca30133afd6f0529b33b86c8df088",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -478,7 +488,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "11a3845e0e90f3aa5ee9680287bb119ae36f138942ec1f2be3ae22aaade68e17",
+      "sha256": "9b3d9adf585ebc76910bbc0400039f86a4d583f29f6249b01846329440a08df8",
       "executable": false
     },
     "web/src/admin/notificationAppearanceEditor.ts": {
@@ -613,7 +623,7 @@
     },
     "web/src/components/mail/ComposeDialog.vue": {
       "source": "web/src/components/mail/ComposeDialog.vue",
-      "sha256": "ecf24d71791cf6666f4fc39b3f1b9e5a2390ea7a294049b9e883def0046fe265",
+      "sha256": "7982e5d686aac0b616dca4622a91057c493f3ec5c9765a202f6a18976ffb7e26",
       "executable": false
     },
     "web/src/components/mail/FolderRail.vue": {
@@ -664,6 +674,11 @@
     "web/src/mail/attachments.ts": {
       "source": "web/src/mail/attachments.ts",
       "sha256": "e163171cb6114dca5a2d32d737dca8d1a3d53d01094965c12c3f8ba30fda651b",
+      "executable": false
+    },
+    "web/src/mail/composeViewport.ts": {
+      "source": "web/src/mail/composeViewport.ts",
+      "sha256": "08cdd26edead9580dbe9db7ba668d9e1e59acc1bf6129598336f975c32772d50",
       "executable": false
     },
     "web/src/mail/localCache.ts": {
@@ -818,7 +833,7 @@
     },
     "web/src/styles/dialogs.css": {
       "source": "web/src/styles/dialogs.css",
-      "sha256": "da315d82296cebba3574532fc7cf29f60a9f13852050f6484482e71823db9d46",
+      "sha256": "60a07d8cd28c7fea171e3402c15fc270c179c04f76c91c5913ebdfb7621baff7",
       "executable": false
     },
     "web/src/styles/intro.css": {
@@ -893,7 +908,7 @@
     },
     "web/src/styles/workspace.css": {
       "source": "web/src/styles/workspace.css",
-      "sha256": "db3f3c90a4ddf281c40e8e11de8b1af85b270b89fe7ee520a0dabb6336d385bc",
+      "sha256": "22bf0c12cfb329306759bf61e0952325d2c0b24a70f279caeda19700283a81bf",
       "executable": false
     },
     "web/src/surfaceLines.ts": {
@@ -1056,6 +1071,11 @@
       "sha256": "b864db9dd5df672d91e1fb04882874869ad2e0b353556d47932acfb31331158f",
       "executable": false
     },
+    "web/test/compose-viewport.test.ts": {
+      "source": "web/test/compose-viewport.test.ts",
+      "sha256": "04995432c666aac07ae6ec796b67e368ffa62d65d444d541837b143567599075",
+      "executable": false
+    },
     "web/test/contacts-store.test.ts": {
       "source": "web/test/contacts-store.test.ts",
       "sha256": "2335439ecb4ed3f8d84bf3abd6eed414449884d092fccc05a879ef2d746aeddd",
@@ -1089,6 +1109,11 @@
     "web/test/fixtures/admin-entry.html": {
       "source": "web/test/fixtures/admin-entry.html",
       "sha256": "540550dfc11fa375e6c4836377fe3e6ca4d9c70d7b8bf473096b893530eeb03d",
+      "executable": false
+    },
+    "web/test/fixtures/compose-viewport-fixture.ts": {
+      "source": "web/test/fixtures/compose-viewport-fixture.ts",
+      "sha256": "31f8f4b9da690f2f53abdb82bcc4f77e20645d6efc00e52e65b8d08bda1aeb74",
       "executable": false
     },
     "web/test/fixtures/navigation-continuity.ts": {
@@ -1153,7 +1178,7 @@
     },
     "web/test/fixtures/workspace-fixture.ts": {
       "source": "web/test/fixtures/workspace-fixture.ts",
-      "sha256": "09801bf17680fe36a703232a5e9e57a95a4ed845fa6ff3d81a9b1dfa3ef0e2c5",
+      "sha256": "e6134c3b9d6fef63226b2bf820c7613352a6aaf98b951c642b4e8177e1437609",
       "executable": false
     },
     "web/test/fixtures/workspace.html": {
@@ -1199,6 +1224,11 @@
     "web/test/message-store.test.ts": {
       "source": "web/test/message-store.test.ts",
       "sha256": "2e86d045e1cbd170b61f31ccdd29b32c268b49a4785a8cc06e36d73d18a654af",
+      "executable": false
+    },
+    "web/test/mobile-compose-layout.test.ts": {
+      "source": "web/test/mobile-compose-layout.test.ts",
+      "sha256": "89fb2cc1178077ef804d84f68a168ef5a9098bfd5f4c0da38ef793ea053c4b43",
       "executable": false
     },
     "web/test/navigation-continuity.test.ts": {
