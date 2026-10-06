@@ -169,7 +169,27 @@ for (const [table, column, declaration] of [
   const columns = db.prepare(`pragma table_info(${table})`).all() as { name: string }[];
   if (!columns.some((row) => row.name === column)) db.exec(`alter table ${table} add column ${column} ${declaration}`);
 }
+// Migrate legacy one-shot codes once. Never reopen a used/revoked/expired invitation.
+const inviteColumns = db.prepare('pragma table_info(invites)').all() as { name: string }[];
+if (!inviteColumns.some(row => row.name === 'used_count')) {
+  db.exec(`alter table invites add column used_count integer not null default 0 check(used_count >= 0);
+    update invites set used_count = 1 where used_at is not null;`);
+}
+if (!inviteColumns.some(row => row.name === 'max_uses')) {
+  db.exec('alter table invites add column max_uses integer default 1 check(max_uses is null or max_uses between 1 and 1000000)');
+}
+if (!inviteColumns.some(row => row.name === 'reserved_count')) {
+  db.exec('alter table invites add column reserved_count integer not null default 0 check(reserved_count >= 0)');
+}
 db.exec(`
+create table if not exists invite_claims (
+  token text primary key,
+  invite_id integer not null references invites(id) on delete cascade,
+  account text not null,
+  claimed_at text not null,
+  state text not null check(state in ('pending', 'completed', 'unconfirmed'))
+);
+create index if not exists ix_invite_claims_invite on invite_claims(invite_id, state);
 create index if not exists ix_login_logs_account on login_logs(scope, account_hash, created_at);
 create table if not exists security_cooldowns (
   scope text not null, identity_hash text not null, until_ms integer not null,

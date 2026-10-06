@@ -2,6 +2,7 @@
 import { isUiConfig } from '../../../shared/notificationMotion.ts';
 import { copyUiConfigV2, defaultUiConfigV2, isUiConfigV2, applyLegacyMotionEdit, projectUiConfigV1 } from '../../../shared/notificationDisplay.ts';
 import { adminPathProblem } from '../../../shared/adminPaths.ts';
+import { inviteLimitsProblem, type InviteSummary } from '../../../shared/invitePolicy.ts';
 const fixtureEntry = location.href;
 // Router replaces the visible path. Keep Vite full reloads on the mock entry, not production /index.
 import.meta.hot?.on('vite:beforeFullReload', () => { history.replaceState(null, '', fixtureEntry); });
@@ -35,6 +36,13 @@ const member = () => ({ username: "qa-admin", displayName: "隔离验收", role:
   permissions: readOnly ? ["system.audit.read"] : ["*"], csrfToken: csrf, runner: "disabled", statsAvailable: false });
 const ok = (data: unknown) => Response.json({ ok: true, data, error: "" });
 const fail = (status: number, error: string) => Response.json({ ok: false, data: null, error }, { status });
+let inviteRows: InviteSummary[] = Array.from({length:6}, (_, i) => ({
+  id:i+1, code_hint:`QA0${i+1}`, bound_address:'', bound_domain:'example.test', note:'隔离模拟邀请码',
+  created_by:'qa-admin', created_at:new Date().toISOString(), expires_at: i === 1 ? null : new Date(Date.now() + (i === 4 ? -1 : 72)*3600000).toISOString(),
+  used_at: i === 0 || i === 1 ? new Date().toISOString() : null, used_by: i === 0 || i === 1 ? 'fixture@example.test' : '',
+  revoked_at:i === 5 ? new Date().toISOString() : null, max_uses:i === 1 ? null : i === 2 ? 1 : 5,
+  used_count:i === 0 ? 2 : i === 1 ? 8 : i === 3 ? 5 : 0, reserved_count:i === 2 ? 1 : 0,
+}));
 
 const controls = document.createElement("details");
 controls.setAttribute("aria-label", "隔离验收控制");
@@ -114,6 +122,26 @@ window.fetch = async (input, options) => {
     return authenticated ? ok(member()) : fail(401, "模拟管理员未登录或过期");
   }
   if (!authenticated) return fail(401, "模拟管理员未登录或过期");
+  if (path === '/api/admin/invites') {
+    if (readOnly) return fail(403, '模拟角色无邀请权限');
+    if (options?.method === 'POST') {
+      if (new Headers(options.headers).get('x-csrf-token') !== csrf) return fail(403, '模拟CSRF拒绝');
+      const body = JSON.parse(String(options.body)), problem = inviteLimitsProblem(body);
+      if (problem) return fail(400, problem);
+      const id = Math.max(...inviteRows.map(row=>row.id))+1;
+      const expiresAt = body.ttlHours === null ? null : new Date(Date.now()+(body.ttlHours ?? 72)*3600000).toISOString();
+      inviteRows.unshift({id,code_hint:'QANE',bound_address:body.boundAddress || '',bound_domain:body.boundDomain || '',note:body.note || '',created_by:'qa-admin',created_at:new Date().toISOString(),
+        expires_at:expiresAt,used_at:null,used_by:'',revoked_at:null,max_uses:body.maxUses === undefined ? 1 : body.maxUses,used_count:0,reserved_count:0});
+      return ok({id, code:'qa-fixture-invite-not-a-real-code',expiresAt,maxUses:body.maxUses});
+    }
+    return ok({invites:inviteRows});
+  }
+  if (/^\/api\/admin\/invites\/\d+\/revoke$/.test(path) && options?.method === 'POST') {
+    if (readOnly || new Headers(options.headers).get('x-csrf-token') !== csrf) return fail(403,'模拟写入拒绝');
+    const row=inviteRows.find(row=>row.id===Number(path.split('/')[4]));
+    if (!row || row.revoked_at) return fail(404,'模拟邀请码已撤销');
+    row.revoked_at=new Date().toISOString(); return ok({revoked:row.id});
+  }
   if (path === '/api/admin/entry-settings') {
     if (readOnly) return fail(403, '模拟角色无入口设置权限');
     if (options?.method === 'PATCH') {

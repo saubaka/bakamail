@@ -24,7 +24,7 @@ import { recordAudit } from "../security/audit.ts";
 import { MailboxSession, isValidLocalAccount, normalizeMailboxAccount } from "../mail/session.ts";
 import { dropSession, dropSessionsForMailbox, liveSessionCount, putSession } from "../mail/registry.ts";
 import { changeMailboxPassword, createMailbox, listAccounts, listCredentials, maddyRunnerReady } from "../mail/accounts.ts";
-import { checkInvite, consumeInvite, releaseInviteClaim } from "../admin/invites.ts";
+import { checkInvite, consumeInvite, releaseInviteClaim, completeInviteClaim, retainInviteClaim } from "../admin/invites.ts";
 import { passwordProblem } from "../security/passwords.ts";
 import { registrationReasonProblem, reserveRegistrationAttempt } from "../security/registration.ts";
 import { isMailServiceFailure } from "../mail/authFailure.ts";
@@ -337,6 +337,9 @@ authRouter.post("/register", anonymousRequestBudget("register"), async (request,
         released = releaseInviteClaim(invite.invite.id, requestedAccount, claimedAt);
       }
     } catch { /* Fail closed: do not reuse an invite if partial account state is unknown. */ }
+    if (!released) {
+      try { retainInviteClaim(invite.invite.id, requestedAccount, claimedAt); } catch { /* The reserved slot remains fail-closed. */ }
+    }
     const code = released ? "mailbox_create_failed" : "mailbox_create_unconfirmed";
     recordAudit({ actorType: "invite", actor: requestedAccount, action: "mailbox.create-failed",
       targetType: "mailbox", targetId: requestedAccount,
@@ -348,6 +351,19 @@ authRouter.post("/register", anonymousRequestBudget("register"), async (request,
     return;
   }
 
+  // Mailbox creation has completed. Never release its slot even if the bookkeeping write fails.
+  try {
+    if (!completeInviteClaim(invite.invite.id, requestedAccount, claimedAt)) throw Error('Invite completion unconfirmed');
+  } catch {
+    attemptReason = 'invite-completion-unconfirmed';
+    recordAudit({ actorType: 'invite', actor: requestedAccount, action: 'mailbox.create-unconfirmed',
+      targetType: 'mailbox', targetId: requestedAccount, summary: 'mailbox-created; invite-count-unconfirmed',
+      requestId: requestId(request), identityHash: identity });
+    sendJson(response, 502, { ok: false, code: 'mailbox_create_unconfirmed',
+      data: { inviteRestored: false, requiresAdminReview: true },
+      error: '邮箱已创建，但邀请码计数未确认；请联系管理员核对，勿重复提交' });
+    return;
+  }
   attemptReason = "created";
   recordAudit({
     actorType: "invite",
