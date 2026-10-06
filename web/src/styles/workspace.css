@@ -67,7 +67,7 @@ body:has(.mail-workspace) { padding-bottom: 0; }
 .dock-menu-heading { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; font-size: 13px; font-weight: 600; flex: none; }
 .dock-close { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--line-blue); border-radius: 11px; background: var(--fog-white); color: var(--text-soft); font-size: 22px; cursor: pointer; }
 .dock-menu-scroll { min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 0 14px 14px; scrollbar-width: thin; }
-.dock-compose { width: 100%; min-height: 46px; margin: 0 0 12px; border: 1px solid var(--line-blue); border-radius: 13px; background: var(--cloud-blue); color: var(--graphite-blue); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.dock-compose { display:flex; align-items:center; justify-content:center; gap:10px; padding:0 13px; width: 100%; min-height: 46px; margin: 0 0 12px; border: 1px solid var(--line-blue); border-radius: 13px; background: var(--cloud-blue); color: var(--graphite-blue); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
 .dock-navigation { position: relative; isolation: isolate; display: grid; grid-auto-rows: 40px; gap: 4px; }
 .dock-navigation-highlight { position: absolute; left: 0; top: 0; width:0; height:0; border-radius: 12px; background: transparent; border: 0; opacity:0; z-index: 0; pointer-events: none; will-change:transform; transition:transform 420ms cubic-bezier(.22,.85,.25,1),opacity 120ms ease; }
 .dock-navigation-highlight.is-ready { opacity:1; }
