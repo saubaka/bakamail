@@ -75,6 +75,7 @@ import { registrationLimits } from "../security/registration.ts";
 import { admitLogin, rejectLoginBusy } from "../security/loginGuard.ts";
 import { anonymousRequestBudget } from "../security/abuse.ts";
 import { appearanceRouter } from "./appearance.ts";
+import { inviteLimitsProblem } from '../../../shared/invitePolicy.ts';
 
 export const adminRouter = Router();
 
@@ -464,15 +465,19 @@ adminRouter.post("/invites", requirePermission("mail.invite.write"), async (requ
     boundAddress?: string;
     boundDomain?: string;
     note?: string;
-    ttlHours?: number;
+    ttlHours?: number | null;
+    maxUses?: number | null;
   }>(request);
+  const problem = inviteLimitsProblem(body);
+  if (problem) { fail(response, 400, problem); return; }
   const boundAddress = normalizeMailboxAccount(String(body.boundAddress ?? ""), config.mail.domain);
   const invite = createInvite({
     boundAddress: String(body.boundAddress ?? "").trim() ? boundAddress : "",
     boundDomain: String(body.boundDomain ?? "").trim().toLowerCase(),
     note: String(body.note ?? ""),
     createdBy: request.admin?.admin.username ?? "",
-    ttlHours: Number(body.ttlHours ?? 72),
+    ttlHours: body.ttlHours,
+    maxUses: body.maxUses,
   });
   recordAudit({
     actorType: "admin",
@@ -480,7 +485,7 @@ adminRouter.post("/invites", requirePermission("mail.invite.write"), async (requ
     action: "invite.create",
     targetType: "invite",
     targetId: String(invite.id),
-    summary: boundAddress ? `绑定 ${boundAddress}` : "未绑定地址",
+    summary: `${boundAddress ? `绑定 ${boundAddress}` : '未绑定地址'}；次数=${invite.maxUses ?? '无限制'}；有效期=${body.ttlHours === null ? '无限制' : `${body.ttlHours ?? 72}小时`}`,
     requestId: requestId(request),
   });
   ok(response, invite);
