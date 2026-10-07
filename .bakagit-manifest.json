@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "11f1d5c47a13ce7d74ee786423b709c384e907a266ae57702d805bc80ac7615b",
+      "sha256": "7ab375aea8c0fbb2e930e723dea0d9020d03eaf4a02465e1db850ef5eaaefb6d",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "e662cde90c5e6afe757538f1abd13680e21b667afb3fac8e8757ca32d5d8f721",
+      "sha256": "ab2e494b0198b4e23b411a7ef18da509538ce86d8217cbfd08541d44fdb2fdc3",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "df4f1cabb8f4578f871a7b11c72e32cf521160ee85818461df51817df254eaf2",
+      "sha256": "ed703ea19c93c0977419948943e05914e1f2e92fff15eb6b2841821d5ce7046e",
       "executable": false
     },
     "README.md": {
@@ -148,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "890568baa3fb42fbe6916ff8b9bfe3802a4ab02ea6d0c5869557560c0bf4fdad",
+      "sha256": "6bb6a2866ddc3c2b011b564620e48e924389e202ed1ff2c67509ec65f5b4aff4",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -498,7 +498,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "ce039bbf70909e29bcd96ac40dd6ad938e8a4570de9bc704986ae1ec865e811c",
+      "sha256": "1165fb002845a192353e844168ab4e9a04fce31073bbe604a5a57ffe8373ef99",
       "executable": false
     },
     "web/src/admin/notificationAppearanceEditor.ts": {
@@ -938,7 +938,7 @@
     },
     "web/src/views/admin/AdminLoginView.vue": {
       "source": "web/src/views/admin/AdminLoginView.vue",
-      "sha256": "21deba63d08536e22ea30db7193304507dffa7e04091a4f15b00d67f1a8b5e8e",
+      "sha256": "e4ccd6e68480a22a2d977383148905a4be136b104aafa228fb4f69cf5102df8f",
       "executable": false
     },
     "web/src/views/admin/AdminShell.vue": {
@@ -1044,6 +1044,11 @@
     "web/test/admin-entry.test.ts": {
       "source": "web/test/admin-entry.test.ts",
       "sha256": "39fe228a6247f7f40522e0a41295f4d7673aba8e1becf3d4d30b11e605c9933c",
+      "executable": false
+    },
+    "web/test/admin-login-layout.test.ts": {
+      "source": "web/test/admin-login-layout.test.ts",
+      "sha256": "c1f31127e1c105515ba587b6f7e2ed79df9ba07dbab66e9d272d8e7bb76bcde2",
       "executable": false
     },
     "web/test/admin-session-logout.test.ts": {
