@@ -123,3 +123,76 @@ onMounted(() => {
 });
 onBeforeUnmount(() => { active = false; controller?.abort(); window.clearInterval(timer); });
 </script>
+
+<style scoped>
+/* Keep all three controls in one compact row, including narrow auth cards. */
+.human-check {
+  /* 148px reserves the 44px button, two 8px gaps and an 88px input. */
+  grid-template-columns: clamp(72px, calc(100% - 148px), 112px) 44px minmax(0, 1fr);
+  align-items: start;
+  gap: 7px 8px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.human-check__field { display: contents; }
+.human-check__field > .field__label { grid-column: 1 / -1; grid-row: 1; }
+
+.human-check__image {
+  grid-column: 1;
+  grid-row: 2;
+  display: grid;
+  place-items: center;
+  height: 48px;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+.human-check__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.human-check__image .mail-empty {
+  max-width: 100%;
+  padding: 3px;
+  font-size: 11px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.human-check__refresh {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: stretch;
+  width: 44px;
+  height: 48px;
+  margin: 0;
+  padding: 0;
+  border-radius: 13px;
+}
+/* The captured theme uses !important for global icon-button translation. */
+.human-check__refresh:hover,
+.human-check__refresh:active,
+.human-check__refresh:disabled { transform: none !important; }
+.human-check__field input {
+  grid-column: 3;
+  grid-row: 2;
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  min-height: 48px;
+  padding: 10px 8px;
+  box-sizing: border-box;
+  font-size: 16px;
+  letter-spacing: .12em;
+}
+.human-check__status {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+</style>
