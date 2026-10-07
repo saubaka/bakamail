@@ -104,7 +104,7 @@ window.fetch = async (input, options) => {
   }
   if (path === "/api/auth/login" && options?.method === "POST") {
     mailLoginCalls++; sync();
-    return Response.json({ ok: false, code: "login_cooldown", data: { retryAfterSeconds: 10 },
+    return Response.json({ ok: false, code: "login_cooldown", data: { retryAfterSeconds: 10, requireHuman: initial.get('challenge') === '1' },
       error: "隔离冷却模拟：请等待冷却结束后再试，验证码不能提前解除冷却" }, { status: 429, headers: { "Retry-After": "10" } });
   }
   if (path === "/api/auth/me") return mailAuthenticated

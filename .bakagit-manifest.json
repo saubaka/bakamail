@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "9de86d2383face036c3ec4a4ed2f830c6351e59fd8aaab85c2bb6195aac42fb6",
+      "sha256": "11f1d5c47a13ce7d74ee786423b709c384e907a266ae57702d805bc80ac7615b",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "ba11b5b9d594a30944c5fe30edc39f0a64bdec181ac19c628cfc70d65b0161df",
+      "sha256": "e662cde90c5e6afe757538f1abd13680e21b667afb3fac8e8757ca32d5d8f721",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "a857f93801576b45ec723fb02ae0a12214da093f295d7f31942af8899ff36f35",
+      "sha256": "df4f1cabb8f4578f871a7b11c72e32cf521160ee85818461df51817df254eaf2",
       "executable": false
     },
     "README.md": {
@@ -148,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "9130207b9216a12776af9447f9c789f7b1f7d0b2223fc38f97b547c217604ea4",
+      "sha256": "890568baa3fb42fbe6916ff8b9bfe3802a4ab02ea6d0c5869557560c0bf4fdad",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -498,7 +498,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "c873a1560350e69d2cf3d385012fc7a3cfc117b999eebcde33ddb627ef296a6e",
+      "sha256": "ce039bbf70909e29bcd96ac40dd6ad938e8a4570de9bc704986ae1ec865e811c",
       "executable": false
     },
     "web/src/admin/notificationAppearanceEditor.ts": {
@@ -623,7 +623,7 @@
     },
     "web/src/components/HumanCheck.vue": {
       "source": "web/src/components/HumanCheck.vue",
-      "sha256": "cb5b35001911c76fe68c01915256166df14765c688e18f265d22e062dfc62c4c",
+      "sha256": "2b757962c93a79a661398eb932ba285953871cd84d8cc2f56c334ccc7a8b4569",
       "executable": false
     },
     "web/src/components/LineOutline.vue": {
@@ -1113,7 +1113,7 @@
     },
     "web/test/fixtures/admin-entry-fixture.ts": {
       "source": "web/test/fixtures/admin-entry-fixture.ts",
-      "sha256": "1a0c130c6cf9013d541827af47767fec5e262e2f96c0f70d6bfc9ad81ba460c4",
+      "sha256": "6adb90e98d8e200e6451b9ecf22f224d1aad87521e45301dafe41502aec8dce2",
       "executable": false
     },
     "web/test/fixtures/admin-entry.html": {
@@ -1199,6 +1199,11 @@
     "web/test/folders.test.ts": {
       "source": "web/test/folders.test.ts",
       "sha256": "581176741461938ef4a81a22fb8d56852d09571e2c787d9e76fdbaaeb4f5e4ee",
+      "executable": false
+    },
+    "web/test/human-check-layout.test.ts": {
+      "source": "web/test/human-check-layout.test.ts",
+      "sha256": "9ff5ffff08ad1a5bac0aac459519b48af0a3523be087bcb84e048f282008c085",
       "executable": false
     },
     "web/test/intro-reveal.test.ts": {
