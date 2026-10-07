@@ -1,39 +1,51 @@
 <template>
-  <main id="main-content" class="auth-shell">
-    <BrandMark auth subtitle="管理后台" />
-    <section v-motion="{ kind: 'feature', reversible: false }" class="auth-card card" aria-labelledby="admin-login-title">
-      <span class="soft-icon soft-icon--blue auth-icon" aria-hidden="true">⚙</span>
-      <span class="eyebrow">ADMIN</span>
-      <h1 id="admin-login-title">进入管理后台</h1>
-      <form class="form-grid auth-form" novalidate @submit.prevent="submit">
-        <label class="field field--wide">
-          <span class="field__label">管理员账号</span>
-          <input v-model="username" autocomplete="username" autocapitalize="none" spellcheck="false" />
-        </label>
-        <PasswordField v-model="password" />
-        <HumanCheck
-          v-if="humanVisible"
-          ref="humanRef"
-          v-model:nonce="humanNonce"
-          v-model:answer="humanAnswer"
-          admin
-        />
-        <p v-if="hint" v-capsule-notice class="field-error field--wide">{{ hint }}</p>
-        <p v-if="lockedSeconds > 0" class="hint-line field--wide">请等待冷却结束。验证码不能提前解除冷却。</p>
-        <button v-press-feedback="'submit'" class="button button--primary action-submit field--wide" type="submit" :disabled="submission.disabled" :aria-busy="busy">
-          {{ busy ? "正在验证…" : lockedSeconds > 0 ? `${lockedSeconds} 秒后可重试` : "登录后台" }}
-        </button>
-      </form>
-      <p class="hint-line"><router-link to="/login">返回邮箱登录</router-link></p>
-    </section>
-  </main>
+  <div class="login-page">
+    <main id="main-content" class="login-main" tabindex="-1">
+      <section v-motion="{ kind: 'feature', reversible: false }" class="login-card card" aria-labelledby="admin-login-title">
+        <header class="login-heading">
+          <span class="login-logo" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none"><rect x="5" y="9" width="30" height="23" rx="5" /><path d="m7 12 10 8a5 5 0 0 0 6 0l10-8M7 29l8-8m18 8-8-8" /></svg>
+          </span>
+          <span class="login-product-name">BakaMail</span>
+          <h1 id="admin-login-title">登录后台</h1>
+          <p>使用管理员账号，管理你的邮局。</p>
+        </header>
+        <form class="form-grid auth-form login-form" novalidate @submit.prevent="submit">
+          <label class="field field--wide">
+            <span class="field__label">管理员账号</span>
+            <input v-model="username" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="请输入管理员账号" />
+          </label>
+          <PasswordField v-model="password" />
+          <HumanCheck
+            v-if="humanVisible"
+            ref="humanRef"
+            v-model:nonce="humanNonce"
+            v-model:answer="humanAnswer"
+            admin
+          />
+          <p v-if="hint" v-capsule-notice class="field-error field--wide" role="alert">{{ hint }}</p>
+          <p v-if="lockedSeconds > 0" class="hint-line field--wide">请等待冷却结束。验证码不能提前解除冷却。</p>
+          <button v-press-feedback="'submit'" class="button login-submit action-submit field--wide" type="submit" :disabled="submission.disabled" :aria-busy="busy">
+            <span class="action-submit__spinner" aria-hidden="true" /><span>{{ busy ? "正在登录…" : lockedSeconds > 0 ? `${lockedSeconds} 秒后可重试` : "登录后台" }}</span>
+          </button>
+        </form>
+        <nav class="login-secondary-nav" aria-label="其他入口">
+          <router-link to="/login">返回邮箱登录</router-link>
+          <router-link to="/">了解 BakaMail</router-link>
+        </nav>
+      </section>
+    </main>
+    <footer class="login-footer">
+      <p>© {{ year }} saubaka · BakaMail</p>
+      <span>给来信留一扇小窗。</span>
+    </footer>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { probeLoginSession } from "../../auth/sessionProbe";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import BrandMark from "../../components/BrandMark.vue";
 import HumanCheck from "../../components/HumanCheck.vue";
 import PasswordField from "../../components/PasswordField.vue";
 import { ApiError, api, setCsrfToken } from "../../api";
@@ -44,6 +56,7 @@ import { safeAdminDestination } from "../../../../shared/adminPaths";
 const router = useRouter();
 const route = useRoute();
 const session = useAdminSessionStore();
+const year = new Date().getFullYear();
 const username = ref("");
 const password = ref("");
 const humanNonce = ref("");
