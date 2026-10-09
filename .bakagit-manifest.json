@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "7ab375aea8c0fbb2e930e723dea0d9020d03eaf4a02465e1db850ef5eaaefb6d",
+      "sha256": "17b7d5f584e891b9da1b20be66874693b4306a8a76775f8df456fab2835fe44c",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "ab2e494b0198b4e23b411a7ef18da509538ce86d8217cbfd08541d44fdb2fdc3",
+      "sha256": "14b48f486a0c347ad23ce866393463bea0bdc011b4697d96dbd29d3192daf402",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "ed703ea19c93c0977419948943e05914e1f2e92fff15eb6b2841821d5ce7046e",
+      "sha256": "4fc0fbb6c07b1bc8d5f8fffc6cfb8bbeb7f770035c92defb32161b713d132dd1",
       "executable": false
     },
     "README.md": {
@@ -148,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "6bb6a2866ddc3c2b011b564620e48e924389e202ed1ff2c67509ec65f5b4aff4",
+      "sha256": "7eaef6bbcc4104380ddd2afcd8f74709cfe9de1966f7de6ef4ba235f33e11468",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -498,7 +498,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "1165fb002845a192353e844168ab4e9a04fce31073bbe604a5a57ffe8373ef99",
+      "sha256": "6266e04d48f1a011f12c8eb938f0970859eb8fd08799de8f70df18ea5496baf6",
       "executable": false
     },
     "web/src/admin/notificationAppearanceEditor.ts": {
