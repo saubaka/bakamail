@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "b0fb896c72957c48399089e960358c2b96ae1034465ee640c4b6334e373a36a2",
+      "sha256": "b68226fbfe297116b84f74b3b2e5b86c693e953cd401f27a9c0dfe467889c962",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "8c64494b0b25e98adadb49a3f62deb9f405926ba0ae3485c039bd64a278e3478",
+      "sha256": "33be650b7bf80fb9e1c849eff70da9af96bec891d1a8e52385db27ae43004d04",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "22e703da1f134ddf15497e82ecf6a5345c651aa18f30c43be4a7b59ae9701a84",
+      "sha256": "0db027e75f11d5ec095d8bda9f7c2dbe04ffe0e0f92d9075489781bd26d6d9cb",
       "executable": false
     },
     "README.md": {
@@ -148,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "3883990074e53ef457a8da14c21bd3289f61bdaef6a1fdedb0d180335c44a100",
+      "sha256": "cf59775d5db697d8438e4474b0cfb4933535cbf48943fa4748e637fabb8adbc0",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -548,7 +548,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "49f86cd6c503b466a7e59f2270a343c4678b785f3ee40075d5f08dd0aad85e67",
+      "sha256": "734c7d0f35359d69d458e640f612a32187a3c9bd62e17c70c5954a89c1f5e5b5",
       "executable": false
     },
     "web/src/admin/notificationAppearanceEditor.ts": {
@@ -738,7 +738,7 @@
     },
     "web/src/components/TurnstileWidget.vue": {
       "source": "web/src/components/TurnstileWidget.vue",
-      "sha256": "5d0336f67c6f0278d17afad12a29538d5e73051472c459cb98d444a946cd09bc",
+      "sha256": "c2ba459beee2c8d4aa4e9203bea15851a20274e207f30ca044e8c31f1d7ffc98",
       "executable": false
     },
     "web/src/dialog.ts": {
@@ -1023,7 +1023,7 @@
     },
     "web/src/views/admin/HumanVerificationView.vue": {
       "source": "web/src/views/admin/HumanVerificationView.vue",
-      "sha256": "aea48698218bb2972e2f3490bd7f53a7c2f4d6b4def57def8a718b3b0e0405c2",
+      "sha256": "7aafd3918e782838083447fa0df6694891a4e7f04e81c3c18c0340da2d1dc80c",
       "executable": false
     },
     "web/src/views/admin/InvitesView.vue": {
@@ -1463,7 +1463,7 @@
     },
     "web/test/turnstile-ui.test.ts": {
       "source": "web/test/turnstile-ui.test.ts",
-      "sha256": "47e9cef1ae90251f493aa4c8c9048c821a7cafb4965f57c560457917efffb9e8",
+      "sha256": "88d58f460c0aefe6580a100b5672ffda0e00f7b3e1b5920c3b68a734fb842ca9",
       "executable": false
     },
     "web/test/upload-client.test.ts": {

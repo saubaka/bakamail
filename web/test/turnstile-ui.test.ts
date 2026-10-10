@@ -71,7 +71,8 @@ test("后台人机验证面板：路由需要安全写权限，入口在安全�
   assert.match(shell, /name: "admin-human-check", label: "人机验证"[^}]*permission: "system\.security\.write"/);
   assert.match(shell, /"admin-human-check": "人机验证"/);
   const view = source("views/admin/HumanVerificationView.vue");
-  assert.match(view, /后台登录始终使用内建验证码/);
+  // 后台登录一行固定显示内建验证码，且不提供开关。
+  assert.match(view, /<li class="is-fixed">\s*<span>后台登录<\/span>\s*<span class="hv-routes__state">内建验证码<\/span>\s*<span class="hv-routes__fixed">固定<\/span>/);
   // 私有密钥框只用本地输入；adopt() 在每次读取或保存后清空它，永远不用接口数据回填。
   assert.match(view, /function adopt\([\s\S]*secret\.value = "";/);
   assert.doesNotMatch(view, /secret\.value = (next|state)/);
@@ -88,4 +89,17 @@ test("管理接口客户端只访问同源 /api/admin/human-verification", () =>
   assert.equal([...client.matchAll(/"(\/api\/[^"`]*)"|`(\/api\/[^`]*)`|\$\{base\}/g)].length > 0, true);
   assert.match(client, /const base = "\/api\/admin\/human-verification"/);
   assert.doesNotMatch(client, /https?:\/\//);
+});
+
+test("人机验证面板与组件是纯色扁平样式：没有渐变，复选框用 !important 真正隐藏，不再重复套卡片", () => {
+  for (const file of ["views/admin/HumanVerificationView.vue", "components/TurnstileWidget.vue"]) {
+    assert.doesNotMatch(source(file), /gradient/i, file);
+  }
+  const view = source("views/admin/HumanVerificationView.vue");
+  assert.match(view, /\.hv-switch > input \{ position: absolute !important;/);
+  // 面板不再使用步骤条、提示卡和每行一张卡片的写法。
+  assert.doesNotMatch(view, /hv-steps|hv-lock|hv-note/);
+  const widget = source("components/TurnstileWidget.vue");
+  assert.match(widget, /\.ts-box__skeleton \{[^}]*animation: ts-pulse/);
+  assert.doesNotMatch(widget, /background-position|ts-shimmer/);
 });
