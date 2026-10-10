@@ -56,6 +56,8 @@ export function verifyPassword(stored: string, password: string): boolean {
 export function passwordProblem(password: string): string {
   if (password.length < 10) return "密码至少 10 位";
   if (password.length > 200) return "密码过长";
+  // 密码会通过标准输入交给邮件服务，换行等控制字符会让实际生效的密码被截断，从而绕过长度与强度规则。
+  if (/[\u0000-\u001f\u007f]/.test(password)) return "密码不能包含换行或其他控制字符";
   if (/^\d+$/.test(password)) return "密码不能是纯数字";
   if (/^[a-zA-Z]+$/.test(password)) return "密码不能是纯字母";
   return "";

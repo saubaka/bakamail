@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "cbca16fff58aa7ff15b3a6aa1060532c47edae26f744f9ebda5c1fe320043227",
+      "sha256": "6a501ea8c1bdac0486a988dac26a4add49e552973334b9c0947c72e00ed07c96",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -33,7 +33,7 @@
     },
     "deploy/docker-compose.yml": {
       "source": "deploy/docker-compose.yml",
-      "sha256": "803b7db21c9a25280b21d9eb9f76b65c5edde3a82a6690f48c3d4d2add2999e1",
+      "sha256": "25cd558958dd7535b61f3d9b66f618fa1c2b8d854a8f6d973be743957a7efadc",
       "executable": false
     },
     "deploy/Dockerfile": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "ea2daf90996dc7fc2a80be827a6316c8dcec5755a62204a8df65be6d6912e548",
+      "sha256": "736398e05f7b5e39f54d8d51134df23cc681cad9d62cf432f671e2d0b329cb06",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "efcfc0820e8b85caf0ca24456ceaac2f49487fde9157de52da144fb916ff659d",
+      "sha256": "1068d552c1b1061e83cd585a3b4871f7a6243a083376b1d681c96c8318a531af",
       "executable": false
     },
     "README.md": {
@@ -148,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "40593b19f255067e1166299c1aec22dc45f93397b6f617752f7e702c2a9f80c9",
+      "sha256": "1b96a5e49b1a812ec73ec9ce747ade129fa38bca8f3388e138d74f1140b93178",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -208,7 +208,7 @@
     },
     "server/src/db.ts": {
       "source": "server/src/db.ts",
-      "sha256": "2041ac262e15936178c539a1ae8d815a7ee839cf26f78269015de27fc769c10c",
+      "sha256": "c44d6d160ffd341156afbdae43c652ed8a170fac33afc2a3b87ba3f20b307086",
       "executable": false
     },
     "server/src/http/auth.ts": {
@@ -228,7 +228,7 @@
     },
     "server/src/index.ts": {
       "source": "server/src/index.ts",
-      "sha256": "2eb954bdc6d5d4904842ec69beb65a9af12c89730b753b22c299eb1ea8788102",
+      "sha256": "a1f9647d0a4e1a5bf9d39d45a4176b98a3f16c1fcaba6e9c1680ca27d642aa86",
       "executable": false
     },
     "server/src/mail/accountFailure.ts": {
@@ -273,7 +273,7 @@
     },
     "server/src/routes/admin.ts": {
       "source": "server/src/routes/admin.ts",
-      "sha256": "2c06fde5f016ef5d7ef3447de0748288f007b990150ff6fcf84c45d8e1a644b5",
+      "sha256": "e9ee836390964e21c09e2864edbcbdd59c9461932dc675e17cd428cb9571907a",
       "executable": false
     },
     "server/src/routes/appearance.ts": {
@@ -288,17 +288,17 @@
     },
     "server/src/routes/installation.ts": {
       "source": "server/src/routes/installation.ts",
-      "sha256": "28d9c172683eac98006f981bfbec4ea07c3fa39e96f57cc6dba806192139c490",
+      "sha256": "83e54042521dd0124a0a43ac2862d1bd74b6f7005b2dfc692be3d861241602ba",
       "executable": false
     },
     "server/src/routes/mail.ts": {
       "source": "server/src/routes/mail.ts",
-      "sha256": "f2a41e6a15bd555f80101f309b8bd0e6b2c09270925ab8df1c72274f9d277f40",
+      "sha256": "cea46a4e0047fb3b7c510efd85adb9e3241b79ddb1f4e5ae882cfc7dbd2b3c63",
       "executable": false
     },
     "server/src/security/abuse.ts": {
       "source": "server/src/security/abuse.ts",
-      "sha256": "4014ede5ec461b13514971d4b638dcbab6c9d7e0ad90d3f3b59ff7daa17aa4d1",
+      "sha256": "c9c7c7dc2a68dc22b4f5eb374863db98709cebbb8229639f6e9ebe967bc7d34c",
       "executable": false
     },
     "server/src/security/audit.ts": {
@@ -313,12 +313,12 @@
     },
     "server/src/security/humanCheck.ts": {
       "source": "server/src/security/humanCheck.ts",
-      "sha256": "3bb00e43f2ae844596b23c5c22ad613646cd59f12e4b9467e5ff58587eaa24fa",
+      "sha256": "2932410ff228508be55a03d6970ecfe6adaa46657404a112e6a8628eb8c45ab7",
       "executable": false
     },
     "server/src/security/identity.ts": {
       "source": "server/src/security/identity.ts",
-      "sha256": "c1fda7ed529209bec0ed75b5b129225aa95946ac4242883fb1962f9c94e3b335",
+      "sha256": "f83ab0d9b4ba3a9aa52920012d730808429119c94f6cd83720babe40e1da992c",
       "executable": false
     },
     "server/src/security/loginGuard.ts": {
@@ -333,17 +333,22 @@
     },
     "server/src/security/passwords.ts": {
       "source": "server/src/security/passwords.ts",
-      "sha256": "fdf61434af7377fee31d0d0ae5dcf3bb9a73908f373a37609a75a4bebc934dc8",
+      "sha256": "24155ee6184bbc2eefe59dd715aab43b37c4e4cae97b7d7a8aefcc1ad3699554",
       "executable": false
     },
     "server/src/security/rateLimit.ts": {
       "source": "server/src/security/rateLimit.ts",
-      "sha256": "0bcb0720c2fada634cfc13278e4e99f8dffc7f5dd45bdd8d277062f75e064ac5",
+      "sha256": "313d81605613f5d9b6fe587f80fea3da742ae53126a620dc9682e6a232b06235",
       "executable": false
     },
     "server/src/security/registration.ts": {
       "source": "server/src/security/registration.ts",
       "sha256": "a7f9a5b30c50b99caef8ff170bfd609b2fae98a48c81aa8a760cd29657707e11",
+      "executable": false
+    },
+    "server/src/security/retention.ts": {
+      "source": "server/src/security/retention.ts",
+      "sha256": "4121f157093584e7db218f133d787f3999ee18972f733d7087b961074b8b778a",
       "executable": false
     },
     "server/src/types/nodemailer-mail-composer.d.ts": {
@@ -383,7 +388,7 @@
     },
     "server/test/auth-security-phase2.test.ts": {
       "source": "server/test/auth-security-phase2.test.ts",
-      "sha256": "b101941607c074faa0117c815a46f669248f1827ea0a54fec69824b20d6e5e61",
+      "sha256": "014634b572c320e0d8f5e9064708a8b47f2b9f74ed8d3a48912c25b4676b9841",
       "executable": false
     },
     "server/test/certificateCheck.test.ts": {
@@ -451,6 +456,11 @@
       "sha256": "ccfe65c94581e763c31c210aa7e01badafdfd16b8fddb14e8a3872403515b485",
       "executable": false
     },
+    "server/test/rate-limit-isolation.test.ts": {
+      "source": "server/test/rate-limit-isolation.test.ts",
+      "sha256": "1aeb534ca5efc3a6aa3d9633e0ca42e12840d54a7b4665f69cbfb1931e34bc1f",
+      "executable": false
+    },
     "server/test/registration.test.ts": {
       "source": "server/test/registration.test.ts",
       "sha256": "a04fbcca30db1ba32ea183ae34b367ab25ab961ee4d6193a7332d2fa02191ca0",
@@ -498,7 +508,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "2270e77a7c01ee22f6ee16f54aee98c5be4ca69067c5df2d408025a855809ee6",
+      "sha256": "ffb403cfcaf3df4257d5199f1a3a38ec296244b438671477b74b26cd93074c5a",
       "executable": false
     },
     "web/src/admin/notificationAppearanceEditor.ts": {

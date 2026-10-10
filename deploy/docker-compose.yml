@@ -18,6 +18,11 @@ services:
     restart: unless-stopped
     # Reap subprocess descendants after bounded CLI termination.
     init: true
+    # 不允许进程通过 setuid 等方式获得更多权限，并限制进程数量，防止失控的子进程耗尽主机。
+    # 应用仍以 root 运行：账号命令要写入 maddy 数据卷，降权前须先核对该卷的属主。
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 512
     env_file:
       - ./bakamail.env
     environment:
