@@ -200,27 +200,34 @@ test("密码喷洒换账号仍累计来源风险；成功只清理相同来源�
   assert.equal(loginLimitState("mail-login", identity).limited, true);
 });
 
-test("来源短窗及全站预算预约是原子的，拒绝请求不增加状态或延长窗口", () => {
+test("来源窗口预约是原子的，拒绝请求不增加状态或延长窗口；全站上限不拖累低用量的新来源", () => {
   const policy = { sourceMinute: 2, sourceHour: 4, globalMinute: 3, globalHour: 5 };
   assert.equal(reserveBudget("unit-request", "a", policy), 0);
   assert.equal(reserveBudget("unit-request", "a", policy), 0);
   const wait = reserveBudget("unit-request", "a", policy);
   assert.ok(wait > 0 && wait <= 60);
   assert.equal(reserveBudget("unit-request", "b", policy), 0);
-  assert.ok(reserveBudget("unit-request", "c", policy) > 0);
-  assert.equal((db.prepare("select count(*) as n from security_budgets where bucket = 'unit-request'").get() as { n: number }).n, 3);
+  // 全站窗口已满，但 c 是第一次出现的来源，不能因为别人的用量被拒绝。
+  assert.equal(reserveBudget("unit-request", "c", policy), 0);
+  assert.equal((db.prepare("select count(*) as n from security_budgets where bucket = 'unit-request'").get() as { n: number }).n, 4);
   db.prepare("update security_budgets set created_ms = created_ms - 60001 where bucket = 'unit-request'").run();
   assert.equal(reserveBudget("unit-request", "a", policy), 0);
 });
 
-test("验证码签发洪泛被独立预算拦截，不继续生成 PNG 或新增挑战", async () => {
+test("验证码签发洪泛被独立预算拦截，不继续生成 PNG 或新增挑战；后台与邮箱额度互不挤占", async () => {
   const source = "198.51.100.121";
   for (let index = 0; index < 6; index++) assert.equal((await request(app).get("/api/admin/human-check").set("x-real-ip", source)).status, 200);
   const before = (db.prepare("select count(*) as n from human_challenges").get() as { n: number }).n;
-  const denied = await request(app).get("/api/auth/human-check?purpose=login").set("x-real-ip", source);
-  assert.equal(denied.body.code, "challenge_rate_limited");
+  const denied = await request(app).get("/api/admin/human-check").set("x-real-ip", source);
+  assert.equal(denied.body.code, "challenge_admin_rate_limited");
   assert.ok(Number(denied.headers["retry-after"]) > 0);
   assert.equal((db.prepare("select count(*) as n from human_challenges").get() as { n: number }).n, before);
+  // 同一来源刷光后台验证码，邮箱登录的验证码额度仍可用；反之亦然。
+  assert.equal((await request(app).get("/api/auth/human-check?purpose=login").set("x-real-ip", source)).status, 200);
+  const mailSource = "198.51.100.122";
+  for (let index = 0; index < 6; index++) assert.equal((await request(app).get("/api/auth/human-check?purpose=login").set("x-real-ip", mailSource)).status, 200);
+  assert.equal((await request(app).get("/api/auth/human-check?purpose=login").set("x-real-ip", mailSource)).body.code, "challenge_rate_limited");
+  assert.equal((await request(app).get("/api/admin/human-check").set("x-real-ip", mailSource)).status, 200);
 });
 
 test("验证码与表单令牌绑定来源、用途、TTL 并原子消费", () => {

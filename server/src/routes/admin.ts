@@ -95,7 +95,7 @@ adminRouter.get("/human-check", (request, response) => {
   });
 });
 
-adminRouter.post("/auth/login", anonymousRequestBudget("login"), async (request, response) => {
+adminRouter.post("/auth/login", anonymousRequestBudget("admin-login"), async (request, response) => {
   const body = await readJson<{
     username?: string;
     password?: string;
@@ -520,7 +520,10 @@ adminRouter.post(
       String(body.code ?? ""),
       normalizeMailboxAccount(String(body.account ?? ""), config.mail.domain),
     );
-    ok(response, result);
+    // 查询用的哈希不需要给前端；只返回判断结果和邀请码的基本信息。
+    if (!result.ok) { ok(response, result); return; }
+    const { code_hash: _hash, ...invite } = result.invite;
+    ok(response, { ok: true, invite });
   },
 );
 

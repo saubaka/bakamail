@@ -156,7 +156,8 @@ export function issueHumanCheck(
   targetKey = "",
   identityHash = "",
 ): HumanChallenge {
-  enforceBudget("challenge", identityHash || targetKey);
+  // 后台登录的验证码额度独立于邮箱用户，同一出口 IP 下的其他人刷验证码不会让管理员拿不到验证码。
+  enforceBudget(purpose.startsWith("admin-") ? "challenge-admin" : "challenge", identityHash || targetKey);
   purgeExpiredChallenges();
   const answer = Array.from({ length: LENGTH }, () => ALPHABET[randomInt(0, ALPHABET.length)])
     .join("");
@@ -202,7 +203,7 @@ export function verifyHumanCheck(
   answer: string,
   budgetIdentity = targetKey,
 ): boolean {
-  enforceBudget("human-verify", budgetIdentity);
+  enforceBudget(purpose.startsWith("admin-") ? "human-verify-admin" : "human-verify", budgetIdentity);
   const normalized = (answer ?? "").trim().toUpperCase();
   const row = db
     .prepare(

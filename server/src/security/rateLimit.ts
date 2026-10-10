@@ -61,8 +61,13 @@ export function reserveLoginAttempt(scope: "mail-login" | "admin-login", identit
   try {
     db.prepare("update login_logs set reason = 'interrupted' where reason = 'pending' and scope in ('mail-login','admin-login') and created_at < ?")
       .run(new Date(Date.now() - 120_000).toISOString());
-    if (loginLimitState(scope, identityHash, account).limited) { db.exec("commit"); return null; }
-    const lease = reserveLease(scope, identityHash, account, scope === "admin-login" ? 4 : 8);
+    const state = loginLimitState(scope, identityHash, account);
+    if (state.limited) { db.exec("commit"); return null; }
+    // 只看来源自己的失败记录：已经在猜密码的来源只能使用部分名额；后台留 1 个、邮箱留 2 个给其他人。
+    // 不能用“账号被别处猜过”来判断，否则攻击者乱猜管理员账号，真正的管理员也会被当成可疑来源。
+    const suspicious = state.failures > 0;
+    const lease = reserveLease(scope, identityHash, account, scope === "admin-login" ? 4 : 8, 2,
+      scope === "admin-login" ? 1 : 2, suspicious);
     if (!lease) { db.exec("commit"); return null; }
     const id = recordLoginAttempt(scope, identityHash, account, false, "pending");
     db.prepare("update security_leases set id = ? where id = ?").run(`login:${id}`, lease);

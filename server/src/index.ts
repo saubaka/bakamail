@@ -1,6 +1,7 @@
 import { config } from "./config.ts";
 import { db } from "./db.ts";
 import { purgeExpiredChallenges } from "./security/humanCheck.ts";
+import { pruneExpiredRecords } from "./security/retention.ts";
 import { createApp } from "./app.ts";
 
 const app = createApp();
@@ -12,6 +13,7 @@ const cleanup = setInterval(() => {
     .run(now, now);
   db.prepare("update admin_sessions set revoked_at = ? where expires_at < ? and revoked_at is null")
     .run(now, now);
+  pruneExpiredRecords();
 }, 10 * 60_000);
 cleanup.unref();
 

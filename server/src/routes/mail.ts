@@ -9,6 +9,10 @@ import { TrashUnavailableError, type MailboxSession } from "../mail/session.ts";
 
 export const mailRouter = Router();
 
+const DRAFT_BODY_LIMIT = 1024 * 1024;
+const DRAFT_PAYLOAD_LIMIT = 512 * 1024;
+const MAX_DRAFTS_PER_MAILBOX = 100;
+
 /**
  * 只为邮件相关的路径挂登录校验。
  * 如果直接 mailRouter.use(requireMail)，未匹配的 /api/* 也会返回 401 而不是 404。
@@ -491,10 +495,22 @@ mailRouter.get("/drafts", (request, response) => {
 
 mailRouter.post("/drafts", requireCsrf, async (request, response) => {
   const owner = mailboxOf(request);
-  const body = await readJson<{ id?: string; payload?: unknown }>(request, { maxBytes: MAIL_BODY_LIMIT });
+  // 草稿只保存收件人、主题和正文（附件不随草稿保存），不需要邮件那样的大额度。
+  const body = await readJson<{ id?: string; payload?: unknown }>(request, { maxBytes: DRAFT_BODY_LIMIT });
   const id = String(body.id ?? "") || `draft-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const payload = JSON.stringify(body.payload ?? {});
+  if (Buffer.byteLength(payload) > DRAFT_PAYLOAD_LIMIT) {
+    fail(response, 413, "草稿内容过大，请缩短正文；附件不会保存在草稿里");
+    return;
+  }
   const existing = db.prepare("select id from drafts where id = ? and owner = ?").get(id, owner);
+  if (!existing) {
+    const { n } = db.prepare("select count(*) as n from drafts where owner = ?").get(owner) as { n: number };
+    if (n >= MAX_DRAFTS_PER_MAILBOX) {
+      fail(response, 409, `草稿最多保存 ${MAX_DRAFTS_PER_MAILBOX} 封，请先删除不需要的草稿`);
+      return;
+    }
+  }
   if (existing) {
     db.prepare("update drafts set payload = ?, updated_at = ? where id = ?").run(
       payload,

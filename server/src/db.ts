@@ -5,7 +5,21 @@ import { config } from "./config.ts";
 export const db = new DatabaseSync(join(config.dataDir, "bakamail.db"));
 
 db.exec("pragma busy_timeout = 5000");
-db.exec("pragma journal_mode = wal");
+/*
+ * 把库切换到 WAL 需要独占锁，而且 SQLite 不会为这条语句等待 busy_timeout：
+ * 多个进程同时启动并首次转换同一个库时，其中一些会直接报 database is locked。
+ * 已经是 WAL 的库不会触发；这里只在锁冲突时做有上限的短重试，其他错误照常抛出。
+ */
+function enableWal(): void {
+  for (let attempt = 0; ; attempt += 1) {
+    try { db.exec("pragma journal_mode = wal"); return; }
+    catch (error) {
+      if (attempt >= 60 || !/locked|busy/i.test(error instanceof Error ? error.message : String(error))) throw error;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 25 + (attempt % 5) * 15);
+    }
+  }
+}
+enableWal();
 db.exec("pragma foreign_keys = on");
 
 /** 建表语句全部幂等，启动时执行一次即可。 */

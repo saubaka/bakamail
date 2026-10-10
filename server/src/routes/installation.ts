@@ -3,13 +3,24 @@ import { entrySettings, resolveAdminEntry, installationInitialized, initializeIn
 import { requireAdmin, requireCsrf, requirePermission } from "../http/auth.ts";
 import { requireSameOrigin } from "../security/origin.ts";
 import { clientAddress, fingerprint } from "../security/identity.ts";
-import { enforceBudget, reserveLease, releaseLease, rejectBudget } from "../security/abuse.ts";
+import { enforceBudget, peekBudget, reserveLease, releaseLease, rejectBudget, SecurityBudgetError, SECURITY_BUDGETS } from "../security/abuse.ts";
+import { adminPathProblem } from "../../../shared/adminPaths.ts";
 import { ok, readJson, requestId } from "../http/kit.ts";
 
 export const installationRouter = Router();
 installationRouter.get("/installation", (request, response) => {
   const initialized = installationInitialized();
-  const entry = initialized ? resolveAdminEntry(request.query.entry) : null;
+  const candidate = request.query.entry;
+  // 只对“看起来像后台路径”的猜测限流，且只计失败：正常管理员打开自己的路径不会被消耗。
+  // 已经猜错过多的来源在冷却期内连正确的答案也拿不到，因此限流不会变成猜路径的探测器。
+  const probing = initialized && typeof candidate === "string" && !adminPathProblem(candidate);
+  const identity = fingerprint("entry-probe", clientAddress(request.headers, request.socket.remoteAddress));
+  if (probing) {
+    const wait = peekBudget("entry-probe", identity, SECURITY_BUDGETS["entry-probe"]);
+    if (wait) throw new SecurityBudgetError("entry_probe_rate_limited", wait);
+  }
+  const entry = initialized ? resolveAdminEntry(candidate) : null;
+  if (probing && !entry) enforceBudget("entry-probe", identity);
   ok(response, { initialized, ...(entry ? { entry } : {}) });
 });
 installationRouter.post("/installation", requireSameOrigin, (request, _response, next) => {
