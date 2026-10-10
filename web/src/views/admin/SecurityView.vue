@@ -1,6 +1,7 @@
 <template>
   <div>
-    <section v-motion="{ kind: 'feature' }" class="managed-page-card">
+    <TotpSettings />
+    <section v-motion="{ kind: 'compact', delay: 40 }" class="managed-page-card">
       <div class="panel-heading">
         <div>
           <span class="eyebrow">SECURITY POLICY</span>
@@ -157,6 +158,7 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { ApiError, api, toast } from "../../api";
 import { confirmDialog } from "../../dialog";
 import { useAdminSessionStore } from "../../stores/adminSession";
+import TotpSettings from "../../components/admin/TotpSettings.vue";
 
 type LoginRow = {
   id: number;

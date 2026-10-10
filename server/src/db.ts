@@ -221,6 +221,30 @@ create table if not exists security_leases (
   account_hash text not null, expires_ms integer not null
 );
 create index if not exists ix_security_leases_scope on security_leases(scope, expires_ms);
+create table if not exists admin_totp (
+  admin_id integer primary key references admin_users(id) on delete cascade,
+  secret text not null,
+  enabled integer not null default 0 check(enabled in (0, 1)),
+  last_step integer not null default 0,
+  created_at text not null,
+  enabled_at text
+);
+create table if not exists admin_recovery_codes (
+  id integer primary key autoincrement,
+  admin_id integer not null references admin_users(id) on delete cascade,
+  code_hash text not null unique,
+  used_at text
+);
+create index if not exists ix_admin_recovery_admin on admin_recovery_codes(admin_id, used_at);
+create table if not exists admin_login_tickets (
+  id integer primary key autoincrement,
+  admin_id integer not null references admin_users(id) on delete cascade,
+  token_hash text not null unique,
+  identity_hash text not null,
+  expires_ms integer not null,
+  attempts integer not null default 0
+);
+create index if not exists ix_admin_login_tickets_expiry on admin_login_tickets(expires_ms);
 create table if not exists ui_appearance (
   id integer primary key check(id = 1),
   schema_version integer not null,

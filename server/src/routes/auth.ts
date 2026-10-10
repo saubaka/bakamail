@@ -14,7 +14,9 @@ import {
 } from "../http/kit.ts";
 import { MAIL_COOKIE, createMailSession, findMailSession, revokeMailSession, revokeMailSessionsFor } from "../http/session.ts";
 import { requireCsrf, requireMail } from "../http/auth.ts";
-import { issueHumanCheck, verifyHumanCheck } from "../security/humanCheck.ts";
+import { issueHumanCheck } from "../security/humanCheck.ts";
+import { checkPublicHuman } from "../security/publicHuman.ts";
+import { TURNSTILE_NONCE, turnstileFor, type TurnstilePurpose } from "../security/turnstile.ts";
 import { issueFormToken, consumeFormToken } from "../security/formToken.ts";
 import { clientAddress, fingerprint } from "../security/identity.ts";
 import { attemptCount, completeLoginAttempt, globalFailureCount, isIdentityBlocked, recordLoginAttempt, reserveLoginAttempt, loginRiskBackoff } from "../security/rateLimit.ts";
@@ -44,6 +46,23 @@ authRouter.get("/human-check", (request, response) => {
   const budgetIdentity = fingerprint("auth-source", address);
   // Reserve the cheaper token before rendering a PNG; both issuance budgets are independently enforced.
   const formToken = purpose === "register" ? issueFormToken("register", 1800, identity) : "";
+  const turnstile = turnstileFor(purpose as TurnstilePurpose);
+  if (turnstile) {
+    // 启用 Turnstile 后不再生成图片，浏览器改为渲染 Cloudflare 组件，提交时把结果令牌放在 humanAnswer 里。
+    enforceBudget("challenge", budgetIdentity);
+    ok(response, {
+      purpose,
+      provider: "turnstile",
+      siteKey: turnstile.siteKey,
+      domain: config.mail.domain,
+      nonce: TURNSTILE_NONCE,
+      image: "",
+      expiresIn: 300,
+      formToken,
+      minFormSeconds: config.security.minFormSeconds,
+    });
+    return;
+  }
   const challenge = issueHumanCheck(`mail-${purpose}`, identity, budgetIdentity);
   ok(response, {
     purpose,
@@ -72,8 +91,8 @@ authRouter.post("/login", anonymousRequestBudget("login"), async (request, respo
   const identity = fingerprint("mail-login", address);
   const account = normalizeMailboxAccount(String(body.account ?? ""), config.mail.domain);
   const password = String(body.password ?? "");
-  if (!admitLogin("mail-login", identity, account, fingerprint("auth-source", address),
-    String(body.humanNonce ?? ""), String(body.humanAnswer ?? ""), response)) return;
+  if (!(await admitLogin("mail-login", identity, account, fingerprint("auth-source", address),
+    String(body.humanNonce ?? ""), String(body.humanAnswer ?? ""), response, address))) return;
 
   // Existing mailboxes may predate the stricter new-account naming policy (e.g. "me").
   const local = account.endsWith(`@${config.mail.domain}`) ? account.slice(0, -config.mail.domain.length - 1) : "";
@@ -249,17 +268,19 @@ authRouter.post("/register", anonymousRequestBudget("register"), async (request,
     fail(response, 400, "表单已失效或提交过快，请换一张验证码后重新填写");
     return;
   }
-  if (
-    !verifyHumanCheck(
-      "mail-register",
-      humanIdentity,
-      String(body.humanNonce ?? ""),
-      String(body.humanAnswer ?? ""),
-      fingerprint("auth-source", address),
-    )
-  ) {
-    attemptReason = "human";
-    fail(response, 400, "人机校验未通过");
+  const registerHuman = await checkPublicHuman(
+    "register",
+    "mail-register",
+    humanIdentity,
+    String(body.humanNonce ?? ""),
+    String(body.humanAnswer ?? ""),
+    fingerprint("auth-source", address),
+    address,
+  );
+  if (registerHuman !== "ok") {
+    attemptReason = registerHuman === "unavailable" ? "human-unavailable" : "human";
+    if (registerHuman === "unavailable") fail(response, 503, "人机验证服务暂时不可用，请稍后再试");
+    else fail(response, 400, "人机校验未通过");
     return;
   }
 
@@ -405,15 +426,18 @@ authRouter.post("/password-reset", async (request, response) => {
   const attemptId = recordLoginAttempt("password-reset", identity, account, false, "pending");
   let attemptReason = "human";
   response.once("finish", () => completeLoginAttempt(attemptId, response.statusCode < 400, attemptReason));
-  if (
-    !verifyHumanCheck(
-      "mail-password-reset",
-      humanIdentity,
-      String(body.humanNonce ?? ""),
-      String(body.humanAnswer ?? ""),
-    )
-  ) {
-    fail(response, 400, "人机校验未通过");
+  const resetHuman = await checkPublicHuman(
+    "password-reset",
+    "mail-password-reset",
+    humanIdentity,
+    String(body.humanNonce ?? ""),
+    String(body.humanAnswer ?? ""),
+    humanIdentity,
+    address,
+  );
+  if (resetHuman !== "ok") {
+    if (resetHuman === "unavailable") { attemptReason = "human-unavailable"; fail(response, 503, "人机验证服务暂时不可用，请稍后再试"); }
+    else fail(response, 400, "人机校验未通过");
     return;
   }
   attemptReason = "requested";

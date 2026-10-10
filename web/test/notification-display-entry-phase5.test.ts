@@ -120,7 +120,9 @@ test('全入口不再允许无理由persistent；保留发送锁、人工确认�
   assert.equal(inventory.status, 0, inventory.stderr);
   const sites = JSON.parse(inventory.stdout);
   // v0.3.0 adds one invite-limit validation feedback, still routed through the central capsule.
-  assert.equal(sites.files.length, 25); assert.equal(sites.total, 112); assert.deepEqual(sites.persistent, []);
+  // v0.3.7 adds admin two-step verification feedback (TotpSettings and the admin list reset), also through the central capsule.
+  // v0.4.0 adds the human-verification panel (HumanVerificationView) and its widget feedback, same central capsule.
+  assert.equal(sites.files.length, 27); assert.equal(sites.total, 124); assert.deepEqual(sites.persistent, []);
   assert.equal(sites.manualExceptions.length, 1);
   assert.equal(sites.manualExceptions[0].file, 'web/src/components/mail/ComposeDialog.vue');
   assert.equal(sites.manualExceptions[0].manualReason, 'delivery-unconfirmed');

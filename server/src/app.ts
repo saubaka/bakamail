@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import express from "express";
 import { config, projectRoot } from "./config.ts";
@@ -14,6 +14,8 @@ import { requireSameOrigin } from "./security/origin.ts";
 import { SecurityBudgetError, rejectBudget } from "./security/abuse.ts";
 import { prepareInstallation, retiredInstallationPath, InstallationError } from "./admin/installation.ts";
 import { installationRouter, entrySettingsRouter } from "./routes/installation.ts";
+import { newCspNonce, pageCsp, withNonce } from "./http/csp.ts";
+import { turnstileConfigured } from "./security/turnstile.ts";
 
 export type AppOptions = {
   /** 测试时关闭引导管理员创建，避免污染断言 */
@@ -102,7 +104,10 @@ export function createApp(options: AppOptions = {}): express.Express {
         return;
       }
       response.setHeader("cache-control", "no-cache, must-revalidate");
-      response.sendFile(join(webDist, "index.html"));
+      // 每次响应生成新的 nonce，并随页面一起下发完整的内容安全策略。
+      const nonce = newCspNonce();
+      response.setHeader("content-security-policy", pageCsp(nonce, { turnstile: turnstileConfigured() }));
+      response.type("html").send(withNonce(readFileSync(join(webDist, "index.html"), "utf8"), nonce));
     });
 
     // 走到这里的都是缺失的静态资源：返回不可缓存的 404

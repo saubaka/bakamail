@@ -8,6 +8,7 @@ export type AdminRow = {
   role: AdminRole;
   is_active: number;
   last_login_at: string | null;
+  totp_enabled: number;
 };
 
 function adminPath(id: number): string {
@@ -29,6 +30,11 @@ export function changeAdminRole(id: number, role: AdminRole): Promise<void> {
 
 export function setAdminUserActive(id: number, active: boolean): Promise<void> {
   return api(adminPath(id), { method: "PATCH", body: { active } });
+}
+
+/** 设备丢失时由超级管理员代为重置别人的二步验证；对方会话同时失效。 */
+export function resetAdminUserTotp(id: number): Promise<void> {
+  return api(adminPath(id), { method: "PATCH", body: { resetTotp: true } });
 }
 
 export function resetAdminUserPassword(id: number, password: string): Promise<void> {

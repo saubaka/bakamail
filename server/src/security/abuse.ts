@@ -12,6 +12,10 @@ export const SECURITY_BUDGETS = {
   challenge: { sourceMinute: 6, sourceHour: 30, globalMinute: 120, globalHour: 1000 },
   "challenge-admin": { sourceMinute: 6, sourceHour: 30, globalMinute: 60, globalHour: 500 },
   "human-verify-admin": { sourceMinute: 15, sourceHour: 60, globalMinute: 100, globalHour: 800 },
+  // 已登录管理员管理二步验证（启用、停用）时的尝试次数，防止会话被盗后在线猜密码或动态码。
+  // 管理员在人机验证面板里检查密钥、做真实验证：每次都会请求 Cloudflare，单独限额。
+  "admin-turnstile": { sourceMinute: 10, sourceHour: 60, globalMinute: 60, globalHour: 300 },
+  "admin-totp": { sourceMinute: 8, sourceHour: 40, globalMinute: 80, globalHour: 400 },
   // 只统计“猜了一个不存在的后台路径”的请求，正常访问不计数。
   "entry-probe": { sourceMinute: 20, sourceHour: 100, globalMinute: 200, globalHour: 1000 },
   "form-token": { sourceMinute: 6, sourceHour: 30, globalMinute: 60, globalHour: 500 },

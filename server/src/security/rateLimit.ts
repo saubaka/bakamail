@@ -47,7 +47,7 @@ export function failureCount(
     .prepare(
       `select count(*) as n from login_logs
        where scope = ? and identity_hash = ? and success = 0 and created_at > ?
-         and reason not in ('pending', 'busy', 'mail-unavailable', 'interrupted', 'locked', 'human-required', 'rate-limited', 'blocked', 'admin-unblocked')
+         and reason not in ('pending', 'busy', 'mail-unavailable', 'interrupted', 'locked', 'human-required', 'rate-limited', 'blocked', 'admin-unblocked', 'totp-pending')
          and id > coalesce((select max(s.id) from login_logs s where s.scope = login_logs.scope
            and s.identity_hash = login_logs.identity_hash and s.account = login_logs.account and s.success = 1), 0)`,
     )
@@ -93,7 +93,7 @@ export function attemptCount(
 export function globalFailureCount(windowMs: number): number {
   const since = new Date(Date.now() - windowMs).toISOString();
   const row = db
-    .prepare("select count(*) as n from login_logs where success = 0 and reason not in ('pending', 'busy', 'mail-unavailable', 'interrupted', 'locked', 'human-required', 'rate-limited', 'blocked') and created_at >= ?")
+    .prepare("select count(*) as n from login_logs where success = 0 and reason not in ('pending', 'busy', 'mail-unavailable', 'interrupted', 'locked', 'human-required', 'rate-limited', 'blocked', 'totp-pending') and created_at >= ?")
     .get(since) as { n: number } | undefined;
   return row?.n ?? 0;
 }

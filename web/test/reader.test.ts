@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { authenticationChecks, authenticationSummary, readerFrameDocument, sanitizeReaderHtml } from '../src/mail/reader.ts';
+import { authenticationChecks, authenticationSummary, pageScriptNonce, readerFrameDocument, sanitizeReaderHtml } from '../src/mail/reader.ts';
 const source = (name: string) => readFileSync(new URL(`../src/${name}`,import.meta.url),'utf8');
 test('正文认证归并：全部通过、部分、失败及缺失均不伪报可信',()=>{
   assert.equal(authenticationSummary(authenticationChecks({'Authentication-Results':'mx; SPF=pass; DKIM=pass; DMARC=pass'})),'安全认证 · 全部通过');
@@ -56,4 +56,17 @@ test('远程图片净化为自建占位而非破图，协议相对链接、srcse
     assert.equal(replacement.className,'baka-blocked-image');assert.equal(replacement.textContent,'示例图片');assert.equal(replacement.attributes.get('role'),'img');
     replacement=undefined;assert.equal(sanitizeReaderHtml('fixture',true).blocked,0);assert.equal(replacement,undefined);
   } finally { globalThis.DOMParser=originalParser; }
+});
+
+test('邮件框架脚本使用页面 nonce（继承父页面策略时才能执行），非法 nonce 被拒绝，缺省回退到框架令牌', () => {
+  const token = 'b'.repeat(48), pageNonce = 'AbCdEfGhIjKlMnOpQrStUvWx';
+  const withPage = readerFrameDocument('<p>示例</p>', false, token, pageNonce);
+  assert.match(withPage, new RegExp(`script-src 'nonce-${pageNonce}'`));
+  assert.match(withPage, new RegExp(`<script nonce="${pageNonce}">`));
+  assert.match(withPage, new RegExp(`token:'${token}'`));
+  assert.doesNotMatch(withPage, new RegExp(`script nonce="${token}"`));
+  const fallback = readerFrameDocument('<p>示例</p>', false, token);
+  assert.match(fallback, new RegExp(`<script nonce="${token}">`));
+  assert.throws(() => readerFrameDocument('<p>x</p>', false, token, `x" onload="alert(1)`), /Invalid reader script nonce/);
+  assert.equal(pageScriptNonce(), '');
 });

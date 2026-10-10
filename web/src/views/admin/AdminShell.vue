@@ -176,6 +176,7 @@ const groups = [
     hint: "策略、会话与审计",
     items: [
       { name: "admin-security", label: "安全中心", hint: "限速、日志与会话", permission: "system.audit.read" },
+      { name: "admin-human-check", label: "人机验证", hint: "Cloudflare Turnstile", permission: "system.security.write" },
     ],
   },
   {
@@ -223,6 +224,7 @@ const titles: Record<string, string> = {
   "admin-invites": "邀请码",
   "admin-mail-ops": "邮件运维",
   "admin-security": "安全",
+  "admin-human-check": "人机验证",
   "admin-admins": "管理员",
   "admin-system": "系统设置",
 };

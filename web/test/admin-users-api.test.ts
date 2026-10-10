@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  changeAdminRole, createAdminUser, listAdminUsers, resetAdminUserPassword, setAdminUserActive,
+  changeAdminRole, createAdminUser, listAdminUsers, resetAdminUserPassword, resetAdminUserTotp, setAdminUserActive,
 } from "../src/api/admin.ts";
 import { setCsrfToken } from "../src/api/client.ts";
 
@@ -24,18 +24,21 @@ test("管理员账号请求只走统一客户端，变更携带管理员 CSRF", 
     await changeAdminRole(2, "admin");
     await setAdminUserActive(2, false);
     await resetAdminUserPassword(2, "new-password-123");
+    await resetAdminUserTotp(2);
     assert.deepEqual(calls.map(({ path, method }) => [path, method]), [
       ["/api/admin/admins", "GET"],
       ["/api/admin/admins", "POST"],
       ["/api/admin/admins/2", "PATCH"],
       ["/api/admin/admins/2", "PATCH"],
       ["/api/admin/admins/2", "PATCH"],
+      ["/api/admin/admins/2", "PATCH"],
     ]);
     assert.equal(calls[0]?.csrf, null);
-    assert.deepEqual(calls.slice(1).map(({ csrf }) => csrf), Array(4).fill("admin-test-token"));
+    assert.deepEqual(calls.slice(1).map(({ csrf }) => csrf), Array(5).fill("admin-test-token"));
     assert.deepEqual(calls[2]?.body, { role: "admin" });
     assert.deepEqual(calls[3]?.body, { active: false });
     assert.deepEqual(calls[4]?.body, { password: "new-password-123" });
+    assert.deepEqual(calls[5]?.body, { resetTotp: true });
   } finally {
     setCsrfToken("", "admin");
     globalThis.fetch = originalFetch;

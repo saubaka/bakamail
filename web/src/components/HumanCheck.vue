@@ -1,8 +1,16 @@
 <template>
-  <div class="human-check field--wide">
+  <TurnstileWidget
+    v-if="provider === 'turnstile' && siteKey"
+    ref="widgetRef"
+    v-model:token="answer"
+    class="human-check-turnstile field--wide"
+    :site-key="siteKey"
+    :action="purpose"
+  />
+  <div v-else class="human-check field--wide">
     <div class="human-check__image">
       <img v-if="image" :src="image" alt="四位人机验证字符" />
-      <span v-else class="mail-empty">{{ loading ? "正在获取验证码…" : error || "请刷新验证码" }}</span>
+      <span v-else class="mail-empty">{{ loading ? "正在准备人机验证…" : error || "请刷新验证码" }}</span>
     </div>
     <button
       class="icon-button human-check__refresh"
@@ -30,10 +38,14 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { ApiError, api } from "../api";
+import TurnstileWidget from "./TurnstileWidget.vue";
 
 type HumanCheckResponse = {
   nonce: string;
   image: string;
+  /** "turnstile" when the administrator enabled Cloudflare Turnstile for this entry. */
+  provider?: "turnstile";
+  siteKey?: string;
   formToken?: string;
   domain?: string;
   expiresIn?: number;
@@ -52,6 +64,9 @@ const domain = defineModel<string>("domain", { default: "" });
 const formReadyAt = defineModel<number>("formReadyAt", { default: 0 });
 
 const image = ref("");
+const provider = ref<"image" | "turnstile">("image");
+const siteKey = ref("");
+const widgetRef = ref<InstanceType<typeof TurnstileWidget> | null>(null);
 const loading = ref(false);
 const error = ref("");
 const retryUntil = ref(0);
@@ -63,6 +78,12 @@ let active = true;
 let controller: AbortController | null = null;
 
 function invalidate(): void {
+  if (provider.value === "turnstile") {
+    // Turnstile tokens are single use: drop the spent one and let the widget issue a fresh one.
+    answer.value = ""; formToken.value = ""; formReadyAt.value = 0;
+    widgetRef.value?.reset();
+    return;
+  }
   image.value = ""; nonce.value = ""; answer.value = ""; formToken.value = "";
   formReadyAt.value = 0; expiresAt = 0;
   error.value = "请换一张验证码后再试";
@@ -74,7 +95,8 @@ async function load(): Promise<void> {
   error.value = "";
   image.value = "";
   nonce.value = "";
-  answer.value = "";
+  // Keep a rendered Turnstile widget mounted across reloads; the token it holds is replaced on reset.
+  if (provider.value !== "turnstile") answer.value = "";
   formToken.value = "";
   formReadyAt.value = 0;
   controller = new AbortController();
@@ -86,10 +108,24 @@ async function load(): Promise<void> {
           { signal: controller.signal },
         );
     if (!active) return;
-    image.value = data.image;
-    nonce.value = data.nonce;
-    expiresAt = Date.now() + (data.expiresIn ?? 600) * 1000;
-    answer.value = "";
+    // 后台登录永远使用内建验证码：即使响应声称 Turnstile 也不采用。
+    if (!props.admin && data.provider === "turnstile" && data.siteKey) {
+      const wasTurnstile = provider.value === "turnstile";
+      provider.value = "turnstile";
+      siteKey.value = data.siteKey;
+      image.value = "";
+      nonce.value = data.nonce;
+      expiresAt = 0; // the widget tracks token expiry itself
+      answer.value = "";
+      if (wasTurnstile) widgetRef.value?.reset();
+    } else {
+      provider.value = "image";
+      siteKey.value = "";
+      image.value = data.image;
+      nonce.value = data.nonce;
+      expiresAt = Date.now() + (data.expiresIn ?? 600) * 1000;
+      answer.value = "";
+    }
     if (data.formToken) formToken.value = data.formToken;
     if (data.formToken) formReadyAt.value = Date.now() + (data.minFormSeconds ?? 2) * 1000;
     if (data.domain) domain.value = data.domain;

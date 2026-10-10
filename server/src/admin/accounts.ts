@@ -53,13 +53,14 @@ export function permissionList(role: AdminRole): string[] {
   return [...(ROLE_PERMISSIONS[role] ?? [])];
 }
 
-export function listAdmins(): Omit<AdminUser, "password_hash">[] {
+export function listAdmins(): (Omit<AdminUser, "password_hash"> & { totp_enabled: number })[] {
   return db
     .prepare(
-      `select id, username, display_name, role, is_active, created_at, last_login_at
+      `select id, username, display_name, role, is_active, created_at, last_login_at,
+              coalesce((select enabled from admin_totp where admin_id = admin_users.id), 0) as totp_enabled
        from admin_users order by id`,
     )
-    .all() as Omit<AdminUser, "password_hash">[];
+    .all() as (Omit<AdminUser, "password_hash"> & { totp_enabled: number })[];
 }
 
 export function findAdminByUsername(username: string): AdminUser | undefined {

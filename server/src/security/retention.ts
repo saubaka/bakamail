@@ -15,5 +15,6 @@ export function pruneExpiredRecords(now = Date.now()): { sessions: number; login
     count(db.prepare("delete from mail_sessions where revoked_at is not null and revoked_at < ?").run(sessionCutoff)) +
     count(db.prepare("delete from admin_sessions where revoked_at is not null and revoked_at < ?").run(sessionCutoff));
   const loginLogs = count(db.prepare("delete from login_logs where created_at < ?").run(logCutoff));
+  db.prepare("delete from admin_login_tickets where expires_ms < ?").run(now);
   return { sessions, loginLogs };
 }
