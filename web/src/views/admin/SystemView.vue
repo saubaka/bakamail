@@ -7,7 +7,7 @@
         <div>
           <span class="eyebrow">站点设置</span>
           <h2>名称、公告与欢迎邮件</h2>
-          <p>这些内容由 BakaMail 后端保存，不会直接修改 Maddy 配置。</p>
+          <p>这些内容保存在 BakaMail 里，不会修改 Maddy 的配置。</p>
         </div>
         <button class="button button--primary" type="button" :disabled="!settingsLoaded || settingsLoading || saving" @click="save">
           {{ saving ? "保存中…" : "保存设置" }}
@@ -46,13 +46,13 @@
         <div>
           <span class="eyebrow">RUNNER</span>
           <h2>邮局连接方式</h2>
-          <p>浏览器只访问 BFF，命令和协议参数不会进入前端。</p>
+          <p>浏览器只访问本站接口，邮件服务的命令和连接参数不会暴露在页面里。</p>
         </div>
         <span class="badge" :class="runnerLoaded ? (runner.ready ? 'badge--blue' : 'badge--danger') : 'badge--gray'">
           {{ !runnerLoaded ? "未读取" : runner.ready ? "已启用" : "未启用" }}
         </span>
       </div>
-      <p class="mail-notice">“已启用”仅表示后端配置了邮局调用方式，不代表容器或邮件协议已通过健康检查。</p>
+      <p class="mail-notice">“已启用”只表示服务端配置了调用邮局的方式，不代表邮件服务运行正常。</p>
       <p v-if="!runnerLoaded && runnerLoading" class="admin-page-state" role="status">正在读取运行方式…</p>
       <p v-capsule-notice="{ action: { label: '重试读取', run: async () => { await loadRunner(); } } }" v-if="runnerError" class="mail-notice" role="alert">
         运行方式读取失败：{{ runnerError }}{{ runnerLoaded ? "；下方保留上次结果。" : "" }}
@@ -72,10 +72,10 @@
         <div>
           <span class="eyebrow">BACKUP</span>
           <h2>管理数据备份</h2>
-          <p>包含管理员元数据、邀请码、审计记录、登录记录、设置和联系人，不包含密码明文。</p>
+          <p>包含管理员信息、邀请码、操作日志、登录记录、设置和联系人，不包含密码。</p>
         </div>
       </div>
-      <p class="mail-notice">下载响应禁止缓存；每次下载都会写入审计日志。</p>
+      <p class="mail-notice">每次下载都会记录在操作日志里。</p>
       <button class="button button--primary" type="button" :disabled="downloading" @click="downloadBackup">
         {{ downloading ? "正在生成…" : "下载 JSON 备份" }}
       </button>
@@ -88,7 +88,7 @@
         <div>
           <span class="eyebrow">权限</span>
           <h2>{{ roleLabel }}的有效权限</h2>
-          <p>页面入口按此清单显示；最终授权仍由服务端中间件决定。</p>
+          <p>页面入口会按这份权限显示，最终能否操作以服务端的判断为准。</p>
         </div>
       </div>
       <div class="permission-cloud">

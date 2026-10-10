@@ -2,7 +2,7 @@
   <div>
     <section v-motion="{ kind: 'feature' }" class="managed-page-card">
       <div class="panel-heading">
-        <div><span class="eyebrow">DELIVERY</span><h2>出站队列</h2><p>只展示 BFF 从邮局数据卷读取到的队列项，不在浏览器拼接邮局命令。</p></div>
+        <div><span class="eyebrow">DELIVERY</span><h2>出站队列</h2><p>显示邮局里正在排队、等待投递的邮件。</p></div>
         <button class="button button--soft" type="button" :disabled="loading" @click="loadAll">{{ loading ? "正在采样…" : "重新采样" }}</button>
       </div>
       <p v-capsule-notice="{ action: { label: '重试读取', run: async () => { await loadQueue(); } } }" v-if="queueError" class="mail-notice" role="alert">
@@ -11,7 +11,7 @@
       </p>
       <p v-if="!queueLoaded && queueLoading" class="admin-page-state" role="status">正在读取出站队列…</p>
       <p v-else-if="!queueLoaded && !queueError" class="admin-page-state">尚未读取队列。</p>
-      <p v-if="queueLoaded && !queueStatsAvailable" class="mail-notice">邮局统计数据卷未确认可用；当前队列结果需要到服务器核对，空列表不能视为没有积压。</p>
+      <p v-if="queueLoaded && !queueStatsAvailable" class="mail-notice">读取不到邮局的数据目录，下面的队列结果不一定准确。空列表不代表没有积压，请到服务器上核对。</p>
       <p v-if="queueLoaded && queue.length === 0 && queueStatsAvailable" class="mail-empty">{{ queueError ? "上次成功采样时没有积压；当前状态未知" : "没有积压的投递任务" }}</p>
       <div v-if="queueLoaded && queue.length > 0" class="table-scroll"><table class="admin-table">
         <thead><tr><th>队列项</th><th>大小</th><th>写入时间</th></tr></thead>
@@ -41,7 +41,7 @@
 
     <section v-motion="{ kind: 'compact', delay: 100 }" class="managed-page-card">
       <div class="panel-heading">
-        <div><h2>投递日志</h2><p>页面隐藏时暂停自动刷新，避免后台持续请求。</p></div>
+        <div><h2>投递日志</h2><p>页面切到后台时会暂停自动刷新。</p></div>
         <div class="mail-log-actions">
           <button class="button button--soft" type="button" :disabled="logsLoading" @click="loadLogs">{{ logsLoading ? '读取中…' : '刷新日志' }}</button>
           <button class="button button--soft" type="button" :disabled="!logsAvailable" @click="copyLogs">复制诊断片段</button>

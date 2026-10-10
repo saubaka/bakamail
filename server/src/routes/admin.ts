@@ -300,7 +300,7 @@ adminRouter.post(
     const body = await readJson<{ account?: string; password?: string; confirm?: boolean }>(request);
     const account = normalizeMailboxAccount(String(body.account ?? ""), config.mail.domain);
     if (body.confirm !== true || !isValidLocalAccount(account, config.mail.domain)) {
-      fail(response, 400, "修复账号需要有效邮箱地址和显式确认");
+      fail(response, 400, "修复账号需要填写有效的邮箱地址，并确认操作");
       return;
     }
     let credentials: string[], accounts: string[];
@@ -348,7 +348,7 @@ adminRouter.post(
     const body = await readJson<{ account?: string; password?: string; confirm?: boolean }>(request);
     const account = String(body.account ?? "").trim().toLowerCase();
     if (body.confirm !== true) {
-      fail(response, 400, "重置密码需要显式确认");
+      fail(response, 400, "重置密码需要先确认");
       return;
     }
     if (!isValidLocalAccount(account, config.mail.domain)) {
@@ -392,7 +392,7 @@ adminRouter.post(
     const body = await readJson<{ account?: string; confirm?: boolean }>(request);
     const account = String(body.account ?? "").trim().toLowerCase();
     if (body.confirm !== true || !isValidLocalAccount(account, config.mail.domain)) {
-      fail(response, 400, "删除账号需要显式确认");
+      fail(response, 400, "删除账号需要先确认");
       return;
     }
     let revoked = 0;

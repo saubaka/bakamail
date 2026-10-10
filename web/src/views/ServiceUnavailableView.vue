@@ -5,8 +5,8 @@
       <span class="soft-icon soft-icon--blue auth-icon" aria-hidden="true">!</span>
       <span class="eyebrow">BAKAMAIL</span>
       <h1 id="unavailable-title">暂时无法连接</h1>
-      <p>会话状态暂时无法确认，可能是网络或服务短暂不可用。我们没有将你退出，也没有清除当前会话。</p>
-      <button class="button button--primary" type="button" @click="retry">重试进入页面</button>
+      <p>暂时无法确认登录状态，可能是网络或服务出了问题。你没有被退出登录，稍后重试即可。</p>
+      <button class="button button--primary" type="button" @click="retry">重试</button>
     </section>
   </main>
 </template>

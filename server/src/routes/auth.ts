@@ -290,7 +290,7 @@ authRouter.post("/register", anonymousRequestBudget("register"), async (request,
   }
   if (!maddyRunnerReady()) {
     attemptReason = "runner-unavailable";
-    fail(response, 503, "当前实例未开启账号管理能力");
+    fail(response, 503, "服务器暂时不能创建邮箱，请联系管理员");
     return;
   }
 
