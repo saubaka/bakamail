@@ -117,46 +117,32 @@ defineExpose({ reset, retry });
 </script>
 
 <style scoped>
-.ts-box {
-  display: grid;
-  gap: 10px;
-  min-width: 0;
-  padding: 12px;
-  border: 1px solid var(--line-blue, #dfe9f1);
-  border-radius: 18px;
-  background: linear-gradient(145deg, #fff, #f4faff);
-  box-shadow: inset 0 1px 0 #fff, 0 6px 18px rgba(83, 117, 143, .06);
-  transition: border-color 220ms var(--ease, ease), box-shadow 260ms var(--ease, ease), background 220ms var(--ease, ease);
-  animation: ts-arrive 280ms var(--ease, ease) both;
-}
-.ts-box.is-verified { border-color: #a9dcc6; background: linear-gradient(145deg, #fff, #f0faf5); box-shadow: inset 0 1px 0 #fff, 0 0 0 4px rgba(150, 215, 188, .14); }
-.ts-box.is-error { border-color: #efc4c4; background: linear-gradient(145deg, #fff, #fff6f6); }
-.ts-box__stage { position: relative; min-height: 65px; border-radius: 12px; overflow: hidden; }
+/* 组件本身没有外框和底色：Cloudflare 的验证框自带边框，再包一层卡片只会重复。 */
+.ts-box { display: grid; gap: 8px; min-width: 0; animation: ts-arrive 240ms var(--ease, ease) both; }
+.ts-box__stage { position: relative; min-height: 65px; }
 .ts-box__mount { width: 100%; min-height: 65px; transition: opacity 200ms var(--ease, ease); }
-.ts-box__mount.is-hidden { opacity: 0; pointer-events: none; position: absolute; inset: 0; }
-.ts-box__skeleton {
-  position: absolute; inset: 0; border-radius: 12px;
-  background: linear-gradient(100deg, #eef5fa 30%, #f9fcfe 50%, #eef5fa 70%) 0 0 / 220% 100%;
-  animation: ts-shimmer 1.4s linear infinite;
-}
-.ts-box__failure { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-height: 65px; padding: 8px 4px; color: var(--text-soft); font-size: 13px; line-height: 1.6; }
+.ts-box__mount.is-hidden { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.ts-box__skeleton { position: absolute; inset: 0; border: 1px solid var(--line-blue, #dfe9f1); border-radius: 6px; background: #eef3f7; animation: ts-pulse 1.2s ease-in-out infinite; }
+.ts-box__failure { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-height: 65px; padding: 8px 0; color: var(--text-soft); font-size: 13px; line-height: 1.6; }
 .ts-box__failure > span:nth-child(2) { flex: 1 1 140px; min-width: 0; overflow-wrap: anywhere; }
-.ts-box__status { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--text-soft); font-size: 12px; line-height: 1.6; }
-.ts-box__mark { display: inline-grid; place-items: center; flex: 0 0 18px; width: 18px; height: 18px; }
-.ts-box__mark--warn { border-radius: 50%; background: #fbe3e3; color: #b05252; font-size: 12px; font-weight: 700; }
-.ts-box__mark svg { width: 18px; height: 18px; padding: 2px; border-radius: 50%; background: #d6f0e4; fill: none; stroke: #2f8f67; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.ts-box__mark svg path { stroke-dasharray: 16; stroke-dashoffset: 16; animation: ts-check 320ms 80ms var(--ease, ease) forwards; }
-.ts-box__dot { width: 8px; height: 8px; border-radius: 50%; background: #9bc9e5; }
-.ts-box.is-expired .ts-box__dot { background: #e8c78a; }
-.ts-box__spinner { width: 14px; height: 14px; border: 2px solid #cfe3f0; border-top-color: #7fb7d8; border-radius: 50%; animation: ts-spin 800ms linear infinite; }
-@keyframes ts-arrive { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
-@keyframes ts-shimmer { to { background-position: -220% 0; } }
+.ts-box__status { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--text-soft); font-size: 12px; line-height: 1.6; transition: color 200ms var(--ease, ease); }
+.ts-box.is-verified .ts-box__status { color: #2c7a5a; }
+.ts-box.is-error .ts-box__status { color: #a24c4c; }
+.ts-box__mark { display: inline-grid; place-items: center; flex: 0 0 16px; width: 16px; height: 16px; }
+.ts-box__mark--warn { border-radius: 50%; background: #fbe3e3; color: #b05252; font-size: 11px; font-weight: 700; }
+.ts-box__mark svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.ts-box__mark svg path { stroke-dasharray: 16; stroke-dashoffset: 16; animation: ts-check 300ms 60ms var(--ease, ease) forwards; }
+.ts-box__dot { width: 7px; height: 7px; border-radius: 50%; background: #9bc9e5; }
+.ts-box.is-expired .ts-box__dot { background: #e0b96a; }
+.ts-box__spinner { width: 13px; height: 13px; border: 2px solid #d5e5f0; border-top-color: #7fb7d8; border-radius: 50%; animation: ts-spin 800ms linear infinite; }
+@keyframes ts-arrive { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes ts-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
 @keyframes ts-spin { to { transform: rotate(360deg); } }
 @keyframes ts-check { to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) {
   .ts-box, .ts-box__skeleton, .ts-box__spinner, .ts-box__mark svg path { animation: none; }
   .ts-box__mark svg path { stroke-dashoffset: 0; }
-  .ts-box, .ts-box__mount { transition: none; }
+  .ts-box__mount, .ts-box__status { transition: none; }
 }
 :global(html[data-motion="reduce"]) .ts-box, :global(html[data-motion="reduce"]) .ts-box__skeleton, :global(html[data-motion="reduce"]) .ts-box__spinner, :global(html[data-motion="reduce"]) .ts-box__mark svg path { animation: none; }
 :global(html[data-motion="reduce"]) .ts-box__mark svg path { stroke-dashoffset: 0; }
