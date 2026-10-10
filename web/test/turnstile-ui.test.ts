@@ -67,9 +67,8 @@ test("组件在 CSP 拦截时提示刷新页面，并清理组件与计时，不
 test("后台人机验证面板：路由需要安全写权限，入口在安全分组，密钥输入不从接口回填", () => {
   const routes = source("auth/adminRoutes.ts");
   assert.match(routes, /path: "human-check", name: "admin-human-check", meta: \{ permission: "system\.security\.write" \}/);
-  const shell = source("views/admin/AdminShell.vue");
-  assert.match(shell, /name: "admin-human-check", label: "人机验证"[^}]*permission: "system\.security\.write"/);
-  assert.match(shell, /"admin-human-check": "人机验证"/);
+  const model = source("admin/navModel.ts");
+  assert.match(model, /name: "admin-human-check", label: "人机验证"[^}]*permission: "system\.security\.write"[^}]*section: "security"/);
   const view = source("views/admin/HumanVerificationView.vue");
   // 后台登录一行固定显示内建验证码，且不提供开关。
   assert.match(view, /<li class="is-fixed">\s*<span>后台登录<\/span>\s*<span class="hv-routes__state">内建验证码<\/span>\s*<span class="hv-routes__fixed">固定<\/span>/);
