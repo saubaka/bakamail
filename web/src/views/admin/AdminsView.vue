@@ -39,12 +39,13 @@
       <p v-else-if="!loading && !loadError && !admins.length" class="admin-page-state">尚无管理员账号。</p>
       <div v-if="admins.length" class="admin-users-table-scroll" role="region" aria-label="管理员列表" tabindex="0">
         <table class="table">
-          <thead><tr><th>账号</th><th>角色</th><th>状态</th><th>最近登录</th><th><span class="sr-only">操作</span></th></tr></thead>
+          <thead><tr><th>账号</th><th>角色</th><th>状态</th><th>二步验证</th><th>最近登录</th><th><span class="sr-only">操作</span></th></tr></thead>
           <tbody>
             <tr v-for="row in admins" :key="row.id">
               <td><span class="admin-users-cell-label">账号</span>{{ row.username }}</td>
               <td><span class="admin-users-cell-label">角色</span>{{ row.role }}</td>
               <td><span class="admin-users-cell-label">状态</span>{{ row.is_active ? "启用" : "禁用" }}</td>
+              <td><span class="admin-users-cell-label">二步验证</span>{{ row.totp_enabled ? "已启用" : "未启用" }}</td>
               <td><span class="admin-users-cell-label">最近登录</span>{{ row.last_login_at ? new Date(row.last_login_at).toLocaleString("zh-CN") : "—" }}</td>
               <td class="table__actions">
                 <button class="button button--soft" type="button" :disabled="busy || loading" @click="setRole(row.id, row.role)">
@@ -54,6 +55,7 @@
                   {{ row.is_active ? "禁用" : "启用" }}
                 </button>
                 <button class="button button--soft" type="button" :disabled="busy || loading" @click="resetPassword(row.id)">改密码</button>
+                <button v-if="row.totp_enabled && row.username !== session.me?.username" class="button button--soft" type="button" :disabled="busy || loading" @click="resetTotp(row)">重置二步验证</button>
               </td>
             </tr>
           </tbody>
@@ -74,7 +76,7 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { ApiError, toast } from "../../api";
 import {
-  changeAdminRole, createAdminUser, listAdminUsers, resetAdminUserPassword, setAdminUserActive,
+  changeAdminRole, createAdminUser, listAdminUsers, resetAdminUserPassword, resetAdminUserTotp, setAdminUserActive,
 } from "../../api/admin.ts";
 import type { AdminRole, AdminRow } from "../../api/admin.ts";
 import PasswordField from "../../components/PasswordField.vue";
@@ -170,6 +172,26 @@ async function toggleActive(id: number, active: boolean): Promise<void> {
     await load();
   } catch (error) {
     toast(error instanceof ApiError ? error.message : "状态更新失败", "error");
+  } finally {
+    actionBusy.value = "";
+  }
+}
+
+async function resetTotp(row: AdminRow): Promise<void> {
+  if (busy.value || loading.value) return;
+  actionBusy.value = `totp:${row.id}`;
+  try {
+    if (!(await confirmDialog({
+      title: "重置二步验证",
+      message: `${row.username} 的二步验证和恢复码会被清除，对方现有的后台会话立即失效。对方之后只凭密码登录，请提醒其重新启用。`,
+      confirmLabel: "重置并下线",
+      tone: "danger",
+    }))) return;
+    await resetAdminUserTotp(row.id);
+    toast("已重置二步验证并让对方下线");
+    await load();
+  } catch (error) {
+    toast(error instanceof ApiError ? error.message : "重置失败", "error");
   } finally {
     actionBusy.value = "";
   }

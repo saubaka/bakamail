@@ -19,9 +19,12 @@ services:
     # Reap subprocess descendants after bounded CLI termination.
     init: true
     # 不允许进程通过 setuid 等方式获得更多权限，并限制进程数量，防止失控的子进程耗尽主机。
-    # 应用仍以 root 运行：账号命令要写入 maddy 数据卷，降权前须先核对该卷的属主。
+    # 应用仍以 root 运行：maddy 数据卷里的文件属主是 root，账号命令要写入它们，改成普通用户会写不进去。
     security_opt:
       - no-new-privileges:true
+    # 丢弃全部 Linux 能力：应用只绑定 8790 端口、写自己的数据卷和 maddy 数据卷（文件属主均为 root），不需要任何额外能力。
+    cap_drop:
+      - ALL
     pids_limit: 512
     env_file:
       - ./bakamail.env

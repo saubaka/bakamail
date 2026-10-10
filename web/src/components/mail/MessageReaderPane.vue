@@ -67,7 +67,7 @@
 import { computed, nextTick, onMounted, onBeforeUnmount, ref, useId, watch } from 'vue';
 import { formatSize } from '../../api';
 import { attachmentPath } from '../../api/mail';
-import { authenticationChecks, authenticationSummary, readerFrameDocument, sanitizeReaderHtml } from '../../mail/reader';
+import { authenticationChecks, authenticationSummary, pageScriptNonce, readerFrameDocument, sanitizeReaderHtml } from '../../mail/reader';
 import type { MessageDetail } from '../../mail/types';
 import { validScrollPosition, type ScrollPosition } from '../../mail/scrollIntent';
 const props = defineProps<{ detail: MessageDetail | null; loading: boolean; actionBusy: boolean; currentFolder: string; remoteImages: string }>();
@@ -89,7 +89,7 @@ const blockedImages = computed(() => safeContent.value.blocked);
 const frameDocument = computed(() => {
   const bytes = crypto.getRandomValues(new Uint8Array(24));
   const token = [...bytes].map(byte => byte.toString(16).padStart(2,'0')).join('');
-  return { token, html: readerFrameDocument(safeContent.value.html, allowImages.value, token) };
+  return { token, html: readerFrameDocument(safeContent.value.html, allowImages.value, token, pageScriptNonce() || token) };
 });
 const frameHtml = computed(() => frameDocument.value.html);
 function receiveScroll(event: MessageEvent) {

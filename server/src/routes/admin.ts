@@ -34,7 +34,10 @@ import {
   completeLoginAttempt,
   reserveLoginAttempt,
   failureLimit,
+  isIdentityBlocked,
   limitWindowMs,
+  loginLimitState,
+  recordLoginAttempt,
   unblockIdentity,
 } from "../security/rateLimit.ts";
 import { listAuditLogs, recordAudit } from "../security/audit.ts";
@@ -42,6 +45,7 @@ import {
   countAdmins,
   createAdmin,
   findAdminById,
+  type AdminUser,
   hasPermission,
   listAdmins,
   markAdminLogin,
@@ -53,6 +57,8 @@ import {
   verifyAdminCredentials,
 } from "../admin/accounts.ts";
 import { checkInvite, createInvite, listInvites, revokeInvite } from "../admin/invites.ts";
+import { beginTotpSetup, checkTicket, confirmTotpSetup, consumeTicket, disableTotp, issueLoginTicket, TICKET_TTL_MS,
+  totpEnabled, totpState, verifySecondFactor } from "../admin/totp.ts";
 import { mailboxStats, queueEntries, statsAvailable } from "../admin/mailstats.ts";
 import { hasLocalMailboxData, localMailboxOwners, purgeLocalMailboxData } from "../admin/accountCleanup.ts";
 import { domainCheck } from "../admin/domainCheck.ts";
@@ -73,7 +79,8 @@ import { isValidLocalAccount, normalizeMailboxAccount } from "../mail/session.ts
 import { passwordProblem } from "../security/passwords.ts";
 import { registrationLimits } from "../security/registration.ts";
 import { admitLogin, rejectLoginBusy } from "../security/loginGuard.ts";
-import { anonymousRequestBudget } from "../security/abuse.ts";
+import { humanVerificationRouter } from "./humanVerification.ts";
+import { anonymousRequestBudget, enforceBudget } from "../security/abuse.ts";
 import { appearanceRouter } from "./appearance.ts";
 import { inviteLimitsProblem } from '../../../shared/invitePolicy.ts';
 
@@ -95,6 +102,31 @@ adminRouter.get("/human-check", (request, response) => {
   });
 });
 
+/** 创建后台会话并下发 Cookie；密码直接登录和二步验证登录共用，保证两条路径的会话行为完全一致。 */
+function startAdminSession(request: Request, response: Response, admin: AdminUser, identity: string,
+  method: "password" | "totp" | "recovery"): void {
+  const created = createAdminSession(admin.id, identity, String(request.headers["user-agent"] ?? ""));
+  const previous = findAdminSession(parseCookies(request)[ADMIN_COOKIE] ?? "");
+  if (previous) revokeAdminSession(previous.id);
+  markAdminLogin(admin.id);
+  recordAudit({
+    actorType: "admin",
+    actor: admin.username,
+    action: "admin.login",
+    summary: `角色 ${admin.role}${method === "password" ? "" : `；二步验证（${method === "recovery" ? "恢复码" : "动态码"}）`}`,
+    requestId: requestId(request),
+    identityHash: identity,
+  });
+  appendCookie(response, sessionCookie(ADMIN_COOKIE, created.token, config.session.adminIdleMinutes * 60));
+  ok(response, {
+    username: admin.username,
+    role: admin.role,
+    permissions: permissionList(admin.role),
+    csrfToken: created.csrfToken,
+    expiresAt: created.expiresAt,
+  });
+}
+
 adminRouter.post("/auth/login", anonymousRequestBudget("admin-login"), async (request, response) => {
   const body = await readJson<{
     username?: string;
@@ -108,13 +140,13 @@ adminRouter.post("/auth/login", anonymousRequestBudget("admin-login"), async (re
   );
   const identity = fingerprint(ADMIN_LOGIN_PURPOSE, address);
   const username = String(body.username ?? "").trim().toLowerCase().slice(0, 200);
-  if (!admitLogin(ADMIN_LOGIN_PURPOSE, identity, username, fingerprint("auth-source", address),
-    String(body.humanNonce ?? ""), String(body.humanAnswer ?? ""), response)) return;
+  if (!(await admitLogin(ADMIN_LOGIN_PURPOSE, identity, username, fingerprint("auth-source", address),
+    String(body.humanNonce ?? ""), String(body.humanAnswer ?? ""), response))) return;
   const password = String(body.password ?? "");
   if (!username || !password || password.length > 200) { fail(response, 400, "请输入有效的账号名和密码"); return; }
   const attemptId = reserveLoginAttempt(ADMIN_LOGIN_PURPOSE, identity, username);
   if (attemptId === null) { rejectLoginBusy(response); return; }
-  let success = false;
+  let success = false, attemptFinished = false;
   try {
   await loginRiskBackoff(ADMIN_LOGIN_PURPOSE, identity, username);
   const verified = await verifyAdminCredentials(username, password);
@@ -132,35 +164,61 @@ adminRouter.post("/auth/login", anonymousRequestBudget("admin-login"), async (re
     return;
   }
 
-  const created = createAdminSession(
-    verified.admin.id,
-    identity,
-    String(request.headers["user-agent"] ?? ""),
-  );
-  const previous = findAdminSession(parseCookies(request)[ADMIN_COOKIE] ?? "");
-  if (previous) revokeAdminSession(previous.id);
-  markAdminLogin(verified.admin.id);
+  if (totpEnabled(verified.admin.id)) {
+    // 密码正确但还差第二因素：不创建会话，只签发一张短时、单次、绑定来源的票据。
+    completeLoginAttempt(attemptId, false, "totp-pending");
+    attemptFinished = true;
+    ok(response, { totpRequired: true, ticket: issueLoginTicket(verified.admin.id, identity), expiresInSeconds: TICKET_TTL_MS / 1000 });
+    return;
+  }
   success = true;
-  recordAudit({
-    actorType: "admin",
-    actor: verified.admin.username,
-    action: "admin.login",
-    summary: `角色 ${verified.admin.role}`,
-    requestId: requestId(request),
-    identityHash: identity,
-  });
-  appendCookie(
-    response,
-    sessionCookie(ADMIN_COOKIE, created.token, config.session.adminIdleMinutes * 60),
-  );
-  ok(response, {
-    username: verified.admin.username,
-    role: verified.admin.role,
-    permissions: permissionList(verified.admin.role),
-    csrfToken: created.csrfToken,
-    expiresAt: created.expiresAt,
-  });
-  } finally { completeLoginAttempt(attemptId, success, success ? "ok" : "interrupted"); }
+  startAdminSession(request, response, verified.admin, identity, "password");
+  } finally { if (!attemptFinished) completeLoginAttempt(attemptId, success, success ? "ok" : "interrupted"); }
+});
+
+/**
+ * 二步验证的第二步：用第一步签发的票据加动态码（或恢复码）换会话。
+ * 不再要求图形验证码（密码和验证码在第一步已通过），但沿用同一套来源冷却：猜错动态码计入失败，
+ * 来源被冷却时连正确的码也不接受；票据本身还限制 5 次尝试、5 分钟、只能用一次，并且绑定签发时的来源。
+ */
+adminRouter.post("/auth/login/totp", anonymousRequestBudget("admin-login"), async (request, response) => {
+  const body = await readJson<{ ticket?: string; code?: string }>(request, { maxBytes: 2048 });
+  const address = clientAddress(request.headers as Record<string, unknown>, request.socket.remoteAddress);
+  const identity = fingerprint(ADMIN_LOGIN_PURPOSE, address);
+  if (isIdentityBlocked(identity)) {
+    sendJson(response, 403, { ok: false, code: "source_blocked", data: null, error: "该来源已被禁止登录，请联系管理员" });
+    return;
+  }
+  const state = loginLimitState(ADMIN_LOGIN_PURPOSE, identity);
+  if (state.limited) {
+    response.setHeader("retry-after", String(state.retryAfterSeconds));
+    sendJson(response, 429, { ok: false, code: "login_cooldown", error: "失败次数过多，请等待冷却结束后再试",
+      data: { retryAfterSeconds: state.retryAfterSeconds } });
+    return;
+  }
+  const ticket = checkTicket(String(body.ticket ?? ""), identity);
+  if (!ticket.ok) {
+    fail(response, 401, "登录已超时或已失效，请重新输入账号和密码");
+    return;
+  }
+  const admin = findAdminById(ticket.adminId);
+  if (!admin || !admin.is_active) {
+    consumeTicket(ticket.id);
+    fail(response, 401, "管理员账号不可用");
+    return;
+  }
+  const method = verifySecondFactor(admin.id, String(body.code ?? ""));
+  if (!method) {
+    recordLoginAttempt(ADMIN_LOGIN_PURPOSE, identity, admin.username, false, "bad-totp");
+    fail(response, 401, "验证码不正确，请核对验证器应用中的 6 位数字，或使用恢复码");
+    return;
+  }
+  if (!consumeTicket(ticket.id)) {
+    fail(response, 401, "登录已失效，请重新输入账号和密码");
+    return;
+  }
+  recordLoginAttempt(ADMIN_LOGIN_PURPOSE, identity, admin.username, true, "ok");
+  startAdminSession(request, response, admin, identity, method);
 });
 
 adminRouter.post("/auth/logout", requireAdmin, requireCsrf, (request, response) => {
@@ -186,6 +244,52 @@ adminRouter.get("/auth/me", requireAdmin, (request, response) => {
 
 adminRouter.use(requireAdmin, requireCsrf);
 adminRouter.use(appearanceRouter);
+adminRouter.use(humanVerificationRouter);
+
+// ---- 我的二步验证（已登录管理员自助管理，需要 CSRF；停用必须再次提供密码和动态码） ----
+
+function totpBudget(request: Request): void {
+  enforceBudget("admin-totp", fingerprint("admin-totp", clientAddress(request.headers as Record<string, unknown>, request.socket.remoteAddress)));
+}
+
+adminRouter.get("/auth/totp", (request, response) => {
+  ok(response, totpState(request.admin!.admin.id));
+});
+
+adminRouter.post("/auth/totp/setup", (request, response) => {
+  totpBudget(request);
+  const admin = request.admin!.admin;
+  const setup = beginTotpSetup(admin.id, admin.username);
+  if (!setup) { fail(response, 409, "二步验证已经启用；如需重新绑定，请先停用再重新启用"); return; }
+  recordAudit({ actorType: "admin", actor: admin.username, action: "admin.totp.setup-started", targetType: "admin",
+    targetId: String(admin.id), requestId: requestId(request) });
+  ok(response, setup);
+});
+
+adminRouter.post("/auth/totp/enable", async (request, response) => {
+  totpBudget(request);
+  const admin = request.admin!.admin;
+  const body = await readJson<{ code?: string }>(request, { maxBytes: 1024 });
+  const recoveryCodes = confirmTotpSetup(admin.id, String(body.code ?? "").trim());
+  if (!recoveryCodes) { fail(response, 400, "验证码不正确，请核对验证器应用中的 6 位数字和手机时间后重试"); return; }
+  recordAudit({ actorType: "admin", actor: admin.username, action: "admin.totp.enabled", targetType: "admin",
+    targetId: String(admin.id), requestId: requestId(request) });
+  ok(response, { recoveryCodes });
+});
+
+adminRouter.post("/auth/totp/disable", async (request, response) => {
+  totpBudget(request);
+  const admin = request.admin!.admin;
+  const body = await readJson<{ password?: string; code?: string }>(request, { maxBytes: 2048 });
+  const password = String(body.password ?? "");
+  const checked = password && password.length <= 200 ? await verifyAdminCredentials(admin.username, password) : { ok: false as const };
+  if (!checked.ok) { fail(response, 401, "密码不正确"); return; }
+  if (!verifySecondFactor(admin.id, String(body.code ?? ""))) { fail(response, 401, "验证码不正确"); return; }
+  disableTotp(admin.id);
+  recordAudit({ actorType: "admin", actor: admin.username, action: "admin.totp.disabled", targetType: "admin",
+    targetId: String(admin.id), requestId: requestId(request) });
+  ok(response, { disabled: true });
+});
 
 // ---- 概览 ----
 
@@ -765,7 +869,7 @@ adminRouter.patch(
   requirePermission("system.admin.write"),
   async (request, response) => {
     const id = Number(request.params.id);
-    const body = await readJson<{ role?: string; active?: boolean; password?: string }>(request);
+    const body = await readJson<{ role?: string; active?: boolean; password?: string; resetTotp?: boolean }>(request);
     const target = findAdminById(id);
     if (!target) {
       fail(response, 404, "管理员不存在");
@@ -791,6 +895,12 @@ adminRouter.patch(
       fail(response, 409, "不能停用或降权最后一个超级管理员");
       return;
     }
+    if (body.resetTotp === true) {
+      // 设备丢失时由超级管理员代为重置。重置自己必须走“停用”流程（需要密码和动态码），避免被盗会话借此摘掉第二因素。
+      if (id === request.admin?.admin.id) { fail(response, 400, "请在“我的二步验证”里停用自己的二步验证"); return; }
+      disableTotp(id);
+      revokeAdminSessionsFor(id);
+    }
     if (body.role) setAdminRole(id, normalizeRole(body.role));
     if (typeof body.active === "boolean") {
       setAdminActive(id, body.active);
@@ -806,7 +916,7 @@ adminRouter.patch(
       action: "admin.update",
       targetType: "admin",
       targetId: String(id),
-      summary: JSON.stringify({ role: body.role, active: body.active, password: Boolean(body.password) }),
+      summary: JSON.stringify({ role: body.role, active: body.active, password: Boolean(body.password), resetTotp: body.resetTotp === true }),
       requestId: requestId(request),
     });
     ok(response, { updated: id });
