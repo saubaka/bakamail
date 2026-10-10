@@ -49,7 +49,7 @@
     </main>
     <footer class="login-footer">
       <p>© {{ year }} saubaka · BakaMail</p>
-      <span>给来信留一扇小窗。</span>
+      <span>自建邮局的网页端。</span>
     </footer>
   </div>
 </template>

@@ -82,17 +82,6 @@
 .intro-developer-note { padding-left: 30px; border-left: 1px solid var(--border-strong); }
 .intro-developer-note span { font-size: 10px; color: var(--text-soft); }
 .intro-developer-note p { margin: 12px 0; font-size: 18px; color: var(--text); }
-.intro-voices { padding: 86px 0 76px; scroll-margin-top: 30px; }
-.intro-voices-heading { display: flex; gap: 30px; justify-content: space-between; align-items: end; margin-bottom: 32px; }
-.intro-voices-heading h2 { margin: 0; }
-.intro-voices-heading > p { margin: 0 0 3px; font-size: 11px; color: var(--text-soft); }
-.intro-quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-.intro-quotes figure { margin: 0; padding-top: 26px; border-top: 1px solid var(--border-strong); }
-.intro-quotes blockquote { margin: 0 0 28px; font-size: 16px; line-height: 1.85; min-height: 90px; }
-.intro-quotes figcaption { display: flex; gap: 12px; align-items: center; font-size: 12px; }
-.intro-quotes small { display: block; font-size: 10px; color: var(--text-soft); margin-top: 2px; }
-.intro-quote-avatar { display: grid; place-items: center; width: 34px; height: 34px; background: var(--cloud-blue); border: 1px solid var(--border); border-radius: 50%; color: var(--text-soft); }
-.intro-quotes figure:nth-child(2) .intro-quote-avatar { background: var(--petal-pink); }
 .intro-faq { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 62px; padding: 60px 0 70px; border-top: 1px solid var(--border); }
 .intro-faq-items { width: 100%; min-width: 0; display: grid; gap: 12px; align-content: start; }
 .intro-page .intro-faq-card { width: 100%; max-width: 100%; min-width: 0; margin: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); box-shadow: none; }
@@ -167,11 +156,6 @@
   .intro-developer h2 { font-size: 22px; }
   .intro-developer p br { display: none; }
   .intro-developer-note { grid-column: 1 / -1; }
-  .intro-voices { padding: 54px 0 52px; }
-  .intro-voices-heading { display: block; margin-bottom: 28px; }
-  .intro-voices-heading > p { margin-top: 18px; }
-  .intro-quotes { grid-template-columns: 1fr; gap: 26px; }
-  .intro-quotes blockquote { min-height: 0; margin-bottom: 20px; }
   .intro-closing { padding: 46px 0 54px; }
   .intro-footer { display: grid; gap: 22px; padding: 28px 0; }
 }
