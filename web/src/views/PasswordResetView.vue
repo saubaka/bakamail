@@ -5,7 +5,7 @@
       <span class="soft-icon soft-icon--blue auth-icon" aria-hidden="true">↺</span>
       <span class="eyebrow">PASSWORD RESET</span>
       <h1 id="reset-title">申请重置密码</h1>
-      <p class="auth-description">提交后管理员会在后台处理。无论账号是否存在，页面都会返回相同结果。</p>
+      <p class="auth-description">提交后由管理员处理。无论账号是否存在，这里的提示都一样。</p>
       <form v-if="!accepted" class="form-grid auth-form" @submit.prevent="submit">
         <label class="field field--wide">
           <span class="field__label">账号名或完整邮箱</span>
@@ -18,7 +18,7 @@
       <div v-else class="content-state">
         <span class="soft-icon soft-icon--blue" aria-hidden="true">✓</span>
         <strong>申请已记录</strong>
-        <p>如果账号存在，管理员可以在后台为它设置新密码。</p>
+        <p>如果这个账号存在，管理员会为它设置新密码。</p>
       </div>
       <p class="hint-line"><router-link to="/login">返回登录</router-link></p>
     </section>

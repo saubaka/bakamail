@@ -399,7 +399,7 @@ async function createFolder(): Promise<void> {
   const mailboxAccount = account.value;
   const name = await promptDialog({
     title: "新建文件夹",
-    message: "输入一个便于识别的文件夹名称。最终是否可创建由邮局服务确认。",
+    message: "输入文件夹名称。能否创建以邮件服务器的结果为准。",
     fieldLabel: "文件夹名称",
     placeholder: "例如 项目归档",
     confirmLabel: "创建文件夹",

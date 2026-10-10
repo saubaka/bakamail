@@ -22,7 +22,7 @@
     <form v-if="state.saved" class="appearance-form" novalidate @submit.prevent="save">
       <fieldset class="appearance-display" :disabled="disabled">
         <legend class="appearance-legend">显示与关闭（秒）</legend>
-        <p class="appearance-help" id="appearance-display-help">定时支持 1–120 秒整数，从完整可读后开始计时，不包含动画；悬停、焦点、后台堆叠和隐藏页面暂停。手动关闭不是 0 秒。</p>
+        <p class="appearance-help" id="appearance-display-help">可设为 1–120 秒的整数，从通知完整显示后开始计时，不含动画时间。鼠标悬停、键盘聚焦、被其他通知盖住或页面在后台时会暂停计时。选“手动关闭”则一直显示，直到点关闭。</p>
         <div class="appearance-types">
           <section v-for="type in types" :key="type" class="appearance-type">
             <h3>{{ labels[type] }}</h3>
@@ -46,11 +46,11 @@
           <button class="button button--soft" type="button" @click="editor.displayPreset('gentle')">充裕阅读预设</button>
           <button class="button button--soft" type="button" @click="editor.displayPreset('default')">恢复显示默认</button>
         </div>
-        <p class="appearance-help">阅读预设仅修改显示：简短 3/4/6 秒，充裕 8/10/12 秒；均保留错误手动关闭和加载等待结束。不会改动下方动画。</p>
+        <p class="appearance-help">预设只改显示时间：简短为 3/4/6 秒，充裕为 8/10/12 秒（依次对应成功、提示、警告）。错误仍需手动关闭，加载仍等任务结束。下方的动画设置不受影响。</p>
       </fieldset>
       <fieldset class="appearance-motion" :disabled="disabled">
         <legend class="appearance-legend">动画与切换（毫秒）</legend>
-        <p class="appearance-help" id="appearance-help">支持 0（立即完成）。入场/退场 0–3000，文字切换 0–1000；系统或本机减少动画优先，不缩短阅读时间。</p>
+        <p class="appearance-help" id="appearance-help">可以填 0，表示没有动画。入场、退场最长 3000 毫秒，文字切换最长 1000 毫秒。系统或本机开启“减少动态效果”时以它为准；动画不会缩短阅读时间。</p>
         <div class="appearance-types">
           <section v-for="type in types" :key="type" class="appearance-type">
             <h3>{{ labels[type] }}</h3>
@@ -80,7 +80,7 @@
     </form>
     <section v-if="state.saved" class="appearance-preview" aria-labelledby="appearance-preview-heading">
       <h3 id="appearance-preview-heading">预览当前草稿</h3>
-      <p class="appearance-help">使用真实通知计时，不保存、不改全局、不发邮件。关闭预览会清理模拟任务；剩余前景秒数仅在可读且活跃时减少，不逐秒播报。</p>
+      <p class="appearance-help">预览使用真实的通知计时，不会保存，也不影响其他通知或邮件。关闭预览会清除模拟任务。剩余秒数只在通知可读、页面活跃时才会减少。</p>
       <div class="appearance-actions">
         <button v-for="tone in tones" :key="tone" class="button button--soft" type="button" :disabled="!canPreview" @click="preview(tone)">预览{{ labels[tone] }}</button>
         <button class="button button--soft" type="button" :disabled="!canPreview" @click="progress()">预览加载</button>
@@ -92,7 +92,7 @@
         <button class="button button--soft" type="button" @click="previews.finishWaiting">完成等待预览</button>
         <button class="button button--soft" type="button" @click="previews.clear">关闭所有预览</button>
       </div>
-      <p class="appearance-help">“加载收起后结果”需先选择加载定时收起，模拟任务在收起时间后完成；悬停或切到后台时会暂停收起时钟。普通错误及重试反馈遵从设置。唯一必须手动关闭的业务例外是“发送结果未确认”，避免误重发；关闭通知不会解除发送锁，仍须核对记录并人工确认。</p>
+      <p class="appearance-help">“加载收起后结果”要求加载提示设为定时收起，模拟任务会在收起之后才结束。悬停或页面在后台时，收起计时会暂停。普通错误和重试提示都按上面的设置显示。只有“发送结果未确认”必须手动关闭，以免重复发送；关闭通知不会解除发送锁，仍要核对记录后人工确认。</p>
       <div v-if="previewRows.length" class="appearance-preview-states" aria-label="预览计时状态" aria-live="off">
         <article v-for="row in previewRows" :key="row.id" class="appearance-preview-state">
           <strong>{{ row.label }} · {{ labels[row.type] }}</strong><span>{{ phaseName(row.phase) }} · 版本 {{ row.revision }}</span>

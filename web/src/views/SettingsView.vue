@@ -3,7 +3,7 @@
     <main id="main-content" class="page-shell mail-utility-shell" tabindex="-1">
       <section v-motion="{ kind: 'feature', reversible: false }" class="admin-panel mail-tool-panel">
         <div class="section-heading mail-tool-heading">
-          <div><span class="eyebrow">PREFERENCES</span><h1>邮箱设置</h1><p>这些偏好由 BakaMail 保存，不会直接写入邮局核心。</p></div>
+          <div><span class="eyebrow">PREFERENCES</span><h1>邮箱设置</h1><p>这些偏好保存在 BakaMail 里，不会修改邮件服务器上的设置。</p></div>
           <button class="button button--primary" type="button" :disabled="saving || !settingsLoaded" @click="save">{{ saving ? "正在保存…" : "保存设置" }}</button>
         </div>
         <div class="settings-grid">
@@ -36,7 +36,7 @@
             <textarea v-model="form.signature" rows="6" maxlength="2000" :disabled="saving || !settingsLoaded" placeholder="发送新邮件时可插入的签名"></textarea>
           </label>
         </div>
-        <p class="mail-notice">动效和性能模式选择后立即生效，仅保存在当前浏览器；其他邮箱偏好点击“保存设置”后由 BakaMail 后端保存。</p>
+        <p class="mail-notice">动效和性能模式选好就生效，只保存在当前浏览器；其他设置要点“保存设置”才会保存。</p>
         <p v-if="loading" class="mail-notice" role="status">正在读取邮箱设置…</p>
         <p v-if="error" v-capsule-notice class="field-error" role="alert">{{ error }}</p>
         <button v-if="error && !settingsLoaded" class="button button--soft" type="button" :disabled="loading" @click="load">{{ loading ? "正在重试…" : "重试读取设置" }}</button>
@@ -54,7 +54,7 @@
           </dl>
         </div>
         <div class="danger-zone">
-          <div><strong>退出所有设备</strong><p>吊销这个邮箱的全部网页登录会话，并断开当前 BFF 邮局连接。</p></div>
+          <div><strong>退出所有设备</strong><p>让这个邮箱在所有设备上的网页登录立即失效。</p></div>
           <button class="button button--danger" type="button" :disabled="logoutAllBusy" @click="logoutAll">{{ logoutAllBusy ? "正在退出…" : "退出所有设备" }}</button>
         </div>
       </section>

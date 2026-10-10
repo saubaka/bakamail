@@ -112,7 +112,7 @@ mailRouter.delete("/folders", requireCsrf, async (request, response) => {
   if (!session) return;
   const path = String(request.query.path ?? "");
   if (!path) {
-    fail(response, 400, "缺少 path");
+    fail(response, 400, "请选择要操作的文件夹");
     return;
   }
   const folder = await existingFolder(session, path);
@@ -137,7 +137,7 @@ mailRouter.post("/folders/empty", requireCsrf, async (request, response) => {
   if (!session) return;
   const body = await readJson<{ path?: string }>(request);
   const path = String(body.path ?? "");
-  if (!path) return fail(response, 400, "缺少 path");
+  if (!path) return fail(response, 400, "请选择要操作的文件夹");
   if (!(await existingFolder(session, path))) return fail(response, 404, "文件夹不存在");
   const removed = await session.emptyFolder(path);
   recordAudit({
@@ -157,7 +157,7 @@ mailRouter.post("/folders/subscribe", requireCsrf, async (request, response) => 
   if (!session) return;
   const body = await readJson<{ path?: string; subscribe?: boolean }>(request);
   const path = String(body.path ?? "");
-  if (!path) return fail(response, 400, "缺少 path");
+  if (!path) return fail(response, 400, "请选择要操作的文件夹");
   if (!(await existingFolder(session, path))) return fail(response, 404, "文件夹不存在");
   await session.subscribeFolder(path, body.subscribe !== false);
   ok(response, { path, subscribe: body.subscribe !== false });
@@ -389,7 +389,7 @@ mailRouter.post("/messages/flags", requireCsrf, async (request, response) => {
   const uids = (body.uids ?? []).map(Number).filter(Number.isFinite);
   const flags = (body.flags ?? ["\\Seen"]).filter((flag) => /^\\?[A-Za-z]+$/.test(flag));
   if (uids.length === 0 || flags.length === 0) {
-    fail(response, 400, "缺少 uids 或 flags");
+    fail(response, 400, "请先选择邮件");
     return;
   }
   await session.setFlags(folder, uids, flags, body.mode ?? "add");
@@ -403,7 +403,7 @@ mailRouter.post("/messages/move", requireCsrf, async (request, response) => {
   const uids = (body.uids ?? []).map(Number).filter(Number.isFinite);
   const target = String(body.target ?? "");
   if (uids.length === 0 || !target) {
-    fail(response, 400, "缺少 uids 或 target");
+    fail(response, 400, "请选择邮件和目标文件夹");
     return;
   }
   await session.move(String(body.folder ?? "INBOX"), uids, target);
@@ -426,7 +426,7 @@ mailRouter.post("/messages/delete", requireCsrf, async (request, response) => {
   const folder = String(body.folder ?? "INBOX");
   const uids = (body.uids ?? []).map(Number).filter(Number.isFinite);
   if (uids.length === 0) {
-    fail(response, 400, "缺少 uids");
+    fail(response, 400, "请先选择邮件");
     return;
   }
   try {
@@ -465,7 +465,7 @@ mailRouter.get("/search", async (request, response) => {
   const before = String(request.query.before ?? "");
   if (before) query.before = new Date(before);
   if (Object.keys(query).length === 0) {
-    fail(response, 400, "请至少给出一个搜索条件");
+    fail(response, 400, "请至少填写一个搜索条件");
     return;
   }
   try {

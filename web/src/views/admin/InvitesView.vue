@@ -4,7 +4,7 @@
       <div>
         <span class="eyebrow">邀请管理</span>
         <h2>邀请码</h2>
-        <p>明文邀请码只在创建成功后显示一次，列表只保留不可逆推的前缀。</p>
+        <p>完整邀请码只在创建后显示一次，列表里只保留前几位。</p>
       </div>
       <button class="button button--soft" type="button" :disabled="loading || creating || Boolean(revokingId)" @click="load">{{ loading ? "刷新中…" : "刷新" }}</button>
     </div>

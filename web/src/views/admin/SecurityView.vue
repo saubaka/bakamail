@@ -54,7 +54,7 @@
         </div>
       </form>
       <p class="mail-notice">
-        管理员每次登录均需验证码；邮箱登录按来源和账号风险升级验证。硬冷却仅作用于来源，不永久锁定账号，验证码不能越过冷却。请求预算与校验并发独立限制。
+        管理员每次登录都要填验证码；邮箱登录在失败较多时才要求验证码。冷却只针对来源，不会永久锁定账号，填了验证码也不能提前结束冷却。
       </p>
     </section>
 
@@ -89,7 +89,7 @@
     </section>
 
     <section v-motion="{ kind: 'compact', delay: 80 }" class="managed-page-card">
-      <div class="panel-heading"><div><h2>来源封禁与冷却</h2><p>包含手动封禁与自动冷却，仅显示不可逆指纹，不显示原始 IP。解除会记录在审计日志中，不清除请求预算。</p></div><button class="button button--soft" type="button" :disabled="panels.blocked.loading || Boolean(actionBusy)" @click="readBlocked">{{ panels.blocked.loading ? "读取中…" : "刷新" }}</button></div>
+      <div class="panel-heading"><div><h2>来源封禁与冷却</h2><p>包括手动封禁和自动冷却。页面只显示来源的指纹，不显示真实 IP。解除封禁会记入操作日志，但不会重置请求次数限制。</p></div><button class="button button--soft" type="button" :disabled="panels.blocked.loading || Boolean(actionBusy)" @click="readBlocked">{{ panels.blocked.loading ? "读取中…" : "刷新" }}</button></div>
       <p v-capsule-notice="{ action: { label: '重试读取', run: async () => { await readBlocked(); } } }" v-if="panels.blocked.error" class="mail-notice" role="alert">封禁列表读取失败：{{ panels.blocked.error }}{{ panels.blocked.loaded ? "；下方保留上次数据。" : "" }} <button class="button button--soft" type="button" :disabled="panels.blocked.loading" @click="readBlocked">重试读取</button></p>
       <p v-if="!panels.blocked.loaded && panels.blocked.loading" class="admin-page-state" role="status">正在读取封禁来源…</p>
       <div v-if="panels.blocked.loaded && blocked.length" class="table-scroll"><table class="admin-table">
@@ -326,7 +326,7 @@ async function block(identityHash: string): Promise<void> {
   try {
     if (!(await confirmDialog({
       title: "封禁登录来源",
-      message: "该登录类型下的匿名来源指纹将被禁止继续登录。原始 IP 不会显示在前端。",
+      message: "这个来源将被禁止继续登录。页面上不会显示它的真实 IP。",
       confirmLabel: "确认封禁",
       tone: "danger",
     }))) return;
@@ -363,7 +363,7 @@ async function unblock(identityHash: string): Promise<void> {
   try {
     if (!(await confirmDialog({
       title: "解除来源封禁",
-      message: "解除后，该来源的封禁或失败冷却会结束；请求预算、验证码和新的失败限速仍会生效。",
+      message: "解除后，这个来源的封禁或冷却会结束，但验证码和请求次数限制仍然有效。",
       confirmLabel: "确认解封",
     }))) return;
     await api("/api/admin/blocked-identities/unblock", { method: "POST", body: { identityHash } });

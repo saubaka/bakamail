@@ -8,7 +8,7 @@
           </span>
           <span class="login-product-name">BakaMail</span>
           <h1 id="admin-login-title">登录后台</h1>
-          <p>使用管理员账号，管理你的邮局。</p>
+          <p>请使用管理员账号登录。</p>
         </header>
         <form class="form-grid auth-form login-form" novalidate @submit.prevent="submit">
           <label class="field field--wide">

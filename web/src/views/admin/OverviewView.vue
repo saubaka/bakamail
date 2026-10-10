@@ -48,7 +48,7 @@
           <div>
             <span>邮件统计</span>
             <strong>{{ overview.statsAvailable ? "可用" : "未提供" }}</strong>
-            <small>{{ overview.statsAvailable ? "来自当前邮局数据卷" : "当前实例未挂载统计数据卷" }}</small>
+            <small>{{ overview.statsAvailable ? "来自邮局数据目录" : "当前没有挂载邮局数据目录" }}</small>
           </div>
           <div>
             <span>邮局操作方式</span>
@@ -61,7 +61,7 @@
             <small>过去 15 分钟失败 {{ overview.loginFailures15m }} 次，阈值 {{ overview.failureAlertThreshold }} 次</small>
           </div>
         </div>
-        <p v-if="!overview.statsAvailable" class="mail-notice">统计不可用不等于邮箱没有账号或邮件，请到服务器核对数据卷挂载。</p>
+        <p v-if="!overview.statsAvailable" class="mail-notice">统计不可用不代表没有账号或邮件，请到服务器上检查数据目录是否已挂载。</p>
       </section>
 
       <section v-motion="{ kind: 'compact', delay: 100 }" class="admin-panel baka-overview-panel" aria-labelledby="overview-actions-title">

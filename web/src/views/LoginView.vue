@@ -8,7 +8,7 @@
           </span>
           <span class="login-product-name">BakaMail</span>
           <h1 id="login-title">登录邮箱</h1>
-          <p>让每一封来信，都有自己的位置。</p>
+          <p>输入账号和密码，进入你的邮箱。</p>
         </header>
         <form class="form-grid auth-form login-form" novalidate @submit.prevent="submit">
         <label class="field field--wide">

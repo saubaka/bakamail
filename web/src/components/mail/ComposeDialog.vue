@@ -63,7 +63,7 @@ const sendStatus = computed(() => {
   const progress = sendProgress.value;
   if (!progress) return "正在准备邮件并等待当前草稿保存…";
   if (progress.phase === "awaiting-response") return "邮件数据已上传，正在等待邮局确认；此时尚未确认发送成功。";
-  if (progress.total === null) return "正在上传邮件数据（含附件），浏览器未提供可计算的进度…";
+  if (progress.total === null) return "正在上传邮件（含附件）…";
   return `邮件数据（含附件）上传：${uploadPercent.value}%`;
 });
 const dialogRef = ref<HTMLDialogElement | null>(null);
