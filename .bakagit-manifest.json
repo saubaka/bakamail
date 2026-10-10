@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "b68226fbfe297116b84f74b3b2e5b86c693e953cd401f27a9c0dfe467889c962",
+      "sha256": "763926a9e242a886f1ff8b93139a0f8301d2f5d00af957b6dfe6cab64cf4e0db",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "33be650b7bf80fb9e1c849eff70da9af96bec891d1a8e52385db27ae43004d04",
+      "sha256": "7680c2023f27c5306d38cfe6b9ef456e967a1ca8c50da45a3eff8a7d9fed72b0",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "0db027e75f11d5ec095d8bda9f7c2dbe04ffe0e0f92d9075489781bd26d6d9cb",
+      "sha256": "037f00cc887410d63712c1cc67aee31bf331d984af5edd64726ff0796d28f504",
       "executable": false
     },
     "README.md": {
@@ -148,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "cf59775d5db697d8438e4474b0cfb4933535cbf48943fa4748e637fabb8adbc0",
+      "sha256": "a8dfe0cee1345233d15ace2305c51268bd2898f6b5101ca5d6fb16777d016e52",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -194,6 +194,11 @@
     "server/src/admin/mailstats.ts": {
       "source": "server/src/admin/mailstats.ts",
       "sha256": "edf9665c78bc96687306c6436837d1be5ce3499242d169a4157cd59545a20588",
+      "executable": false
+    },
+    "server/src/admin/navBadges.ts": {
+      "source": "server/src/admin/navBadges.ts",
+      "sha256": "e515274ce83ee670fe51f06eecb771374914544603a0129925a181f839226847",
       "executable": false
     },
     "server/src/admin/totp.ts": {
@@ -283,7 +288,7 @@
     },
     "server/src/routes/admin.ts": {
       "source": "server/src/routes/admin.ts",
-      "sha256": "b570b65a2ec3a7a5e690da72ad553e78e34d9e7c2eafaa2e102ea728218f5e07",
+      "sha256": "5ad5ee63a1622c3402243c14bcf0c5d6e4944fee6e25c878e90322b6647b97d3",
       "executable": false
     },
     "server/src/routes/appearance.ts": {
@@ -486,6 +491,11 @@
       "sha256": "ff34fd59e3fc41b8b50ffa22034fa8895ccfa3d5cbb81d9a9f0f690e9fb39535",
       "executable": false
     },
+    "server/test/nav-badges.test.ts": {
+      "source": "server/test/nav-badges.test.ts",
+      "sha256": "88e3f8d27ef9df9240bf617bcd97b93810df0f10282f925f5e8b0c549d2b062c",
+      "executable": false
+    },
     "server/test/notification-display-phase2.test.ts": {
       "source": "server/test/notification-display-phase2.test.ts",
       "sha256": "ccfe65c94581e763c31c210aa7e01badafdfd16b8fddb14e8a3872403515b485",
@@ -548,7 +558,12 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "734c7d0f35359d69d458e640f612a32187a3c9bd62e17c70c5954a89c1f5e5b5",
+      "sha256": "e31ef92dc652eb2ecad0768f68b479ec3255cb56a2abd19dbd155e162f898c76",
+      "executable": false
+    },
+    "web/src/admin/navModel.ts": {
+      "source": "web/src/admin/navModel.ts",
+      "sha256": "3f85ec1d227d2718073458a14b9a91df672b32ace61d8ffb6a39db80aca376c5",
       "executable": false
     },
     "web/src/admin/notificationAppearanceEditor.ts": {
@@ -559,6 +574,21 @@
     "web/src/admin/notificationAppearancePreview.ts": {
       "source": "web/src/admin/notificationAppearancePreview.ts",
       "sha256": "d7ee26ab14b116380cd81391f80cde2f424bfb3f980c5190d3181de2901c73e4",
+      "executable": false
+    },
+    "web/src/admin/railSwipe.ts": {
+      "source": "web/src/admin/railSwipe.ts",
+      "sha256": "481b4e5be2236e5a2d1ff53d8fa6728564c4f865a7fe1d4cbfa38a06dc1ca78e",
+      "executable": false
+    },
+    "web/src/admin/shortcuts.ts": {
+      "source": "web/src/admin/shortcuts.ts",
+      "sha256": "9fdcc154af292fc8bf45d40a146e9d25641cd87d8ff2ffc6623ad8a85c9f72c6",
+      "executable": false
+    },
+    "web/src/admin/useRailBadges.ts": {
+      "source": "web/src/admin/useRailBadges.ts",
+      "sha256": "befed680c85d7b4a33d323298aaa3f76413bfb2553f16ce07cf1440f2a39aca8",
       "executable": false
     },
     "web/src/api.ts": {
@@ -661,9 +691,24 @@
       "sha256": "978ef99fca51d987f600ceb29875a9a43c2f3b2155b1c21696f05844b8b270df",
       "executable": false
     },
+    "web/src/components/admin/AdminCommandPalette.vue": {
+      "source": "web/src/components/admin/AdminCommandPalette.vue",
+      "sha256": "aed878fff0bd12c5a159690ada713931d579d5b283764fd91d6f5dde6df26c7e",
+      "executable": false
+    },
     "web/src/components/admin/AdminEntrySettings.vue": {
       "source": "web/src/components/admin/AdminEntrySettings.vue",
       "sha256": "d6c9688eb5b361fdea2cf7299db0867dc86144005816a92b2684a392bc8062f3",
+      "executable": false
+    },
+    "web/src/components/admin/AdminIcon.vue": {
+      "source": "web/src/components/admin/AdminIcon.vue",
+      "sha256": "a442ea4b47515a9508e91e3cb2c7cd96ab3ac71e464a02ae116b83f4e941b8df",
+      "executable": false
+    },
+    "web/src/components/admin/AdminRail.vue": {
+      "source": "web/src/components/admin/AdminRail.vue",
+      "sha256": "b75c6044fecd7104180a8c4ca4c896b031031f96aab346518938eccba750966b",
       "executable": false
     },
     "web/src/components/admin/NotificationAppearance.vue": {
@@ -898,7 +943,7 @@
     },
     "web/src/styles/admin.css": {
       "source": "web/src/styles/admin.css",
-      "sha256": "063db56014e375b35629bf9e9c0114b083fda47b4c813c5d46ea6bfa470935e0",
+      "sha256": "f19b835ed7ad1511d01cd541fd204dddf676e15379a45029da68364e0011c95b",
       "executable": false
     },
     "web/src/styles/app.css": {
@@ -1013,7 +1058,7 @@
     },
     "web/src/views/admin/AdminShell.vue": {
       "source": "web/src/views/admin/AdminShell.vue",
-      "sha256": "cd6915b8518002b99b96abc331278b005332d4abf731592137e568af79f30c39",
+      "sha256": "3c80e31d6901410f9fa3a7c021a355440db18a662bb1e6e360294f7aec8415f6",
       "executable": false
     },
     "web/src/views/admin/AdminsView.vue": {
@@ -1124,6 +1169,11 @@
     "web/test/admin-login-layout.test.ts": {
       "source": "web/test/admin-login-layout.test.ts",
       "sha256": "c1f31127e1c105515ba587b6f7e2ed79df9ba07dbab66e9d272d8e7bb76bcde2",
+      "executable": false
+    },
+    "web/test/admin-rail.test.ts": {
+      "source": "web/test/admin-rail.test.ts",
+      "sha256": "1ce1e88ff6f29977816e4f85010459d7fc5302f31ffd41f665306787825ff3df",
       "executable": false
     },
     "web/test/admin-session-logout.test.ts": {
@@ -1463,7 +1513,7 @@
     },
     "web/test/turnstile-ui.test.ts": {
       "source": "web/test/turnstile-ui.test.ts",
-      "sha256": "88d58f460c0aefe6580a100b5672ffda0e00f7b3e1b5920c3b68a734fb842ca9",
+      "sha256": "851c04ccf10af7fd1121042b39fbea646d6fa3c11f9eacd606a3cf731c7308a1",
       "executable": false
     },
     "web/test/upload-client.test.ts": {
