@@ -23,7 +23,7 @@ export function useRailBadges() {
     if (!force && Date.now() - last < MIN_GAP_MS) return;
     inflight = true;
     try {
-      const next = await api<RailBadges>("/api/admin/nav-badges");
+      const next = await api<RailBadges>("/api/admin/nav-badges", { quiet: true });
       if (active) { badges.value = next; last = Date.now(); }
     } catch { /* 角标是辅助信息，失败时保留旧值 */ }
     finally { inflight = false; }

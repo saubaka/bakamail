@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { NavigationFailureType, createRouter, createWebHistory, isNavigationFailure } from "vue-router";
+import { beginAdminNavigation, clearAdminNavigation } from "./admin/navigationState";
 import { useAdminSessionStore } from "./stores/adminSession";
 import { pinia } from "./stores/pinia";
 import { useSessionStore } from "./stores/session";
@@ -45,13 +46,27 @@ export function finishInstallation(base: string): void {
   installAdminRoutes(base);
 }
 
-router.beforeEach(async (to) => {
+// 第一个守卫是同步的：点击菜单的那一刻就记下目标，菜单高亮和顶部加载线立刻响应，
+// 服务端校验（下面的守卫）要几百毫秒到几秒，期间右侧保留旧页面。
+router.beforeEach((to, from) => {
+  if (to.meta.auth === "admin" && to.fullPath !== from.fullPath) beginAdminNavigation(to.name, to.fullPath);
+  return true;
+});
+
+/** 后台页面之间切换时，入口路径最多每分钟向服务端确认一次；身份校验仍然每次都做。 */
+const ENTRY_RECHECK_MS = 60_000;
+let entryCheckedAt = 0;
+
+router.beforeEach(async (to, from) => {
+  const reuseEntryCheck = to.meta.auth === "admin" && from.meta.auth === "admin" && installationReady
+    && Date.now() - entryCheckedAt < ENTRY_RECHECK_MS;
   // Fail closed on unavailable status, never render a fresh admin form on assumed defaults.
-  if (to.name !== "unavailable" && (!installationReady || to.name === "setup" || to.meta.auth === "admin" || to.name === "not-found" || to.name === "admin-login")) {
+  if (!reuseEntryCheck && to.name !== "unavailable" && (!installationReady || to.name === "setup" || to.meta.auth === "admin" || to.name === "not-found" || to.name === "admin-login")) {
     try {
       const status = await readInstallation(to.path, AbortSignal.timeout(15_000));
       if (!status.initialized) return to.name === "setup" ? true : { name: "setup", replace: true };
       installationReady = true;
+      entryCheckedAt = Date.now();
       if (status.entry && status.entry.adminBase !== configuredAdminBase) {
         installAdminRoutes(status.entry.adminBase);
         return { path: to.fullPath, replace: true };
@@ -72,6 +87,13 @@ router.beforeEach(async (to) => {
     return checkAdminEntry(() => session.restore(true), () => session.clear(), to.fullPath);
   }
   return true;
+});
+
+router.onError(() => { clearAdminNavigation(); });
+
+// 成功完成的导航一定是最新的一次；被新导航取代（cancelled）的不清，新导航自己会设置。
+router.afterEach((_to, _from, failure) => {
+  if (!failure || !isNavigationFailure(failure, NavigationFailureType.cancelled)) clearAdminNavigation();
 });
 
 router.afterEach(() => {
