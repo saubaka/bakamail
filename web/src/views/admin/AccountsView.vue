@@ -35,7 +35,7 @@
       </label>
     </div>
     <div class="table-scroll">
-    <table class="admin-table">
+    <table v-stack-table class="admin-table">
       <thead>
         <tr>
           <th>邮箱地址</th>
@@ -73,6 +73,7 @@
 import { computed, onMounted, ref } from "vue";
 import { ApiError, api, toast } from "../../api";
 import PasswordField from "../../components/PasswordField.vue";
+import { passwordProblem } from "../../auth/passwordRules.ts";
 import { promptDialog } from "../../dialog";
 import { useAdminSessionStore } from "../../stores/adminSession";
 
@@ -141,6 +142,9 @@ async function create(): Promise<void> {
   }
 }
 
+/** 服务端返回的修复项是内部英文标识，界面上显示中文名称。 */
+const repairedNames: Record<string, string> = { credential: "登录凭据", mailbox: "邮箱数据" };
+
 async function repair(row: Row): Promise<void> {
   let password = "";
   if (!row.hasCredential) {
@@ -150,6 +154,7 @@ async function repair(row: Row): Promise<void> {
       fieldLabel: "新密码",
       placeholder: "至少 10 位，不能是纯数字或纯字母",
       inputType: "password",
+      validate: passwordProblem,
       confirmLabel: "补建凭据",
       tone: "danger",
     })) ?? "";
@@ -170,7 +175,7 @@ async function repair(row: Row): Promise<void> {
       method: "POST",
       body: { account: row.mailbox, password, confirm: true },
     });
-    toast(`账号已修复：${result.repaired.join("、") || "状态已正常"}`);
+    toast(`账号已修复：${result.repaired.map((part) => repairedNames[part] ?? part).join("、") || "状态已正常"}`);
     await load();
   } catch (error) {
     toast(error instanceof ApiError ? error.message : "修复失败", "error");
@@ -184,6 +189,7 @@ async function resetPassword(mailbox: string): Promise<void> {
     fieldLabel: "新密码",
     placeholder: "至少 10 位，不能是纯数字或纯字母",
     inputType: "password",
+    validate: passwordProblem,
     confirmLabel: "重置并下线",
     tone: "danger",
   });

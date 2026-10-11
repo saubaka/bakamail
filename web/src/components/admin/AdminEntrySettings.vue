@@ -4,8 +4,9 @@
     <p v-if="loading" class="admin-page-state" role="status">正在读取入口设置…</p>
     <form v-if="loaded" class="form-grid" @submit.prevent="save">
       <label class="field field--wide"><span class="field__label">后台路径</span><input v-model="draft" maxlength="49" autocomplete="off" autocapitalize="none" spellcheck="false" :disabled="loading || saving || uncertain" aria-describedby="entry-settings-help" /><small id="entry-settings-help">使用 / 开头的单层路径，3–48 位小写字母、数字、短横线或下划线，首位字母。请在保存后更新书签。</small></label>
+      <p v-if="draftProblem" class="field-error field--wide" role="status">{{ draftProblem }}</p>
       <p class="hint-line">当前已保存入口：<a :href="savedUrl" @click.prevent="router.push(saved!.adminBase)">{{ savedUrl }}</a></p>
-      <button v-press-feedback="'submit'" type="submit" class="button button--primary" :disabled="loading || saving || uncertain || draft === saved?.adminBase" :aria-busy="saving">{{ saving ? "正在保存…" : "保存后台路径" }}</button>
+      <button v-press-feedback="'submit'" type="submit" class="button button--primary" :disabled="loading || saving || uncertain || draft === saved?.adminBase || Boolean(draftProblem)" :aria-busy="saving">{{ saving ? "正在保存…" : "保存后台路径" }}</button>
     </form>
     <p v-if="error" v-capsule-notice class="form-error" role="alert">{{ error }}</p>
     <button v-if="!loaded || error" class="button button--soft" type="button" :disabled="loading || saving" @click="load">重新读取已保存入口</button>
@@ -28,6 +29,8 @@ const saving = ref(false);
 const loaded = ref(false);
 const uncertain = ref(false);
 const error = ref("");
+// 输入时就提示不合法的路径并禁用保存，不必等服务端拒绝；没改动或为空时不提示。
+const draftProblem = computed(() => (draft.value && draft.value !== saved.value?.adminBase ? adminPathProblem(draft.value) : ""));
 const savedUrl = computed(() => saved.value ? `${window.location.origin}${saved.value.adminBase}` : "");
 let active = true;
 let controller: AbortController | undefined;

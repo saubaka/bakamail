@@ -99,3 +99,56 @@ test("两套轮廓线都使用共享几何：不再写死向内缩的固定值�
   // 每一处生成 SVG 轮廓线的代码都必须走共享几何，防止以后再出现一套内缩的实现。
   for (const file of ["motion.ts", "surfaceLines.ts"]) assert.match(source(file), /from "\.\/outlineGeometry\.ts"|from '\.\/outlineGeometry\.ts'/, file);
 });
+
+test("被裁剪的容器（弹窗等 overflow 非 visible）：线条只画在内边距盒内，圆角用内圆角，不再向外伸到会被切掉的边框区域", () => {
+  for (const radius of [16, 22, 26]) for (const stroke of [1.1, 1.25]) {
+    const g = computeOutline({ clientWidth: 502, clientHeight: 380, border: { left: 1, top: 1, right: 1, bottom: 1 }, radius, stroke, clipped: true });
+    assert.deepEqual([g.left, g.top, g.extraWidth, g.extraHeight], [0, 0, 0, 0], "stays inside the padding box");
+    assert.equal(g.viewWidth, 502);
+    assert.equal(g.viewHeight, 380);
+    near(g.rect.x + g.rect.width + stroke / 2, 502, "flush with the padding box edge");
+    near(g.rect.rx + stroke / 2, radius - 1, "outer radius equals the inner radius of the padding box");
+  }
+  // 没有边框时两种模式完全相同
+  const a = computeOutline({ clientWidth: 300, clientHeight: 100, border: { left: 0, top: 0, right: 0, bottom: 0 }, radius: 20, stroke: 1.2, clipped: true });
+  const b = computeOutline({ clientWidth: 300, clientHeight: 100, border: { left: 0, top: 0, right: 0, bottom: 0 }, radius: 20, stroke: 1.2 });
+  assert.deepEqual(a, b);
+});
+
+test("applyOutline 按 overflow 判断是否被裁剪，并给元素打上背景收回的标记", () => {
+  const original = (globalThis as { getComputedStyle?: unknown }).getComputedStyle;
+  const styles = new Map<unknown, Record<string, string>>();
+  (globalThis as { getComputedStyle: unknown }).getComputedStyle = (element: unknown) => styles.get(element) ?? {};
+  try {
+    const border = { borderLeftWidth: "1px", borderTopWidth: "1px", borderRightWidth: "1px", borderBottomWidth: "1px", borderTopLeftRadius: "22px" };
+    const scroller = { clientWidth: 502, clientHeight: 380, dataset: {} as Record<string, string> } as unknown as HTMLElement;
+    styles.set(scroller, { ...border, overflowX: "auto", overflowY: "auto" });
+    const svgA = fake(), rectA = fake();
+    styles.set(rectA, { strokeWidth: "1.25" });
+    applyOutline(svgA as unknown as SVGSVGElement, [rectA] as unknown as SVGRectElement[], scroller, scroller, 1.25);
+    assert.equal(svgA.attrs.viewBox, "0 0 502 380");
+    assert.equal(svgA.style.left, "0px");
+    assert.equal(svgA.style.width, "calc(100% + 0px)");
+    assert.equal((scroller as unknown as { dataset: Record<string, string> }).dataset.outlineBox, "padding");
+    assert.equal(rectA.attrs.rx, "20.375", "22 - 1 border - 0.625 half stroke");
+    const visible = { clientWidth: 502, clientHeight: 380, dataset: {} as Record<string, string> } as unknown as HTMLElement;
+    styles.set(visible, { ...border, overflowX: "visible", overflowY: "visible" });
+    const svgB = fake(), rectB = fake();
+    styles.set(rectB, { strokeWidth: "1.25" });
+    applyOutline(svgB as unknown as SVGSVGElement, [rectB] as unknown as SVGRectElement[], visible, visible, 1.25);
+    assert.equal(svgB.attrs.viewBox, "0 0 504 382");
+    assert.equal((visible as unknown as { dataset: Record<string, string> }).dataset.outlineBox, "border");
+    // 一个方向裁剪也算裁剪
+    const half = { clientWidth: 100, clientHeight: 50, dataset: {} as Record<string, string> } as unknown as HTMLElement;
+    styles.set(half, { ...border, overflowX: "visible", overflowY: "hidden" });
+    applyOutline(fake() as unknown as SVGSVGElement, [fake()] as unknown as SVGRectElement[], half, half, 1.25);
+    assert.equal((half as unknown as { dataset: Record<string, string> }).dataset.outlineBox, "padding");
+  } finally {
+    (globalThis as { getComputedStyle?: unknown }).getComputedStyle = original;
+  }
+});
+
+test("样式：被裁剪的元素把背景收回到内边距盒，且不会被后面的 background 简写覆盖", () => {
+  const css = source("styles/dashed-accent.css");
+  assert.match(css, /\[data-outline-box="padding"\] \{ background-clip: padding-box !important; \}/);
+});

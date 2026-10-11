@@ -24,7 +24,7 @@
         class="baka-overview-stat"
         :class="{ 'is-alert': metric.alert, 'is-unavailable': !metric.available }"
       >
-        <span class="baka-overview-stat__icon" aria-hidden="true">{{ metric.icon }}</span>
+        <span class="baka-overview-stat__icon" aria-hidden="true"><AdminIcon :name="metric.icon" :size="20" /></span>
         <div>
           <small>{{ metric.title }}</small>
           <strong>{{ metric.available ? metric.value : "未提供" }}</strong>
@@ -73,9 +73,9 @@
         </div>
         <div class="baka-overview__quick-actions">
           <router-link v-for="action in quickActions" :key="action.to.name" :to="action.to">
-            <span aria-hidden="true">{{ action.icon }}</span>
+            <AdminIcon :name="action.icon" :size="18" />
             {{ action.label }}
-            <span class="baka-overview__arrow" aria-hidden="true">↗</span>
+            <span class="baka-overview__arrow" aria-hidden="true"><AdminIcon name="chevron" :size="16" /></span>
           </router-link>
         </div>
       </section>
@@ -88,6 +88,8 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { api } from "../../api";
 import { useAdminSessionStore } from "../../stores/adminSession";
 import { ADMIN_PAGE_PATHS } from "../../../../shared/adminPaths";
+import AdminIcon from "../../components/admin/AdminIcon.vue";
+import type { IconName } from "../../admin/navModel";
 
 type Overview = {
   accounts: number;
@@ -117,24 +119,27 @@ const runnerLabel = computed(() => {
   if (overview.value?.maddyRunner === "disabled") return "未启用";
   return "未说明";
 });
-const metrics = computed(() => {
+type Metric = { title: string; value: number; hint: string; icon: IconName; available: boolean; alert: boolean };
+const metrics = computed<Metric[]>(() => {
   const data = overview.value;
   if (!data) return [];
   return [
-    { title: "邮箱账号", value: data.accounts, hint: "账号总数", icon: "☺", available: data.statsAvailable, alert: false },
-    { title: "邮件总数", value: data.messages, hint: "全部文件夹合计", icon: "✉", available: data.statsAvailable, alert: false },
-    { title: "未读邮件", value: data.unseen, hint: "所有账号合计", icon: "•", available: data.statsAvailable, alert: false },
-    { title: "出站队列", value: data.queueLength, hint: "待投递任务", icon: "↗", available: data.statsAvailable, alert: false },
-    { title: "15 分钟失败", value: data.loginFailures15m, hint: `告警阈值 ${data.failureAlertThreshold}`, icon: "!", available: true, alert: alertReached.value },
-    { title: "24 小时失败", value: data.recentFailures, hint: "登录与注册失败", icon: "◷", available: true, alert: false },
+    { title: "邮箱账号", value: data.accounts, hint: "账号总数", icon: "accounts", available: data.statsAvailable, alert: false },
+    { title: "邮件总数", value: data.messages, hint: "全部文件夹合计", icon: "mail", available: data.statsAvailable, alert: false },
+    { title: "未读邮件", value: data.unseen, hint: "所有账号合计", icon: "unread", available: data.statsAvailable, alert: false },
+    { title: "出站队列", value: data.queueLength, hint: "待投递任务", icon: "send", available: data.statsAvailable, alert: false },
+    { title: "15 分钟失败", value: data.loginFailures15m, hint: `告警阈值 ${data.failureAlertThreshold}`, icon: "alert", available: true, alert: alertReached.value },
+    { title: "24 小时失败", value: data.recentFailures, hint: "登录与注册失败", icon: "clock", available: true, alert: false },
   ];
 });
-const quickActions = computed(() => [
-  { to: { name: 'admin-accounts' }, label: "邮箱账号", icon: "☺", permission: "mail.account.read" },
-  { to: { name: 'admin-invites' }, label: "邀请码", icon: "✦", permission: "mail.invite.read" },
-  { to: { name: 'admin-mail-ops' }, label: "邮件运维", icon: "✉", permission: "mail.queue.read" },
-  { to: { name: 'admin-security' }, label: "安全中心", icon: "◇", permission: "system.audit.read" },
-].filter((action) => session.can(action.permission)));
+type QuickAction = { to: { name: string }; label: string; icon: IconName; permission: string };
+const quickActionList: QuickAction[] = [
+  { to: { name: 'admin-accounts' }, label: "邮箱账号", icon: "accounts", permission: "mail.account.read" },
+  { to: { name: 'admin-invites' }, label: "邀请码", icon: "invites", permission: "mail.invite.read" },
+  { to: { name: 'admin-mail-ops' }, label: "邮件运维", icon: "ops", permission: "mail.queue.read" },
+  { to: { name: 'admin-security' }, label: "安全中心", icon: "security", permission: "system.audit.read" },
+];
+const quickActions = computed(() => quickActionList.filter((action) => session.can(action.permission)));
 
 async function loadOverview(): Promise<void> {
   if (loading.value) return;

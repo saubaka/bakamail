@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "7618779ab419e36a403a00f0331b33461e78bb04fefa6fe80abc51dd8744b8fe",
+      "sha256": "a8aecbf76f56ed38af0644d3028df5f820d69958ea879cf058445c0b02f3c645",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "980eb9eb532a03b4171bc432ae5c65aae3b19617046249eddf8785560296a2f5",
+      "sha256": "47bf48f53af11fa70b0c628e9ab426e25fc8be55ae96d0b14a395d75c986ed71",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "ad96fa0f9bad664f876ff03b385864ab405aa31a0c622d5a313ab0b4d27c7065",
+      "sha256": "20caf4968561bcc167b1a8b6109bc32caf1870fcf2ce7f6fbff2d063222fce46",
       "executable": false
     },
     "README.md": {
@@ -148,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "02b04e9e787e176521b5eeceba931eecd15de97bdb42e0a862f80baa07c590a3",
+      "sha256": "61269b975976c9d1a6bdfdc22c2e1230549d90311b8036c09c898469a649df28",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -558,7 +558,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "5b1cc5b4b17102a70d64f8288f48cb286dad02314dbc4b15c2f58176ef05b59a",
+      "sha256": "86d03eda6e0f0a78d1bf43d2d6b69b5f4fd47daea432d98dc3b62b0f296b8121",
       "executable": false
     },
     "web/src/admin/navigationState.ts": {
@@ -568,7 +568,7 @@
     },
     "web/src/admin/navModel.ts": {
       "source": "web/src/admin/navModel.ts",
-      "sha256": "3f85ec1d227d2718073458a14b9a91df672b32ace61d8ffb6a39db80aca376c5",
+      "sha256": "f55dbf9d7248528f972e0dcd2c69e2b21dd3663b7848fc76e03c5127eb074f6b",
       "executable": false
     },
     "web/src/admin/notificationAppearanceEditor.ts": {
@@ -676,6 +676,11 @@
       "sha256": "cc18b3752bab0540af994413b19cc3d66f99cc8e1761a06b6c9d674ec2c098c5",
       "executable": false
     },
+    "web/src/auth/passwordRules.ts": {
+      "source": "web/src/auth/passwordRules.ts",
+      "sha256": "b67c7763da253b52e05ff14d44a46de168064ad0dd4e8c4782330dd3bd237b55",
+      "executable": false
+    },
     "web/src/auth/sessionProbe.ts": {
       "source": "web/src/auth/sessionProbe.ts",
       "sha256": "30f0f2622530c8d032909ca514683ddba21666eecff0480c2bf9781337e28293",
@@ -708,12 +713,12 @@
     },
     "web/src/components/admin/AdminEntrySettings.vue": {
       "source": "web/src/components/admin/AdminEntrySettings.vue",
-      "sha256": "d6c9688eb5b361fdea2cf7299db0867dc86144005816a92b2684a392bc8062f3",
+      "sha256": "d3b3d0c8e06339ff2a0918bc4fe6bfc239ae4ebb8d496588908e2c4aa44edd9d",
       "executable": false
     },
     "web/src/components/admin/AdminIcon.vue": {
       "source": "web/src/components/admin/AdminIcon.vue",
-      "sha256": "a442ea4b47515a9508e91e3cb2c7cd96ab3ac71e464a02ae116b83f4e941b8df",
+      "sha256": "cba6c6fbf85c460c40020992ce9fd8c6e03374a2ca6da7973cc8dc5884787881",
       "executable": false
     },
     "web/src/components/admin/AdminProgressLine.vue": {
@@ -738,7 +743,7 @@
     },
     "web/src/components/BakaDialog.vue": {
       "source": "web/src/components/BakaDialog.vue",
-      "sha256": "f4436450daa82d91563c1d68e892e226ed660bd1b29b45644792a55f981aa3de",
+      "sha256": "712545eb18f058436a668eff4c9b2bf123843e3673de28bd3796e3af25bd712f",
       "executable": false
     },
     "web/src/components/BrandMark.vue": {
@@ -803,7 +808,7 @@
     },
     "web/src/dialog.ts": {
       "source": "web/src/dialog.ts",
-      "sha256": "835a674a24027e7a3d6fcddf41001e0c29391910d7701ca75ff9f3bf71e140bd",
+      "sha256": "bc2065af807771342adc1ce5536fa840401c88ba2047e21d019499dd08ef61be",
       "executable": false
     },
     "web/src/intro/reveal.ts": {
@@ -863,7 +868,7 @@
     },
     "web/src/main.ts": {
       "source": "web/src/main.ts",
-      "sha256": "2124f17b7cc5a83a7a8f69bdcf87c4dd04408a98e43e6fed66ac169df6dc3e1b",
+      "sha256": "9014557068c88b678bc33c7e1bda6ddcc3ad69a01e870453512152a42aef6b5c",
       "executable": false
     },
     "web/src/motion.ts": {
@@ -893,7 +898,7 @@
     },
     "web/src/outlineGeometry.ts": {
       "source": "web/src/outlineGeometry.ts",
-      "sha256": "8b771e38f10151ca158db01fbe255311bfe045e370472a5e50a06f9c6aadb763",
+      "sha256": "f4f1fe521e66c702c2a80931bba6aea9dcbefa37cbb59e6ea967b600e2bcce77",
       "executable": false
     },
     "web/src/pressFeedback.ts": {
@@ -909,6 +914,11 @@
     "web/src/smoothHeight.ts": {
       "source": "web/src/smoothHeight.ts",
       "sha256": "15f0cdc7f9bfa571c3f00242d6d20a82e9ded9581700a65c5f593c028e95a724",
+      "executable": false
+    },
+    "web/src/stackTable.ts": {
+      "source": "web/src/stackTable.ts",
+      "sha256": "ef0c2159a24f03e487f0bb2db629d0f98901f7832957a33e43f8ddea29b0c2e5",
       "executable": false
     },
     "web/src/stores/adminSession.ts": {
@@ -963,7 +973,7 @@
     },
     "web/src/styles/admin.css": {
       "source": "web/src/styles/admin.css",
-      "sha256": "61a9fd7406b4e8fd1ac107ce98dd97dd4f4e59406c58a18a11a28e719d891c3f",
+      "sha256": "ac05165f8a6f9c196d1a143565124c09c82a482f0caeefe8d2f00055b6afdb73",
       "executable": false
     },
     "web/src/styles/app.css": {
@@ -973,7 +983,7 @@
     },
     "web/src/styles/dashed-accent.css": {
       "source": "web/src/styles/dashed-accent.css",
-      "sha256": "dc738b7d3ebf20ee65e3eda18966dee2bbe0df5d2964ea53ee5bd7eb3c220109",
+      "sha256": "4b7e1e4fd3594a882fb2a204d833108ea50d58ceb727cd7e49c4e09670ad821d",
       "executable": false
     },
     "web/src/styles/dialogs.css": {
@@ -1068,7 +1078,7 @@
     },
     "web/src/views/admin/AccountsView.vue": {
       "source": "web/src/views/admin/AccountsView.vue",
-      "sha256": "cd146049fb2146b5464bdde947e33a00195d9ceb85f54e79d47cf097e58d9a4a",
+      "sha256": "cb71a688656ebf9f50f7d2717550d649232c22e241940de202c1b2c5d68f0119",
       "executable": false
     },
     "web/src/views/admin/AdminLoginView.vue": {
@@ -1083,7 +1093,7 @@
     },
     "web/src/views/admin/AdminsView.vue": {
       "source": "web/src/views/admin/AdminsView.vue",
-      "sha256": "02fb400f8948f37b1517a2c9aaf2b6e38a7ac9b098cdd10fddfe1414c94eb426",
+      "sha256": "7be502422318fffada2e0ddd934a9916d80454edd4aa6aa9ec307c1f16a4f876",
       "executable": false
     },
     "web/src/views/admin/HumanVerificationView.vue": {
@@ -1093,22 +1103,22 @@
     },
     "web/src/views/admin/InvitesView.vue": {
       "source": "web/src/views/admin/InvitesView.vue",
-      "sha256": "81c9cbd322cfed433194102d5a8794172160393e996d6d5a7c2bfc8e0aab4912",
+      "sha256": "3c54f7acfb89535e9032841cca7500aa65e068f46478f59911b323710cb7ae73",
       "executable": false
     },
     "web/src/views/admin/MailOpsView.vue": {
       "source": "web/src/views/admin/MailOpsView.vue",
-      "sha256": "e296916fb176a638ad7f00349ad2447f6134ec959e7569e90024acd3c4ab09f1",
+      "sha256": "6d747c993fd8d4777f8b6afec9b0867b5afe4e2f269662914da2f6cfead1e9b3",
       "executable": false
     },
     "web/src/views/admin/OverviewView.vue": {
       "source": "web/src/views/admin/OverviewView.vue",
-      "sha256": "35b778cd55b8455458a2df557aac47707b6a6d75954b3974f0c9a3ba620dc5eb",
+      "sha256": "25d7d6ca8a181ce808b61f9b7114414114539a658ca53fa52d06ae5902e62807",
       "executable": false
     },
     "web/src/views/admin/SecurityView.vue": {
       "source": "web/src/views/admin/SecurityView.vue",
-      "sha256": "23c3f86a67c3f1bc4cd77798a82e8bcdea2009edbe43d70377d39c894764d0c0",
+      "sha256": "6d7baae234c0675a3d434d5af345c34962d1cf39e3b6018e0a832dc340695570",
       "executable": false
     },
     "web/src/views/admin/SystemView.vue": {
@@ -1184,6 +1194,11 @@
     "web/test/admin-entry.test.ts": {
       "source": "web/test/admin-entry.test.ts",
       "sha256": "39fe228a6247f7f40522e0a41295f4d7673aba8e1becf3d4d30b11e605c9933c",
+      "executable": false
+    },
+    "web/test/admin-layout.test.ts": {
+      "source": "web/test/admin-layout.test.ts",
+      "sha256": "edbbe2ceaf6bd4ec1f09886927ad9fcd22b37e275f114162f666c6bc3be3547f",
       "executable": false
     },
     "web/test/admin-login-layout.test.ts": {
@@ -1473,7 +1488,7 @@
     },
     "web/test/outline-geometry.test.ts": {
       "source": "web/test/outline-geometry.test.ts",
-      "sha256": "b9b5193536fb233dc03e41324cf883ba80d277c1eb1d0818471c293e447de73c",
+      "sha256": "e477373e61d8c97c9c8ea3f41073bb8267262b01a3bc016b372dc0007300df89",
       "executable": false
     },
     "web/test/preferences-store.test.ts": {

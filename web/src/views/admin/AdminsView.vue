@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="admin-page-stack">
     <section v-motion="{ kind: 'feature' }" class="managed-page-card" :aria-busy="loading">
       <header class="admin-users-heading">
         <h2>管理员</h2>
@@ -64,10 +64,10 @@
     </section>
     <section v-motion="{ kind: 'compact', delay: 60 }" class="managed-page-card">
       <h2>我的权限</h2>
-      <div class="check-row"><span class="badge">角色 {{ me.role }}</span></div>
-      <ul>
-        <li v-for="code in me.permissions" :key="code">{{ code }}</li>
-      </ul>
+      <div class="permission-cloud">
+        <span class="badge badge--blue">角色 {{ me.role }}</span>
+        <span v-for="code in me.permissions" :key="code" class="badge badge--gray">{{ code === "*" ? "全部权限（*）" : code }}</span>
+      </div>
     </section>
   </div>
 </template>
@@ -80,6 +80,7 @@ import {
 } from "../../api/admin.ts";
 import type { AdminRole, AdminRow } from "../../api/admin.ts";
 import PasswordField from "../../components/PasswordField.vue";
+import { passwordProblem, roleProblem } from "../../auth/passwordRules.ts";
 import { confirmDialog, promptDialog } from "../../dialog";
 import { useAdminSessionStore } from "../../stores/adminSession";
 
@@ -140,6 +141,7 @@ async function setRole(id: number, current: string): Promise<void> {
       message: "可用角色：superadmin（超级管理员）、admin（管理员）、auditor（只读审计）。",
       fieldLabel: "新角色",
       initialValue: current,
+      validate: roleProblem,
       confirmLabel: "更新角色",
     });
     if (!next) return;
@@ -207,6 +209,7 @@ async function resetPassword(id: number): Promise<void> {
       fieldLabel: "新密码",
       placeholder: "至少 10 位，不能是纯数字或纯字母",
       inputType: "password",
+      validate: passwordProblem,
       confirmLabel: "更新并下线",
       tone: "danger",
     });

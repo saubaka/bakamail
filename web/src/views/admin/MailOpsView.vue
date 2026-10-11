@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="admin-page-stack">
     <section v-motion="{ kind: 'feature' }" class="managed-page-card">
       <div class="panel-heading">
         <div><span class="eyebrow">DELIVERY</span><h2>出站队列</h2><p>显示邮局里正在排队、等待投递的邮件。</p></div>
@@ -13,7 +13,7 @@
       <p v-else-if="!queueLoaded && !queueError" class="admin-page-state">尚未读取队列。</p>
       <p v-if="queueLoaded && !queueStatsAvailable" class="mail-notice">读取不到邮局的数据目录，下面的队列结果不一定准确。空列表不代表没有积压，请到服务器上核对。</p>
       <p v-if="queueLoaded && queue.length === 0 && queueStatsAvailable" class="mail-empty">{{ queueError ? "上次成功采样时没有积压；当前状态未知" : "没有积压的投递任务" }}</p>
-      <div v-if="queueLoaded && queue.length > 0" class="table-scroll"><table class="admin-table">
+      <div v-if="queueLoaded && queue.length > 0" class="table-scroll"><table v-stack-table class="admin-table">
         <thead><tr><th>队列项</th><th>大小</th><th>写入时间</th></tr></thead>
         <tbody>
           <tr v-for="item in queue" :key="item.id">

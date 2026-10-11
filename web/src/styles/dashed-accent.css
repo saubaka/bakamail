@@ -54,3 +54,5 @@ dialog.modal.is-closing > .dash-outline .dash-outline__piece,.dock-menu.is-closi
 html:has(.mail-workspace)::before,html:has(.mail-workspace)::after { content:none!important; display:none!important; }
 @media(prefers-reduced-motion:reduce) { .dash-outline__piece { animation:none!important; transform:none!important; opacity:1; } }
 html:is([data-motion="reduce"],[data-performance="low"]) .dash-outline__piece { animation:none!important; transform:none!important; opacity:1; }
+/* 裁剪子元素的容器（如可滚动的弹窗）里，轮廓线只能画在内边距盒内；背景同样收回到内边距盒，线条才是最外沿。 */
+[data-outline-box="padding"] { background-clip: padding-box !important; }

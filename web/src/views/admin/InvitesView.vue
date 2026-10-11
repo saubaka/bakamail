@@ -105,7 +105,7 @@
           <td data-label="最近使用／占用">{{ row.used_by || "—" }}<small v-if="row.used_at" class="invite-cell-note">{{ short(row.used_at) }}</small></td>
           <td data-label="操作">
             <button
-              v-if="canWrite && !row.revoked_at"
+              v-if="canWrite && (statusKey(row) === 'available' || statusKey(row) === 'reserved')"
               class="button button--soft"
               type="button"
               :disabled="creating || loading || revokingId !== null"
@@ -311,7 +311,10 @@ onBeforeUnmount(() => { active = false; });
 .invite-overview { display:flex; flex-wrap:wrap; gap:8px 20px; margin:12px 0 16px; color:var(--text-soft); font-size:12px; }
 .invite-status { display:inline-flex; padding:5px 9px; border:1px solid var(--line-blue); border-radius:var(--radius-pill); background:transparent; }
 .invite-table-scroll { max-width:100%; }
-.invite-table td { vertical-align:top; max-width:240px; white-space:normal; overflow-wrap:anywhere; line-height:1.7; }
+/* 短内容（人名、日期、状态、次数）不换行；只有备注、绑定地址、最近使用这类可能很长的格子才折行。 */
+.invite-table td { vertical-align:middle; white-space:nowrap; line-height:1.7; }
+.invite-table td[data-label="前缀"], .invite-table td[data-label="绑定"], .invite-table td[data-label="最近使用／占用"] { min-width:140px; max-width:240px; white-space:normal; overflow-wrap:anywhere; }
+.invite-table .invite-status { white-space:nowrap; }
 .invite-table code { white-space:nowrap; }
 .invite-usage strong { font-weight:600; white-space:nowrap; }
 .invite-usage small,.invite-cell-note { display:block; color:var(--text-soft); font-size:11px; line-height:1.7; margin-top:3px; }
