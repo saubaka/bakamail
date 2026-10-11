@@ -6,7 +6,7 @@ const source=(name:string)=>readFileSync(new URL(`../src/${name}`,import.meta.ur
 test('实线几何实际随尺寸变化、四分段复用、卸载断开观察器且移除SVG',()=>{
   const originalDocument=globalThis.document, originalStyle=globalThis.getComputedStyle, originalObserver=globalThis.ResizeObserver;
   const made:any[]=[];let callback:()=>void=()=>{},disconnected=0,removed=0;
-  function node(){const n={attrs:new Map<string,string>(),classList:{add(...values:string[]){n.attrs.set('classes',values.join(' '));}},children:[] as any[],setAttribute(k:string,v:string){n.attrs.set(k,v);},append(child:any){n.children.push(child);},remove(){removed++;}};made.push(n);return n;}
+  function node(){const n={attrs:new Map<string,string>(),style:{} as Record<string,string>,classList:{add(...values:string[]){n.attrs.set('classes',values.join(' '));}},children:[] as any[],setAttribute(k:string,v:string){n.attrs.set(k,v);},append(child:any){n.children.push(child);},remove(){removed++;}};made.push(n);return n;}
   globalThis.document={createElementNS:()=>node()} as unknown as Document;
   globalThis.getComputedStyle=()=>({borderTopLeftRadius:'22px'}) as CSSStyleDeclaration;
   globalThis.ResizeObserver=class { constructor(fn:()=>void){callback=fn;} observe(){} disconnect(){disconnected++;} } as unknown as typeof ResizeObserver;
@@ -14,10 +14,12 @@ test('实线几何实际随尺寸变化、四分段复用、卸载断开观察�
   try{
     const stop=attachSurfaceLines(element as unknown as HTMLElement);
     assert.equal(made.length,5); assert.equal(made[0].attrs.get('viewBox'),'0 0 80 42');
-    assert.equal(made[1].attrs.get('width'),'77');assert.equal(made[1].attrs.get('rx'),'21');
+    // 线条外沿贴着元素外沿：中心线内缩半个线宽（默认 1.25 的一半），圆角被短边一半限制。
+    assert.equal(made[0].style.left,'0px');assert.equal(made[0].style.width,'calc(100% + 0px)');
+    assert.equal(made[1].attrs.get('x'),'0.625');assert.equal(made[1].attrs.get('width'),'78.75');assert.equal(made[1].attrs.get('rx'),'20.375');
     assert.equal(attachSurfaceLines(element as unknown as HTMLElement),stop);assert.equal(made.length,5);
     element.clientWidth=120;callback();assert.equal(made[0].attrs.get('viewBox'),'0 0 120 42');
-    assert.equal(made[1].attrs.get('width'),'117');assert.equal(made[0].attrs.get('aria-hidden'),'true');
+    assert.equal(made[1].attrs.get('width'),'118.75');assert.equal(made[0].attrs.get('aria-hidden'),'true');
     stop();assert.equal(disconnected,1);assert.equal(removed,1);
   }finally{globalThis.document=originalDocument;globalThis.getComputedStyle=originalStyle;globalThis.ResizeObserver=originalObserver;}
 });

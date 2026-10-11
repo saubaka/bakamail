@@ -1,3 +1,4 @@
+import { applyOutline } from './outlineGeometry.ts';
 const NS = 'http://www.w3.org/2000/svg';
 const surfaces = new WeakMap<HTMLElement, { svg: SVGSVGElement; dispose: () => void; measure: () => void }>();
 /** A bounded, pointer-transparent four-part outline. Geometry is measured, never mail data. */
@@ -12,10 +13,9 @@ export function attachSurfaceLines(element: HTMLElement): () => void {
   });
   element.append(svg);
   function measure() {
-    const width = Math.max(1,element.clientWidth), height = Math.max(1,element.clientHeight);
-    const radius = Number.parseFloat(getComputedStyle(element).borderTopLeftRadius) || 12;
-    svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
-    pieces.forEach(rect => { rect.setAttribute('x','1.5');rect.setAttribute('y','1.5');rect.setAttribute('width',String(Math.max(0,width-3)));rect.setAttribute('height',String(Math.max(0,height-3)));rect.setAttribute('rx',String(Math.min(radius,width/2,height/2))); });
+    // 宿主 span 铺满父元素的内边距盒，边框和圆角属于父元素；弹窗等直接挂载的元素就是自己。
+    const reference = element.classList?.contains('line-outline-host') ? (element.parentElement ?? element) : element;
+    applyOutline(svg, pieces, reference, element, 1.25);
   }
   const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(measure);
   observer?.observe(element); measure();
