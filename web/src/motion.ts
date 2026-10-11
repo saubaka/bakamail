@@ -1,4 +1,5 @@
 import type { Directive, DirectiveBinding } from "vue";
+import { applyOutline } from "./outlineGeometry.ts";
 
 type MotionKind = "feature" | "compact" | "control";
 type MotionOptions = {
@@ -123,17 +124,8 @@ function createOutline(element: HTMLElement): { outline: SVGSVGElement; path: SV
 }
 
 function configureGeometry(element: HTMLElement, outline: SVGSVGElement, path: SVGRectElement): void {
-  const width = Math.max(1, element.clientWidth);
-  const height = Math.max(1, element.clientHeight);
-  const radius = Math.max(0, Number.parseFloat(getComputedStyle(element).borderTopLeftRadius) || 0);
-  const inset = 0.75;
-  outline.setAttribute("viewBox", `0 0 ${width} ${height}`);
-  path.setAttribute("x", String(inset));
-  path.setAttribute("y", String(inset));
-  path.setAttribute("width", String(Math.max(0, width - inset * 2)));
-  path.setAttribute("height", String(Math.max(0, height - inset * 2)));
-  path.setAttribute("rx", String(Math.min(radius, width / 2, height / 2)));
-  path.setAttribute("ry", String(Math.min(radius, width / 2, height / 2)));
+  // 线条贴着元素最外沿（含边框），背景不会在线条外面多出一圈；细节见 outlineGeometry.ts。
+  applyOutline(outline, [path], element, element, 1.2);
 }
 
 function play(record: MotionRecord, forward: boolean, element: HTMLElement): void {

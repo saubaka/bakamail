@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "dcd90b4537bda381db326b92fbc483d54b0782abfe466d65dcfb6a6dfadd003f",
+      "sha256": "7618779ab419e36a403a00f0331b33461e78bb04fefa6fe80abc51dd8744b8fe",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "f51f0df241cea8defedbe50254558bde36247ab7f0cd74ef515f1de9c8514b15",
+      "sha256": "980eb9eb532a03b4171bc432ae5c65aae3b19617046249eddf8785560296a2f5",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "49877b21dcda63a79ae018cad42517d08a00d7e582c7012214e44c407b5bae2a",
+      "sha256": "ad96fa0f9bad664f876ff03b385864ab405aa31a0c622d5a313ab0b4d27c7065",
       "executable": false
     },
     "README.md": {
@@ -148,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "92254d59aa9e5025080a02a55ab6a47446db68b4b86f300cc2c76158e6cb6e71",
+      "sha256": "02b04e9e787e176521b5eeceba931eecd15de97bdb42e0a862f80baa07c590a3",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -558,7 +558,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "bd407276b9f1a1a69dfb7a88987f10d0e05d2b9e957dc8159f8a1eeb65b5de0d",
+      "sha256": "5b1cc5b4b17102a70d64f8288f48cb286dad02314dbc4b15c2f58176ef05b59a",
       "executable": false
     },
     "web/src/admin/navigationState.ts": {
@@ -868,7 +868,7 @@
     },
     "web/src/motion.ts": {
       "source": "web/src/motion.ts",
-      "sha256": "0d490e4ba97480af14a133e4ce8d1453bdfcad70992197de0440f5da96bb24a3",
+      "sha256": "a13585397585ca363a5033334762a3688edb1c8922b1ad985c076a74a67dd291",
       "executable": false
     },
     "web/src/notificationConfig.ts": {
@@ -889,6 +889,11 @@
     "web/src/notificationTiming.ts": {
       "source": "web/src/notificationTiming.ts",
       "sha256": "dfa9e9f8977239255bfea3f2cecbf4e159c318ff4d1156bc13fd834ecbeb6d15",
+      "executable": false
+    },
+    "web/src/outlineGeometry.ts": {
+      "source": "web/src/outlineGeometry.ts",
+      "sha256": "8b771e38f10151ca158db01fbe255311bfe045e370472a5e50a06f9c6aadb763",
       "executable": false
     },
     "web/src/pressFeedback.ts": {
@@ -1053,7 +1058,7 @@
     },
     "web/src/surfaceLines.ts": {
       "source": "web/src/surfaceLines.ts",
-      "sha256": "86897ab30743cad2f969d15a62e7580ef596f90498f4a760b8e5e03fdb4606ee",
+      "sha256": "c332768fe34fe05ab294df1d70efcc71c16758140b2925f186cb4ae9c44a4948",
       "executable": false
     },
     "web/src/themeControls.ts": {
@@ -1243,7 +1248,7 @@
     },
     "web/test/dashed-accent.test.ts": {
       "source": "web/test/dashed-accent.test.ts",
-      "sha256": "21b728c171cb43a153b5519004e7d7fd3098764b6ff0376f41d5e073375b2ed7",
+      "sha256": "60699e10669afc26de321aaa638d70d4eddcf1b9dd5aec72e780c81dfb27ecef",
       "executable": false
     },
     "web/test/dialog-lifecycle.test.ts": {
@@ -1464,6 +1469,11 @@
     "web/test/notification-outline.test.ts": {
       "source": "web/test/notification-outline.test.ts",
       "sha256": "9e36302d9d5762f7b942fd1495dc103a267e35db819f7d96e610650da01282ed",
+      "executable": false
+    },
+    "web/test/outline-geometry.test.ts": {
+      "source": "web/test/outline-geometry.test.ts",
+      "sha256": "b9b5193536fb233dc03e41324cf883ba80d277c1eb1d0818471c293e447de73c",
       "executable": false
     },
     "web/test/preferences-store.test.ts": {
