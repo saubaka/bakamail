@@ -44,3 +44,15 @@ test("生产路由的全局导航完成钩子为所有页面恢复同一标题�
   assert.equal(checks, routes.length);
   assert.doesNotMatch(source, /routeTitles/);
 });
+
+test("首页没有开发者栏：导航只剩功能介绍和常见问题，且每个导航锚点都对应页面里真实存在的区块", () => {
+  const intro = readFileSync(new URL("../src/views/IntroView.vue", import.meta.url), "utf8");
+  const css = readFileSync(new URL("../src/styles/intro.css", import.meta.url), "utf8");
+  assert.doesNotMatch(intro, /开发者|id="developer"|developer-title|intro-developer/);
+  assert.doesNotMatch(css, /intro-developer/, "its styles are gone too");
+  const nav = intro.match(/<nav class="intro-nav"[^>]*>([\s\S]*?)<\/nav>/)![1]!;
+  const anchors = [...nav.matchAll(/href="#([a-z-]+)"/g)].map((match) => match[1]!);
+  assert.deepEqual(anchors, ["about", "faq"]);
+  for (const anchor of anchors) assert.match(intro, new RegExp(`<section id="${anchor}"`), `#${anchor} must exist`);
+  assert.equal(css.split("{").length, css.split("}").length, "stylesheet braces stay balanced");
+});

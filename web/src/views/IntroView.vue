@@ -4,7 +4,7 @@
     <header class="intro-header">
       <router-link class="intro-brand" to="/" aria-label="BakaMail 首页"><BrandMark subtitle="自建邮局的网页端" /></router-link>
       <nav class="intro-nav" aria-label="项目导航">
-        <a href="#about">功能介绍</a><a href="#developer">开发者</a><a href="#faq">常见问题</a>
+        <a href="#about">功能介绍</a><a href="#faq">常见问题</a>
       </nav>
     </header>
 
@@ -52,12 +52,6 @@
             <article><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="5" width="21" height="17" rx="3" /><rect x="20" y="13" width="10" height="16" rx="2" /><path d="M8 27h9M12 22v5" /></svg><h3>手机上也能用</h3><p>页面会按屏幕宽度调整，在手机和电脑上都能正常阅读、回复邮件。</p></article>
           </div>
         </div>
-      </section>
-
-      <section id="developer" v-intro-reveal class="intro-developer" aria-labelledby="developer-title">
-        <div class="intro-developer-monogram" aria-hidden="true">S<span>✳</span></div>
-        <div><p class="intro-kicker">开发者</p><h2 id="developer-title">saubaka</h2><p>BakaMail 是我自己开发和维护的项目。自建邮局能正常收发之后，我想让它用起来也顺手，就做了这个网页端。</p></div>
-        <div class="intro-developer-note"><span>使用说明</span><p>需要邀请码，或者遇到问题，请联系本站管理员。</p></div>
       </section>
 
       <section id="faq" v-intro-reveal class="intro-faq" aria-labelledby="faq-title"><div><p class="intro-kicker">开始之前</p><h2 id="faq-title">常见问题</h2></div><div class="intro-faq-items">
