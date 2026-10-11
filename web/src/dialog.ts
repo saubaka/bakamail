@@ -30,6 +30,8 @@ export type DialogOptions = {
   initialValue?: string;
   inputType?: "text" | "password";
   requiredText?: string;
+  /** 返回不符合的原因；空字符串表示通过。有原因时确认按钮保持禁用，并在输入框下面显示原因。 */
+  validate?: (value: string) => string;
 };
 
 export const dialogState = reactive({
@@ -45,6 +47,7 @@ export const dialogState = reactive({
   value: "",
   inputType: "text" as "text" | "password",
   requiredText: "",
+  validate: undefined as ((value: string) => string) | undefined,
 });
 
 let resolver: ((value: boolean | string | null) => void) | null = null;
@@ -64,6 +67,7 @@ function requestDialog(mode: DialogMode, options: DialogOptions): Promise<boolea
     value: options.initialValue ?? "",
     inputType: options.inputType ?? "text",
     requiredText: options.requiredText ?? "",
+    validate: options.validate,
   });
   return new Promise((resolve) => {
     resolver = resolve;

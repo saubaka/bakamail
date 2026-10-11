@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="admin-page-stack">
     <TotpSettings />
     <section v-motion="{ kind: 'compact', delay: 40 }" class="managed-page-card">
       <div class="panel-heading">
@@ -66,7 +66,7 @@
       </div>
       <p v-capsule-notice="{ action: { label: '重试读取', run: async () => { await readLogins(); } } }" v-if="panels.logins.error" class="mail-notice" role="alert">登录记录读取失败：{{ panels.logins.error }}{{ panels.logins.loaded ? "；下方为上次数据。" : "" }} <button class="button button--soft" type="button" :disabled="panels.logins.loading" @click="readLogins">重试读取</button></p>
       <p v-if="!panels.logins.loaded && panels.logins.loading" class="admin-page-state" role="status">正在读取登录记录…</p>
-      <div v-if="panels.logins.loaded" class="table-scroll"><table class="admin-table">
+      <div v-if="panels.logins.loaded" class="table-scroll"><table v-stack-table class="admin-table">
         <thead><tr><th>时间</th><th>类型</th><th>账号</th><th>匿名来源指纹</th><th>结果</th><th>原因</th><th></th></tr></thead>
         <tbody>
           <tr v-for="row in filteredLogins" :key="row.id">
@@ -93,7 +93,7 @@
       <div class="panel-heading"><div><h2>来源封禁与冷却</h2><p>包括手动封禁和自动冷却。页面只显示来源的指纹，不显示真实 IP。解除封禁会记入操作日志，但不会重置请求次数限制。</p></div><button class="button button--soft" type="button" :disabled="panels.blocked.loading || Boolean(actionBusy)" @click="readBlocked">{{ panels.blocked.loading ? "读取中…" : "刷新" }}</button></div>
       <p v-capsule-notice="{ action: { label: '重试读取', run: async () => { await readBlocked(); } } }" v-if="panels.blocked.error" class="mail-notice" role="alert">封禁列表读取失败：{{ panels.blocked.error }}{{ panels.blocked.loaded ? "；下方保留上次数据。" : "" }} <button class="button button--soft" type="button" :disabled="panels.blocked.loading" @click="readBlocked">重试读取</button></p>
       <p v-if="!panels.blocked.loaded && panels.blocked.loading" class="admin-page-state" role="status">正在读取封禁来源…</p>
-      <div v-if="panels.blocked.loaded && blocked.length" class="table-scroll"><table class="admin-table">
+      <div v-if="panels.blocked.loaded && blocked.length" class="table-scroll"><table v-stack-table class="admin-table">
         <thead><tr><th>指纹</th><th>类型</th><th>原因</th><th>操作者</th><th>封禁时间</th><th></th></tr></thead>
         <tbody>
           <tr v-for="row in blocked" :key="row.identity_hash">
@@ -113,7 +113,7 @@
       <div class="panel-heading"><div><h2>操作日志</h2><p>审计记录只读，不提供修改或删除。</p></div><label class="field admin-inline-filter"><span class="field__label">筛选</span><input v-model="auditQuery" type="search" placeholder="操作、对象或摘要" /></label></div>
       <p v-capsule-notice="{ action: { label: '重试读取', run: async () => { await readAudits(); } } }" v-if="panels.audits.error" class="mail-notice" role="alert">操作日志读取失败：{{ panels.audits.error }}{{ panels.audits.loaded ? "；下方为上次数据。" : "" }} <button class="button button--soft" type="button" :disabled="panels.audits.loading" @click="readAudits">重试读取</button></p>
       <p v-if="!panels.audits.loaded && panels.audits.loading" class="admin-page-state" role="status">正在读取操作日志…</p>
-      <div v-if="panels.audits.loaded" class="table-scroll"><table class="admin-table">
+      <div v-if="panels.audits.loaded" class="table-scroll"><table v-stack-table class="admin-table">
         <thead><tr><th>时间</th><th>操作者</th><th>操作</th><th>对象</th><th>摘要</th><th>请求 ID</th></tr></thead>
         <tbody>
           <tr v-for="row in filteredAudits" :key="row.id">
@@ -133,7 +133,7 @@
       <h2>在线后台会话</h2>
       <p v-capsule-notice="{ action: { label: '重试读取', run: async () => { await readSessions(); } } }" v-if="panels.sessions.error" class="mail-notice" role="alert">在线会话读取失败：{{ panels.sessions.error }}{{ panels.sessions.loaded ? "；下方保留上次数据。" : "" }} <button class="button button--soft" type="button" :disabled="panels.sessions.loading" @click="readSessions">重试读取</button></p>
       <p v-if="!panels.sessions.loaded && panels.sessions.loading" class="admin-page-state" role="status">正在读取在线会话…</p>
-      <div v-if="panels.sessions.loaded && sessions.length" class="table-scroll"><table class="admin-table">
+      <div v-if="panels.sessions.loaded && sessions.length" class="table-scroll"><table v-stack-table class="admin-table">
         <thead><tr><th>管理员</th><th>客户端</th><th>建立时间</th><th>最近活动</th><th>到期</th><th></th></tr></thead>
         <tbody>
           <tr v-for="row in sessions" :key="row.id">

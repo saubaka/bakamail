@@ -31,6 +31,7 @@
         <p v-if="dialogState.requiredText" class="dialog-required-hint">
           请输入 <strong>{{ dialogState.requiredText }}</strong> 以继续。
         </p>
+        <p v-if="problem" class="dialog-problem" role="status">{{ problem }}</p>
         <div class="button-row dialog-actions">
           <button class="button button--soft" type="button" @click="cancel">
             {{ dialogState.cancelLabel }}
@@ -59,9 +60,13 @@ const showField = computed(() => dialogState.mode === "prompt" || Boolean(dialog
 const fieldLabel = computed(() =>
   dialogState.fieldLabel || (dialogState.requiredText ? "确认文字" : "请输入"),
 );
+// 密码原样提交：首尾的空格也是密码的一部分，不能被悄悄去掉；其他文字输入仍然去掉首尾空白。
+const isSecret = computed(() => dialogState.inputType === "password");
+const submitted = (): string => (isSecret.value ? dialogState.value : dialogState.value.trim());
+const problem = computed(() => (dialogState.mode === "prompt" && dialogState.value && dialogState.validate ? dialogState.validate(submitted()) : ""));
 const canSubmit = computed(() => {
   if (dialogState.requiredText) return dialogState.value.trim() === dialogState.requiredText;
-  if (dialogState.mode === "prompt") return dialogState.value.trim().length > 0;
+  if (dialogState.mode === "prompt") return submitted().length > 0 && !problem.value;
   return true;
 });
 
@@ -85,7 +90,7 @@ function cancel(): void {
 
 function submit(): void {
   if (!canSubmit.value) return;
-  settleDialog(dialogState.mode === "prompt" ? dialogState.value.trim() : true);
+  settleDialog(dialogState.mode === "prompt" ? submitted() : true);
 }
 
 function onBackdrop(event: MouseEvent): void {

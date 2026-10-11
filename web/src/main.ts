@@ -8,6 +8,7 @@ import { capsuleFeedbackDirective } from "./capsuleFeedback";
 import { initializeNotifications, disposeNotifications } from "./notifications";
 import { initializeUiConfig, uiConfigClient } from "./notificationConfig";
 import { initializeThemeValidation, themedControlDirective } from "./themeControls";
+import { stackTableDirective } from "./stackTable";
 import "./styles/vendor/project1-app.css";
 import "./styles/vendor/project1-small-window-theme.css";
 import "./styles/mail-overrides.css";
@@ -37,7 +38,8 @@ const app = createApp(App)
   .directive("motion", motionDirective)
   .directive("press-feedback", pressFeedbackDirective)
   .directive("capsule-notice", capsuleFeedbackDirective)
-  .directive("theme-control", themedControlDirective);
+  .directive("theme-control", themedControlDirective)
+  .directive("stack-table", stackTableDirective);
 app.onUnmount(() => { disposeUiConfig(); disposeConfigBoundary(); disposeNotifications(); });
 window.addEventListener('pagehide', event => {
   if (!event.persisted) { disposeUiConfig(); disposeConfigBoundary(); disposeNotifications(); }

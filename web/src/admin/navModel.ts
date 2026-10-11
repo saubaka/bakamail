@@ -1,7 +1,8 @@
 /** 后台导航的唯一数据源：侧栏、跳转面板、快捷键和页面标题都从这里生成。 */
 export type IconName =
   | "overview" | "accounts" | "invites" | "ops" | "security" | "human" | "admins" | "system"
-  | "logout" | "mail" | "search" | "panel" | "return";
+  | "logout" | "mail" | "search" | "panel" | "return"
+  | "send" | "alert" | "clock" | "unread" | "chevron";
 
 export type RailBadgeKey = "accounts" | "security";
 

@@ -664,3 +664,57 @@ html[data-performance="low"] .admin-panel-enter-active > * > * { animation: none
   .admin-progress, .admin-progress__bar { transition: none; }
 }
 html[data-motion="reduce"] .admin-progress, html[data-motion="reduce"] .admin-progress__bar { transition: none; }
+
+/* ---- 后台页面版式：卡片间距、按钮尺寸与位置、表格、弹窗间距 ---- */
+
+/* 页面里有多张卡片时统一间距；裸 <div> 根元素用 admin-page-stack，多根节点的页面由路由容器兜底。 */
+.admin-page-stack { display: grid; gap: 20px; align-content: start; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.admin-route-panel { display: grid; gap: 20px; align-content: start; grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 700px) { .admin-page-stack, .admin-route-panel { gap: 14px; } }
+
+/* 大卡片是静态内容，悬停时不上浮（与描边动画的变换叠在一起会抖动）；底色用纯色。 */
+.admin-main .managed-page-card { background-color: var(--surface); background-image: none; }
+.admin-main .managed-page-card:hover { transform: none; }
+/* 基座把它当作“等高卡片网格”的格子（最小高度 264px、三行拉伸）；后台里它只是内容容器，高度应由内容决定。 */
+.admin-main .managed-page-card { grid-template-rows: none; grid-auto-rows: auto; align-content: start; min-height: 0; height: auto; }
+.admin-table thead { background: var(--surface-soft); }
+
+/* 网格或卡片里的直接子按钮不再被拉成整行或整列高：按内容宽度、靠起点放置。 */
+.admin-main :is(.form-grid, .managed-page-card, .admin-panel) > .button { justify-self: start; align-self: start; width: auto; }
+.admin-main .compose-grid__row { align-items: flex-end; }
+.admin-main .compose-grid__row > .button { flex: 0 0 auto; align-self: flex-end; height: 48px; min-height: 48px; padding-inline: 22px; white-space: nowrap; }
+@media (max-width: 700px) {
+  .admin-main .compose-grid__row { flex-wrap: wrap; }
+  .admin-main .compose-grid__row > .field { flex: 1 1 100%; }
+  .admin-main .compose-grid__row > .button { flex: 1 1 100%; }
+}
+
+/* 表格行内的操作按钮：紧凑、同一尺寸、不换行。 */
+.admin-table td { vertical-align: middle; }
+.admin-table td .button { min-height: 34px; padding: 0 14px; border-radius: 12px; font-size: 12px; white-space: nowrap; }
+.admin-table td .button + .button { margin-left: 8px; }
+.admin-table .table__actions { white-space: nowrap; }
+
+/* 确认/输入弹窗：外边距和网格间距不再叠加，纵向间距均匀。 */
+.baka-confirm-dialog .app-system-dialog__field { margin-bottom: 0; }
+.baka-confirm-dialog .dialog-required-hint { margin: 0; }
+.baka-confirm-dialog .dialog-actions { margin-top: 6px; }
+.baka-confirm-dialog .dialog-problem { margin: 0; color: var(--danger-700); font-size: 12px; line-height: 1.6; }
+
+/* ---- 窄屏表格：每行一张卡片（列名由 stackTable.ts 写入 data-label），操作按钮不再跑到屏幕外 ---- */
+@media (max-width: 700px) {
+  .table-scroll:has(> .is-stackable) { overflow: visible; border: 0; background: transparent; }
+  .is-stackable, .is-stackable tbody, .is-stackable tr, .is-stackable td { display: block; width: 100%; }
+  .is-stackable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .is-stackable tbody tr { margin: 0 0 10px; padding: 6px 14px; border: 1px solid var(--line-blue); border-radius: 16px; background: var(--surface); }
+  .is-stackable tbody tr.is-warning-row { background: var(--danger-100); }
+  .admin-table.is-stackable .is-warning-row td { background: transparent; }
+  .is-stackable td { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 8px 0; border: 0; border-top: 1px solid var(--line-blue); text-align: right; white-space: normal; overflow-wrap: anywhere; }
+  .is-stackable td:first-child { border-top: 0; }
+  .is-stackable td::before { content: attr(data-label); flex: 0 0 auto; margin-right: auto; padding-right: 8px; color: var(--text-soft); font-size: 12px; text-align: left; }
+  .is-stackable td:not([data-label])::before { content: none; }
+  .is-stackable td .button + .button { margin-left: 0; }
+}
+/* 筛选栏里两列等高拉伸时，多出的高度不能被分给标签行，否则两个标签高低不一。 */
+.admin-filter-bar { align-items: start; }
+.admin-filter-bar .field { align-content: start; }

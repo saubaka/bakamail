@@ -15,6 +15,13 @@ export type OutlineInput = {
   radius: number;
   /** 线宽，CSS 像素（线条使用 non-scaling-stroke）。 */
   stroke: number;
+  /**
+   * 元素是否裁剪子元素（overflow 不是 visible，例如可滚动的弹窗）。
+   * 裁剪发生在内边距盒边缘，伸到边框上的那部分线条会被切掉，还会撑出多余的滚动区域，
+   * 所以这种元素里线条只能画在内边距盒里；同时元素的背景要收回到内边距盒（见 dashed-accent.css），
+   * 这样线条依旧是元素最外沿，背景不会外露。
+   */
+  clipped?: boolean;
 };
 
 export type OutlineGeometry = {
@@ -30,17 +37,20 @@ export type OutlineGeometry = {
 };
 
 export function computeOutline(input: OutlineInput): OutlineGeometry {
-  const { border, stroke } = input;
+  const { stroke } = input;
+  const border = input.clipped ? { left: 0, top: 0, right: 0, bottom: 0 } : input.border;
+  // 被裁剪时覆盖的是内边距盒，它的圆角是外圆角减去边框宽度。
+  const radius = input.clipped ? Math.max(0, input.radius - Math.max(input.border.left, input.border.top)) : input.radius;
   const half = stroke / 2;
   const viewWidth = Math.max(1, input.clientWidth + border.left + border.right);
   const viewHeight = Math.max(1, input.clientHeight + border.top + border.bottom);
   // 线条中心线内缩半个线宽，外沿恰好贴着元素外沿；外半径 = 中心线半径 + 半个线宽。
-  const rx = Math.max(0, Math.min(input.radius - half, (viewWidth - stroke) / 2, (viewHeight - stroke) / 2));
+  const rx = Math.max(0, Math.min(radius - half, (viewWidth - stroke) / 2, (viewHeight - stroke) / 2));
   return {
     viewWidth,
     viewHeight,
-    left: -border.left,
-    top: -border.top,
+    left: 0 - border.left,
+    top: 0 - border.top,
     extraWidth: border.left + border.right,
     extraHeight: border.top + border.bottom,
     rect: {
@@ -73,13 +83,18 @@ export function applyOutline(
   const style = getComputedStyle(reference);
   const first = shapes[0];
   const measuredStroke = first ? px(getComputedStyle(first).strokeWidth) : 0;
+  const clips = (value?: string): boolean => Boolean(value) && value !== "visible";
+  const clipped = clips(style.overflowX) || clips(style.overflowY);
   const geometry = computeOutline({
+    clipped,
     clientWidth: container.clientWidth,
     clientHeight: container.clientHeight,
     border: { left: px(style.borderLeftWidth), top: px(style.borderTopWidth), right: px(style.borderRightWidth), bottom: px(style.borderBottomWidth) },
     radius: px(style.borderTopLeftRadius),
     stroke: measuredStroke > 0 ? measuredStroke : fallbackStroke,
   });
+  // 样式用这个标记让被裁剪的元素把背景收回到内边距盒，线条才是它真正的最外沿。
+  if (reference.dataset) reference.dataset.outlineBox = clipped ? "padding" : "border";
   svg.setAttribute("viewBox", `0 0 ${geometry.viewWidth} ${geometry.viewHeight}`);
   // 百分比相对定位参照盒的实际（含小数）尺寸，替换元素也会按它撑开；不用整数的 clientWidth 以免右、下边缘短一截。
   svg.style.left = `${geometry.left}px`;
