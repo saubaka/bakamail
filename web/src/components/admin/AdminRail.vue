@@ -40,7 +40,7 @@
           <li v-for="item in section.items" :key="item.name" :style="{ '--i': order.get(item.name) }">
             <router-link
               class="admin-rail__link"
-              :class="{ 'is-current': current === item.name }"
+              :class="{ 'is-current': active === item.name }"
               :to="{ name: item.name }"
               :title="collapsed ? `${item.label}（g ${item.shortcut}）` : `g ${item.shortcut}`"
               :aria-keyshortcuts="`g ${item.shortcut}`"
@@ -78,6 +78,8 @@ import type { RailBadgeKey, RailSection } from "../../admin/navModel";
 const props = defineProps<{
   sections: RailSection[];
   current: string;
+  /** 已点击但服务端校验还没完成的目标页；菜单先于页面响应。 */
+  pending?: string;
   badges: Partial<Record<RailBadgeKey, number>>;
   collapsed: boolean;
   open: boolean;
@@ -96,6 +98,7 @@ let observer: ResizeObserver | null = null;
 let frame = 0;
 
 const modifier = typeof navigator !== "undefined" && /mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent) ? "⌘" : "Ctrl";
+const active = computed(() => props.pending || props.current);
 const order = computed(() => new Map(props.sections.flatMap((section) => section.items).map((item, index) => [item.name, index])));
 const count = (key?: RailBadgeKey): number => (key ? props.badges[key] ?? 0 : 0);
 const indicatorStyle = computed(() => ({
@@ -113,7 +116,7 @@ function measure(): void {
   indicator.visible = true;
 }
 
-watch(() => [props.current, props.sections, props.collapsed, props.compact], async () => { await nextTick(); measure(); }, { flush: "post" });
+watch(() => [active.value, props.sections, props.collapsed, props.compact], async () => { await nextTick(); measure(); }, { flush: "post" });
 
 onMounted(() => {
   measure();

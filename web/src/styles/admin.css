@@ -640,3 +640,27 @@ html[data-motion="reduce"] .palette-enter-active .palette__panel, html[data-moti
   .palette { padding-top: 12vh; }
   .palette__group { display: none; }
 }
+
+/* ---- 顶部加载线：纯色线条，先快后慢，完成时补满再淡出 ---- */
+.admin-progress { position: fixed; z-index: 95; top: 0; left: var(--rail-w, 0px); right: 0; height: 3px; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity 220ms var(--ease), left 260ms var(--ease); }
+.admin-progress.is-visible { opacity: 1; }
+.admin-progress__bar { width: 100%; height: 100%; border-radius: 0 3px 3px 0; background: var(--blue-600); transform: scaleX(var(--p, 0)); transform-origin: 0 50%; transition: transform 260ms var(--ease); }
+.admin-progress.is-idle .admin-progress__bar, .admin-progress.is-idle { transition: none; }
+@media (max-width: 900px) { .admin-progress { left: 0; } }
+
+/* ---- 新页面入场：页面内的各块依次升起 ---- */
+@keyframes admin-rise { from { opacity: 0; transform: translate3d(0, 12px, 0); } to { opacity: 1; transform: none; } }
+.admin-panel-enter-active > * > * { animation: admin-rise 340ms var(--ease) both; }
+.admin-panel-enter-active > * > :nth-child(2) { animation-delay: 50ms; }
+.admin-panel-enter-active > * > :nth-child(3) { animation-delay: 100ms; }
+.admin-panel-enter-active > * > :nth-child(4) { animation-delay: 150ms; }
+.admin-panel-enter-active > * > :nth-child(5) { animation-delay: 200ms; }
+.admin-panel-enter-active > * > :nth-child(6) { animation-delay: 250ms; }
+.admin-panel-enter-active > * > :nth-child(n + 7) { animation-delay: 300ms; }
+html[data-motion="reduce"] .admin-panel-enter-active > * > *,
+html[data-performance="low"] .admin-panel-enter-active > * > * { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .admin-panel-enter-active > * > * { animation: none; }
+  .admin-progress, .admin-progress__bar { transition: none; }
+}
+html[data-motion="reduce"] .admin-progress, html[data-motion="reduce"] .admin-progress__bar { transition: none; }

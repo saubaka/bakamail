@@ -22,7 +22,27 @@ export class ApiError extends Error {
   }
 }
 
-type ApiOptions = { method?: string; body?: unknown; signal?: AbortSignal };
+/** `quiet` 的请求（后台定时刷新）不计入“正在加载”的全局状态，避免顶部加载线每分钟闪一次。 */
+type ApiOptions = { method?: string; body?: unknown; signal?: AbortSignal; quiet?: boolean };
+
+let inflight = 0;
+const activityListeners = new Set<(busy: number) => void>();
+/** 在途的界面请求数量变化时回调；用于顶部加载线。返回取消订阅函数。 */
+export function onApiActivity(listener: (busy: number) => void): () => void {
+  activityListeners.add(listener);
+  return () => { activityListeners.delete(listener); };
+}
+function trackRequest(): () => void {
+  inflight += 1;
+  for (const listener of activityListeners) listener(inflight);
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    inflight -= 1;
+    for (const listener of activityListeners) listener(inflight);
+  };
+}
 export type UploadProgress = { phase: "uploading" | "awaiting-response"; loaded: number; total: number | null };
 type UploadOptions = { signal?: AbortSignal; onProgress?: (progress: UploadProgress) => void };
 export type QueryValue = string | number | boolean | null | undefined;
@@ -88,6 +108,7 @@ async function request(path: string, options: ApiOptions = {}): Promise<{ respon
   }
   const requestId = newRequestId();
   const headers = requestHeaders(path, method, options.body !== undefined, requestId);
+  const release = options.quiet ? null : trackRequest();
   try {
     const response = await fetch(path, {
       method,
@@ -102,6 +123,8 @@ async function request(path: string, options: ApiOptions = {}): Promise<{ respon
   } catch (error) {
     if (options.signal?.aborted) throw error;
     throw new ApiError("网络连接失败，请稍后重试", 0, null, { code: "network_error", requestId });
+  } finally {
+    release?.();
   }
 }
 
