@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "bde3ad6332155d4865444b4e9ad25f0e7ef6fc8e6c46193d29e8c602dd2542cf",
+      "sha256": "dcd90b4537bda381db326b92fbc483d54b0782abfe466d65dcfb6a6dfadd003f",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "d0fa8331f89461177b0428f8595bd7e7944e38c63e8d00319ec8708d2a93d7c4",
+      "sha256": "f51f0df241cea8defedbe50254558bde36247ab7f0cd74ef515f1de9c8514b15",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "caf1999e8e7dacc96794017c13c36b95156b469cd4567b011385774ee9a6a652",
+      "sha256": "49877b21dcda63a79ae018cad42517d08a00d7e582c7012214e44c407b5bae2a",
       "executable": false
     },
     "README.md": {
@@ -148,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "3d8979e2c5be39429c178ad1b22bb4d29d7f1b2ca29bf4229ed7972922b9acbf",
+      "sha256": "92254d59aa9e5025080a02a55ab6a47446db68b4b86f300cc2c76158e6cb6e71",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -558,7 +558,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "c952ef6f04303cec01861d6f4d354fbe7261684c8926da6cea0ad63cd44f5071",
+      "sha256": "bd407276b9f1a1a69dfb7a88987f10d0e05d2b9e957dc8159f8a1eeb65b5de0d",
       "executable": false
     },
     "web/src/admin/navigationState.ts": {
@@ -978,7 +978,7 @@
     },
     "web/src/styles/intro.css": {
       "source": "web/src/styles/intro.css",
-      "sha256": "31ec1b87c7413dd402dd0c847e64c5c9ab54924b1394ac4661399d1ecdac52de",
+      "sha256": "444322e3cde0ca75afdba9c94ab2eae6825b0182f71f4ecde2daceb0d7e9101f",
       "executable": false
     },
     "web/src/styles/local-theme.css": {
@@ -1123,7 +1123,7 @@
     },
     "web/src/views/IntroView.vue": {
       "source": "web/src/views/IntroView.vue",
-      "sha256": "13e15c32dc178ad20d647d6c53447b7eaac1ce83591b7f47f5cf1b28eb89da28",
+      "sha256": "9075456467892ffee3c1092c7ddc24b69110f741d6346fbe84cf0c8b8e1a5e29",
       "executable": false
     },
     "web/src/views/LoginView.vue": {
@@ -1513,7 +1513,7 @@
     },
     "web/test/site-title.test.ts": {
       "source": "web/test/site-title.test.ts",
-      "sha256": "d2bab0d326c0b8bee094bd00885eb7ea2186a4ac30152f51e7289150de2f6f97",
+      "sha256": "614404da455cf8bf263acc158a66752ed209a678a8d8d6d52e6f7b2ef03271f9",
       "executable": false
     },
     "web/test/tsconfig.notification-display-phase4.json": {

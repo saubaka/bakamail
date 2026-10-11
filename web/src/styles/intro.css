@@ -73,15 +73,6 @@
 .intro-features svg { width: 30px; height: 30px; fill: none; stroke: var(--border-strong); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 18px; }
 .intro-features h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
 .intro-features p { font-size: 12px; color: var(--text-soft); line-height: 1.85; margin: 0; }
-.intro-developer { display: grid; grid-template-columns: 104px 1fr auto; align-items: center; gap: 36px; padding: 50px 44px; border: 1px solid var(--border); background: var(--blue-050); border-radius: 24px; scroll-margin-top: 30px; }
-.intro-developer-monogram { position: relative; display: grid; place-items: center; width: 94px; height: 110px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 48% 48% 18% 18%; font: italic 52px Georgia, serif; color: var(--text-soft); }
-.intro-developer-monogram span { position: absolute; right: -12px; top: -10px; font: 26px sans-serif; color: var(--border-strong); }
-.intro-developer .intro-kicker { margin-bottom: 8px; }
-.intro-developer h2 { font-size: 25px; margin-bottom: 14px; }
-.intro-developer p { color: var(--text-soft); font-size: 13px; line-height: 1.9; margin: 0; }
-.intro-developer-note { padding-left: 30px; border-left: 1px solid var(--border-strong); }
-.intro-developer-note span { font-size: 10px; color: var(--text-soft); }
-.intro-developer-note p { margin: 12px 0; font-size: 18px; color: var(--text); }
 .intro-faq { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 62px; padding: 60px 0 70px; border-top: 1px solid var(--border); }
 .intro-faq-items { width: 100%; min-width: 0; display: grid; gap: 12px; align-content: start; }
 .intro-page .intro-faq-card { width: 100%; max-width: 100%; min-width: 0; margin: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); box-shadow: none; }
@@ -120,10 +111,6 @@
   .intro-brand small { display: none; }
   .intro-about, .intro-faq { gap: 32px; grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); }
   .intro-features { gap: 16px; }
-  .intro-developer { grid-template-columns: 80px 1fr; gap: 24px; padding: 32px; }
-  .intro-developer-monogram { width: 76px; height: 92px; }
-  .intro-developer-note { grid-column: 2; border-left: 0; border-top: 1px solid var(--border); padding: 18px 0 0; }
-  .intro-developer-note p br { display: none; }
   .intro-footer { flex-wrap: wrap; }
   .intro-footer > p { width: 100%; text-align: left; }
 }
@@ -151,11 +138,6 @@
   .intro-features article { display: grid; grid-template-columns: 36px 1fr; column-gap: 16px; }
   .intro-features svg { grid-row: span 2; margin: 0; }
   .intro-features h3 { margin-bottom: 6px; }
-  .intro-developer { padding: 28px 22px; grid-template-columns: 58px 1fr; gap: 18px; }
-  .intro-developer-monogram { width: 55px; height: 76px; font-size: 38px; }
-  .intro-developer h2 { font-size: 22px; }
-  .intro-developer p br { display: none; }
-  .intro-developer-note { grid-column: 1 / -1; }
   .intro-closing { padding: 46px 0 54px; }
   .intro-footer { display: grid; gap: 22px; padding: 28px 0; }
 }
