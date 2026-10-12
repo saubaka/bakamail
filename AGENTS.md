@@ -20,4 +20,4 @@ This directory contains source, tests, dependency declarations/lockfile and plac
 - Mail HTML is untrusted. Never loosen the opaque sandbox to allow same-origin or arbitrary scripts/media. Keep confirmation dialogs for destructive actions.
 - Do not force whole-page reloads, discard drafts or clear real-user caches. The Vite configuration retains old hashed assets for open tabs.
 - Use isolated fixtures/temporary databases for tests, not real accounts or mailboxes. Do not deploy, commit, push or mutate remote resources unless explicitly requested. GitHub login/verification remains a human step.
-- No license has been selected; do not invent a license grant.
+- The project is released under the MIT License (see `LICENSE`). Keep the license file and package metadata consistent; do not change the license without an explicit request.

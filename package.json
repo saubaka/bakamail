@@ -1,6 +1,7 @@
 {
   "name": "bakamail",
-  "version": "0.6.0",
+  "version": "0.6.1",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "description": "Webmail + admin console for the self-hosted Maddy mail server",
