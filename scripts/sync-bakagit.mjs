@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 export const sourceTrees = ['server/src', 'server/test', 'web/src', 'web/test', 'shared', 'scripts/test'];
 export const sourceFiles = [
-  'package.json', 'package-lock.json', 'CHANGELOG.md', '.gitignore', '.dockerignore', '.env.example',
+  'package.json', 'package-lock.json', 'CHANGELOG.md', 'LICENSE', '.gitignore', '.dockerignore', '.env.example',
   'server/package.json', 'server/tsconfig.json', 'web/package.json', 'web/tsconfig.json',
   'web/vite.config.ts', 'web/index.html', '启动BakaMail.command',
   'deploy/Dockerfile', 'deploy/docker-compose.yml', 'deploy/bakamail.env.example',

@@ -18,12 +18,12 @@
     },
     "AGENTS.md": {
       "source": "docs/github/AGENTS.md",
-      "sha256": "d60d8053dc4ce6ff72488aefd6066514286883c13cea0237cdb3aa78acb09d34",
+      "sha256": "752c770e37607c515be60fb29a0d3ce62f2a165eafc0656f98855a73d0a4f184",
       "executable": false
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "30f59573b61767ddf7f0886df0b69fe538ba4ac0a319ec197d8941dee3237ecf",
+      "sha256": "225cdbab9f38ab84212b048bd012c3e5865cf722df6245cd3980816471e80675",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -56,19 +56,24 @@
       "sha256": "a130e15cb38795e46bdd852214cf47613b0f2a5c2ff51732f559a12e514554d5",
       "executable": false
     },
+    "LICENSE": {
+      "source": "LICENSE",
+      "sha256": "496ee84f738ac06ef4265b717b86a78a5229671a8c76dd8bd394d7e1c455b5e3",
+      "executable": false
+    },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "a12fb560cb2f7821aadbd36065e86faa5aef5575fe4802adfe9a38eda67d06d0",
+      "sha256": "e9ea11ed83979b083f0a76db7f15c06948a695fdc4e6231a2e7cd5c99dcb45e1",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "8a7e75fcf464be9e63d4c95aae45204f47251c0395e063d093749f79994c3687",
+      "sha256": "e6353e3dee5ba790ebf51a48dee5f7584d383b137b5e7e26345e1b07cc12c234",
       "executable": false
     },
     "README.md": {
       "source": "docs/github/README.md",
-      "sha256": "767946d692641f5f95ce7bdd0a3dbaa5d2f1f217b392461b5d295f7c8abffc44",
+      "sha256": "1abf766c465479b421c299a486720368cb1f03bc3794fdba4afb13748895b4b7",
       "executable": false
     },
     "scripts/audit-project1-prototype.mjs": {
@@ -103,7 +108,7 @@
     },
     "scripts/sync-bakagit.mjs": {
       "source": "scripts/sync-bakagit.mjs",
-      "sha256": "0b7f7bd552a14bc90a4a70a05b7ed400541dd3127b7de4a35aa9d18db2ad008f",
+      "sha256": "d91de2f1cbed1dff8182417f24b35a7b39e5f1509e2dfc5217815480c1908da8",
       "executable": false
     },
     "scripts/sync-project1-styles.sh": {
@@ -148,7 +153,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "3f36431cc3abaa3a8391f1206c4a2348131e3778c88b509beb684a34beca5f12",
+      "sha256": "1d5d7e91779103971ba7ea3e49700219ff3e0d09565f625bed17b3805d8a6737",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -568,7 +573,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "720c8b9b02f9d51be61bb3fdb621b16bfea64fb946aea6721795d406936acf81",
+      "sha256": "9a7f29fceb1a22a0c3cabf1191a6459d6777d0b0c778d2ee2742dc759ebcc8a4",
       "executable": false
     },
     "web/src/admin/navigationState.ts": {
