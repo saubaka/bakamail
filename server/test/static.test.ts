@@ -43,7 +43,8 @@ test("旧后台地址在静态资源与 SPA 回退之前返回无指引的 404",
   // A source-only checkout need not have run the frontend build yet.
   if (existsSync(join(projectRoot, "web", "dist", "index.html"))) {
     const entry = await request(app).get("/bakaadmin");
-    assert.equal(entry.status, 200);
+    // 后台入口和任意未知地址一样返回 404 状态（外壳照常下发，前端据此显示登录页或 404 页），状态码不泄漏入口。
+    assert.equal(entry.status, 404);
     assert.match(entry.text, /<div id="app"><\/div>/);
   }
 });

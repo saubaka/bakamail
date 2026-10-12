@@ -6,7 +6,7 @@
           <span class="login-logo" aria-hidden="true">
             <svg viewBox="0 0 40 40" fill="none"><rect x="5" y="9" width="30" height="23" rx="5" /><path d="m7 12 10 8a5 5 0 0 0 6 0l10-8M7 29l8-8m18 8-8-8" /></svg>
           </span>
-          <span class="login-product-name">BakaMail</span>
+          <span class="login-product-name">{{ siteInfo.siteName }}</span>
           <h1 id="login-title">登录邮箱</h1>
           <p>输入账号和密码，进入你的邮箱。</p>
         </header>
@@ -43,7 +43,7 @@
           <router-link to="/register">用邀请码开通邮箱<span aria-hidden="true">↗</span></router-link>
         </div>
         <nav class="login-secondary-nav" aria-label="其他入口">
-          <router-link to="/">了解 BakaMail</router-link>
+          <router-link to="/">了解 {{ siteInfo.siteName }}</router-link>
         </nav>
       </section>
     </main>
@@ -61,6 +61,7 @@ import HumanCheck from "../components/HumanCheck.vue";
 import PasswordField from "../components/PasswordField.vue";
 import { ApiError, api, setCsrfToken, toast } from "../api";
 import { useSessionStore } from "../stores/session";
+import { siteInfo } from "../siteInfo";
 import { loginSubmissionState } from "../auth/loginState";
 import { probeLoginSession } from "../auth/sessionProbe";
 import { safeMailDestination } from "../auth/entryGate";

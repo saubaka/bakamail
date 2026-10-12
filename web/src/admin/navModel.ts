@@ -1,6 +1,6 @@
 /** 后台导航的唯一数据源：侧栏、跳转面板、快捷键和页面标题都从这里生成。 */
 export type IconName =
-  | "overview" | "accounts" | "invites" | "ops" | "security" | "human" | "admins" | "system"
+  | "overview" | "accounts" | "invites" | "ops" | "security" | "human" | "admins" | "system" | "seo"
   | "logout" | "mail" | "search" | "panel" | "return"
   | "send" | "alert" | "clock" | "unread" | "chevron";
 
@@ -37,6 +37,7 @@ export const RAIL_ITEMS: RailItem[] = [
   { name: "admin-human-check", label: "人机验证", icon: "human", permission: "system.security.write", section: "security", shortcut: "h", keywords: "rjyz yz turnstile cloudflare captcha 验证码 机器人" },
   { name: "admin-admins", label: "管理员", icon: "admins", permission: "system.admin.write", section: "system", shortcut: "u", keywords: "gly admins administrator 角色 账号" },
   { name: "admin-system", label: "系统设置", icon: "system", permission: "system.admin.write", section: "system", shortcut: "y", keywords: "xtsz sz system settings 备份 路径 入口 通知 公告" },
+  { name: "admin-seo", label: "SEO 管理", icon: "seo", permission: "system.seo.write", section: "system", shortcut: "e", keywords: "seo ss sousuo yqyh 搜索 搜索引擎 优化 收录 标题 描述 关键词 站点名 名称 品牌 分享 sitemap robots 百度 谷歌 google" },
 ];
 
 export const PAGE_TITLES: Record<string, string> = Object.fromEntries(RAIL_ITEMS.map((item) => [item.name, item.label]));

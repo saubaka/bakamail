@@ -1,4 +1,8 @@
-# Baka Mail
+<p align="center">
+  <img src="web/public/logo.svg" width="96" height="96" alt="Baka Mail" />
+</p>
+
+<h1 align="center">Baka Mail</h1>
 
 Baka Mail 是给自建 [Maddy](https://maddy.email/) 邮局用的网页邮箱和管理后台。用户在浏览器里收发邮件，管理员在后台管理账号、邀请码和安全策略。
 
@@ -26,6 +30,7 @@ Baka Mail 是给自建 [Maddy](https://maddy.email/) 邮局用的网页邮箱和
 - 邮箱账号、邀请码、管理员和角色权限
 - 邮局日志（脱敏）、出站队列、证书检查等运维页面
 - 安全策略、人机验证、通知动画等站点设置
+- SEO 管理：站点名称、首页标题和描述、关键词、规范网址、站点地图、分享卡片、站长平台验证，并给出达标评分和修改建议
 - 后台入口路径由你在首次初始化时自己选择，之后可以修改
 
 ## 技术栈
@@ -119,6 +124,10 @@ location / {
 
 `proxy_buffering off` 和较长的读超时是为了新邮件的实时推送。转发头必须由这台代理自己覆盖，不要原样转发客户端发来的值。
 
+### 错误页面
+
+应用返回的 404、500 等错误页已是统一风格。后端没起来时，502/503/504 由反向代理自己返回，可以用 `deploy/error-pages/` 里的静态页保持同样外观：把四个页面复制到服务器，把 `openresty.conf.example` 里的内容放进站点配置并改好目录即可。不要开启 `proxy_intercept_errors`，否则会盖掉应用自己的错误页。
+
 ### 首次初始化
 
 全新的数据库没有任何管理员。服务启动后会在数据目录生成一个只有你能读的 `setup.key`：
@@ -191,6 +200,12 @@ maddy imap-acct list --cfg-block local_mailboxes
 ### 邮局日志
 
 后台的邮局日志读取的是一个只读的 JSON 快照，应用容器不接触 Docker socket。主机上的 `deploy/export-mail-logs.py` 按计划任务导出脱敏后的最近日志，示例计划任务在 `deploy/mail-log-export.cron`。把快照目录挂进容器，并设置 `MAIL_LOG_DIRECTORY` 和 `MAIL_LOG_SNAPSHOT_PATH` 即可。不部署采集器时，邮件收发不受影响，只是后台看不到邮局日志。
+
+## 站点名称与 SEO
+
+在后台“SEO 管理”里可以把站点名改成自己的（例如“某某邮箱”），浏览器标题、首页、登录页和邮箱页面里的名称会一起变化。页面底部的开源仓库链接和版权标记固定显示，不受设置影响。
+
+首页的标题、描述、规范网址、分享卡片和结构化数据由服务器直接写进页面，不执行脚本的抓取工具也能读到。登录、注册、邮箱和后台页面一律不收录。规范网址留空时使用环境变量 `PUBLIC_ORIGIN`，两者都没有时，canonical、分享图片和站点地图都无法生成，页面里的评分会提示。`/robots.txt` 只禁止接口，不会写出后台路径；`/sitemap.xml` 只包含首页。
 
 ## 更新与备份
 

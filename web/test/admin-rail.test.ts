@@ -26,15 +26,15 @@ test("导航模型与路由一致：每个菜单项都对应真实后台路由�
   assert.deepEqual(Object.keys(PAGE_TITLES), RAIL_ITEMS.map((item) => item.name));
 });
 
-test("菜单扁平：8 个页面一次点击可达，没有说明文字字段；没有权限的页面与空分区被隐藏", () => {
-  assert.equal(RAIL_ITEMS.length, 8);
+test("菜单扁平：9 个页面一次点击可达，没有说明文字字段；没有权限的页面与空分区被隐藏", () => {
+  assert.equal(RAIL_ITEMS.length, 9);
   assert.ok(RAIL_ITEMS.every((item) => !("hint" in item)));
   const everything = railSections(allow);
   assert.deepEqual(everything.map((section) => section.key), RAIL_SECTIONS.map((section) => section.key));
-  assert.equal(everything.flatMap((section) => section.items).length, 8);
+  assert.equal(everything.flatMap((section) => section.items).length, 9);
   const auditor = railSections((permission) => ["mail.account.read", "mail.invite.read", "mail.queue.read", "system.audit.read"].includes(permission));
   const names = auditor.flatMap((section) => section.items.map((item) => item.name));
-  assert.ok(!names.includes("admin-admins") && !names.includes("admin-system") && !names.includes("admin-human-check"));
+  assert.ok(!names.includes("admin-admins") && !names.includes("admin-system") && !names.includes("admin-human-check") && !names.includes("admin-seo"));
   assert.ok(!auditor.some((section) => section.key === "system"), "a section with no visible page disappears");
   assert.deepEqual(visibleItems(() => false), []);
 });
@@ -49,6 +49,10 @@ test("跳转面板匹配：名称开头优先于包含，再到关键词；拼�
   assert.equal(matchItems(items, "账号")[0]!.label, "邮箱账号");
   assert.equal(matchItems(items, "  邀请  ")[0]!.label, "邀请码");
   assert.equal(matchItems(items, "totp")[0]!.label, "安全中心");
+  assert.equal(matchItems(items, "seo")[0]!.label, "SEO 管理");
+  assert.equal(matchItems(items, "搜索引擎")[0]!.label, "SEO 管理");
+  assert.equal(matchItems(items, "站点名")[0]!.label, "SEO 管理");
+  assert.equal(matchItems(items, "sitemap")[0]!.label, "SEO 管理");
   assert.deepEqual(matchItems(items, "zzzz"), []);
   // 名称开头 > 名称包含：“安全”同时是“安全中心”的开头，也是关键词；排在前面的必须是名称开头的项。
   assert.equal(matchItems(items, "安全")[0]!.label, "安全中心");

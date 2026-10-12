@@ -81,6 +81,7 @@ import { passwordProblem } from "../security/passwords.ts";
 import { registrationLimits } from "../security/registration.ts";
 import { admitLogin, rejectLoginBusy } from "../security/loginGuard.ts";
 import { humanVerificationRouter } from "./humanVerification.ts";
+import { seoRouter } from "./seo.ts";
 import { railBadges } from "../admin/navBadges.ts";
 import { anonymousRequestBudget, enforceBudget } from "../security/abuse.ts";
 import { appearanceRouter } from "./appearance.ts";
@@ -247,6 +248,7 @@ adminRouter.get("/auth/me", requireAdmin, (request, response) => {
 adminRouter.use(requireAdmin, requireCsrf);
 adminRouter.use(appearanceRouter);
 adminRouter.use(humanVerificationRouter);
+adminRouter.use(seoRouter);
 
 // 侧栏角标：只读，已通过 requireAdmin；每个管理员只能看到自己有权限的页面的数字。
 adminRouter.get("/nav-badges", (request, response) => { ok(response, railBadges(request.admin!.admin.role as AdminRole)); });

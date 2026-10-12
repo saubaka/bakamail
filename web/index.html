@@ -15,6 +15,9 @@
     <meta name="theme-color" content="#F7F9FC" />
     <meta name="robots" content="noindex, nofollow" />
     <title>Baka Mail</title>
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">跳到主要内容</a>
@@ -28,9 +31,20 @@
        */
       (function () {
         var retried = false;
+        /* 重试后仍然加载失败（或一直没有渲染出来）时，显示服务器随页面下发的统一风格提示，而不是一片空白。 */
+        function showFatal() {
+          var app = document.getElementById("app");
+          var template = document.getElementById("bm-fatal");
+          if (!app || !template || !template.content || app.childElementCount > 0) return;
+          app.appendChild(template.content.cloneNode(true));
+        }
+        window.__bmFatal = showFatal;
         function retry(node, factory) {
-          if (retried || !node || !node.src || node.src.indexOf("retry=") !== -1) return;
-          if (node.src.indexOf("/assets/") === -1) return;
+          if (!node || !node.src || node.src.indexOf("/assets/") === -1) return;
+          if (retried || node.src.indexOf("retry=") !== -1) {
+            if (node.tagName === "SCRIPT") showFatal();
+            return;
+          }
           retried = true;
           factory(node.src + (node.src.indexOf("?") === -1 ? "?" : "&") + "retry=" + Date.now());
         }
@@ -57,6 +71,8 @@
           },
           true,
         );
+        /* 页面脚本很久都没有渲染出内容（网络极慢或被拦截）：同样给出可以重试的提示，应用一旦渲染就会把它替换掉。 */
+        setTimeout(showFatal, 20000);
       })();
     </script>
     <script type="module" src="/src/main.ts"></script>

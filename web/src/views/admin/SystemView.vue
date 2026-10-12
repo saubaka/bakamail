@@ -6,7 +6,7 @@
       <div class="panel-heading">
         <div>
           <span class="eyebrow">站点设置</span>
-          <h2>名称、公告与欢迎邮件</h2>
+          <h2>公告与欢迎邮件</h2>
           <p>这些内容保存在 BakaMail 里，不会修改 Maddy 的配置。</p>
         </div>
         <button class="button button--primary" type="button" :disabled="!settingsLoaded || settingsLoading || saving" @click="save">
@@ -19,19 +19,13 @@
         <button class="button button--soft" type="button" :disabled="settingsLoading || saving" @click="loadSettings">重试读取</button>
       </p>
       <form v-if="settingsLoaded" class="form-grid" @submit.prevent="save">
-        <div class="compose-grid__row">
-          <label class="field">
-            <span class="field__label">站点名称</span>
-            <input v-model="settings.siteName" maxlength="80" :disabled="saving || settingsLoading" />
-          </label>
-          <label class="field">
-            <span class="field__label">新账号欢迎邮件</span>
-            <select v-theme-control v-model="settings.welcomeMail" :disabled="saving || settingsLoading">
-              <option value="off">关闭</option>
-              <option value="on">开启</option>
-            </select>
-          </label>
-        </div>
+        <label class="field">
+          <span class="field__label">新账号欢迎邮件</span>
+          <select v-theme-control v-model="settings.welcomeMail" :disabled="saving || settingsLoading">
+            <option value="off">关闭</option>
+            <option value="on">开启</option>
+          </select>
+        </label>
         <label class="field">
           <span class="field__label">全站公告</span>
           <textarea v-model="settings.announcement" rows="4" maxlength="500" :disabled="saving || settingsLoading"></textarea>
@@ -108,7 +102,6 @@ import NotificationAppearance from '../../components/admin/NotificationAppearanc
 import AdminEntrySettings from '../../components/admin/AdminEntrySettings.vue';
 
 type SiteSettings = {
-  siteName: string;
   announcement: string;
   registrationMode: string;
   welcomeMail: string;
@@ -123,7 +116,6 @@ type RunnerStatus = {
 
 const session = useAdminSessionStore();
 const settings = reactive<SiteSettings>({
-  siteName: "BakaMail",
   announcement: "",
   registrationMode: "invite",
   welcomeMail: "off",
@@ -156,7 +148,10 @@ async function loadSettings(): Promise<void> {
   try {
     const site = await api<{ settings: SiteSettings; domain: string; mailHost: string }>("/api/admin/site-settings");
     if (!active) return;
-    Object.assign(settings, site.settings);
+    // 站点名称现在在“SEO 管理”里修改，接口里的旧字段不再带进来。
+    settings.announcement = site.settings.announcement;
+    settings.registrationMode = site.settings.registrationMode;
+    settings.welcomeMail = site.settings.welcomeMail;
     domain.value = site.domain;
     mailHost.value = site.mailHost;
     settingsLoaded.value = true;
@@ -191,7 +186,6 @@ async function save(): Promise<void> {
     await api("/api/admin/site-settings", {
       method: "PATCH",
       body: {
-        siteName: settings.siteName,
         announcement: settings.announcement,
         welcomeMail: settings.welcomeMail,
       },

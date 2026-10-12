@@ -5,7 +5,7 @@
         <span class="brand-mark">
           <span class="window-symbol" aria-hidden="true"><i></i><i></i></span>
         </span>
-        <span>BakaMail<small>{{ subtitle }}</small></span>
+        <span>{{ siteInfo.siteName }}<small>{{ subtitle }}</small></span>
       </router-link>
       <div class="site-nav__links mail-page-links">
         <router-link to="/mail">邮箱</router-link>
@@ -35,6 +35,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { ApiError, toast } from "../api";
 import { useSessionStore } from "../stores/session";
+import { siteInfo } from "../siteInfo";
 
 withDefaults(defineProps<{ subtitle?: string }>(), { subtitle: "邮箱工具" });
 
