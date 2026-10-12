@@ -33,7 +33,7 @@ test('桌面菜单允许过渡中改选，旧请求不能清除新导航busy，�
   assert.match(mail, /if \(!isDesktop.value && navigationBusy.value\) return/);
   assert.match(mail, /const generation = \+\+navigationGeneration/);
   assert.match(mail, /if \(generation !== navigationGeneration\) return/);
-  assert.match(mail, /if \(generation === navigationGeneration\) navigating.value = false/);
+  assert.match(mail, /if \(generation === navigationGeneration\) \{ navigating\.value = false; pendingPath\.value = null; \}/);
   assert.match(mail, /if \(!element.isConnected \|\| element.classList.contains\('mail-panel-leave-active'\)\) return/);
   assert.doesNotMatch(mail, /location\.(reload|assign|replace)/);
 });

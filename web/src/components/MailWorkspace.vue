@@ -1,5 +1,6 @@
 <template>
   <div class="mail-workspace" :class="{ 'is-desktop-layout': isDesktop, 'is-desktop-sidebar-expanded': isDesktop && desktopSidebarExpanded }" :data-navigation-mode="isDesktop ? 'desktop' : 'mobile'" :data-panel-direction="panelDirection" @keydown="handleKey">
+    <AdminLoader :active="navigationPending" />
     <header class="workspace-header">
       <button
         v-if="isDesktop"
@@ -42,8 +43,8 @@
             <span class="dock-compose-icon" aria-hidden="true">＋</span><span class="desktop-sidebar-label">写邮件</span>
           </button>
           <nav ref="navigationList" class="dock-navigation" aria-label="邮箱功能">
-            <span class="dock-navigation-highlight" :class="{ 'is-line-shifting': lineShifting, 'is-ready': navigationHighlight.ready }" aria-hidden="true" :style="navigationHighlightStyle"><LineOutline /></span>
-            <button v-for="item in mailNavigation" :key="item.path" class="dock-navigation-item" type="button" :aria-current="route.path === item.path ? 'page' : undefined" :disabled="!isDesktop && navigationBusy" :title="collapsedTitle(item.label)" @click="navigate(item.path)">
+            <span ref="highlightElement" class="dock-navigation-highlight" :class="{ 'is-line-shifting': lineShifting, 'is-ready': navigationHighlight.ready }" aria-hidden="true" :style="navigationHighlightStyle"><LineOutline /></span>
+            <button v-for="item in mailNavigation" :key="item.path" class="dock-navigation-item" :class="{ 'is-active': highlightPath === item.path }" :data-path="item.path" type="button" :aria-current="route.path === item.path ? 'page' : undefined" :disabled="!isDesktop && navigationBusy" :title="collapsedTitle(item.label)" @click="navigate(item.path)">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path :d="item.icon" /></svg><span class="desktop-sidebar-label">{{ item.label }}</span>
             </button>
           </nav>
@@ -119,6 +120,9 @@ import {
 } from "../mail/navigationLayout";
 import { createDockScrollIntent, type ScrollPosition } from '../mail/scrollIntent';
 import LineOutline from './LineOutline.vue';
+import AdminLoader from './admin/AdminLoader.vue';
+import { navigationState } from '../admin/navigationState';
+import { planHighlightMove, HIGHLIGHT_MS, HIGHLIGHT_EASING } from '../mail/highlightMotion';
 const route = useRoute();
 const router = useRouter();
 const session = useSessionStore();
@@ -164,6 +168,11 @@ const menuLeft = ref(16);
 const menuWidth = ref(360);
 const origin = ref(44);
 const selectedIndex = computed(() => navigationIndex(route.path));
+// 点击菜单的那一刻就记下目标：高亮线条立刻开始移动，不等服务端校验和页面文件加载；右侧用加载动画表示等待。
+const pendingPath = ref<string | null>(null);
+const highlightPath = computed(() => pendingPath.value ?? route.path);
+const navigationPending = computed(() => navigationState.pending !== "");
+const highlightElement = ref<HTMLElement | null>(null);
 const dockIndex = computed(() => menuOpen.value || route.path !== "/mail" ? 0 : view.value === "reader" ? 2 : 1);
 const lineShifting = ref(false);
 const navigationHighlight = ref({ x: 0, y: 0, width: 0, height: 0, ready: false });
@@ -187,26 +196,34 @@ function pulseNavigationLine() {
   if(reduced()) return;
   lineFrame=requestAnimationFrame(()=>{lineShifting.value=true;lineTimer=setTimeout(()=>{lineShifting.value=false;},440);});
 }
-function measureNavigationHighlight() {
+function measureNavigationHighlight(animate = false) {
   cancelAnimationFrame(navigationMeasureFrame);
   navigationMeasureFrame = requestAnimationFrame(() => {
     const list = navigationList.value;
-    const current = list?.querySelector<HTMLElement>('.dock-navigation-item[aria-current="page"]');
-    if (!list || !current || current.offsetWidth === 0 || current.offsetHeight === 0) {
+    const target = list?.querySelector<HTMLElement>(`.dock-navigation-item[data-path="${highlightPath.value}"]`);
+    if (!list || !target || target.offsetWidth === 0 || target.offsetHeight === 0) {
       navigationHighlight.value = { ...navigationHighlight.value, ready: false };
       return;
     }
-    navigationHighlight.value = {
-      x: current.offsetLeft,
-      y: current.offsetTop,
-      width: current.offsetWidth,
-      height: current.offsetHeight,
-      ready: true,
-    };
+    const next = { x: target.offsetLeft, y: target.offsetTop, width: target.offsetWidth, height: target.offsetHeight, ready: true };
+    const element = highlightElement.value;
+    const wasReady = navigationHighlight.value.ready;
+    if (animate === true && wasReady && element && !reduced() && typeof element.animate === "function") {
+      // 从线条此刻真实的位置出发（连续点击时不会跳回上一个终点）。
+      const listBox = list.getBoundingClientRect();
+      const box = element.getBoundingClientRect();
+      const from = { x: box.left - listBox.left, y: box.top - listBox.top, width: box.width, height: box.height };
+      for (const running of element.getAnimations()) running.cancel();
+      const plan = planHighlightMove(from, next);
+      if (plan) element.animate(plan, { duration: HIGHLIGHT_MS, easing: HIGHLIGHT_EASING });
+    }
+    navigationHighlight.value = next;
   });
 }
-function scheduleNavigationHighlight() { void nextTick(measureNavigationHighlight); }
-watch([dockIndex,selectedIndex], () => { pulseNavigationLine(); scheduleNavigationHighlight(); });
+const measureOnResize = () => measureNavigationHighlight();
+function scheduleNavigationHighlight() { void nextTick(() => measureNavigationHighlight()); }
+watch(dockIndex, () => { pulseNavigationLine(); scheduleNavigationHighlight(); });
+watch(highlightPath, () => { pulseNavigationLine(); void nextTick(() => measureNavigationHighlight(true)); });
 watch(desktopSidebarExpanded, () => { pulseNavigationLine(); scheduleNavigationHighlight(); });
 const panelStyle = computed(() => ({ left: `${menuLeft.value}px`, width: `${menuWidth.value}px`, "--menu-origin-x": `${origin.value}px` }));
 let resolveClose: (() => void) | undefined;
@@ -329,13 +346,14 @@ async function navigate(path: string) {
   if (path !== "/mail") pendingFolderFocus = false;
   const generation = ++navigationGeneration;
   navigating.value = true;
+  pendingPath.value = path;
   try {
     await closeMenu(false);
     if (generation !== navigationGeneration) return;
     if (route.path !== path || isDesktop.value) await router.push(path);
     else focusMain();
   } finally {
-    if (generation === navigationGeneration) navigating.value = false;
+    if (generation === navigationGeneration) { navigating.value = false; pendingPath.value = null; }
   }
 }
 function beginPanelTransition() { transitioning.value = true; }
@@ -393,10 +411,10 @@ onMounted(() => {
   desktopQuery.addEventListener("change", syncResponsiveNavigation);
   wideQuery.addEventListener("change", syncResponsiveNavigation);
   if (typeof ResizeObserver !== "undefined") {
-    navigationResizeObserver = new ResizeObserver(measureNavigationHighlight);
+    navigationResizeObserver = new ResizeObserver(() => measureNavigationHighlight());
     if (navigationList.value) navigationResizeObserver.observe(navigationList.value);
   }
-  window.addEventListener("resize", measureNavigationHighlight, { passive: true });
+  window.addEventListener("resize", measureOnResize, { passive: true });
   scheduleNavigationHighlight();
 });
 onBeforeUnmount(() => {
@@ -409,7 +427,7 @@ onBeforeUnmount(() => {
   desktopQuery?.removeEventListener("change", syncResponsiveNavigation);
   wideQuery?.removeEventListener("change", syncResponsiveNavigation);
   navigationResizeObserver?.disconnect();
-  window.removeEventListener("resize", measureNavigationHighlight);
+  window.removeEventListener("resize", measureOnResize);
   resolveClose?.();
   unlockBodyScroll();
 });

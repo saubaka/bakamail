@@ -58,3 +58,12 @@
   #app :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]), textarea, select),
   #app .field .themed-control { font-size: 16px; }
 }
+
+/* 校验提示出现时，同一行另一侧的文本框不被拉高也不移位（字段内容从顶部排起）；提示本身从无到有平滑展开，消失时平滑收起。 */
+#app .field { align-content: start; }
+.themed-field-error { overflow: hidden; animation: themed-error-in 240ms var(--ease) both; }
+.themed-field-error.is-leaving { animation: themed-error-out 200ms var(--ease) both; }
+@keyframes themed-error-in { from { max-height: 0; margin-top: 0; opacity: 0; transform: translate3d(0, -4px, 0); } to { max-height: 4.5em; margin-top: 5px; opacity: 1; transform: none; } }
+@keyframes themed-error-out { from { max-height: 4.5em; margin-top: 5px; opacity: 1; } to { max-height: 0; margin-top: 0; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .themed-field-error, .themed-field-error.is-leaving { animation: none; } }
+:root:is([data-motion="reduce"], [data-performance="low"]) .themed-field-error { animation: none; }

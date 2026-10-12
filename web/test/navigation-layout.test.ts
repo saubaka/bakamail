@@ -105,12 +105,13 @@ test("桌面选中轮廓按真实按钮几何移动，并在侧栏变形和窗�
   const workspace = readFileSync(new URL("../src/components/MailWorkspace.vue", import.meta.url), "utf8");
   const css = readFileSync(new URL("../src/styles/workspace.css", import.meta.url), "utf8");
   assert.match(workspace, /ref="navigationList"/);
-  assert.match(workspace, /querySelector<HTMLElement>\('\.dock-navigation-item\[aria-current="page"\]'\)/);
-  assert.match(workspace, /x: current\.offsetLeft[\s\S]*y: current\.offsetTop[\s\S]*width: current\.offsetWidth[\s\S]*height: current\.offsetHeight/);
-  assert.match(workspace, /new ResizeObserver\(measureNavigationHighlight\)/);
+  // v0.9.8: 高亮跟随“目标”（点击的那一刻就是目标，不等路由完成），aria-current 仍然只跟随真实路由
+  assert.match(workspace, /querySelector<HTMLElement>\(`\.dock-navigation-item\[data-path="\$\{highlightPath\.value\}"\]`\)/);
+  assert.match(workspace, /x: target\.offsetLeft, y: target\.offsetTop, width: target\.offsetWidth, height: target\.offsetHeight/);
+  assert.match(workspace, /new ResizeObserver\(\(\) => measureNavigationHighlight\(\)\)/);
   assert.match(workspace, /watch\(desktopSidebarExpanded,[\s\S]*scheduleNavigationHighlight\(\)/);
   assert.doesNotMatch(workspace, /selectedIndex \* 44/);
-  assert.match(css, /\.dock-navigation-highlight \{[^}]*will-change:transform[^}]*transition:transform 420ms/);
+  assert.match(css, /\.dock-navigation-highlight \{[^}]*will-change:transform,height[^}]*transition:opacity 160ms/);
   assert.doesNotMatch(css.match(/\.dock-navigation-highlight \{[^}]*\}/)?.[0] ?? "", /transition:[^;}]*width/);
   assert.match(css, /\.dock-navigation-highlight\.is-ready \{ opacity:1; \}/);
 });

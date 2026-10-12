@@ -9,6 +9,9 @@
 .dash-part-2 { clip-path:polygon(100% 100%,0 100%,50% 50%); --fragment-x:0px; --fragment-y:3px; }
 .dash-part-3 { clip-path:polygon(0 100%,0 0,50% 50%); --fragment-x:-3px; --fragment-y:0px; }
 .is-line-shifting .dash-outline__piece { animation:dash-fragment-travel 420ms cubic-bezier(.22,.85,.25,1) backwards; }
+/* 左侧菜单的选中线条：移动时线条从虚线连成实线（边走边“画”出来），并在途中轻微发亮，落定后是完整的实线。 */
+.dock-navigation-highlight.is-line-shifting .dash-outline__piece { animation:dock-line-flow 640ms cubic-bezier(.3,.8,.25,1) backwards; }
+@keyframes dock-line-flow { 0% { stroke-dasharray:5 7; stroke-dashoffset:24; opacity:.55; } 45% { stroke-dasharray:14 5; stroke-dashoffset:8; opacity:1; } 100% { stroke-dasharray:80 0; stroke-dashoffset:0; opacity:1; } }
 @keyframes dash-contour-arrive { from { opacity:0; stroke-dashoffset:24; } to { opacity:1; stroke-dashoffset:0; } }
 @keyframes dash-contour-exit { from { opacity:1; stroke-dashoffset:0; } to { opacity:0; stroke-dashoffset:-18; } }
 @keyframes dash-fragment-travel { 0% { transform:none; opacity:1; stroke-dashoffset:0; } 28%,55% { transform:translate(var(--fragment-x),var(--fragment-y)); opacity:.6; stroke-dashoffset:8; } 100% { transform:none; opacity:1; stroke-dashoffset:0; } }
