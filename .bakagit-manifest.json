@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "2610aa8d969530b3dcb89bbe55bed649559263b2baada1b3b2b9ecb21ad40003",
+      "sha256": "965ca62f397c1f91c754388088779403081bc6e992c8e846fa458d02f7639854",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "6ec1d15e0ebdfcc01cd56efc80eecac335fec2bbe509e4452fa3a22187fe8b56",
+      "sha256": "22a1967f2d5acc7da0b6f66a7cbd6769c76d5e8d7777aed597bb2965a7c442dc",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "23f4cbffdfc4cc249833feb252b663b7bb5728da5d828b527dd8063f66cf77ea",
+      "sha256": "a99676385627821f25cf11e4fd404f80612a327a63d9700b584039a16aa606ad",
       "executable": false
     },
     "README.md": {
@@ -188,7 +188,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "ffc21d146736795b1f1bb122fa9ee93eb84fc2ea57c139dd3a72532e435cd2af",
+      "sha256": "a6c5fe2f5aeff450eb46c9abcf3738f37abc1cf0402d4f3c91cad20e483a0ffb",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -658,7 +658,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "c049997cf97cf411fc5eb9ed8b91c3def53e80550a31b73e64898a5c10112ab7",
+      "sha256": "acef1ada96c337d1b2826dd823a27eea5c8a00228bd07d7ec594bcaeff465b22",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -953,7 +953,7 @@
     },
     "web/src/components/MailWorkspace.vue": {
       "source": "web/src/components/MailWorkspace.vue",
-      "sha256": "3e430b5b3f2b7ec7ee13d6e255bc194987d2816c74e3f9eb477dbfcbfe8c43e6",
+      "sha256": "597b076398be4a01aff8db104a71c8cf292971f3d6fa2030c115f51f091d08d9",
       "executable": false
     },
     "web/src/components/PasswordField.vue": {
@@ -1023,7 +1023,7 @@
     },
     "web/src/mail/highlightMotion.ts": {
       "source": "web/src/mail/highlightMotion.ts",
-      "sha256": "b90ddbea237c9a1460a8887045dd294ced41012b43849b4c840a2662befea6fc",
+      "sha256": "1b9139a1576d35d741cceaf393434fec0ad8c259c1b1377721d2c88d75753a2b",
       "executable": false
     },
     "web/src/mail/localCache.ts": {
@@ -1198,7 +1198,7 @@
     },
     "web/src/styles/dashed-accent.css": {
       "source": "web/src/styles/dashed-accent.css",
-      "sha256": "04824886378dbd5666b4cdc5ea4ae2671222fe6ff57ea4a7676727c9ce180e37",
+      "sha256": "4120191f3e30aaa9850a005d92b71d3d2ebcdc1ea106b1a8db7300da0f0a8e23",
       "executable": false
     },
     "web/src/styles/dialogs.css": {
@@ -1648,7 +1648,7 @@
     },
     "web/test/mail-menu-motion.test.ts": {
       "source": "web/test/mail-menu-motion.test.ts",
-      "sha256": "c74a02c8120dc9d250dd5409c83035e574e75a5a7e30facd2b6de5187a7c9b0d",
+      "sha256": "d6ac58710f97769ad10ded4032037e43fc3aff72016d73a3b25aad88d7b678ca",
       "executable": false
     },
     "web/test/mail-row-visibility.test.ts": {

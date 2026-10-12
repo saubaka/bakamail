@@ -196,9 +196,14 @@ function pulseNavigationLine() {
   if(reduced()) return;
   lineFrame=requestAnimationFrame(()=>{lineShifting.value=true;lineTimer=setTimeout(()=>{lineShifting.value=false;},440);});
 }
+// 一次“要播放动画”的测量不能被紧随其后的普通测量（窗口或侧栏尺寸变化触发）顶掉，否则线条会直接瞬移到目标。
+let animateRequested = false;
 function measureNavigationHighlight(animate = false) {
+  animateRequested = animateRequested || animate === true;
   cancelAnimationFrame(navigationMeasureFrame);
   navigationMeasureFrame = requestAnimationFrame(() => {
+    animate = animateRequested;
+    animateRequested = false;
     const list = navigationList.value;
     const target = list?.querySelector<HTMLElement>(`.dock-navigation-item[data-path="${highlightPath.value}"]`);
     if (!list || !target || target.offsetWidth === 0 || target.offsetHeight === 0) {

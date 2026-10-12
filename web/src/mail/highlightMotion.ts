@@ -1,10 +1,13 @@
 /**
- * 左侧菜单选中线条的移动：从当前位置出发，先向目标方向拉长（把起点和终点一起罩住），再收缩到目标按钮上，
- * 像一滴水从一个按钮流到另一个按钮；线条本身的绘制动画在样式里同步进行。
+ * 左侧菜单选中线条的移动：整个包围线条先朝目标方向移动（前沿先到目标按钮，后沿的线条停留在原地，
+ * 两侧的竖线被拉长连着），到位之后，停留在原地的线条再沿着竖线收回到现在的位置。
+ * 全程都是同一圈实线在伸缩，不会出现新的虚线包围。
  */
-export const HIGHLIGHT_MS = 620;
-export const HIGHLIGHT_EASING = "cubic-bezier(.3,.8,.25,1)";
-export const HIGHLIGHT_STRETCH_AT = 0.42;
+export const HIGHLIGHT_MS = 640;
+export const HIGHLIGHT_EASING = "linear";
+export const HIGHLIGHT_STRETCH_AT = 0.5;
+const LEAD_EASING = "cubic-bezier(.22,.8,.28,1)";
+const TRAIL_EASING = "cubic-bezier(.55,0,.25,1)";
 
 export type Box = { x: number; y: number; width: number; height: number };
 
@@ -19,8 +22,8 @@ export function planHighlightMove(from: Box, to: Box): Keyframe[] | null {
   const right = Math.max(from.x + from.width, to.x + to.width);
   const frame = (box: Box): Keyframe => ({ transform: `translate3d(${round(box.x)}px,${round(box.y)}px,0)`, width: `${round(box.width)}px`, height: `${round(box.height)}px` });
   return [
-    { ...frame(from), offset: 0 },
-    { ...frame({ x: left, y: top, width: right - left, height: bottom - top }), offset: HIGHLIGHT_STRETCH_AT },
+    { ...frame(from), offset: 0, easing: LEAD_EASING },
+    { ...frame({ x: left, y: top, width: right - left, height: bottom - top }), offset: HIGHLIGHT_STRETCH_AT, easing: TRAIL_EASING },
     { ...frame(to), offset: 1 },
   ];
 }
