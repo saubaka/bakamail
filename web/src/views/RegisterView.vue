@@ -1,10 +1,14 @@
 <template>
   <main id="main-content" class="auth-shell">
-    <BrandMark auth subtitle="邀请制开通" />
     <section v-motion="{ kind: 'feature', reversible: false }" class="auth-card card" aria-labelledby="register-title">
-      <span class="soft-icon soft-icon--blue auth-icon" aria-hidden="true">✎</span>
-      <span class="eyebrow">INVITE ONLY</span>
-      <h1 id="register-title">用邀请码开通邮箱</h1>
+      <header class="login-heading">
+        <span class="login-logo" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none"><rect x="5" y="9" width="30" height="23" rx="5" /><path d="m7 12 10 8a5 5 0 0 0 6 0l10-8M7 29l8-8m18 8-8-8" /></svg>
+        </span>
+        <span class="login-product-name">{{ siteInfo.siteName }}</span>
+        <h1 id="register-title">用邀请码开通邮箱</h1>
+        <p>填写邀请码和账号信息，提交后开通你的邮箱。</p>
+      </header>
       <form class="form-grid auth-form" novalidate @submit.prevent="submit">
         <label class="field field--wide">
           <span class="field__label">邀请码</span>
@@ -64,7 +68,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import BrandMark from "../components/BrandMark.vue";
+import { siteInfo } from "../siteInfo";
 import HumanCheck from "../components/HumanCheck.vue";
 import PasswordField from "../components/PasswordField.vue";
 import { ApiError, api, toast } from "../api";

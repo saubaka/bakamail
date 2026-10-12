@@ -14,7 +14,7 @@ const UNIT_TAGS = new Set([
   "SVG", "IMG", "INPUT", "SELECT", "TEXTAREA", "CANVAS", "FIGURE", "BLOCKQUOTE", "CODE", "TIME",
 ]);
 /** 带背景的小图标、头像、徽标、状态标签：整体入场，不拆开里面的图形。 */
-const UNIT_CLASS = /(^|[\s_-])(icon|avatar|badge|pill|chip|status|tag|button|table-scroll|toggle|switch|seo-preview|hv-chart|range-tabs|field|check-row|permission-list|log-block|eyebrow)([\s_-]|$)/;
+const UNIT_CLASS = /(^|[\s_-])(icon|logo|avatar|badge|pill|chip|status|tag|button|table-scroll|toggle|switch|seo-preview|hv-chart|range-tabs|field|check-row|permission-list|log-block|eyebrow)([\s_-]|$)/;
 /** 自己会入场的东西（外轮廓、嵌套的卡片、对话框），不在这里重复处理。 */
 const SKIP_CLASS = /(^|\s)(motion-outline|motion-line-target|admin-panel|managed-page-card|baka-overview-stat|login-card|auth-card)(\s|$)/;
 
@@ -81,7 +81,7 @@ export function playCardParts(card: HTMLElement, baseDelay = 0): number {
   const parts = collectCardParts(card, isRendered);
   parts.forEach((part, index) => {
     part.dataset.entered = "1";
-    const scale = /(^|[\s_-])(icon|avatar)([\s_-]|$)/.test(classText(part));
+    const scale = /(^|[\s_-])(icon|logo|avatar)([\s_-]|$)/.test(classText(part));
     const from: Keyframe = scale ? { opacity: 0, transform: "translate3d(0, 6px, 0) scale(.72)" } : { opacity: 0, transform: "translate3d(0, 8px, 0)" };
     part.animate([from, { opacity: 1, transform: "none" }], {
       duration: PART_DURATION_MS, delay: baseDelay + partOffset(index), easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards",
