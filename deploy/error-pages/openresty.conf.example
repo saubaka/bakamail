@@ -1,15 +1,20 @@
-# 反向代理（Nginx / OpenResty / 1Panel 反向代理站点）：后端没起来或超时时，
-# 代理自己会返回 502/503/504，应用来不及渲染，这里用静态页保持同样的外观。
+# 反向代理（Nginx / OpenResty / 1Panel 反向代理站点）：代理自己返回 403/404，
+# 或者后端没起来、超时时返回 500/502/503/504，应用来不及渲染，这里用静态页保持同样的外观。
 #
-# 1. 把本目录里的 500.html、502.html、503.html、504.html 复制到服务器，例如 /opt/bakamail/error-pages/
-# 2. 把下面的内容放进站点的 server 块，并把 alias 改成上面的目录（末尾保留斜杠）
-# 3. 重新加载代理配置
+# 1. 把本目录里的 403.html、404.html、500.html、503.html、unreachable.html 复制到服务器，例如 /opt/bakamail/error-pages/
+# 2. 把下面的内容放进站点的 server 块（1Panel 站点可以放进该站点 proxy 目录下的一个独立 .conf 文件），
+#    并把两处 alias 改成上面的目录
+# 3. 先 nginx -t 检查，再重新加载代理配置
+#
+# 502/504 不直接返回而是改成 503：站点放在 Cloudflare 之类的服务后面时，它们会把 502/504 换成自己的纯文本页
+# （error code: 502），用户看不到我们的页面；503 会原样透传，语义上“服务暂时不可用”也是准确的。
 #
 # 应用自己返回的错误页（404、500 等）已经是统一风格，不需要也不应该开启 proxy_intercept_errors。
+error_page 403 /_bakamail_errors/403.html;
+error_page 404 /_bakamail_errors/404.html;
 error_page 500 /_bakamail_errors/500.html;
-error_page 502 /_bakamail_errors/502.html;
 error_page 503 /_bakamail_errors/503.html;
-error_page 504 /_bakamail_errors/504.html;
+error_page 502 504 =503 /_bakamail_errors/unreachable.html;
 
 location ^~ /_bakamail_errors/ {
     internal;
