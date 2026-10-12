@@ -171,3 +171,23 @@ html:is([data-motion="reduce"], [data-performance="low"]) .mail-list .mail-row[d
 /* 加载动画显示期间，右侧旧内容先淡出，加载动画和容器线条不会同时出现。 */
 html[data-route-loading] .workspace-route-panel:not(.mail-panel-leave-active) { opacity: 0; transition: opacity 200ms ease; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .workspace-route-panel, html[data-route-loading] .workspace-route-panel { transition: none; } }
+
+/* ---- 桌面端：搜索、草稿、联系人、设置的大容器与邮箱页的两个大容器、左侧菜单栏同高同位 ----
+   邮箱页的列表和阅读区上下各留 14px / 12px（见 .mail-shell 的内边距），这里整页做成一个大容器，
+   上下边界线与它们、与左侧菜单栏对齐；里面的几块内容用分隔线隔开，内容多时在容器内部滚动。 */
+.mail-utility-page > .motion-outline { display: none; }
+@media (min-width: 901px) {
+  .workspace-route-panel:has(> .mail-utility-page) { display: grid; justify-items: center; align-items: stretch; padding: 14px 24px 12px; overflow: hidden; }
+  .mail-utility-page { position: relative; width: 100%; max-width: 1552px; height: 100%; min-height: 0; border-radius: 26px; background: var(--surface); }
+  .mail-utility-page > .motion-outline { display: block; }
+  .workspace-content .mail-utility-page .mail-utility-shell { width: 100%; max-width: none; height: 100%; margin: 0; padding: 0; gap: 0; align-content: start; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; border-radius: inherit; }
+  .mail-utility-page .mail-utility-shell .motion-outline { display: none; }
+  .mail-utility-page .mail-utility-shell > .admin-panel,
+  .mail-utility-page .mail-utility-shell > .search-result-slot { margin: 0; border: 0; border-radius: 0; background: transparent; background-image: none; box-shadow: none; padding: 32px 40px; }
+  .mail-utility-page .mail-utility-shell > .search-result-slot { padding: 0; }
+  /* 结果多时由整个大容器滚动，不再在容器里再套一个滚动区。 */
+  .mail-utility-page .search-result-content .mail-result-list { max-height: none; overflow: visible; }
+  .mail-utility-page .mail-utility-shell > .search-result-slot > .search-result-clip > .search-result-panel { padding: 32px 40px; }
+  .mail-utility-page .mail-utility-shell > .admin-panel + .admin-panel,
+  .mail-utility-page .mail-utility-shell > .admin-panel + .search-result-slot.is-open { border-top: 0 !important; box-shadow: inset 0 1px 0 var(--line-blue) !important; }
+}

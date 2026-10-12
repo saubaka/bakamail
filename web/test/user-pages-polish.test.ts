@@ -90,3 +90,23 @@ test("滚动入场指令已注册，减少动画时所有新增过渡关闭", ()
   assert.match(css, /prefers-reduced-motion: reduce\) \{\s*\.smooth-block, \[data-scroll-reveal\]/);
   assert.match(css, /data-motion="reduce"\], \[data-performance="low"\]\) :is\(\.smooth-block, \[data-scroll-reveal\]/);
 });
+
+test("桌面端：搜索、草稿、联系人、设置整页是一个大容器，上下边界与邮箱页两个大容器、左侧菜单栏同高同位", () => {
+  for (const view of ["views/SearchView.vue", "views/DraftsView.vue", "views/ContactsView.vue", "views/SettingsView.vue"]) {
+    assert.match(source(view), /<div v-motion="\{ kind: 'feature' \}" class="mail-utility-page">\s*<main id="main-content" class="page-shell mail-utility-shell"/);
+  }
+  const css = source("styles/workspace.css");
+  const tail = css.slice(css.indexOf("桌面端：搜索、草稿、联系人、设置的大容器"));
+  // 邮箱页的外壳内边距是 14px 上、12px 下，工具页的容器用同样的间距，侧栏也是 margin:14px 0 12px
+  assert.match(tail, /\.workspace-route-panel:has\(> \.mail-utility-page\) \{[^}]*padding: 14px 24px 12px; overflow: hidden;/);
+  assert.match(tail, /\.mail-utility-page \{ position: relative; width: 100%; max-width: 1552px; height: 100%;/);
+  assert.match(css, /\.workspace-content \.mail-shell \{[^}]*padding: 14px 24px 12px;/);
+  assert.match(css, /\.dock-menu\.is-desktop-sidebar \{[^}]*margin:14px 0 12px; height:calc\(100% - 26px\);/);
+  // 里面的几块内容用分隔线隔开，容器内部滚动，不再各自带边框
+  assert.match(tail, /\.mail-utility-shell \.motion-outline \{ display: none; \}/);
+  assert.match(tail, /overflow-y: auto;/);
+  assert.match(tail, /\.admin-panel \+ \.admin-panel,[\s\S]*box-shadow: inset 0 1px 0 var\(--line-blue\) !important;/);
+  assert.match(tail, /\.search-result-content \.mail-result-list \{ max-height: none; overflow: visible; \}/);
+  // 手机上保持原来的卡片布局：整页大容器的外轮廓只在桌面端显示
+  assert.match(css, /\.mail-utility-page > \.motion-outline \{ display: none; \}\n@media \(min-width: 901px\)/);
+});
