@@ -2,6 +2,7 @@ import type { Directive, DirectiveBinding } from "vue";
 import { applyOutline } from "./outlineGeometry.ts";
 import { stagger } from "./stagger.ts";
 import { playCardParts } from "./cardParts.ts";
+import { loaderGate } from "./admin/loader.ts";
 
 type MotionKind = "feature" | "compact" | "control";
 type MotionOptions = {
@@ -152,8 +153,10 @@ function entranceDelay(element: HTMLElement): number {
   const own = Number(element.dataset.motionDelay ?? 0);
   const now = performance.now();
   const assignedAt = Number(element.dataset.motionAssignedAt ?? 0);
-  if (assignedAt > 0) return own + (now - assignedAt < 1500 ? Number(element.dataset.motionSlotDelay ?? 0) : 0);
-  return own + stagger.next(now);
+  // 加载动画还在（或还在淡出）时，容器线条要等它完全收起之后才开始画。
+  const gate = loaderGate.delay(now);
+  if (assignedAt > 0) return own + gate + (now - assignedAt < 1500 ? Number(element.dataset.motionSlotDelay ?? 0) : 0);
+  return own + gate + stagger.next(now);
 }
 
 function play(record: MotionRecord, forward: boolean, element: HTMLElement): void {
