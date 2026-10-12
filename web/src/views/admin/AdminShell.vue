@@ -92,7 +92,6 @@ import { resolveShortcut } from "../../admin/shortcuts";
 import { decideSwipe } from "../../admin/railSwipe";
 import { useRailBadges } from "../../admin/useRailBadges";
 import { navigationState } from "../../admin/navigationState";
-import { onApiActivity } from "../../api/client.ts";
 import { adminEntranceDirective as vAdminEntrance } from "../../admin/entrance.ts";
 
 const router = useRouter();
@@ -111,14 +110,12 @@ let compactQuery: MediaQueryList | null = null;
 let armedUntil = 0;
 let touchStart: { x: number; y: number } | null = null;
 const { badges, start: startBadges, refresh: refreshBadges } = useRailBadges();
-// 右侧内容区的加载动画：页面切换等待服务端校验，或页面自己的数据请求在途时显示。
-const requestsInFlight = ref(0);
-const busy = computed(() => Boolean(navigationState.pending) || requestsInFlight.value > 0);
-const stopActivity = onApiActivity((count) => { requestsInFlight.value = count; });
-
 // Revalidation still runs in the route guard. Keep the authenticated shell and
 // current panel intact while it awaits the server; a revoked identity is cleared.
 const loading = computed(() => !session.initialized || !session.me);
+// 右侧内容区的加载动画：只在右侧容器本身还没出来时显示（页面切换等待校验、恢复管理员会话）。
+// 页面里的文字、表格等数据还在读取时不显示，它们自己有“正在读取”提示和入场动画。
+const busy = computed(() => Boolean(navigationState.pending) || loading.value);
 const username = computed(() => session.me?.displayName || session.me?.username || "管理员");
 const role = computed(() => session.me?.role ?? "auditor");
 const initial = computed(() => (username.value[0] ?? "?").toUpperCase());
@@ -291,7 +288,6 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  stopActivity();
   document.body.classList.remove("admin-body", "admin-rail-open");
   window.removeEventListener("keydown", onKeydown);
   window.removeEventListener("touchstart", onTouchStart);

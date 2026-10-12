@@ -125,12 +125,13 @@ test("路由守卫：先有一个同步守卫立即记下目标；成功的导�
   assert.match(router, /entryCheckedAt = Date\.now\(\)/);
 });
 
-test("外壳：菜单跟随目标页立即高亮，右侧加载动画覆盖校验等待和页面请求，新页面各块依次入场而不是整体入场", () => {
+test("外壳：菜单跟随目标页立即高亮，右侧加载动画只覆盖容器未加载好（校验等待、恢复会话），新页面各块依次入场而不是整体入场", () => {
   const shell = source("views/admin/AdminShell.vue");
   assert.match(shell, /:pending="navigationState\.pending"/);
   assert.match(shell, /<AdminLoader :active="busy" \/>/);
-  assert.match(shell, /Boolean\(navigationState\.pending\) \|\| requestsInFlight\.value > 0/);
-  assert.match(shell, /onApiActivity\(/);
+  // v0.9.1: 只在右侧容器还没加载好时显示，页面内数据请求在途不再触发。
+  assert.match(shell, /Boolean\(navigationState\.pending\) \|\| loading\.value/);
+  assert.doesNotMatch(shell, /onApiActivity|requestsInFlight/);
   assert.match(shell, /:aria-busy="busy \? 'true' : 'false'"/);
   assert.match(shell, /name="admin-panel" mode="out-in" :duration="\{ enter: 0, leave: 140 \}"/);
   assert.match(shell, /<div :key="String\(childRoute\.name\)" v-admin-entrance class="admin-route-panel">/);
