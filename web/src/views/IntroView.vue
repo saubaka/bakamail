@@ -62,7 +62,7 @@
 
       <section v-intro-reveal class="intro-closing" aria-labelledby="closing-title"><span aria-hidden="true">✉</span><h2 id="closing-title">已经有账号了？<br />直接登录。</h2><router-link class="intro-button" :to="entry">{{ signedIn ? '进入邮箱' : '登录邮箱' }}<span aria-hidden="true">↗</span></router-link></section>
     </main>
-    <footer class="intro-footer"><div><strong>BakaMail</strong><p>自建邮局的网页端。</p></div><div class="intro-footer-links"><router-link to="/">项目介绍</router-link><router-link to="/password-reset">重置密码</router-link></div><p>© {{ year }} saubaka. BakaMail.<br /><span>邮件服务基于 Maddy，第三方项目版权归原作者所有。</span></p></footer>
+    <footer class="intro-footer"><div><strong>BakaMail</strong><p>自建邮局的网页端。</p></div><div class="intro-footer-links"><router-link to="/">项目介绍</router-link><a href="https://github.com/saubaka/bakamail" target="_blank" rel="noopener noreferrer">开源仓库</a><router-link to="/password-reset">重置密码</router-link></div><p>© {{ year }} saubaka. BakaMail.<br /><span>邮件服务基于 Maddy，第三方项目版权归原作者所有。</span></p></footer>
   </div>
 </template>
 
