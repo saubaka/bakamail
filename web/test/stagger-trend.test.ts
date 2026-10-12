@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createStagger } from "../src/stagger.ts";
 import { aggregate, niceMax, yTicks, monotonePath, resample, lerpValues, xTickIndexes } from "../src/admin/trend.ts";
-import { childDelay, dropNested, specFor, CHILD_MAX_STEPS, CHILD_START_MS, CHILD_STEP_MS } from "../src/admin/entrance.ts";
+import { dropNested, specFor, statDelay, STAT_STEP_MS, STAT_SELECTOR, ENTRANCE_SELECTOR } from "../src/admin/entrance.ts";
+import { collectCardParts, partOffset, PARTS_START_MS, PARTS_STEP_MS, PARTS_MAX_STEPS, type PartNode } from "../src/cardParts.ts";
 
 test("依次入场：同一批每个晚一步，超过上限不再变长，停一会儿后从头开始", () => {
   const s = createStagger(70, 3, 180);
@@ -13,9 +14,7 @@ test("依次入场：同一批每个晚一步，超过上限不再变长，停�
   assert.equal(s.next(0), 0);
 });
 
-test("卡片内容在卡片之后依次跟上，嵌套的候选只算最外层，表格行只做透明度", () => {
-  assert.equal(childDelay(100, 0), 100 + CHILD_START_MS);
-  assert.equal(childDelay(0, 99), CHILD_START_MS + CHILD_MAX_STEPS * CHILD_STEP_MS);
+test("嵌套的候选只算最外层，表格行只做透明度", () => {
   const items = [{ id: "a", in: ["b", "c"] }, { id: "b", in: [] }, { id: "c", in: [] }, { id: "d", in: [] }];
   const top = dropNested(items, (outer, inner) => outer.in.includes(inner.id));
   assert.deepEqual(top.map((item) => item.id), ["a", "d"]);
@@ -56,4 +55,48 @@ test("趋势坐标：刻度取整、空数据也有刻度、曲线不冲出范�
   assert.deepEqual(lerpValues([0, 10], [10, 20], 1), [10, 20]);
   const ticks = xTickIndexes(24, 6);
   assert.ok(ticks.length <= 6 && ticks[0] === 0);
+});
+
+type Fake = PartNode & { children: Fake[]; hidden?: boolean };
+const el = (tagName: string, className = "", children: Fake[] = [], text = ""): Fake => ({
+  tagName, className, children,
+  childNodes: [...(text ? [{ nodeType: 3, textContent: text }] : []), ...children.map(() => ({ nodeType: 1, textContent: null }))],
+});
+const names = (parts: Fake[]) => parts.map((part) => `${part.tagName}${part.className ? "." + part.className : ""}`);
+
+test("总览统计卡片一张一张依次入场，间隔肉眼可分辨", () => {
+  assert.deepEqual([0, 1, 2, 3].map((i) => statDelay(70, i)), [70, 70 + STAT_STEP_MS, 70 + 2 * STAT_STEP_MS, 70 + 3 * STAT_STEP_MS]);
+  assert.ok(STAT_STEP_MS >= 100);
+  assert.ok(ENTRANCE_SELECTOR.includes(STAT_SELECTOR));
+});
+
+test("卡片内容单元：统计卡片按图标、标题、数值、说明的顺序，纯容器往里找", () => {
+  const stat = el("ARTICLE", "baka-overview-stat", [
+    el("SPAN", "baka-overview-stat__icon", [el("SVG")]),
+    el("DIV", "", [el("SMALL", "", [], "邮箱账号"), el("STRONG", "", [], "未提供"), el("SPAN", "baka-overview-stat__hint", [], "账号总数")]),
+  ]);
+  assert.deepEqual(names(collectCardParts(stat)), ["SPAN.baka-overview-stat__icon", "SMALL", "STRONG", "SPAN.baka-overview-stat__hint"]);
+});
+
+test("卡片内容单元：跳过外轮廓和嵌套卡片、隐藏元素与对话框，表单项、按钮、表格各算一个，数量有上限", () => {
+  const card = el("SECTION", "admin-panel", [
+    el("SVG", "motion-outline"),
+    el("HEADER", "", [el("H2", "", [], "标题"), el("P", "", [], "说明")]),
+    el("FORM", "form-grid", [el("LABEL", "", [el("INPUT")], "名称"), el("LABEL", "", [el("INPUT")], "地址"), el("DIV", "actions", [el("BUTTON", "button", [], "保存")])]),
+    el("DIV", "table-scroll", [el("TABLE", "", [el("TR")])]),
+    el("SECTION", "admin-panel", [el("P", "", [], "嵌套卡片自己入场")]),
+    Object.assign(el("P", "", [], "隐藏"), { hidden: true }),
+    el("DIALOG", "", [el("P", "", [], "对话框")]),
+  ]);
+  assert.deepEqual(names(collectCardParts(card)), ["H2", "P", "LABEL", "LABEL", "BUTTON.button", "DIV.table-scroll"]);
+  assert.deepEqual(names(collectCardParts(card, (node) => node.tagName !== "P")), ["H2", "LABEL", "LABEL", "BUTTON.button", "DIV.table-scroll"]);
+  const many = el("SECTION", "managed-page-card", Array.from({ length: 60 }, () => el("P", "", [], "文字")));
+  assert.equal(collectCardParts(many).length, 24);
+  assert.equal(collectCardParts(many, () => true, 5).length, 5);
+});
+
+test("内容单元的等待时间：先等卡片出现，之后按固定节拍，超过上限不再变长", () => {
+  assert.equal(partOffset(0), PARTS_START_MS);
+  assert.equal(partOffset(3), PARTS_START_MS + 3 * PARTS_STEP_MS);
+  assert.equal(partOffset(99), PARTS_START_MS + PARTS_MAX_STEPS * PARTS_STEP_MS);
 });

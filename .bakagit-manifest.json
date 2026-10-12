@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "0b7ed391a9a6fdc07bd0393035da33f665c42d9ac65f38a686d2f603eb6385aa",
+      "sha256": "3ba7e5561584e926e74811c67378e34cb46ae28834d006f6ebb9d1c1c9f2a213",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "3447f0dfebbc1e559915c37b57a9f80a015f28ec7b6ff6552a5837082bc42651",
+      "sha256": "100a25f4e62d7f516dfb026142e5bb399bd48a0a5d71c74b7978ea4c6e62dc23",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "8533ceba7262d424523ff81075858aae50af5b54ae15d3467a8d103eea2a6f95",
+      "sha256": "3819887c9ed9f4ab42e4c699fa124ceac2680af713192439517a2c2ccc46f7cb",
       "executable": false
     },
     "README.md": {
@@ -188,7 +188,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "f55356678320c8965b36d56442c528d0694aed9e41dc0930982df95a99acfa35",
+      "sha256": "bbee4d6520a013496d613b33178007b6feb3d2bb41c95fad7655d2835d37f215",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -658,7 +658,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "177ac1040fc0f7982659f7c92bf7875d47d1a52991238de99aafe4f5481c1a43",
+      "sha256": "f11b9b382de2a441f03e172f651950849a519ae2a52507c10c5553fac6b1862a",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -683,7 +683,7 @@
     },
     "web/src/admin/entrance.ts": {
       "source": "web/src/admin/entrance.ts",
-      "sha256": "277bc90c72f65e0a1215a173fd51c8fb7fbcfd07fce3a94045a13ae5f6ffc3ae",
+      "sha256": "b42ce22a911ddb22893a585d3974265e218421c24ebf7375e9391cf5178e0174",
       "executable": false
     },
     "web/src/admin/loader.ts": {
@@ -839,6 +839,11 @@
     "web/src/capsuleFeedback.ts": {
       "source": "web/src/capsuleFeedback.ts",
       "sha256": "978ef99fca51d987f600ceb29875a9a43c2f3b2155b1c21696f05844b8b270df",
+      "executable": false
+    },
+    "web/src/cardParts.ts": {
+      "source": "web/src/cardParts.ts",
+      "sha256": "81babf62e03dcf6888000e92b74c993662498a7ae40682d68dc80a1d1de8ac78",
       "executable": false
     },
     "web/src/components/admin/AdminCommandPalette.vue": {
@@ -1043,7 +1048,7 @@
     },
     "web/src/motion.ts": {
       "source": "web/src/motion.ts",
-      "sha256": "fae95b0e6367a7d15a9493987369474e219fa3528b6c912c8682bed091880966",
+      "sha256": "53f7de0eb2507fee7f25bcb8b4345a082e90ef1a7660aee0ad4950532eead1b4",
       "executable": false
     },
     "web/src/notificationConfig.ts": {
@@ -1753,7 +1758,7 @@
     },
     "web/test/stagger-trend.test.ts": {
       "source": "web/test/stagger-trend.test.ts",
-      "sha256": "ad090c63d33bf993289bb91cb8c45986a2809adcf2bbdbf0b2e645bae377aade",
+      "sha256": "019b3180f356aafd70a23c48ccdfc0bd3e95743c5ba1f461c6411524e01191f3",
       "executable": false
     },
     "web/test/tsconfig.notification-display-phase4.json": {

@@ -1,6 +1,7 @@
 import type { Directive, DirectiveBinding } from "vue";
 import { applyOutline } from "./outlineGeometry.ts";
 import { stagger } from "./stagger.ts";
+import { playCardParts } from "./cardParts.ts";
 
 type MotionKind = "feature" | "compact" | "control";
 type MotionOptions = {
@@ -174,6 +175,8 @@ function play(record: MotionRecord, forward: boolean, element: HTMLElement): voi
     record.startedAt = performance.now();
     prepare(record, forward);
     for (const animation of record.animations) animation.play();
+    // 卡片出现的同时，里面的图标、标题、文字、按钮依次跟上（控件类小元素除外）。
+    if (forward && element.dataset.motionKind !== "control") playCardParts(element, 0);
     const anchor = record.animations[0];
     anchor.finished
       .then(() => {
