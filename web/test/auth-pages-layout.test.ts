@@ -43,3 +43,18 @@ test("邀请码开通页只复刻登录页的 logo 与标题位置，表单和�
   assert.match(register, /purpose="register"/);
   assert.match(register, /v-model:formReadyAt="formReadyAt"/);
 });
+
+test("登录、后台登录、忘记密码页脚用开源仓库导向文字和链接，不再出现“自建邮局的网页端”，样式与首页页脚链接一致", () => {
+  const note = source("components/RepositoryNote.vue");
+  assert.match(note, /本项目已开源：<a :href="repositoryUrl" target="_blank" rel="noopener noreferrer">开源仓库<\/a>/);
+  assert.match(note, /SEO_REPOSITORY_URL/);
+  for (const view of ["views/LoginView.vue", "views/admin/AdminLoginView.vue", "views/PasswordResetView.vue"]) {
+    const text = source(view);
+    assert.match(text, /<RepositoryNote \/>/, `${view} 页脚缺少开源仓库`);
+    assert.match(text, /import RepositoryNote from/);
+    assert.doesNotMatch(text, /自建邮局的网页端/);
+  }
+  const css = source("styles/login.css");
+  assert.match(css, /\.login-footer a \{ color: inherit; text-decoration: none; \}/);
+  assert.match(css, /\.login-page a:hover \{ text-decoration: underline;/);
+});
