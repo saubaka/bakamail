@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "3ba7e5561584e926e74811c67378e34cb46ae28834d006f6ebb9d1c1c9f2a213",
+      "sha256": "af6f6ec411cc7066c1e19b49eec42921973c83b483bc87357e00953d9c7c3659",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "100a25f4e62d7f516dfb026142e5bb399bd48a0a5d71c74b7978ea4c6e62dc23",
+      "sha256": "d57e7411c68bd9461f8c9b2199973679c1ea987709ab912acfca4d2c2b873ffc",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "3819887c9ed9f4ab42e4c699fa124ceac2680af713192439517a2c2ccc46f7cb",
+      "sha256": "c0354baf39307b0b695626b8022d36290434aa02c95f1f8f6ee20717bcd6dee7",
       "executable": false
     },
     "README.md": {
@@ -188,7 +188,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "bbee4d6520a013496d613b33178007b6feb3d2bb41c95fad7655d2835d37f215",
+      "sha256": "12b34508a6c4ae6941afd935ecd7fc44ae4285bbe54f17b6362249f9811ea102",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -658,7 +658,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "f11b9b382de2a441f03e172f651950849a519ae2a52507c10c5553fac6b1862a",
+      "sha256": "8d6e42cdec4d8697f1fc001d8daac430a31b1b32c0eb46eea120de92a6c60edc",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -843,7 +843,7 @@
     },
     "web/src/cardParts.ts": {
       "source": "web/src/cardParts.ts",
-      "sha256": "81babf62e03dcf6888000e92b74c993662498a7ae40682d68dc80a1d1de8ac78",
+      "sha256": "705d31880ab4c8c41c825fb58c4a53a463f086328c63d05be2c9a78a6194cfbd",
       "executable": false
     },
     "web/src/components/admin/AdminCommandPalette.vue": {
@@ -1348,12 +1348,12 @@
     },
     "web/src/views/PasswordResetView.vue": {
       "source": "web/src/views/PasswordResetView.vue",
-      "sha256": "57d35b90bb22c8518f1be7e30221a3b7c61ffcf6e9ba3b1b2904df8c7f3cec64",
+      "sha256": "4a1e6126094b48e73e4ea4838db7eeb2e1b22f70b180a8a7a5d2f69dfa891792",
       "executable": false
     },
     "web/src/views/RegisterView.vue": {
       "source": "web/src/views/RegisterView.vue",
-      "sha256": "b92f31f6aa3888b153f28e000cb6225e2e9f5e19b5742435b5d075b54d3bf6f8",
+      "sha256": "39ce8d388bcd147e6c268d0bbefa6e486ca0916c4da778fb9108d6b778496730",
       "executable": false
     },
     "web/src/views/SearchView.vue": {
@@ -1424,6 +1424,11 @@
     "web/test/attachment-reader.test.ts": {
       "source": "web/test/attachment-reader.test.ts",
       "sha256": "c2e9cb4eef5b7ae526af9fc1ebdedc643f393618e132d9db9347461c179522e4",
+      "executable": false
+    },
+    "web/test/auth-pages-layout.test.ts": {
+      "source": "web/test/auth-pages-layout.test.ts",
+      "sha256": "ffdea027620baeaab1f2b489207f6daa7ee834ed5612dea23d8d96f6cf2bb85f",
       "executable": false
     },
     "web/test/auth-security-ui.test.ts": {
