@@ -8,7 +8,7 @@
       aria-label="关闭后台导航"
       @click="closeMenu()"
     ></button>
-    <AdminProgressLine :active="busy" />
+    <AdminLoader :active="busy" />
     <AdminRail
       ref="railElement"
       :sections="sections"
@@ -65,8 +65,8 @@
           </div>
         </section>
         <router-view v-else v-slot="{ Component, route: childRoute }">
-          <transition name="admin-panel" mode="out-in" :duration="{ enter: 700, leave: 140 }" @before-leave="makePanelInert" @after-enter="focusPanel">
-            <div :key="String(childRoute.name)" class="admin-route-panel"><component :is="Component" /></div>
+          <transition name="admin-panel" mode="out-in" :duration="{ enter: 0, leave: 140 }" @before-leave="makePanelInert" @after-enter="focusPanel">
+            <div :key="String(childRoute.name)" v-admin-entrance class="admin-route-panel"><component :is="Component" /></div>
           </transition>
         </router-view>
       </main>
@@ -85,7 +85,7 @@ import { ADMIN_LOGIN_PATH } from "../../../../shared/adminPaths";
 import { adminLoginDestination } from "../../auth/adminEntryGate";
 import AdminRail from "../../components/admin/AdminRail.vue";
 import AdminIcon from "../../components/admin/AdminIcon.vue";
-import AdminProgressLine from "../../components/admin/AdminProgressLine.vue";
+import AdminLoader from "../../components/admin/AdminLoader.vue";
 import AdminCommandPalette, { type PaletteEntry } from "../../components/admin/AdminCommandPalette.vue";
 import { PAGE_TITLES, RAIL_SECTIONS, railSections } from "../../admin/navModel";
 import { resolveShortcut } from "../../admin/shortcuts";
@@ -93,6 +93,7 @@ import { decideSwipe } from "../../admin/railSwipe";
 import { useRailBadges } from "../../admin/useRailBadges";
 import { navigationState } from "../../admin/navigationState";
 import { onApiActivity } from "../../api/client.ts";
+import { adminEntranceDirective as vAdminEntrance } from "../../admin/entrance.ts";
 
 const router = useRouter();
 const route = useRoute();
@@ -110,7 +111,7 @@ let compactQuery: MediaQueryList | null = null;
 let armedUntil = 0;
 let touchStart: { x: number; y: number } | null = null;
 const { badges, start: startBadges, refresh: refreshBadges } = useRailBadges();
-// 顶部加载线：页面切换等待服务端校验，或页面自己的数据请求在途时显示。
+// 右侧内容区的加载动画：页面切换等待服务端校验，或页面自己的数据请求在途时显示。
 const requestsInFlight = ref(0);
 const busy = computed(() => Boolean(navigationState.pending) || requestsInFlight.value > 0);
 const stopActivity = onApiActivity((count) => { requestsInFlight.value = count; });

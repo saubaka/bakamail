@@ -1,5 +1,6 @@
 import type { Directive, DirectiveBinding } from "vue";
 import { applyOutline } from "./outlineGeometry.ts";
+import { stagger } from "./stagger.ts";
 
 type MotionKind = "feature" | "compact" | "control";
 type MotionOptions = {
@@ -16,6 +17,8 @@ type MotionRecord = {
   delayTimer: number;
   disabled: boolean;
   version: number;
+  /** 当前这段动画开始的时间，用来发现被浏览器挂起而卡在半途的动画。 */
+  startedAt: number;
 };
 
 const records = new WeakMap<HTMLElement, MotionRecord>();
@@ -62,10 +65,21 @@ function resumeMotion(element: HTMLElement): void {
   const record = records.get(element);
   if (!record?.disabled) return;
   record.disabled = false;
+  // 元素已经是“完成”状态：动画效果不需要留着，留着会让滤镜和变换常驻，线条会被重新采样而发虚。
+  for (const animation of record.animations) animation.cancel();
+}
+
+/** 动画结束后撤掉效果：最终样子由样式负责，不再有常驻的滤镜、变换和合成层。 */
+function releaseEffects(record: MotionRecord): void {
+  for (const animation of record.animations) animation.cancel();
+}
+
+/** 反向播放前，把时间放回终点（撤掉效果之后需要重新定位）。 */
+function prepare(record: MotionRecord, forward: boolean): void {
   for (const animation of record.animations) {
-    animation.playbackRate = 1;
-    animation.pause();
-    animation.currentTime = record.duration;
+    animation.playbackRate = forward ? 1 : -1;
+    if (!forward && animation.playState === "idle") animation.currentTime = record.duration;
+    if (forward && animation.playState === "idle") animation.currentTime = 0;
   }
 }
 
@@ -125,7 +139,20 @@ function createOutline(element: HTMLElement): { outline: SVGSVGElement; path: SV
 
 function configureGeometry(element: HTMLElement, outline: SVGSVGElement, path: SVGRectElement): void {
   // 线条贴着元素最外沿（含边框），背景不会在线条外面多出一圈；细节见 outlineGeometry.ts。
-  applyOutline(outline, [path], element, element, 1.2);
+  applyOutline(outline, [path], element, element, 1);
+}
+
+/**
+ * 入场前的等待：自己设置的延迟，加上同一批元素里排的位置。
+ * 后台页面由 admin/entrance.ts 按页面上的先后顺序统一排好（motionSlotDelay），
+ * 其他地方在这里按“进入视野的先后”排队，同时出现的多张卡片不会一起弹出来。
+ */
+function entranceDelay(element: HTMLElement): number {
+  const own = Number(element.dataset.motionDelay ?? 0);
+  const now = performance.now();
+  const assignedAt = Number(element.dataset.motionAssignedAt ?? 0);
+  if (assignedAt > 0) return own + (now - assignedAt < 1500 ? Number(element.dataset.motionSlotDelay ?? 0) : 0);
+  return own + stagger.next(now);
 }
 
 function play(record: MotionRecord, forward: boolean, element: HTMLElement): void {
@@ -144,10 +171,9 @@ function play(record: MotionRecord, forward: boolean, element: HTMLElement): voi
     }
     element.classList.add("is-motion-active");
     element.dataset.motionState = forward ? "drawing" : "reversing";
-    for (const animation of record.animations) {
-      animation.playbackRate = forward ? 1 : -1;
-      animation.play();
-    }
+    record.startedAt = performance.now();
+    prepare(record, forward);
+    for (const animation of record.animations) animation.play();
     const anchor = record.animations[0];
     anchor.finished
       .then(() => {
@@ -155,10 +181,31 @@ function play(record: MotionRecord, forward: boolean, element: HTMLElement): voi
         element.classList.remove("is-motion-active");
         element.classList.toggle("is-revealed", forward);
         element.dataset.motionState = forward ? "settled" : "idle";
+        // 完全显示后不留任何动画效果；退回隐藏状态时才需要保持起点。
+        if (forward) releaseEffects(record);
       })
       .catch(() => undefined);
   };
-  record.delayTimer = window.setTimeout(run, forward ? Number(element.dataset.motionDelay ?? 0) : 0);
+  record.delayTimer = window.setTimeout(run, forward ? entranceDelay(element) : 0);
+}
+
+/**
+ * 页面在后台时浏览器会挂起动画，回来后可能停在半途（线条发虚、卡片半透明）。
+ * 回到前台或窗口重新获得焦点时，把已经超时的动画直接推到终点。
+ */
+export function settleStalledMotion(now = performance.now()): number {
+  let settled = 0;
+  for (const element of mountedElements) {
+    const state = element.dataset.motionState;
+    if (state !== "drawing" && state !== "reversing") continue;
+    const record = records.get(element);
+    if (!record || record.disabled || now - record.startedAt < record.duration + 400) continue;
+    for (const animation of record.animations) {
+      try { animation.finish(); } catch { /* 动画已经被取消 */ }
+    }
+    settled += 1;
+  }
+  return settled;
 }
 
 export function initializeMotionPreferences(): void {
@@ -181,6 +228,8 @@ export function initializeMotionPreferences(): void {
     preferencesInitialized = true;
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const onSystemMotionChange = (): void => syncMountedMotion();
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") settleStalledMotion(); });
+    window.addEventListener("focus", () => { settleStalledMotion(); });
     if (typeof media.addEventListener === "function") media.addEventListener("change", onSystemMotionChange);
     else media.addListener(onSystemMotionChange);
   }
@@ -208,17 +257,18 @@ export const motionDirective: Directive<HTMLElement, MotionOptions | MotionKind 
     };
     const animations = [
       path.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], timing),
+      // 终点用 none 而不是 blur(0)、scale(1)：效果撤掉后样式就是终点，不会留下常驻的滤镜和变换。
       outline.animate(
         [
           { opacity: 0.2, filter: "blur(.7px)", transform: "scale(.988)" },
-          { opacity: 1, filter: "blur(0)", transform: "scale(1)" },
+          { opacity: 1, filter: "none", transform: "none" },
         ],
         timing,
       ),
       element.animate(
         [
           { opacity: 0, transform: "translate3d(0, 8px, 0) scale(.992)" },
-          { opacity: 1, transform: "translate3d(0, 0, 0) scale(1)" },
+          { opacity: 1, transform: "none" },
         ],
         timing,
       ),
@@ -236,6 +286,7 @@ export const motionDirective: Directive<HTMLElement, MotionOptions | MotionKind 
       delayTimer: 0,
       disabled: false,
       version: 0,
+      startedAt: 0,
     };
     records.set(element, record);
 

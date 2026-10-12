@@ -245,6 +245,12 @@ create table if not exists admin_login_tickets (
   attempts integer not null default 0
 );
 create index if not exists ix_admin_login_tickets_expiry on admin_login_tickets(expires_ms);
+create table if not exists turnstile_stats (
+  hour_ms integer primary key,
+  passed integer not null default 0,
+  rejected integer not null default 0,
+  unavailable integer not null default 0
+);
 create table if not exists ui_appearance (
   id integer primary key check(id = 1),
   schema_version integer not null,

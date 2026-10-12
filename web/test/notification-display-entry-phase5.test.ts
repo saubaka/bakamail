@@ -123,7 +123,8 @@ test('全入口不再允许无理由persistent；保留发送锁、人工确认�
   // v0.3.7 adds admin two-step verification feedback (TotpSettings and the admin list reset), also through the central capsule.
   // v0.4.0 adds the human-verification panel (HumanVerificationView) and its widget feedback, same central capsule.
   // v0.7.0 adds the SEO management page (SeoView: two toasts and one capsule-notice directive), same central capsule.
-  assert.equal(sites.files.length, 28); assert.equal(sites.total, 127); assert.deepEqual(sites.persistent, []);
+  // v0.9.0 adds the human-verification stats read-failure feedback (one capsule-notice directive), same central capsule.
+  assert.equal(sites.files.length, 28); assert.equal(sites.total, 128); assert.deepEqual(sites.persistent, []);
   assert.equal(sites.manualExceptions.length, 1);
   assert.equal(sites.manualExceptions[0].file, 'web/src/components/mail/ComposeDialog.vue');
   assert.equal(sites.manualExceptions[0].manualReason, 'delivery-unconfirmed');

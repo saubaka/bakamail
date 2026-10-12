@@ -59,13 +59,15 @@
 
     <div class="admin-rail__profile">
       <span class="avatar avatar--small" aria-hidden="true">{{ initial }}</span>
-      <span class="admin-rail__who admin-rail__text"><strong>{{ username }}</strong><small>{{ roleLabel }}</small></span>
-      <router-link class="admin-rail__tool" to="/mail" title="返回邮箱" aria-label="返回邮箱" @click="emit('navigate')">
-        <AdminIcon name="mail" :size="18" />
-      </router-link>
-      <button class="admin-rail__tool" type="button" :disabled="logoutBusy" :aria-label="logoutBusy ? '正在退出' : '退出登录'" title="退出登录" @click="emit('logout')">
-        <AdminIcon name="logout" :size="18" />
-      </button>
+      <span class="admin-rail__who admin-rail__text" :title="`${username}（${roleLabel}）`"><strong>{{ username }}</strong><small>{{ roleLabel }}</small></span>
+      <span class="admin-rail__tools">
+        <router-link class="admin-rail__tool" to="/mail" title="返回邮箱" aria-label="返回邮箱" @click="emit('navigate')">
+          <AdminIcon name="mail" :size="18" />
+        </router-link>
+        <button class="admin-rail__tool" type="button" :disabled="logoutBusy" :aria-label="logoutBusy ? '正在退出' : '退出登录'" title="退出登录" @click="emit('logout')">
+          <AdminIcon name="logout" :size="18" />
+        </button>
+      </span>
     </div>
   </aside>
 </template>

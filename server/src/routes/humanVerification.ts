@@ -6,7 +6,8 @@ import { enforceBudget } from "../security/abuse.ts";
 import { recordAudit } from "../security/audit.ts";
 import {
   SECRET_PATTERN, SITE_KEY_PATTERN, TURNSTILE_PURPOSES, clearTurnstile, explainErrors, isTestingSecret, isVerified,
-  keyFingerprint, readTurnstile, sealTurnstileSecret, siteverify, turnstileSecret, turnstileStats, writeTurnstile,
+  TURNSTILE_RANGES, keyFingerprint, readTurnstile, sealTurnstileSecret, siteverify, turnstileSecret, turnstileSeries, turnstileStats, writeTurnstile,
+  type TurnstileRange,
   type TurnstilePurpose,
 } from "../security/turnstile.ts";
 import { fingerprint } from "../security/identity.ts";
@@ -44,6 +45,13 @@ function budget(request: import("express").Request): void {
 }
 
 humanVerificationRouter.get("/human-verification", guard, (_request, response) => { ok(response, view()); });
+
+/** 趋势图的数据：最近 24 小时 / 7 天 / 30 天，每个整点一个点（没有记录的整点补 0）。 */
+humanVerificationRouter.get("/human-verification/stats", guard, (request, response) => {
+  const range = String(request.query.range ?? "24h");
+  if (!Object.prototype.hasOwnProperty.call(TURNSTILE_RANGES, range)) { fail(response, 400, "统计范围只能是 24h、7d 或 30d"); return; }
+  ok(response, { ...turnstileSeries(range as TurnstileRange), lastError: turnstileStats.lastError, lastAt: turnstileStats.lastAt });
+});
 
 humanVerificationRouter.put("/human-verification", guard, async (request, response) => {
   const body = await readJson<Record<string, unknown>>(request, { maxBytes: 4096 });

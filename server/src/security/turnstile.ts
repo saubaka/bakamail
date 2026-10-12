@@ -108,6 +108,46 @@ export const SECRET_PATTERN = /^[0-9A-Za-z_-]{8,160}$/;
 // ---- 运行统计（进程内，重启后清零；只用于面板展示，不参与任何判断） ----
 export const turnstileStats = { passed: 0, rejected: 0, unavailable: 0, lastError: "", lastAt: "" };
 
+// ---- 按小时累计的统计（写进数据库，重启后仍在；只用于面板里的趋势图，不参与任何判断） ----
+const HOUR = 3_600_000;
+export const TURNSTILE_STATS_RETENTION_DAYS = 35;
+export const TURNSTILE_RANGES = { "24h": 24 * HOUR, "7d": 7 * 24 * HOUR, "30d": 30 * 24 * HOUR } as const;
+export type TurnstileRange = keyof typeof TURNSTILE_RANGES;
+export type TurnstileOutcome = "passed" | "rejected" | "unavailable";
+
+export function recordTurnstileOutcome(outcome: TurnstileOutcome, now = Date.now()): void {
+  const hour = Math.floor(now / HOUR) * HOUR;
+  const column = outcome; // 只来自上面的三个固定取值，不是用户输入
+  db.prepare(`insert into turnstile_stats (hour_ms, ${column}) values (?, 1)
+    on conflict(hour_ms) do update set ${column} = ${column} + 1`).run(hour);
+}
+
+export type TurnstilePoint = { t: number; passed: number; rejected: number; unavailable: number };
+
+/** 最近一段时间每个整点的计数；没有记录的整点补 0，前端可以直接画线。 */
+export function turnstileSeries(range: TurnstileRange, now = Date.now()): { range: TurnstileRange; points: TurnstilePoint[]; totals: Omit<TurnstilePoint, "t"> } {
+  const span = TURNSTILE_RANGES[range];
+  const last = Math.floor(now / HOUR) * HOUR;
+  const first = last - (span / HOUR - 1) * HOUR;
+  const rows = db.prepare("select hour_ms, passed, rejected, unavailable from turnstile_stats where hour_ms >= ? and hour_ms <= ?").all(first, last) as
+    { hour_ms: number; passed: number; rejected: number; unavailable: number }[];
+  const byHour = new Map(rows.map((row) => [row.hour_ms, row]));
+  const points: TurnstilePoint[] = [];
+  const totals = { passed: 0, rejected: 0, unavailable: 0 };
+  for (let t = first; t <= last; t += HOUR) {
+    const row = byHour.get(t);
+    const point = { t, passed: row?.passed ?? 0, rejected: row?.rejected ?? 0, unavailable: row?.unavailable ?? 0 };
+    totals.passed += point.passed; totals.rejected += point.rejected; totals.unavailable += point.unavailable;
+    points.push(point);
+  }
+  return { range, points, totals };
+}
+
+export function pruneTurnstileStats(now = Date.now()): number {
+  const cutoff = now - TURNSTILE_STATS_RETENTION_DAYS * 24 * HOUR;
+  return Number(db.prepare("delete from turnstile_stats where hour_ms < ?").run(cutoff).changes);
+}
+
 export type VerifyOutcome = {
   ok: boolean;
   /** Cloudflare 没有给出结论（网络、超时、非预期响应），不是用户的问题。 */
@@ -152,9 +192,9 @@ export async function verifyPublicTurnstile(purpose: TurnstilePurpose, token: st
   if (!secret) return { ok: false, unavailable: true, errors: ["not-configured"] };
   const result = await siteverify(secret, token, remoteIp, purpose);
   turnstileStats.lastAt = nowIso();
-  if (result.ok) turnstileStats.passed += 1;
-  else if (result.unavailable) { turnstileStats.unavailable += 1; turnstileStats.lastError = result.errors.join(",").slice(0, 80); }
-  else { turnstileStats.rejected += 1; turnstileStats.lastError = result.errors.join(",").slice(0, 80); }
+  if (result.ok) { turnstileStats.passed += 1; recordTurnstileOutcome("passed"); }
+  else if (result.unavailable) { turnstileStats.unavailable += 1; turnstileStats.lastError = result.errors.join(",").slice(0, 80); recordTurnstileOutcome("unavailable"); }
+  else { turnstileStats.rejected += 1; turnstileStats.lastError = result.errors.join(",").slice(0, 80); recordTurnstileOutcome("rejected"); }
   return result;
 }
 
