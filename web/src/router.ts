@@ -48,10 +48,10 @@ export function finishInstallation(base: string): void {
   installAdminRoutes(base);
 }
 
-// 第一个守卫是同步的：点击菜单的那一刻就记下目标，菜单高亮和顶部加载线立刻响应，
+// 第一个守卫是同步的：点击菜单的那一刻就记下目标，菜单高亮和右侧加载动画立刻响应（后台和邮箱都一样），
 // 服务端校验（下面的守卫）要几百毫秒到几秒，期间右侧保留旧页面。
 router.beforeEach((to, from) => {
-  if (to.meta.auth === "admin" && to.fullPath !== from.fullPath) beginAdminNavigation(to.name, to.fullPath);
+  if ((to.meta.auth === "admin" || to.meta.auth === "mail") && to.fullPath !== from.fullPath) beginAdminNavigation(to.name, to.fullPath);
   return true;
 });
 

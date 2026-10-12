@@ -113,7 +113,8 @@ test("路由守卫：先有一个同步守卫立即记下目标；成功的导�
   const syncGuard = router.indexOf("router.beforeEach((to, from) => {");
   const asyncGuard = router.indexOf("router.beforeEach(async (to, from) => {");
   assert.ok(syncGuard > 0 && asyncGuard > syncGuard, "the synchronous guard is registered first");
-  assert.match(router, /if \(to\.meta\.auth === "admin" && to\.fullPath !== from\.fullPath\) beginAdminNavigation\(to\.name, to\.fullPath\)/);
+  // v0.9.8: 邮箱页面切换也走同一个同步守卫，右侧同样显示加载动画
+  assert.match(router, /\(to\.meta\.auth === "admin" \|\| to\.meta\.auth === "mail"\) && to\.fullPath !== from\.fullPath\) beginAdminNavigation\(to\.name, to\.fullPath\)/);
   assert.match(router, /router\.afterEach\(\(_to, _from, failure\) => \{\s*if \(!failure \|\| !isNavigationFailure\(failure, NavigationFailureType\.cancelled\)\) clearAdminNavigation\(\);/);
   assert.match(router, /router\.onError\(\(error\) => \{\s*clearAdminNavigation\(\);/);
   // 每次后台页面切换仍然向服务端强制校验身份。

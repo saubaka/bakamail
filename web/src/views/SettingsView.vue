@@ -36,7 +36,6 @@
             <textarea v-model="form.signature" rows="6" maxlength="2000" :disabled="saving || !settingsLoaded" placeholder="发送新邮件时可插入的签名"></textarea>
           </label>
         </div>
-        <p class="mail-notice">动效和性能模式选好就生效，只保存在当前浏览器；其他设置要点“保存设置”才会保存。</p>
         <SmoothBlock>
           <transition-group name="card-list-swap" tag="div" class="settings-feedback">
             <p v-if="loading" key="loading" class="mail-notice" role="status">正在读取邮箱设置…</p>

@@ -2,6 +2,7 @@
 /* The workspace already reserves dock/safe-area space; don't add the legacy body spacer again. */
 body:has(.mail-workspace) { padding-bottom: 0; }
 .mail-workspace { --workspace-sidebar-width:0px; display:flex; flex-direction:column; height: 100svh; min-width: 0; background: var(--fog-white); overflow: hidden; }
+.mail-workspace { --rail-w: var(--workspace-sidebar-width); }
 .mail-workspace.is-desktop-layout { --workspace-sidebar-width:72px; }
 .mail-workspace.is-desktop-layout.is-desktop-sidebar-expanded { --workspace-sidebar-width:244px; }
 .workspace-header { flex:none; display:grid; grid-template-columns:48px minmax(0,1fr) 48px; align-items:end; min-height:54px; padding:8px 16px 0; }
@@ -50,7 +51,7 @@ body:has(.mail-workspace) { padding-bottom: 0; }
 .dock-menu::after { content: ""; position: absolute; left: calc(var(--menu-origin-x) - 9px); bottom: -10px; width: 18px; height: 18px; transform: rotate(45deg); border-right: 1px solid var(--line-blue-strong); border-bottom: 1px solid var(--line-blue-strong); border-radius: 0 0 7px 0; background: var(--surface); pointer-events: none; }
 .dock-menu::after { display:none; }
 .dock-menu.is-closing { animation: dock-menu-out 240ms cubic-bezier(.45,0,.8,.25) both; pointer-events: none; }
-.dock-menu.is-desktop-sidebar { position:relative; inset:auto; z-index:10; width:100%; height:100%; max-height:none; border:1px solid var(--line-blue); border-left:0; border-radius:0 24px 24px 0; background:color-mix(in srgb,var(--surface) 92%,var(--fog-white)); box-shadow:none; transform:none; transform-origin:center; will-change:auto; animation:none; overflow:hidden; }
+.dock-menu.is-desktop-sidebar { position:relative; inset:auto; z-index:10; width:100%; margin:14px 0 12px; height:calc(100% - 26px); max-height:none; border:1px solid var(--line-blue); border-left:0; border-radius:0 24px 24px 0; background:color-mix(in srgb,var(--surface) 92%,var(--fog-white)); box-shadow:none; transform:none; transform-origin:center; will-change:auto; animation:none; overflow:hidden; }
 .dock-menu.is-desktop-sidebar::after { display:none; }
 .dock-menu.is-desktop-sidebar .dock-menu-scroll { flex:1; padding:12px 14px 14px; overflow-x:hidden; }
 .dock-menu.is-desktop-sidebar .dock-compose { display:flex; align-items:center; justify-content:flex-start; gap:10px; padding:0 13px; white-space:nowrap; overflow:hidden; }
@@ -69,10 +70,15 @@ body:has(.mail-workspace) { padding-bottom: 0; }
 .dock-menu-scroll { min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 0 14px 14px; scrollbar-width: thin; }
 .dock-compose { display:flex; align-items:center; justify-content:center; gap:10px; padding:0 13px; width: 100%; min-height: 46px; margin: 0 0 12px; border: 1px solid var(--line-blue); border-radius: 13px; background: var(--cloud-blue); color: var(--graphite-blue); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
 .dock-navigation { position: relative; isolation: isolate; display: grid; grid-auto-rows: 40px; gap: 4px; }
-.dock-navigation-highlight { position: absolute; left: 0; top: 0; width:0; height:0; border-radius: 12px; background: transparent; border: 0; opacity:0; z-index: 0; pointer-events: none; will-change:transform; transition:transform 420ms cubic-bezier(.22,.85,.25,1),opacity 120ms ease; }
+.dock-navigation-highlight { position: absolute; left: 0; top: 0; width:0; height:0; border-radius: 12px; background: transparent; border: 0; opacity:0; z-index: 0; pointer-events: none; will-change:transform,height; transition:opacity 160ms ease; }
 .dock-navigation-highlight.is-ready { opacity:1; }
 .dock-navigation-item { position:relative; z-index:1; display: flex; gap: 12px; align-items: center; padding: 8px 14px; border: 0; border-radius: 12px; background: transparent; font: inherit; font-size: 13px; color: var(--text-soft); cursor: pointer; text-align: left; transition:color 180ms ease,transform 220ms cubic-bezier(.22,.85,.25,1),box-shadow 180ms ease; }
 .dock-navigation-item[aria-current="page"] { color: var(--graphite-blue); font-weight: 600; }
+.dock-navigation-item.is-active { color: var(--graphite-blue); font-weight: 600; }
+.dock-navigation-item[aria-current="page"]:not(.is-active) { color: var(--text-soft); font-weight: 400; }
+.dock-navigation-item svg { transition: transform 360ms var(--spring, cubic-bezier(.22,.85,.25,1)); }
+.dock-navigation-item.is-active svg { animation: dock-icon-settle 520ms cubic-bezier(.22,.85,.25,1) both; }
+@keyframes dock-icon-settle { 0% { transform: translateY(0) scale(.86); } 45% { transform: translateY(-2px) scale(1.1); } 100% { transform: none; } }
 .dock-navigation-item:hover { background:transparent; box-shadow:inset 0 0 0 1px var(--line-blue); transform:translateX(2px); }
 .dock-navigation-item:active { transform:translateX(1px) scale(.985); }
 .dock-navigation-item svg { width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
@@ -141,6 +147,7 @@ body:has(.mail-workspace) { padding-bottom: 0; }
   .workspace-content .mail-utility-shell { padding: 24px 12px calc(112px + env(safe-area-inset-bottom)); }
 }
 @media (prefers-reduced-motion: reduce) {
+  .dock-navigation-item.is-active svg { animation: none; }
   .mail-workspace *, .mail-workspace *::before { transition: none !important; animation: none !important; }
   .mail-panel-enter-from,.mail-panel-leave-to { opacity:1; filter:none; transform:none!important; }
   .mail-list .mail-row,.mail-list .mail-row[data-row-reveal="outside"]:not(:focus-within) { opacity: 1; transform: none; filter: none; animation:none; }

@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "48076c8aef2f5ab4b30075d5cd99e037806df0ccd27d087b77436d8fc6fbe874",
+      "sha256": "2610aa8d969530b3dcb89bbe55bed649559263b2baada1b3b2b9ecb21ad40003",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "c35f505e59a689ac21eb8fb6e0387da31aeeaaf85dfe3b148e41c848ce0fec63",
+      "sha256": "6ec1d15e0ebdfcc01cd56efc80eecac335fec2bbe509e4452fa3a22187fe8b56",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "2d2df1e31375521aa8e2a68dfe572f25330e8c1488ab1ad1422ab2e9c35a1402",
+      "sha256": "23f4cbffdfc4cc249833feb252b663b7bb5728da5d828b527dd8063f66cf77ea",
       "executable": false
     },
     "README.md": {
@@ -188,7 +188,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "560875dcce81b96e2bec052d332845aeee719675318e6f842a60352014ea34d8",
+      "sha256": "ffc21d146736795b1f1bb122fa9ee93eb84fc2ea57c139dd3a72532e435cd2af",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -658,7 +658,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "e35878782a43508dc9c4077e9249bb030ec0cc6c6ef2c010c1c8dbeeea997dcc",
+      "sha256": "c049997cf97cf411fc5eb9ed8b91c3def53e80550a31b73e64898a5c10112ab7",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -953,7 +953,7 @@
     },
     "web/src/components/MailWorkspace.vue": {
       "source": "web/src/components/MailWorkspace.vue",
-      "sha256": "336c3aa549f473bbe32a0d72d36797b1fe87c1e0d514e5514abb9ce7ab0b0649",
+      "sha256": "3e430b5b3f2b7ec7ee13d6e255bc194987d2816c74e3f9eb477dbfcbfe8c43e6",
       "executable": false
     },
     "web/src/components/PasswordField.vue": {
@@ -1019,6 +1019,11 @@
     "web/src/mail/composeViewport.ts": {
       "source": "web/src/mail/composeViewport.ts",
       "sha256": "08cdd26edead9580dbe9db7ba668d9e1e59acc1bf6129598336f975c32772d50",
+      "executable": false
+    },
+    "web/src/mail/highlightMotion.ts": {
+      "source": "web/src/mail/highlightMotion.ts",
+      "sha256": "b90ddbea237c9a1460a8887045dd294ced41012b43849b4c840a2662befea6fc",
       "executable": false
     },
     "web/src/mail/localCache.ts": {
@@ -1103,7 +1108,7 @@
     },
     "web/src/router.ts": {
       "source": "web/src/router.ts",
-      "sha256": "cacc25640641477054176468312a223e7dae121f32f313b40768da90c5a997e2",
+      "sha256": "b6462e027af96899080cef7722e947f318123765d642bfbfae70ef50b095b516",
       "executable": false
     },
     "web/src/scrollReveal.ts": {
@@ -1193,7 +1198,7 @@
     },
     "web/src/styles/dashed-accent.css": {
       "source": "web/src/styles/dashed-accent.css",
-      "sha256": "1e14f8df7ff5abc6cd3add9fd0d926e027651c4ba0b08625d61ab6f0659ea3ba",
+      "sha256": "04824886378dbd5666b4cdc5ea4ae2671222fe6ff57ea4a7676727c9ce180e37",
       "executable": false
     },
     "web/src/styles/dialogs.css": {
@@ -1248,7 +1253,7 @@
     },
     "web/src/styles/theme-controls.css": {
       "source": "web/src/styles/theme-controls.css",
-      "sha256": "6fa1afc9e1584fe153f36dfc9a452aa8614c4082d23c10eda266e0b95621d465",
+      "sha256": "ecb076fa3075dcb23f927cb30b1461d81ede7c0c21eb31f05295895ddede1501",
       "executable": false
     },
     "web/src/styles/vendor/manifest.json": {
@@ -1273,7 +1278,7 @@
     },
     "web/src/styles/workspace.css": {
       "source": "web/src/styles/workspace.css",
-      "sha256": "5732e13dff415f9d02c27725f6ad5426b064ecd55bf9e7f6e68a6186ce25c432",
+      "sha256": "90d183a0e3c8b6c7c65a118d385d29c21744c158ca3750084c3542e5752900b8",
       "executable": false
     },
     "web/src/surfaceLines.ts": {
@@ -1283,7 +1288,7 @@
     },
     "web/src/themeControls.ts": {
       "source": "web/src/themeControls.ts",
-      "sha256": "06ce766a5257275b2b65c8a973e7fa076d17cada8c675b8e0d35d7416b2cb113",
+      "sha256": "35a5137b9e8288ebe316867000c421b4864f530b5ecc039b397520de3f840a84",
       "executable": false
     },
     "web/src/views/admin/AccountsView.vue": {
@@ -1393,7 +1398,7 @@
     },
     "web/src/views/SettingsView.vue": {
       "source": "web/src/views/SettingsView.vue",
-      "sha256": "7556570621795eb7605fa5395cbef049058642e3f9e0af578ae66884781ce2ae",
+      "sha256": "967d30686183d0d69871a50d01a7b5f8144d81219812f5783f88f546ee38430a",
       "executable": false
     },
     "web/src/views/SetupView.vue": {
@@ -1423,7 +1428,7 @@
     },
     "web/test/admin-navigation-feedback.test.ts": {
       "source": "web/test/admin-navigation-feedback.test.ts",
-      "sha256": "0898217960b473803482445f4f86e49472cbe715e81761503dd9aff4a7bb03ce",
+      "sha256": "de922de93a0040c609913441bb42ad3f336ead6a0e9971d73376bbb3b2ab8b4e",
       "executable": false
     },
     "web/test/admin-rail.test.ts": {
@@ -1641,6 +1646,11 @@
       "sha256": "7514551df103cbdfa8b6f26c1d3e8fbe8a5db7e4672bb63779c064376d486af5",
       "executable": false
     },
+    "web/test/mail-menu-motion.test.ts": {
+      "source": "web/test/mail-menu-motion.test.ts",
+      "sha256": "c74a02c8120dc9d250dd5409c83035e574e75a5a7e30facd2b6de5187a7c9b0d",
+      "executable": false
+    },
     "web/test/mail-row-visibility.test.ts": {
       "source": "web/test/mail-row-visibility.test.ts",
       "sha256": "6c48206247e047e7e97882db860e0a1a64c4be820d0b5b079aad1c2e41067db1",
@@ -1663,12 +1673,12 @@
     },
     "web/test/navigation-continuity.test.ts": {
       "source": "web/test/navigation-continuity.test.ts",
-      "sha256": "9674b0e9f320893991545d6a0de163a7c1c9cc4a62ccf090ce39aad5a54f71a7",
+      "sha256": "10e0740c7cce589448728b0f9ac2a30265f639c08eed41a07f5619869870caff",
       "executable": false
     },
     "web/test/navigation-layout.test.ts": {
       "source": "web/test/navigation-layout.test.ts",
-      "sha256": "1c79aa764f19392939b55d8cd0e0b919e8cebaf7c6b26d6fdaff79b85aedd4fd",
+      "sha256": "d2783b7e209c60943ab555047d1ca5ab1ff9e06dbfa61bd67d550ddbc51f0e28",
       "executable": false
     },
     "web/test/notification-display-client-phase2.test.ts": {
