@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "7162ef73286f28306afce815fae0ffa2103ac2ecc68216c6f1f6a45ebd4b8327",
+      "sha256": "6727e7e27a670c1ebc4ec286e508c9bbe0619c039b6cab415ef7c2913f512f09",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "2f01443ae39f89bf32966abd9012bdb959a8cf7c91e54e8b054fdea66f44e184",
+      "sha256": "c7a1b5f55d10499c0c57d317a6a30d93f5cca3c6d24d2cd8d16b714513b6279b",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "265f5084f19b0597fdd918f24abb4a8e70459bb7e3f12ba71c88ee15e45975f9",
+      "sha256": "c01e646a0c6150987680d0d7048a1b2781f7aeedf695693ee6afd966940189b4",
       "executable": false
     },
     "README.md": {
@@ -188,7 +188,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "6e2137961d13c847153dee5b4223ce89b82aea5286b5bfa377ec32c4a8173166",
+      "sha256": "efe9fa01a348d6a4939d2ca731e0144504f6389e10d1ac745548d834c6b8e440",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -648,7 +648,7 @@
     },
     "shared/seo.ts": {
       "source": "shared/seo.ts",
-      "sha256": "11bbd8e9081ee2e0fb5b50129c4f08bb212c79cfd476eb72ba96e5800ba2991a",
+      "sha256": "d7d9312be7644c7a828231b74893ac980c4427f6b287467d26942c563c950aaa",
       "executable": false
     },
     "web/index.html": {
@@ -658,7 +658,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "4d223b9fa0cbfcb0a5cb67cec817e238e6eb0cc543dc61949951c999e02d511a",
+      "sha256": "e202b0e6d254e6313a45b15e790e24fe1c7af36ceb71aa049dfa4a0620ff635e",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -991,9 +991,14 @@
       "sha256": "09cc9a89bcd4342038d3d423fc6e496683fb6bd92f447fe1b91708e8eeff0d12",
       "executable": false
     },
+    "web/src/intro/faq.ts": {
+      "source": "web/src/intro/faq.ts",
+      "sha256": "75b4350ddd6f873eed12febc7a643bd7c16df6a05899abfa2518fd472351172f",
+      "executable": false
+    },
     "web/src/intro/reveal.ts": {
       "source": "web/src/intro/reveal.ts",
-      "sha256": "568addf6a582db0f85489598ffc572a0424fc2d9af68cc3a645101ce89ee9be4",
+      "sha256": "aa93fbeffc83b864bae4b1989703fa91488b9029b3e824bad9a809472b6be153",
       "executable": false
     },
     "web/src/mail/attachments.ts": {
@@ -1183,7 +1188,7 @@
     },
     "web/src/styles/intro.css": {
       "source": "web/src/styles/intro.css",
-      "sha256": "1d54a339cc8abbbadfe0fd1caf2c1bc92f5c3b78cc4ac0cb1a0564052ea90d04",
+      "sha256": "5de29b35075163d9b66e184dfdf712309844e527dbc275e725bb7ab8243f1e4e",
       "executable": false
     },
     "web/src/styles/local-theme.css": {
@@ -1333,7 +1338,7 @@
     },
     "web/src/views/IntroView.vue": {
       "source": "web/src/views/IntroView.vue",
-      "sha256": "4ed4d0f133723c402295337549d03496c4bac8c83875883aaa664f599f3b0d74",
+      "sha256": "03519cc86b07e91563f8f74689fef10605ce28e1836398ce39844fa3a61cdedb",
       "executable": false
     },
     "web/src/views/LoginView.vue": {
@@ -1579,6 +1584,11 @@
     "web/test/human-check-layout.test.ts": {
       "source": "web/test/human-check-layout.test.ts",
       "sha256": "9ff5ffff08ad1a5bac0aac459519b48af0a3523be087bcb84e048f282008c085",
+      "executable": false
+    },
+    "web/test/intro-faq-motion.test.ts": {
+      "source": "web/test/intro-faq-motion.test.ts",
+      "sha256": "5a842a8de921a68ad5e8417fb0a87bf3a9ea85dbb87a8e242f7a97ba14f334eb",
       "executable": false
     },
     "web/test/intro-footer.test.ts": {

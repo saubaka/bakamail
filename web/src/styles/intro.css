@@ -81,8 +81,9 @@
 .intro-faq-question { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .intro-faq-plus { flex: 0 0 18px; text-align: center; color: var(--text-soft); transition: transform 260ms var(--spring); }
 .intro-faq summary::-webkit-details-marker { display: none; }
-.intro-faq details[open] .intro-faq-plus { transform: rotate(45deg); }
-.intro-faq details p { margin: 0; max-width: 100%; min-width: 0; overflow-wrap: anywhere; font-size: 13px; color: var(--text-soft); line-height: 1.9; padding: 0 20px 20px; animation: intro-answer-arrive 260ms var(--ease) both; }
+.intro-faq details[open]:not([data-closing]) .intro-faq-plus { transform: rotate(45deg); }
+.intro-faq-answer { overflow: hidden; }
+.intro-faq details p { margin: 0; max-width: 100%; min-width: 0; overflow-wrap: anywhere; font-size: 13px; color: var(--text-soft); line-height: 1.9; padding: 0 20px 20px; }
 @media (hover: hover) and (pointer: fine) {
   .intro-faq-trigger:hover { background: var(--surface-soft); }
 }
@@ -103,7 +104,6 @@
 .intro-reveal--ready:focus-within { opacity: 1; transform: rotate(var(--intro-rest-rotation, 0deg)); }
 .intro-reveal--still { opacity: 1; transform: rotate(var(--intro-rest-rotation, 0deg)); transition: none !important; }
 .intro-page :is(.intro-button, .intro-demo-tab, .intro-open-letter):focus-visible { outline: 3px solid var(--border-strong); outline-offset: 4px; }
-@keyframes intro-answer-arrive { from { opacity: .4; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes intro-postal-travel { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
 @media (max-width: 900px) {
   .intro-hero { gap: 36px; padding: 65px 0 78px; }
@@ -142,13 +142,13 @@
   .intro-footer { display: grid; gap: 22px; padding: 28px 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .intro-page .intro-postal-path path, .intro-faq details p { animation: none !important; }
+  .intro-page .intro-postal-path path { animation: none !important; }
   .intro-page *, .intro-page *::before, .intro-page *::after { transition: none !important; }
   .intro-reveal--ready, .intro-reveal--ready.is-in-view { opacity: 1; transform: rotate(var(--intro-rest-rotation, 0deg)); }
   .intro-page :is(.intro-button, .intro-demo-tab, .intro-open-letter):is(:hover, :active) { transform: none; }
 }
 html:is([data-motion=reduce], [data-performance=low]) .intro-reveal--ready { opacity: 1; transform: rotate(var(--intro-rest-rotation, 0deg)); transition: none !important; }
-html:is([data-motion=reduce], [data-performance=low]) .intro-page :is(.intro-postal-path path, .intro-faq details p) { animation: none !important; }
+html:is([data-motion=reduce], [data-performance=low]) .intro-page .intro-postal-path path { animation: none !important; }
 html:is([data-motion=reduce], [data-performance=low]) .intro-page :is(.intro-button, .intro-demo-tab, .intro-open-letter):is(:hover, :active) { transform: none; }
 
 /*
@@ -156,8 +156,12 @@ html:is([data-motion=reduce], [data-performance=low]) .intro-page :is(.intro-but
  * 顺序由模板里的 --i 决定，间隔 90ms；离开视野时一起收回，不带延迟。
  */
 .intro-reveal--ready.intro-reveal--split { opacity: 1; transform: rotate(var(--intro-rest-rotation, 0deg)); transition: none; }
-.intro-reveal--split.intro-reveal--ready .intro-stagger { opacity: 0; transform: translate3d(0, 18px, 0); transition: opacity 320ms var(--ease), transform 420ms var(--ease); }
-.intro-reveal--split.intro-reveal--ready.is-in-view .intro-stagger { opacity: 1; transform: translate3d(0, 0, 0); transition-duration: 560ms, 680ms; transition-delay: calc(var(--i, 0) * 90ms + 60ms); }
+.intro-reveal--split.intro-reveal--ready .intro-stagger { opacity: 0; transform: translate3d(0, 28px, 0); transition: opacity 240ms var(--ease), transform 320ms var(--ease); }
+.intro-reveal--split.intro-reveal--ready .intro-stagger.is-seen { opacity: 1; transform: none; transition-duration: 680ms, 860ms; transition-delay: var(--d, 0ms); }
+.intro-reveal--split.intro-reveal--ready .intro-stagger:focus-within { opacity: 1; transform: none; }
+/* 问答卡片：起点更低、略小，进来时有明显的“浮上来”。 */
+.intro-reveal--split.intro-reveal--ready .intro-faq-card.intro-stagger { transform: translate3d(0, 40px, 0) scale(.96); transform-origin: 50% 0; }
+.intro-reveal--split.intro-reveal--ready .intro-faq-card.intro-stagger.is-seen, .intro-reveal--split.intro-reveal--ready .intro-faq-card.intro-stagger:focus-within { transform: none; }
 /* 右边的示例窗口比左边的文字晚一拍。 */
 .intro-window.intro-reveal--ready.is-in-view { transition-delay: 320ms; }
 /* 页头：品牌和导航在页面打开时依次淡入。 */
