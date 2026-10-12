@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "8520af927ca508efe1f082055f510ad3c2de90e77d7e19ec1db63404968f0352",
+      "sha256": "c427d769e5b782768d7cd7b6a29577d8db2970fcac6628f83c6d39fb57295110",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "6375fd57b7e5aaedd9156e35c3634dcad97882ecbccabe9336aeeb9b5576f0b0",
+      "sha256": "ab766cf744d83eab1cb2bedd7c810675bc3be351464bcb7e0b44cce49e0597d4",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "f44118034fbea9a558dadef98355e3191e39f1e2a2ddc9913d6e120a81834590",
+      "sha256": "86fe8e0a54d45f1171611f4821b424ce6e0178aee38b2c1916a7d20e1945ee8d",
       "executable": false
     },
     "README.md": {
@@ -188,7 +188,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "1ca6f9d8ea52bba060ef06461f95c1575a0fb405584d5f71b18d9fd6cd5f6f54",
+      "sha256": "9e50c0d95781b4ee9f0766fe3d946f1e7b70e21b2e2ac510d1174c6d7ccc269f",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -658,7 +658,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "739fa50e1ced8b0b75df01350b071548b5e24e5f53f3c74b3bbfa40edb42c881",
+      "sha256": "8bb63f03938d9f3fea9374d9a08e9086fa2866c45966a88d6e59a8894a6dd61d",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -1283,7 +1283,7 @@
     },
     "web/src/styles/workspace.css": {
       "source": "web/src/styles/workspace.css",
-      "sha256": "6d5d7c726bc428c09969b72866ceefbf2bdf07c54727eb743baa6e6272af352c",
+      "sha256": "18042d5ef572876531093d757e72cee02bdec2ada10cdf362a094b92a3f34df5",
       "executable": false
     },
     "web/src/surfaceLines.ts": {
@@ -1353,12 +1353,12 @@
     },
     "web/src/views/ContactsView.vue": {
       "source": "web/src/views/ContactsView.vue",
-      "sha256": "9a101a5e4e5eebdfdcc24cea5efaa53f7e832b9ca64c3910360be3391f22b5ee",
+      "sha256": "278ba859ee8b906fb20a0c2efbce6cb85d74862f18d7c8d712fa20dd55c742a6",
       "executable": false
     },
     "web/src/views/DraftsView.vue": {
       "source": "web/src/views/DraftsView.vue",
-      "sha256": "a5ef4685e2bdebee3f4ad3aa16b0e1cb86b13f079cf639202868cd29d705d030",
+      "sha256": "f58b09dbae505307fb00c395177e93f8523d20ebd5c6e8cbf268e5e863275bf1",
       "executable": false
     },
     "web/src/views/IntroView.vue": {
@@ -1393,7 +1393,7 @@
     },
     "web/src/views/SearchView.vue": {
       "source": "web/src/views/SearchView.vue",
-      "sha256": "0dd1fd80ad6bb57db0e1452244f84cf45925f66201fe9f49af2657498fa1431f",
+      "sha256": "8141a0ce05fd49baf014338ab6e1154ad772b37eeba01139ef993fc15cfa2d44",
       "executable": false
     },
     "web/src/views/ServiceUnavailableView.vue": {
@@ -1403,7 +1403,7 @@
     },
     "web/src/views/SettingsView.vue": {
       "source": "web/src/views/SettingsView.vue",
-      "sha256": "967d30686183d0d69871a50d01a7b5f8144d81219812f5783f88f546ee38430a",
+      "sha256": "07d416beb71bcb962a6223852f3895b2695eb370240e216c9930e67aa8bfa934",
       "executable": false
     },
     "web/src/views/SetupView.vue": {
@@ -1838,7 +1838,7 @@
     },
     "web/test/user-pages-polish.test.ts": {
       "source": "web/test/user-pages-polish.test.ts",
-      "sha256": "6f53805f958e526e08221bd28e8880e4332bcaf32b7ef75e15201f7f3313eb2c",
+      "sha256": "5e17ad1bcbd862e2022c16e2db84486273362d840f97521cafeaa2155f6d0092",
       "executable": false
     },
     "web/test/workspace-motion.test.ts": {

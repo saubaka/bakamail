@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-motion="{ kind: 'feature' }" class="mail-utility-page">
     <main id="main-content" class="page-shell mail-utility-shell" tabindex="-1">
       <section ref="editorPanel" v-motion="{ kind: 'compact' }" class="admin-panel mail-tool-panel contact-editor-panel">
         <div class="panel-heading"><div><span class="eyebrow">ADDRESS BOOK</span><h1>联系人</h1><p>保存常用地址，写邮件时可以快速带入。</p></div></div>

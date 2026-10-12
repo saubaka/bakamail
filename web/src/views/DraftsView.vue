@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-motion="{ kind: 'feature' }" class="mail-utility-page">
     <main id="main-content" class="page-shell mail-utility-shell" tabindex="-1">
       <section v-motion="{ kind: 'feature' }" class="admin-panel mail-tool-panel">
         <div class="section-heading mail-tool-heading">
