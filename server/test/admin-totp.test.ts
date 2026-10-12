@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import test, { mock } from "node:test";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -13,6 +13,10 @@ process.env.MADDY_RUNNER = "disabled";
 process.env.MAIL_DOMAIN = "example.test";
 process.env.BOOTSTRAP_ADMIN = "totp-root";
 process.env.BOOTSTRAP_ADMIN_PASSWORD = "isolated-test-only-2026";
+
+// 动态码按 30 秒时间片计算，“同一时间片内不可重放”的断言若恰好跨过时间片边界就会失败。
+// 把时钟冻结在当前时间片的正中间，整个文件都在同一个时间片内运行，结果不再取决于何时启动。
+mock.timers.enable({ apis: ["Date"], now: Math.floor(Date.now() / 30_000) * 30_000 + 15_000 });
 
 const { createApp } = await import("../src/app.ts");
 const { default: request } = await import("supertest");
