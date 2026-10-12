@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "ab55696c92dead8b2a91a4b351467c74145ad77888033ac675d7c194092dfc35",
+      "sha256": "30f59573b61767ddf7f0886df0b69fe538ba4ac0a319ec197d8941dee3237ecf",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,17 +58,17 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "cad5182c72139198fc3a65b6c1ba7bc4ace7220c202c627bc27468907b22322d",
+      "sha256": "a12fb560cb2f7821aadbd36065e86faa5aef5575fe4802adfe9a38eda67d06d0",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "1040f5e46cf54d04c45302c3ff04483c874a90bc8b9e3102466eb878a840b45c",
+      "sha256": "8a7e75fcf464be9e63d4c95aae45204f47251c0395e063d093749f79994c3687",
       "executable": false
     },
     "README.md": {
       "source": "docs/github/README.md",
-      "sha256": "2ca820d2290c269f228cb9459f9ff5d22647bf942b6af61423a8bd900aba0d92",
+      "sha256": "767946d692641f5f95ce7bdd0a3dbaa5d2f1f217b392461b5d295f7c8abffc44",
       "executable": false
     },
     "scripts/audit-project1-prototype.mjs": {
@@ -148,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "f6d1ae3ddee23716ff1e61668e12307e2d12983d019c5b0021ec02f1b1628a37",
+      "sha256": "3f36431cc3abaa3a8391f1206c4a2348131e3778c88b509beb684a34beca5f12",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -568,7 +568,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "1dbe20a686d88a10ef15502c5351d2eb457f0922b5dfb7255255ba411a51b97b",
+      "sha256": "720c8b9b02f9d51be61bb3fdb621b16bfea64fb946aea6721795d406936acf81",
       "executable": false
     },
     "web/src/admin/navigationState.ts": {
@@ -1148,7 +1148,7 @@
     },
     "web/src/views/IntroView.vue": {
       "source": "web/src/views/IntroView.vue",
-      "sha256": "9075456467892ffee3c1092c7ddc24b69110f741d6346fbe84cf0c8b8e1a5e29",
+      "sha256": "8e4b36c21628498115310ef9fc6369de7a4e5b49c3c4da17593292af5a0bd246",
       "executable": false
     },
     "web/src/views/LoginView.vue": {
@@ -1384,6 +1384,11 @@
     "web/test/human-check-layout.test.ts": {
       "source": "web/test/human-check-layout.test.ts",
       "sha256": "9ff5ffff08ad1a5bac0aac459519b48af0a3523be087bcb84e048f282008c085",
+      "executable": false
+    },
+    "web/test/intro-footer.test.ts": {
+      "source": "web/test/intro-footer.test.ts",
+      "sha256": "a564c17a968f429e96476d480aadb4fe46fdc556c97d19d89d8309e5e142b7c9",
       "executable": false
     },
     "web/test/intro-reveal.test.ts": {
