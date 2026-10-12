@@ -619,9 +619,15 @@ onMounted(async () => {
     const requestedUid = Number.parseInt(String(route.query.uid ?? ""), 10);
     if (Number.isFinite(requestedUid)) await openMessage(requestedUid);
     if (!workbenchActive) return;
+    const consumedIntent = typeof route.query.draft === "string" || route.query.compose === "new";
     if (typeof route.query.draft === "string") await openDraft(route.query.draft);
     else if (route.query.compose === "new") {
       openCompose(undefined, "reply", typeof route.query.to === "string" ? route.query.to : "");
+    }
+    // 写信、打开草稿的意图只用一次：从地址里去掉，关闭写信窗口后刷新或回退不会再次弹出。
+    if (consumedIntent && workbenchActive) {
+      const { draft: _draft, compose: _compose, to: _to, ...rest } = route.query;
+      await router.replace({ name: route.name ?? "mail", query: rest }).catch(() => undefined);
     }
     realtime.start(refreshFromEvent);
   } catch (error) {

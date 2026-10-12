@@ -1,27 +1,31 @@
 <template>
   <div>
     <main id="main-content" class="page-shell mail-utility-shell" tabindex="-1">
-      <section v-motion="{ kind: 'feature', reversible: false }" class="admin-panel mail-tool-panel">
+      <section v-motion="{ kind: 'feature' }" class="admin-panel mail-tool-panel">
         <div class="section-heading mail-tool-heading">
           <div><span class="eyebrow">DRAFTS</span><h1>草稿</h1><p>继续编辑尚未发送的内容，或清理不再需要的草稿。</p></div>
           <router-link class="button button--primary" :to="{ name: 'mail', query: { compose: 'new' } }">写新邮件</router-link>
         </div>
         <p v-if="error" v-capsule-notice class="field-error" role="alert">{{ error }}</p>
-        <div v-if="loading" class="mail-empty">正在读取草稿…</div>
-        <div v-else-if="drafts.length === 0" class="mail-empty">还没有保存的草稿</div>
-        <div v-else class="draft-grid">
-          <article v-for="draft in drafts" :key="draft.id" class="managed-page-card draft-card">
-            <div>
-              <span class="eyebrow">{{ draft.to || "尚未填写收件人" }}</span>
-              <h2>{{ draft.subject || "（无主题）" }}</h2>
-              <p>{{ preview(draft.text) }}</p>
-            </div>
-            <div class="button-row">
-              <button class="button button--primary" type="button" @click="edit(draft.id)">继续编辑</button>
-              <button class="button button--danger" type="button" @click="remove(draft.id)">删除</button>
-            </div>
-          </article>
-        </div>
+        <SmoothBlock>
+          <transition name="card-list-swap">
+            <div v-if="loading && drafts.length === 0" key="loading" class="mail-empty">正在读取草稿…</div>
+            <div v-else-if="drafts.length === 0" key="empty" class="mail-empty">还没有保存的草稿</div>
+          </transition>
+          <transition-group name="card-list" tag="div" class="draft-grid card-list" @before-leave="pinLeavingItem">
+            <article v-for="draft in drafts" :key="draft.id" v-scroll-reveal class="managed-page-card draft-card">
+              <div>
+                <span class="eyebrow">{{ draft.to || "尚未填写收件人" }}</span>
+                <h2>{{ draft.subject || "（无主题）" }}</h2>
+                <p>{{ preview(draft.text) }}</p>
+              </div>
+              <div class="button-row">
+                <button class="button button--primary" type="button" @click="edit(draft.id)">继续编辑</button>
+                <button class="button button--danger" type="button" :disabled="removingId === draft.id" @click="remove(draft.id)">{{ removingId === draft.id ? "处理中…" : "删除" }}</button>
+              </div>
+            </article>
+          </transition-group>
+        </SmoothBlock>
       </section>
     </main>
   </div>
@@ -35,12 +39,15 @@ import { SessionSupersededError } from "../auth/sessionRequests";
 import { listDrafts, deleteDraft, type Draft } from "../api/drafts";
 import { confirmDialog } from "../dialog";
 import { useSessionStore } from "../stores/session";
+import SmoothBlock from "../components/SmoothBlock.vue";
+import { pinLeavingItem } from "../listMotion";
 
 const router = useRouter();
 const session = useSessionStore();
 const drafts = ref<Draft[]>([]);
 const loading = ref(true);
 const error = ref("");
+const removingId = ref("");
 
 function preview(value = ""): string {
   const normalized = value.replace(/\s+/g, " ").trim();
@@ -48,6 +55,7 @@ function preview(value = ""): string {
 }
 
 async function load(): Promise<void> {
+  // 刷新时保留已有的草稿，不先换成“正在读取”再整页重画。
   loading.value = true;
   try {
     const data = await listDrafts();
@@ -68,12 +76,16 @@ async function remove(id: string): Promise<void> {
     confirmLabel: "删除草稿",
     tone: "danger",
   }))) return;
+  removingId.value = id;
   try {
     await deleteDraft(id);
-    await load();
+    drafts.value = drafts.value.filter((item) => item.id !== id);
     toast("草稿已删除");
+    await load().catch(() => undefined);
   } catch (reason) {
     error.value = reason instanceof ApiError ? reason.message : "删除失败";
+  } finally {
+    removingId.value = "";
   }
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <main id="main-content" class="page-shell mail-utility-shell" tabindex="-1">
-      <section v-motion="{ kind: 'feature', reversible: false }" class="admin-panel mail-tool-panel">
+      <section v-motion="{ kind: 'feature' }" class="admin-panel mail-tool-panel">
         <div class="section-heading mail-tool-heading">
           <div><span class="eyebrow">PREFERENCES</span><h1>邮箱设置</h1><p>这些偏好保存在 BakaMail 里，不会修改邮件服务器上的设置。</p></div>
           <button class="button button--primary" type="button" :disabled="saving || !settingsLoaded" @click="save">{{ saving ? "正在保存…" : "保存设置" }}</button>
@@ -37,9 +37,13 @@
           </label>
         </div>
         <p class="mail-notice">动效和性能模式选好就生效，只保存在当前浏览器；其他设置要点“保存设置”才会保存。</p>
-        <p v-if="loading" class="mail-notice" role="status">正在读取邮箱设置…</p>
-        <p v-if="error" v-capsule-notice class="field-error" role="alert">{{ error }}</p>
-        <button v-if="error && !settingsLoaded" class="button button--soft" type="button" :disabled="loading" @click="load">{{ loading ? "正在重试…" : "重试读取设置" }}</button>
+        <SmoothBlock>
+          <transition-group name="card-list-swap" tag="div" class="settings-feedback">
+            <p v-if="loading" key="loading" class="mail-notice" role="status">正在读取邮箱设置…</p>
+            <p v-if="error" key="error" v-capsule-notice class="field-error" role="alert">{{ error }}</p>
+            <button v-if="error && !settingsLoaded" key="retry" class="button button--soft" type="button" :disabled="loading" @click="load">{{ loading ? "正在重试…" : "重试读取设置" }}</button>
+          </transition-group>
+        </SmoothBlock>
       </section>
 
       <section v-motion="{ kind: 'compact', delay: 90 }" class="admin-panel mail-tool-panel account-session-card">
@@ -72,6 +76,7 @@ import { confirmDialog } from "../dialog";
 import { applyMotionPreferences, currentMotionPreferences, type MotionPreference, type PerformancePreference } from "../motion";
 import { useSessionStore } from "../stores/session";
 import { usePreferenceStore } from "../stores/preferences";
+import SmoothBlock from "../components/SmoothBlock.vue";
 
 const router = useRouter();
 const session = useSessionStore();

@@ -9,6 +9,7 @@ import { initializeNotifications, disposeNotifications } from "./notifications";
 import { initializeUiConfig, uiConfigClient } from "./notificationConfig";
 import { initializeThemeValidation, themedControlDirective } from "./themeControls";
 import { stackTableDirective } from "./stackTable";
+import { scrollRevealDirective } from "./scrollReveal";
 import { initializeSiteInfo } from "./siteInfo";
 import "./styles/vendor/project1-app.css";
 import "./styles/vendor/project1-small-window-theme.css";
@@ -40,6 +41,7 @@ const app = createApp(App)
   .directive("motion", motionDirective)
   .directive("press-feedback", pressFeedbackDirective)
   .directive("capsule-notice", capsuleFeedbackDirective)
+  .directive("scroll-reveal", scrollRevealDirective)
   .directive("theme-control", themedControlDirective)
   .directive("stack-table", stackTableDirective);
 app.onUnmount(() => { disposeUiConfig(); disposeConfigBoundary(); disposeNotifications(); });

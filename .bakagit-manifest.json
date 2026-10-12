@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "6727e7e27a670c1ebc4ec286e508c9bbe0619c039b6cab415ef7c2913f512f09",
+      "sha256": "48076c8aef2f5ab4b30075d5cd99e037806df0ccd27d087b77436d8fc6fbe874",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "c7a1b5f55d10499c0c57d317a6a30d93f5cca3c6d24d2cd8d16b714513b6279b",
+      "sha256": "c35f505e59a689ac21eb8fb6e0387da31aeeaaf85dfe3b148e41c848ce0fec63",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "c01e646a0c6150987680d0d7048a1b2781f7aeedf695693ee6afd966940189b4",
+      "sha256": "2d2df1e31375521aa8e2a68dfe572f25330e8c1488ab1ad1422ab2e9c35a1402",
       "executable": false
     },
     "README.md": {
@@ -188,7 +188,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "efe9fa01a348d6a4939d2ca731e0144504f6389e10d1ac745548d834c6b8e440",
+      "sha256": "560875dcce81b96e2bec052d332845aeee719675318e6f842a60352014ea34d8",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -658,7 +658,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "e202b0e6d254e6313a45b15e790e24fe1c7af36ceb71aa049dfa4a0620ff635e",
+      "sha256": "e35878782a43508dc9c4077e9249bb030ec0cc6c6ef2c010c1c8dbeeea997dcc",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -943,7 +943,7 @@
     },
     "web/src/components/mail/MessageReaderPane.vue": {
       "source": "web/src/components/mail/MessageReaderPane.vue",
-      "sha256": "82a85e931a71bc1dfa7af2a6fb01b19a6f238e696d47be163a50d5b6e92dc47f",
+      "sha256": "11b607be28de0d98b7e9c4653c4240ccae4b91951c54a0c078eda619df7f324d",
       "executable": false
     },
     "web/src/components/MailPageHeader.vue": {
@@ -969,6 +969,11 @@
     "web/src/components/RepositoryNote.vue": {
       "source": "web/src/components/RepositoryNote.vue",
       "sha256": "dda02f810c8ef357173e63ab698d5e6ec5df1e5e1dc31768966d5c42468b0af4",
+      "executable": false
+    },
+    "web/src/components/SmoothBlock.vue": {
+      "source": "web/src/components/SmoothBlock.vue",
+      "sha256": "707fbaba5ff8ebec00633b0a26b4600bef264cd6a7086b25b53e23902d47c4c7",
       "executable": false
     },
     "web/src/components/TurnstileWidget.vue": {
@@ -999,6 +1004,11 @@
     "web/src/intro/reveal.ts": {
       "source": "web/src/intro/reveal.ts",
       "sha256": "aa93fbeffc83b864bae4b1989703fa91488b9029b3e824bad9a809472b6be153",
+      "executable": false
+    },
+    "web/src/listMotion.ts": {
+      "source": "web/src/listMotion.ts",
+      "sha256": "b8f9c23597f0027c35a031d7572798f3ac5cf413ea77224e8f91e631bce2c67b",
       "executable": false
     },
     "web/src/mail/attachments.ts": {
@@ -1053,7 +1063,7 @@
     },
     "web/src/main.ts": {
       "source": "web/src/main.ts",
-      "sha256": "efa5e74cccd14e5f5d88520e28837902904b3ebbc3f2b843aef7171b89fa822b",
+      "sha256": "866b9d83855f7180e1b5899fa0f36343201c1b1574acbee15a0b28bc5395a93b",
       "executable": false
     },
     "web/src/motion.ts": {
@@ -1094,6 +1104,11 @@
     "web/src/router.ts": {
       "source": "web/src/router.ts",
       "sha256": "cacc25640641477054176468312a223e7dae121f32f313b40768da90c5a997e2",
+      "executable": false
+    },
+    "web/src/scrollReveal.ts": {
+      "source": "web/src/scrollReveal.ts",
+      "sha256": "6bf129da904293fbe0ef98af2ebab35821cb9119b24a60144d40fdcc9ded39f6",
       "executable": false
     },
     "web/src/siteInfo.ts": {
@@ -1208,7 +1223,7 @@
     },
     "web/src/styles/mail-pages.css": {
       "source": "web/src/styles/mail-pages.css",
-      "sha256": "5b1209ce01ba48e8062dc81a065c7a2d428f429d3bfbb409b115aca0c7117340",
+      "sha256": "c97bca48380326d694603c2999a478e7a704553ad44a1d2163ebaeff81b5c91a",
       "executable": false
     },
     "web/src/styles/motion.css": {
@@ -1233,7 +1248,7 @@
     },
     "web/src/styles/theme-controls.css": {
       "source": "web/src/styles/theme-controls.css",
-      "sha256": "42e8a8a5256974e7e397be6db4f69249ecbea8f8155d2e494e45a2a795130603",
+      "sha256": "6fa1afc9e1584fe153f36dfc9a452aa8614c4082d23c10eda266e0b95621d465",
       "executable": false
     },
     "web/src/styles/vendor/manifest.json": {
@@ -1258,7 +1273,7 @@
     },
     "web/src/styles/workspace.css": {
       "source": "web/src/styles/workspace.css",
-      "sha256": "22bf0c12cfb329306759bf61e0952325d2c0b24a70f279caeda19700283a81bf",
+      "sha256": "5732e13dff415f9d02c27725f6ad5426b064ecd55bf9e7f6e68a6186ce25c432",
       "executable": false
     },
     "web/src/surfaceLines.ts": {
@@ -1328,12 +1343,12 @@
     },
     "web/src/views/ContactsView.vue": {
       "source": "web/src/views/ContactsView.vue",
-      "sha256": "3b51576a3734be7cbb8bc0904a579bc52420e0c635cf78fafa3b4bf0e6131fe6",
+      "sha256": "9a101a5e4e5eebdfdcc24cea5efaa53f7e832b9ca64c3910360be3391f22b5ee",
       "executable": false
     },
     "web/src/views/DraftsView.vue": {
       "source": "web/src/views/DraftsView.vue",
-      "sha256": "e1ba2db1658ace1825cd822e86629738240a43bf49a24efdb2d26e442f4b9a07",
+      "sha256": "a5ef4685e2bdebee3f4ad3aa16b0e1cb86b13f079cf639202868cd29d705d030",
       "executable": false
     },
     "web/src/views/IntroView.vue": {
@@ -1348,7 +1363,7 @@
     },
     "web/src/views/MailView.vue": {
       "source": "web/src/views/MailView.vue",
-      "sha256": "2e3dad6ac707a3a70bc1ea7653ff43cdd0bb60cd25bfe55db3179039b7c0c4a6",
+      "sha256": "aa9db131fa79e8dca406095aead8d7e95b8dc1fc45c21c96f24c010e883f74d4",
       "executable": false
     },
     "web/src/views/NotFoundView.vue": {
@@ -1368,7 +1383,7 @@
     },
     "web/src/views/SearchView.vue": {
       "source": "web/src/views/SearchView.vue",
-      "sha256": "3742c7ccfe7e9c04c60b5cbc2cf756adcc2810767030e436cdddcce4a595674f",
+      "sha256": "0dd1fd80ad6bb57db0e1452244f84cf45925f66201fe9f49af2657498fa1431f",
       "executable": false
     },
     "web/src/views/ServiceUnavailableView.vue": {
@@ -1378,7 +1393,7 @@
     },
     "web/src/views/SettingsView.vue": {
       "source": "web/src/views/SettingsView.vue",
-      "sha256": "04ab675841898bef8d2c31ad75a4e481219882e0a7b2477223b2dd110cf18a97",
+      "sha256": "7556570621795eb7605fa5395cbef049058642e3f9e0af578ae66884781ce2ae",
       "executable": false
     },
     "web/src/views/SetupView.vue": {
@@ -1804,6 +1819,11 @@
     "web/test/upload-client.test.ts": {
       "source": "web/test/upload-client.test.ts",
       "sha256": "cd081061a75922b23881ece7798d6ab9c46cf02ce386646c4dca953a3b46001a",
+      "executable": false
+    },
+    "web/test/user-pages-polish.test.ts": {
+      "source": "web/test/user-pages-polish.test.ts",
+      "sha256": "6f53805f958e526e08221bd28e8880e4332bcaf32b7ef75e15201f7f3313eb2c",
       "executable": false
     },
     "web/test/workspace-motion.test.ts": {

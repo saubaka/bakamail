@@ -1,12 +1,12 @@
 <template>
   <div>
     <main id="main-content" class="page-shell mail-utility-shell" tabindex="-1">
-      <section v-motion="{ kind: 'compact', reversible: false }" class="admin-panel mail-tool-panel contact-editor-panel">
+      <section ref="editorPanel" v-motion="{ kind: 'compact' }" class="admin-panel mail-tool-panel contact-editor-panel">
         <div class="panel-heading"><div><span class="eyebrow">ADDRESS BOOK</span><h1>联系人</h1><p>保存常用地址，写邮件时可以快速带入。</p></div></div>
         <form class="form-grid" @submit.prevent="save">
           <label class="field">
             <span class="field__label">名字</span>
-            <input v-model="form.name" maxlength="80" :disabled="busy" />
+            <input ref="nameInput" v-model="form.name" maxlength="80" :disabled="busy" />
           </label>
           <label class="field">
             <span class="field__label">邮箱地址</span>
@@ -37,23 +37,27 @@
           {{ loadError }}<span v-if="contacts.length">下方是本机保留的列表，可能尚未同步。</span>
           <button class="button button--soft" type="button" :disabled="loading || busy" @click="initialize">重试读取</button>
         </p>
-        <div v-if="loading && contacts.length === 0" class="mail-empty">正在读取联系人…</div>
-        <div v-else-if="filtered.length === 0 && !loadError" class="mail-empty">没有符合条件的联系人</div>
-        <div v-else-if="filtered.length > 0" class="contact-grid">
-          <article v-for="contact in filtered" :key="contact.id" class="managed-page-card contact-card">
-            <span class="avatar avatar--small">{{ (contact.name || contact.email)[0]?.toUpperCase() }}</span>
-            <div class="contact-card__copy">
-              <strong>{{ contact.name || "未命名联系人" }}</strong>
-              <a :href="`mailto:${contact.email}`">{{ contact.email }}</a>
-              <small v-if="contact.note">{{ contact.note }}</small>
-            </div>
-            <div class="contact-card__actions">
-              <button class="button button--primary" type="button" @click="compose(contact.email)">写邮件</button>
-              <button class="button button--soft" type="button" :disabled="busy" @click="edit(contact)">编辑</button>
-              <button class="button button--danger" type="button" :disabled="busy" @click="remove(contact)">{{ removingId === contact.id ? "处理中…" : "删除" }}</button>
-            </div>
-          </article>
-        </div>
+        <SmoothBlock>
+          <transition name="card-list-swap">
+            <div v-if="loading && contacts.length === 0" key="loading" class="mail-empty">正在读取联系人…</div>
+            <div v-else-if="filtered.length === 0 && !loadError" key="empty" class="mail-empty">没有符合条件的联系人</div>
+          </transition>
+          <transition-group name="card-list" tag="div" class="contact-grid card-list" @before-leave="pinLeavingItem">
+            <article v-for="contact in filtered" :key="contact.id" v-scroll-reveal class="managed-page-card contact-card" :class="{ 'is-editing': form.id === contact.id }">
+              <span class="avatar avatar--small">{{ (contact.name || contact.email)[0]?.toUpperCase() }}</span>
+              <div class="contact-card__copy">
+                <strong>{{ contact.name || "未命名联系人" }}</strong>
+                <a :href="`mailto:${contact.email}`">{{ contact.email }}</a>
+                <small v-if="contact.note">{{ contact.note }}</small>
+              </div>
+              <div class="contact-card__actions">
+                <button class="button button--primary" type="button" @click="compose(contact.email)">写邮件</button>
+                <button class="button button--soft" type="button" :disabled="busy" @click="edit(contact)">编辑</button>
+                <button class="button button--danger" type="button" :disabled="busy" @click="remove(contact)">{{ removingId === contact.id ? "处理中…" : "删除" }}</button>
+              </div>
+            </article>
+          </transition-group>
+        </SmoothBlock>
       </section>
     </main>
   </div>
@@ -69,6 +73,8 @@ import type { Contact } from "../api/contacts";
 import { confirmDialog } from "../dialog";
 import { useSessionStore } from "../stores/session";
 import { useContactStore } from "../stores/contacts";
+import SmoothBlock from "../components/SmoothBlock.vue";
+import { pinLeavingItem, revealInScroller } from "../listMotion";
 
 const router = useRouter();
 const session = useSessionStore();
@@ -104,9 +110,12 @@ function reset(): void {
   error.value = "";
 }
 
+const editorPanel = ref<HTMLElement | null>(null);
+const nameInput = ref<HTMLInputElement | null>(null);
 function edit(contact: Contact): void {
   Object.assign(form, contact);
-  window.scrollTo({ top: 0, behavior: document.documentElement.dataset.motion === "reduce" ? "auto" : "smooth" });
+  // 页面在 .workspace-route-panel 里滚动，不是 window：把编辑区带到眼前并聚焦名字框。
+  if (editorPanel.value) revealInScroller(editorPanel.value, nameInput.value);
 }
 
 async function save(): Promise<void> {

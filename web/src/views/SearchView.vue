@@ -1,7 +1,7 @@
 <template>
   <div>
     <main id="main-content" class="page-shell mail-utility-shell" tabindex="-1">
-      <section v-motion="{ kind: 'feature', reversible: false }" class="admin-panel mail-tool-panel">
+      <section v-motion="{ kind: 'feature' }" class="admin-panel mail-tool-panel">
         <div class="section-heading mail-tool-heading">
           <div>
             <span class="eyebrow">SEARCH</span>
@@ -54,7 +54,7 @@
         <div v-if="!searched" class="mail-empty">正在查找邮件…</div>
         <div v-else-if="results.length === 0" class="mail-empty">没有找到符合条件的邮件</div>
         <div v-else class="mail-result-list">
-          <button v-for="item in results" :key="item.uid" class="mail-result-card" type="button" @click="open(item.uid)">
+          <button v-for="item in results" :key="item.uid" v-scroll-reveal class="mail-result-card" type="button" @click="open(item.uid)">
             <span class="mail-result-card__head">
               <strong>{{ item.subject || "（无主题）" }}</strong>
               <time>{{ formatDate(item.date) }}</time>

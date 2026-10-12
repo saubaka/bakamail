@@ -49,3 +49,12 @@
 @media (prefers-reduced-motion: reduce) { .themed-popup { animation: none; } .themed-control, .themed-control__arrow, .themed-popup button { transition: none; } }
 :root[data-motion="reduce"] .themed-popup, :root[data-performance="low"] .themed-popup { animation: none; }
 :root[data-motion="reduce"] .themed-control, :root[data-performance="low"] .themed-control { transition: none; }
+
+/* 选择框、日期框与输入框同高、同圆角、同字号，聚焦时的样式也一致（输入框是 48px 高、13px 圆角）。 */
+#app .field .themed-control { min-height: 48px; padding: 11px 13px; border-radius: 13px; font-size: 13px; }
+#app .themed-control:focus-visible { border-color: var(--line-blue-strong); outline: 1px solid var(--line-blue-strong); outline-offset: 3px; }
+/* 手机上输入框字号小于 16px 时 iOS 会在点击后自动放大页面，输入框和页面看起来突然变大：统一用 16px。 */
+@media (max-width: 900px) {
+  #app :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]), textarea, select),
+  #app .field .themed-control { font-size: 16px; }
+}
