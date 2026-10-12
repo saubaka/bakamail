@@ -53,9 +53,8 @@
           {{ logoutError }}
           <button class="button button--soft" type="button" :disabled="logoutBusy" @click="logout">重试退出</button>
         </p>
-        <section v-if="loading" class="managed-page-card admin-page-state" aria-live="polite">
-          正在恢复管理员会话…
-        </section>
+        <!-- 恢复会话时没有容器可显示，只有居中的加载动画；读屏用户听到状态说明。 -->
+        <p v-if="loading" class="sr-only" role="status" aria-live="polite">正在恢复管理员会话…</p>
         <section v-else-if="permissionDenied" class="managed-page-card admin-access-denied" role="alert">
           <div>
             <span class="soft-icon" aria-hidden="true">!</span>

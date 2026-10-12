@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "cc802e7734026c52904bd471477eca627cf2133e71252a838cf6ba661ddf9e1e",
+      "sha256": "8520af927ca508efe1f082055f510ad3c2de90e77d7e19ec1db63404968f0352",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "88cb26fba6aa220f4ed5cf885aa4786749bde22b1d8ee9a1df568edf1f1d3a8b",
+      "sha256": "6375fd57b7e5aaedd9156e35c3634dcad97882ecbccabe9336aeeb9b5576f0b0",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "5a2acbb02435d3fa7dba239dcb93b9341df72b54e5867be22b43b8c01cc55c22",
+      "sha256": "f44118034fbea9a558dadef98355e3191e39f1e2a2ddc9913d6e120a81834590",
       "executable": false
     },
     "README.md": {
@@ -188,7 +188,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "248bc53539a9c5750c97ceb2446f71b4f6abdae5d0a191ca55cc1c8ec6a664cc",
+      "sha256": "1ca6f9d8ea52bba060ef06461f95c1575a0fb405584d5f71b18d9fd6cd5f6f54",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -658,7 +658,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "3fd45b22bae0bd57e6168a91a27a6495a9ff3e88cce42d7449b6632686bbeded",
+      "sha256": "739fa50e1ced8b0b75df01350b071548b5e24e5f53f3c74b3bbfa40edb42c881",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -683,12 +683,12 @@
     },
     "web/src/admin/entrance.ts": {
       "source": "web/src/admin/entrance.ts",
-      "sha256": "b42ce22a911ddb22893a585d3974265e218421c24ebf7375e9391cf5178e0174",
+      "sha256": "cdc1e329ad3af97d414e535ac0c5b031a5025dc6c97a3b38016bf8500cd37d23",
       "executable": false
     },
     "web/src/admin/loader.ts": {
       "source": "web/src/admin/loader.ts",
-      "sha256": "906ee5ae741480a599acd0cc04dc83d8d5154edc9e4abd552e859c2b25b228e1",
+      "sha256": "2742e1c025a799f819cb8a1fb8792d346faa5f2cda8911a733f91676de3c0a73",
       "executable": false
     },
     "web/src/admin/navigationState.ts": {
@@ -863,7 +863,7 @@
     },
     "web/src/components/admin/AdminLoader.vue": {
       "source": "web/src/components/admin/AdminLoader.vue",
-      "sha256": "5fd256898e1fd981c081f2d5fa6915ccbe9c06415e5b1a5e97c795360dd8a17b",
+      "sha256": "3e5b190e7759e1a60001231de350291741bdd77d6be3c97483d80a12ce3117bb",
       "executable": false
     },
     "web/src/components/admin/AdminRail.vue": {
@@ -1078,7 +1078,7 @@
     },
     "web/src/motion.ts": {
       "source": "web/src/motion.ts",
-      "sha256": "53f7de0eb2507fee7f25bcb8b4345a082e90ef1a7660aee0ad4950532eead1b4",
+      "sha256": "6ae13c86cf827ae03bd95fa556cd3cd6ead19aa29ed4aa70032b28501cc07805",
       "executable": false
     },
     "web/src/notificationConfig.ts": {
@@ -1193,7 +1193,7 @@
     },
     "web/src/styles/admin.css": {
       "source": "web/src/styles/admin.css",
-      "sha256": "700dee24844d0338aa1a1bf14cc4ded682798a4e8c95e6c7881e1b0e630fb662",
+      "sha256": "6f4f234841b86ee14460a5cbe51729d6266ab13035895320677ec21dd569af7c",
       "executable": false
     },
     "web/src/styles/app.css": {
@@ -1283,7 +1283,7 @@
     },
     "web/src/styles/workspace.css": {
       "source": "web/src/styles/workspace.css",
-      "sha256": "ba460af11c9493d51d1bf4a6936b43e8efccbc5de97791d5550498ee739f9d7b",
+      "sha256": "6d5d7c726bc428c09969b72866ceefbf2bdf07c54727eb743baa6e6272af352c",
       "executable": false
     },
     "web/src/surfaceLines.ts": {
@@ -1308,7 +1308,7 @@
     },
     "web/src/views/admin/AdminShell.vue": {
       "source": "web/src/views/admin/AdminShell.vue",
-      "sha256": "4c4d9500fb714fc92169affac22b697e7ee090915af17125c39fe4d86f190ca4",
+      "sha256": "b2a8a618053889ab0e944f8dee5c5e9903026971f65caadc562cd036dc1ab8e4",
       "executable": false
     },
     "web/src/views/admin/AdminsView.vue": {
@@ -1433,7 +1433,7 @@
     },
     "web/test/admin-navigation-feedback.test.ts": {
       "source": "web/test/admin-navigation-feedback.test.ts",
-      "sha256": "de922de93a0040c609913441bb42ad3f336ead6a0e9971d73376bbb3b2ab8b4e",
+      "sha256": "70a1c44edf8bcfeabd925a4550049d832fddc0e6ed2e56d55d0af73f740d1cb1",
       "executable": false
     },
     "web/test/admin-rail.test.ts": {

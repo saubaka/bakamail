@@ -20,7 +20,7 @@ body:has(.mail-workspace) { padding-bottom: 0; }
 .desktop-sidebar-toggle-icon.is-expanded .desktop-sidebar-toggle-icon__bottom { transform:translate3d(-1px,-2.2px,0) rotate(18deg) scaleX(.76); }
 .workspace-body { flex:1; min-height:0; min-width:0; display:grid; grid-template-columns:var(--workspace-sidebar-width) minmax(0,1fr); transition:grid-template-columns 280ms cubic-bezier(.22,.85,.25,1); }
 .workspace-content { position:relative; flex:1; min-height:0; height:auto; min-width:0; display:grid; overflow:hidden; overscroll-behavior:contain; }
-.workspace-route-panel { grid-area:1/1; min-width:0; min-height:0; height:100%; max-height:100%; overflow:auto; overscroll-behavior:contain; backface-visibility:hidden; transform-origin:center; }
+.workspace-route-panel { grid-area:1/1; min-width:0; min-height:0; height:100%; max-height:100%; overflow:auto; overscroll-behavior:contain; backface-visibility:hidden; transform-origin:center; transition:opacity 220ms ease; }
 .workspace-content .mail-shell { grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); height: 100%; min-height: 0; max-width: 1600px; margin: 0 auto; padding: 14px 24px 12px; gap: 18px; grid-template-rows: minmax(0, 1fr); }
 .mail-view-canvas { display: flex; flex-direction: column; height: 100%; min-height: 0; }
 .workspace-content .mail-view-canvas .mail-shell { height: auto; flex: 1 1 0; width: 100%; }
@@ -167,3 +167,7 @@ html:is([data-motion="reduce"], [data-performance="low"]) .mail-list .mail-row[d
 .folder-tree .folder-item.is-current, .folder-tree .folder-item.is-current:hover { background: transparent !important; border-color: transparent !important; outline: none !important; box-shadow: none; }
 /* 目标按钮被点中后不再显示悬停框，线条滑过来之前终点处不会先冒出一个框。 */
 .dock-navigation-item.is-active:hover { outline: none; box-shadow: none; transform: none; }
+
+/* 加载动画显示期间，右侧旧内容先淡出，加载动画和容器线条不会同时出现。 */
+html[data-route-loading] .workspace-route-panel:not(.mail-panel-leave-active) { opacity: 0; transition: opacity 200ms ease; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .workspace-route-panel, html[data-route-loading] .workspace-route-panel { transition: none; } }

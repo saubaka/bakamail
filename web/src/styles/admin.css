@@ -696,3 +696,8 @@ html[data-motion="reduce"] .palette-enter-active .palette__panel, html[data-moti
 /* 筛选栏里两列等高拉伸时，多出的高度不能被分给标签行，否则两个标签高低不一。 */
 .admin-filter-bar { align-items: start; }
 .admin-filter-bar .field { align-content: start; }
+
+/* 加载动画显示期间，右侧旧内容先淡出，加载动画和容器线条不会同时出现；容器出现后加载动画收起，内容再淡入。 */
+.admin-route-panel { transition: opacity 220ms ease; }
+html[data-route-loading] .admin-route-panel { opacity: 0; transition: opacity 200ms ease; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .admin-route-panel, html[data-route-loading] .admin-route-panel { transition: none; } }

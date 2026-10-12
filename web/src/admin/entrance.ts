@@ -1,6 +1,7 @@
 import type { Directive } from "vue";
 import { stagger } from "../stagger.ts";
 import { playCardParts } from "../cardParts.ts";
+import { loaderGate } from "./loader.ts";
 
 /**
  * 后台入场：页面里的每张卡片、每一块文字、每一行数据，都在它真正出现的那一刻单独入场，
@@ -110,6 +111,8 @@ export function handleAdded(roots: Element[], now = performance.now()): number {
   let floor = -1;
   let after = 0;
   const slot = (): number => (floor < 0 ? stagger.next(now) : floor + Math.min(after++, 4) * 70);
+  // 加载动画还在（或还在淡出）时，新内容的入场整体往后推，等它完全收起之后再开始。
+  const gate = loaderGate.delay(now);
   for (const element of top) {
     const kind = kindOf(element);
     if (kind === "row" && ++rows > MAX_ROWS_PER_BATCH) continue;
@@ -118,12 +121,12 @@ export function handleAdded(roots: Element[], now = performance.now()): number {
     if (element.matches(STAT_SELECTOR)) {
       if (statBase < 0) statBase = stagger.next(now);
       const delay = statDelay(statBase, statIndex++);
-      playStat(element, delay);
+      playStat(element, delay + gate);
       floor = delay + 90; after = 0;
       continue;
     }
     if (element.classList.contains("motion-line-target")) { scheduleMotionTarget(element, now, slot()); continue; }
-    const cardDelay = slot();
+    const cardDelay = slot() + gate;
     play(element, specFor(kind, element.tagName), cardDelay);
     if (kind !== "card") continue;
     // 卡片里的内容在卡片出现之后依次跟上（图标、标题、说明、表单项、按钮……）。

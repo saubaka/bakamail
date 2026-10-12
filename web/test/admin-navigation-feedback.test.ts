@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
 import { api, onApiActivity } from "../src/api/client.ts";
-import { GRACE_MS, MIN_SHOW_MS, START_DELAY_MS, createLoader, type LoaderTimers } from "../src/admin/loader.ts";
+import { FADE_MS, MIN_SHOW_MS, START_DELAY_MS, createLoader, loaderGate, type LoaderTimers } from "../src/admin/loader.ts";
 import { beginAdminNavigation, clearAdminNavigation, navigationState } from "../src/admin/navigationState.ts";
 
 const source = (path: string) => readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8");
@@ -72,29 +72,71 @@ function fakeTimers() {
   return { timers, advance };
 }
 
-test("加载动画时机：很快完成的操作不出现；出现后至少停留；前后两段等待合并成一次，不闪烁", () => {
+test("加载动画时机：很快完成的操作不出现；出现后至少停留；容器出现立刻收起，不再额外等待", () => {
   const events: boolean[] = [];
   const { timers, advance } = fakeTimers();
   const loader = createLoader((visible) => events.push(visible), timers);
   // 快速完成：在出现之前就结束，什么都不发生。
   loader.setBusy(true); advance(START_DELAY_MS - 20); loader.setBusy(false); advance(2000);
   assert.deepEqual(events, []);
-  // 正常加载：延迟之后出现，结束后至少停留 MIN_SHOW_MS。
+  // 正常加载：延迟之后出现；结束得太早时停留到最短时间再收起。
   loader.setBusy(true); advance(START_DELAY_MS + 1);
   assert.deepEqual(events, [true]);
   advance(100); loader.setBusy(false);
-  advance(GRACE_MS + 10); assert.deepEqual(events, [true], "出现不久就结束时，停留到最短时间才收起");
-  advance(MIN_SHOW_MS); assert.deepEqual(events, [true, false]);
-  // 页面切换结束后马上又有数据请求：缓冲期内重新忙起来，合并成一次，不收起也不重新出现。
+  advance(MIN_SHOW_MS - 150); assert.deepEqual(events, [true], "出现不久就结束时，停留到最短时间才收起");
+  advance(200); assert.deepEqual(events, [true, false]);
+  // 加载足够久之后结束：容器出现的那一刻立刻收起，没有额外缓冲。
   events.length = 0;
-  loader.setBusy(true); advance(START_DELAY_MS + 1);
-  advance(MIN_SHOW_MS); loader.setBusy(false); advance(GRACE_MS - 50); loader.setBusy(true); advance(GRACE_MS * 3);
+  loader.setBusy(true); advance(START_DELAY_MS + 1); advance(MIN_SHOW_MS + 500);
+  loader.setBusy(false); advance(1);
+  assert.deepEqual(events, [true, false], "不再等待缓冲期");
+  // 收起前又忙起来：不收起也不重新出现。
+  events.length = 0;
+  loader.setBusy(true); advance(START_DELAY_MS + 1); advance(MIN_SHOW_MS);
+  loader.setBusy(false); loader.setBusy(true); advance(2000);
   assert.deepEqual(events, [true], "没有收起再出现");
-  loader.setBusy(false); advance(GRACE_MS + 5);
+  loader.setBusy(false); advance(5);
   assert.deepEqual(events, [true, false]);
   loader.dispose();
   assert.ok(START_DELAY_MS >= 80 && START_DELAY_MS <= 250, "快速操作不会闪一下动画");
-  assert.ok(GRACE_MS > 0 && MIN_SHOW_MS >= GRACE_MS);
+  assert.ok(MIN_SHOW_MS >= 300 && FADE_MS >= 200);
+});
+
+test("入场闸门：加载动画显示期间和淡出期间，新容器的入场往后推；收起完成后恢复；没出现过就不推迟", () => {
+  const { timers, advance } = fakeTimers();
+  const events: boolean[] = [];
+  loaderGate.reset();
+  const loader = createLoader((visible) => events.push(visible), timers);
+  assert.equal(loaderGate.delay(timers.now()), 0, "没有加载动画时不推迟");
+  loader.setBusy(true); advance(START_DELAY_MS - 20); loader.setBusy(false); advance(10);
+  assert.equal(loaderGate.delay(timers.now()), 0, "出现前就结束，不推迟");
+  loader.setBusy(true); advance(START_DELAY_MS + 1);
+  assert.ok(loaderGate.delay(timers.now()) > 10_000, "显示期间闸门关着");
+  advance(MIN_SHOW_MS + 100); loader.setBusy(false);
+  const gate = loaderGate.delay(timers.now());
+  assert.ok(gate > 0 && gate <= FADE_MS + 1, `结束后推迟到淡出完成：${gate}`);
+  advance(2); assert.deepEqual(events, [true, false]);
+  advance(FADE_MS + 5);
+  assert.equal(loaderGate.delay(timers.now()), 0, "淡出完成后恢复");
+  loader.dispose();
+});
+
+test("右侧加载动画与容器线条绝不同时出现：显示期间旧内容淡出，入场被闸门推迟，恢复会话时没有容器卡片", () => {
+  const motion = readFileSync(new URL("../src/motion.ts", import.meta.url), "utf8");
+  const entrance = readFileSync(new URL("../src/admin/entrance.ts", import.meta.url), "utf8");
+  const loaderView = readFileSync(new URL("../src/components/admin/AdminLoader.vue", import.meta.url), "utf8");
+  const shell = source("views/admin/AdminShell.vue");
+  assert.match(motion, /const gate = loaderGate\.delay\(now\);/);
+  assert.match(motion, /return own \+ gate \+ stagger\.next\(now\)/);
+  assert.match(entrance, /const gate = loaderGate\.delay\(now\);/);
+  assert.match(entrance, /const cardDelay = slot\(\) \+ gate;/);
+  assert.match(entrance, /playStat\(element, delay \+ gate\)/);
+  assert.match(loaderView, /setAttribute\("data-route-loading", ""\)/);
+  assert.match(loaderView, /removeAttribute\("data-route-loading"\), FADE_MS\)/);
+  assert.match(source("styles/admin.css"), /html\[data-route-loading\] \.admin-route-panel \{ opacity: 0;/);
+  assert.match(source("styles/workspace.css"), /html\[data-route-loading\] \.workspace-route-panel:not\(\.mail-panel-leave-active\) \{ opacity: 0;/);
+  assert.doesNotMatch(shell, /<section v-if="loading" class="managed-page-card admin-page-state"/);
+  assert.match(shell, /<p v-if="loading" class="sr-only" role="status" aria-live="polite">正在恢复管理员会话…<\/p>/);
 });
 
 test("页面切换的进行中状态：开始时记下目标，清除后恢复为空", () => {
