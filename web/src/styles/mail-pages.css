@@ -454,3 +454,46 @@
     transform: none;
   }
 }
+
+/* ---- 用户端工具页（搜索、草稿、联系人、设置）统一样式 ---- */
+/* 基座把 managed-page-card 当作“等高卡片网格”的格子（最小高度 264px、三行拉伸）；这里它只是内容容器，高度由内容决定。 */
+.mail-utility-shell .managed-page-card { grid-template-rows: none; grid-auto-rows: auto; align-content: start; min-height: 0; height: auto; background-color: var(--surface); background-image: none; }
+.mail-utility-shell .managed-page-card:hover { transform: none; }
+.mail-utility-shell .draft-card { align-content: center; }
+/* 编辑联系人的卡片和下面的列表一样宽，页面里所有卡片左右边缘对齐。 */
+.contact-editor-panel { max-width: none; }
+/* 搜索表单：关键词独占一行，文件夹、起止日期和状态选项整齐排成一行。 */
+.mail-search-form { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.mail-search-query { grid-column: 1 / -1; }
+
+/* 列表增减：高度平滑变化，离开的卡片淡出，其余卡片平滑补位。 */
+.smooth-block { margin: -6px; overflow: hidden; transition: height 260ms var(--ease); }
+.smooth-block__inner { position: relative; display: flow-root; padding: 6px; }
+.card-list { position: relative; }
+.card-list-enter-active, .card-list-leave-active { transition: opacity 240ms var(--ease), transform 300ms var(--ease); }
+.card-list-leave-active { z-index: 0; pointer-events: none; }
+.card-list-enter-from { opacity: 0; transform: translate3d(0, 12px, 0) scale(.985); }
+.card-list-leave-to { opacity: 0; transform: translate3d(0, -4px, 0) scale(.97); }
+.card-list-move { transition: transform 300ms var(--ease); }
+.card-list-swap-enter-active, .card-list-swap-leave-active { transition: opacity 180ms ease, transform 220ms var(--ease); }
+.card-list-swap-enter-from { opacity: 0; transform: translate3d(0, 8px, 0); }
+.card-list-swap-leave-active { position: absolute; left: 6px; right: 6px; top: 6px; pointer-events: none; }
+.card-list-swap-leave-to { opacity: 0; transform: translate3d(0, -4px, 0); }
+.settings-feedback { display: grid; gap: 10px; justify-items: start; }
+.settings-feedback:empty { display: none; }
+.contact-card.is-editing { border-color: var(--line-blue-strong); }
+/* 滚动时卡片的入场与出场（scrollReveal 指令）。 */
+[data-scroll-reveal] { transition: opacity 260ms ease, transform 420ms var(--ease); }
+[data-scroll-reveal="outside"]:not(:focus-within) { opacity: 0; transform: translate3d(0, var(--reveal-offset, 14px), 0); }
+@media (max-width: 980px) {
+  .mail-search-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .mail-search-form { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .smooth-block, [data-scroll-reveal], .card-list-enter-active, .card-list-leave-active, .card-list-move, .card-list-swap-enter-active, .card-list-swap-leave-active { transition: none; }
+  [data-scroll-reveal="outside"]:not(:focus-within) { opacity: 1; transform: none; }
+}
+:root:is([data-motion="reduce"], [data-performance="low"]) :is(.smooth-block, [data-scroll-reveal], .card-list-enter-active, .card-list-leave-active, .card-list-move) { transition: none; }
+:root:is([data-motion="reduce"], [data-performance="low"]) [data-scroll-reveal="outside"]:not(:focus-within) { opacity: 1; transform: none; }

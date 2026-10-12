@@ -1,5 +1,5 @@
 <template>
-  <section class="mail-pane mail-pane--reader" aria-label="邮件正文">
+  <section v-motion="{ kind: 'compact', delay: 160 }" class="mail-pane mail-pane--reader" aria-label="邮件正文">
     <div v-if="loading" class="reader-loading-placeholder" aria-hidden="true"><span></span><span></span><span></span></div>
     <div v-else-if="!detail" class="mail-empty">选择一封邮件，开始阅读</div>
     <div v-else :key="`${currentFolder}:${detail.uid}`" class="reader-content">
