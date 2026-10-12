@@ -15,7 +15,7 @@ process.env.BOOTSTRAP_ADMIN = "isolation-admin";
 process.env.BOOTSTRAP_ADMIN_PASSWORD = "isolated-test-only-2026";
 
 const { createApp } = await import("../src/app.ts");
-const { default: request } = await import("supertest");
+const { default: request } = await import("./support/loopback-request.ts");
 const { db } = await import("../src/db.ts");
 const { clientAddress, rateLimitSource } = await import("../src/security/identity.ts");
 const { reserveBudget, SECURITY_BUDGETS, reserveLease, releaseLease } = await import("../src/security/abuse.ts");

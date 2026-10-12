@@ -19,7 +19,7 @@ process.env.BOOTSTRAP_ADMIN = "phase2-admin";
 process.env.BOOTSTRAP_ADMIN_PASSWORD = "isolated-test-only-2026";
 
 const { createApp } = await import("../src/app.ts");
-const { default: request } = await import("supertest");
+const { default: request } = await import("./support/loopback-request.ts");
 const { clientAddress } = await import("../src/security/identity.ts");
 const { issueFormToken, consumeFormToken } = await import("../src/security/formToken.ts");
 const { db, setSetting } = await import("../src/db.ts");

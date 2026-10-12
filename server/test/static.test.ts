@@ -8,7 +8,7 @@ process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "bakamail-static-"));
 process.env.SECRET_KEY = "test-secret-key-for-static-tests";
 
 const { looksLikeAssetPath, createApp } = await import("../src/app.ts");
-const { default: request } = await import("supertest");
+const { default: request } = await import("./support/loopback-request.ts");
 const { projectRoot } = await import("../src/config.ts");
 
 test("静态资源路径识别：带扩展名的走资源分支", () => {
