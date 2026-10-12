@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
 import { api, onApiActivity } from "../src/api/client.ts";
-import { FINISH_HOLD_MS, GRACE_MS, START_DELAY_MS, TRICKLE_CEILING, nextProgress } from "../src/admin/progressLine.ts";
+import { GRACE_MS, MIN_SHOW_MS, START_DELAY_MS, createLoader, type LoaderTimers } from "../src/admin/loader.ts";
 import { beginAdminNavigation, clearAdminNavigation, navigationState } from "../src/admin/navigationState.ts";
 
 const source = (path: string) => readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8");
@@ -49,16 +49,52 @@ test("界面请求在途数量实时通知，成功、失败、取消都会归�
   assert.deepEqual(seen, []);
 });
 
-test("加载线进度：先快后慢、单调不减、永远到不了 100%，由完成动作补满", () => {
-  let value = 0.16;
-  const trail: number[] = [];
-  for (let i = 0; i < 80; i += 1) { const next = nextProgress(value); assert.ok(next >= value, "never goes backwards"); value = next; trail.push(value); }
-  assert.ok(value < 1 && value <= TRICKLE_CEILING + 1e-9);
-  assert.ok(trail[0]! - 0.16 > trail[20]! - trail[19]!, "early steps are larger than late steps");
-  assert.equal(nextProgress(TRICKLE_CEILING), TRICKLE_CEILING);
-  assert.equal(nextProgress(0.99), TRICKLE_CEILING, "the crawl never goes past the ceiling; only finishing fills the line");
-  assert.ok(START_DELAY_MS >= 50 && START_DELAY_MS <= 200, "quick actions do not flash the line");
-  assert.ok(GRACE_MS > 0 && FINISH_HOLD_MS > 0);
+function fakeTimers() {
+  let clock = 0;
+  let nextId = 1;
+  const pending = new Map<number, { at: number; run: () => void }>();
+  const timers: LoaderTimers = {
+    now: () => clock,
+    set(run, ms) { const id = nextId++; pending.set(id, { at: clock + ms, run }); return id; },
+    clear(id) { pending.delete(id); },
+  };
+  const advance = (ms: number) => {
+    const target = clock + ms;
+    for (;;) {
+      const due = [...pending.entries()].filter(([, item]) => item.at <= target).sort((a, b) => a[1].at - b[1].at)[0];
+      if (!due) break;
+      pending.delete(due[0]);
+      clock = due[1].at;
+      due[1].run();
+    }
+    clock = target;
+  };
+  return { timers, advance };
+}
+
+test("加载动画时机：很快完成的操作不出现；出现后至少停留；前后两段等待合并成一次，不闪烁", () => {
+  const events: boolean[] = [];
+  const { timers, advance } = fakeTimers();
+  const loader = createLoader((visible) => events.push(visible), timers);
+  // 快速完成：在出现之前就结束，什么都不发生。
+  loader.setBusy(true); advance(START_DELAY_MS - 20); loader.setBusy(false); advance(2000);
+  assert.deepEqual(events, []);
+  // 正常加载：延迟之后出现，结束后至少停留 MIN_SHOW_MS。
+  loader.setBusy(true); advance(START_DELAY_MS + 1);
+  assert.deepEqual(events, [true]);
+  advance(100); loader.setBusy(false);
+  advance(GRACE_MS + 10); assert.deepEqual(events, [true], "出现不久就结束时，停留到最短时间才收起");
+  advance(MIN_SHOW_MS); assert.deepEqual(events, [true, false]);
+  // 页面切换结束后马上又有数据请求：缓冲期内重新忙起来，合并成一次，不收起也不重新出现。
+  events.length = 0;
+  loader.setBusy(true); advance(START_DELAY_MS + 1);
+  advance(MIN_SHOW_MS); loader.setBusy(false); advance(GRACE_MS - 50); loader.setBusy(true); advance(GRACE_MS * 3);
+  assert.deepEqual(events, [true], "没有收起再出现");
+  loader.setBusy(false); advance(GRACE_MS + 5);
+  assert.deepEqual(events, [true, false]);
+  loader.dispose();
+  assert.ok(START_DELAY_MS >= 80 && START_DELAY_MS <= 250, "快速操作不会闪一下动画");
+  assert.ok(GRACE_MS > 0 && MIN_SHOW_MS >= GRACE_MS);
 });
 
 test("页面切换的进行中状态：开始时记下目标，清除后恢复为空", () => {
@@ -89,33 +125,36 @@ test("路由守卫：先有一个同步守卫立即记下目标；成功的导�
   assert.match(router, /entryCheckedAt = Date\.now\(\)/);
 });
 
-test("外壳：菜单跟随目标页立即高亮，顶部加载线覆盖校验等待和页面请求，新页面入场动画不被提前截断", () => {
+test("外壳：菜单跟随目标页立即高亮，右侧加载动画覆盖校验等待和页面请求，新页面各块依次入场而不是整体入场", () => {
   const shell = source("views/admin/AdminShell.vue");
   assert.match(shell, /:pending="navigationState\.pending"/);
-  assert.match(shell, /<AdminProgressLine :active="busy" \/>/);
+  assert.match(shell, /<AdminLoader :active="busy" \/>/);
   assert.match(shell, /Boolean\(navigationState\.pending\) \|\| requestsInFlight\.value > 0/);
   assert.match(shell, /onApiActivity\(/);
   assert.match(shell, /:aria-busy="busy \? 'true' : 'false'"/);
-  assert.match(shell, /name="admin-panel" mode="out-in" :duration="\{ enter: 700, leave: 140 \}"/);
+  assert.match(shell, /name="admin-panel" mode="out-in" :duration="\{ enter: 0, leave: 140 \}"/);
+  assert.match(shell, /<div :key="String\(childRoute\.name\)" v-admin-entrance class="admin-route-panel">/);
   const rail = source("components/admin/AdminRail.vue");
   assert.match(rail, /const active = computed\(\(\) => props\.pending \|\| props\.current\)/);
   assert.match(rail, /'is-current': active === item\.name/);
   assert.match(source("admin/useRailBadges.ts"), /\{ quiet: true \}/);
 });
 
-test("加载线与入场动画样式：纯色、只用令牌、减少动画时关闭，且不改变既有的面板过渡规则", () => {
+test("加载动画与入场样式：线条图形、淡浅蓝、只用令牌、减少动画时关闭；样式里不再有整页入场规则和顶部粗线", () => {
   const css = source("styles/admin.css");
-  const block = css.slice(css.indexOf("顶部加载线"));
-  assert.doesNotMatch(block, /gradient/i);
-  assert.doesNotMatch(block, /#[\da-f]{3,8}\b|rgba?\(/i);
-  assert.match(block, /\.admin-progress__bar \{[^}]*background: var\(--blue-600\)/);
-  assert.match(block, /@keyframes admin-rise/);
-  assert.match(block, /\.admin-panel-enter-active > \* > \* \{ animation: admin-rise/);
-  assert.match(block, /html\[data-motion="reduce"\] \.admin-panel-enter-active > \* > \*/);
-  assert.match(block, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(css, /\.admin-panel-enter-active \{ transition: opacity 180ms/);
-  const component = source("components/admin/AdminProgressLine.vue");
-  assert.doesNotMatch(component, /requestAnimationFrame\(/, "the line must not depend on animation frames");
-  assert.match(component, /GRACE_MS/);
+  assert.doesNotMatch(css, /admin-progress|@keyframes admin-rise|admin-panel-enter/, "整页入场和顶部加载线的规则都已移除");
+  assert.match(css, /\.admin-panel-leave-active \{ pointer-events: none/);
+  const component = source("components/admin/AdminLoader.vue");
+  const style = component.slice(component.indexOf("<style scoped>"));
+  assert.doesNotMatch(style, /gradient/i);
+  assert.doesNotMatch(style.replace("var(--blue-300, #a8d0f4)", ""), /#[\da-f]{3,8}\b/i, "颜色只用主题令牌（白色半透明的磨砂底除外）");
+  assert.match(style, /stroke: var\(--line-blue-strong\)/);
+  assert.match(style, /@keyframes loader-orbit/);
+  assert.match(style, /@keyframes loader-draw/);
+  assert.match(style, /left: var\(--rail-w, 0px\)/, "在右侧内容区正中，不是整个窗口的中间");
+  assert.match(style, /pointer-events: none/);
+  assert.match(style, /@media \(prefers-reduced-motion: reduce\)[\s\S]*animation: none/);
   assert.match(component, /aria-hidden="true"/);
+  assert.doesNotMatch(component, /requestAnimationFrame\(/);
+  assert.match(component, /createLoader\(/);
 });

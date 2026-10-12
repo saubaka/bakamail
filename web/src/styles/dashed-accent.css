@@ -2,12 +2,13 @@
    The historical file/class names stay stable for existing imports and tabs. */
 .line-outline-host,.dash-outline { position:absolute; inset:0; width:100%; height:100%; border-radius:inherit; pointer-events:none; }
 .line-outline-host { display:block; }.dash-outline { display:block; overflow:visible; z-index:2; }
-.dash-outline__piece { fill:none; stroke:var(--line-blue-strong); stroke-width:1.25; stroke-dasharray:none; stroke-linecap:round; transform-box:fill-box; transform-origin:center; animation:dash-contour-arrive 420ms cubic-bezier(.22,.85,.25,1) both; }
+/* 线宽取整 1 像素；动画只在开始前保持起点（backwards），结束后不留任何动画效果，线条不会被重新采样而发虚。 */
+.dash-outline__piece { fill:none; stroke:var(--line-blue-strong); stroke-width:1; stroke-dasharray:none; stroke-linecap:round; transform-box:fill-box; transform-origin:center; animation:dash-contour-arrive 420ms cubic-bezier(.22,.85,.25,1) backwards; }
 .dash-part-0 { clip-path:polygon(0 0,100% 0,50% 50%); --fragment-x:0px; --fragment-y:-3px; }
 .dash-part-1 { clip-path:polygon(100% 0,100% 100%,50% 50%); --fragment-x:3px; --fragment-y:0px; }
 .dash-part-2 { clip-path:polygon(100% 100%,0 100%,50% 50%); --fragment-x:0px; --fragment-y:3px; }
 .dash-part-3 { clip-path:polygon(0 100%,0 0,50% 50%); --fragment-x:-3px; --fragment-y:0px; }
-.is-line-shifting .dash-outline__piece { animation:dash-fragment-travel 420ms cubic-bezier(.22,.85,.25,1) both; }
+.is-line-shifting .dash-outline__piece { animation:dash-fragment-travel 420ms cubic-bezier(.22,.85,.25,1) backwards; }
 @keyframes dash-contour-arrive { from { opacity:0; stroke-dashoffset:24; } to { opacity:1; stroke-dashoffset:0; } }
 @keyframes dash-contour-exit { from { opacity:1; stroke-dashoffset:0; } to { opacity:0; stroke-dashoffset:-18; } }
 @keyframes dash-fragment-travel { 0% { transform:none; opacity:1; stroke-dashoffset:0; } 28%,55% { transform:translate(var(--fragment-x),var(--fragment-y)); opacity:.6; stroke-dashoffset:8; } 100% { transform:none; opacity:1; stroke-dashoffset:0; } }

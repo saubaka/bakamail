@@ -15,7 +15,7 @@ export function attachSurfaceLines(element: HTMLElement): () => void {
   function measure() {
     // 宿主 span 铺满父元素的内边距盒，边框和圆角属于父元素；弹窗等直接挂载的元素就是自己。
     const reference = element.classList?.contains('line-outline-host') ? (element.parentElement ?? element) : element;
-    applyOutline(svg, pieces, reference, element, 1.25);
+    applyOutline(svg, pieces, reference, element, 1);
   }
   const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(measure);
   observer?.observe(element); measure();

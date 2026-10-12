@@ -65,3 +65,10 @@ html[data-performance="low"] *::after {
     transition: none;
   }
 }
+
+/*
+ * 卡片轮廓线：线宽统一取整 1 像素，各种卡片不再有 1.1、1.2 这样的小数线宽（小数线宽落在像素中间，横向的上下边会发虚、看起来变粗）。
+ * 动画结束后元素和轮廓线上都不再有常驻的滤镜和变换（见 motion.ts），线条按原样绘制。
+ */
+html.is-motion-ready .motion-line-target .motion-outline__path,
+html.is-motion-ready .motion-line-target[data-motion-kind] .motion-outline__path { stroke-width: 1; }

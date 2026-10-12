@@ -150,3 +150,24 @@
 html:is([data-motion=reduce], [data-performance=low]) .intro-reveal--ready { opacity: 1; transform: rotate(var(--intro-rest-rotation, 0deg)); transition: none !important; }
 html:is([data-motion=reduce], [data-performance=low]) .intro-page :is(.intro-postal-path path, .intro-faq details p) { animation: none !important; }
 html:is([data-motion=reduce], [data-performance=low]) .intro-page :is(.intro-button, .intro-demo-tab, .intro-open-letter):is(:hover, :active) { transform: none; }
+
+/*
+ * 首页依次入场：区块本身不再整体淡入，里面的每一项（标题、说明、功能卡片、问答、按钮）按顺序一个接一个出现；
+ * 顺序由模板里的 --i 决定，间隔 90ms；离开视野时一起收回，不带延迟。
+ */
+.intro-reveal--ready.intro-reveal--split { opacity: 1; transform: rotate(var(--intro-rest-rotation, 0deg)); transition: none; }
+.intro-reveal--split.intro-reveal--ready .intro-stagger { opacity: 0; transform: translate3d(0, 18px, 0); transition: opacity 320ms var(--ease), transform 420ms var(--ease); }
+.intro-reveal--split.intro-reveal--ready.is-in-view .intro-stagger { opacity: 1; transform: translate3d(0, 0, 0); transition-duration: 560ms, 680ms; transition-delay: calc(var(--i, 0) * 90ms + 60ms); }
+/* 右边的示例窗口比左边的文字晚一拍。 */
+.intro-window.intro-reveal--ready.is-in-view { transition-delay: 320ms; }
+/* 页头：品牌和导航在页面打开时依次淡入。 */
+.intro-header > * { animation: intro-header-in 560ms var(--ease) backwards; }
+.intro-header > :nth-child(2) { animation-delay: 120ms; }
+@keyframes intro-header-in { from { opacity: 0; transform: translate3d(0, -6px, 0); } }
+@media (prefers-reduced-motion: reduce) {
+  .intro-reveal--split .intro-stagger { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .intro-header > * { animation: none; }
+}
+html:is([data-motion=reduce], [data-performance=low]) .intro-reveal--split .intro-stagger { opacity: 1 !important; transform: none !important; transition: none !important; }
+html:is([data-motion=reduce], [data-performance=low]) .intro-header > * { animation: none; }
+.intro-reveal--still .intro-stagger { opacity: 1 !important; transform: none !important; transition: none !important; }

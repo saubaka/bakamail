@@ -138,7 +138,7 @@ test("首页：品牌、标题文案、示例邮件、页脚品牌都用站点�
   const withoutFixed = body.replace(fixed, "");
   assert.doesNotMatch(withoutFixed, /BakaMail/, "除固定版权行外没有写死的名称");
   assert.match(body, /v-for="\(feature, index\) in features"/);
-  assert.match(body, /v-for="item in faq"/);
+  assert.match(body, /v-for="\(item, index\) in faq"/);
   assert.match(intro, /const features = INTRO_FEATURES;/);
   assert.match(intro, /const faq = INTRO_FAQ;/);
   assert.match(body, /\{\{ siteInitial \}\}/);

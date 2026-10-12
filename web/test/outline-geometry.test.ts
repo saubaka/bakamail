@@ -90,10 +90,10 @@ test("applyOutline 读取真实边框、圆角和线宽，写入 viewBox、位�
 
 test("两套轮廓线都使用共享几何：不再写死向内缩的固定值，宿主取父元素的边框", () => {
   const motion = source("motion.ts");
-  assert.match(motion, /applyOutline\(outline, \[path\], element, element, 1\.2\)/);
+  assert.match(motion, /applyOutline\(outline, \[path\], element, element, 1\)/);
   assert.doesNotMatch(motion, /const inset = 0\.75|path\.setAttribute\("x"/);
   const lines = source("surfaceLines.ts");
-  assert.match(lines, /applyOutline\(svg, pieces, reference, element, 1\.25\)/);
+  assert.match(lines, /applyOutline\(svg, pieces, reference, element, 1\)/);
   assert.match(lines, /line-outline-host'\) \? \(element\.parentElement \?\? element\) : element/);
   assert.doesNotMatch(lines, /setAttribute\('x','1\.5'\)/);
   // 每一处生成 SVG 轮廓线的代码都必须走共享几何，防止以后再出现一套内缩的实现。

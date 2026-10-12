@@ -344,3 +344,38 @@ test("清除配置后入口恢复内建验证码，审计记录不含任何密�
   assert.equal(logs.includes(SECRET), false);
   assert.equal(logs.includes("0123456789abcdef"), false);
 });
+
+test("按小时统计写入数据库：同一小时累加、缺失的小时补 0、范围外不计入、过期记录被清理", () => {
+  const H = 3_600_000;
+  const now = Math.floor(Date.now() / H) * H + 1234;
+  db.prepare("delete from turnstile_stats").run();
+  turnstile.recordTurnstileOutcome("passed", now);
+  turnstile.recordTurnstileOutcome("passed", now + 10);
+  turnstile.recordTurnstileOutcome("rejected", now - 2 * H);
+  turnstile.recordTurnstileOutcome("unavailable", now - 30 * H);
+  const day = turnstile.turnstileSeries("24h", now);
+  assert.equal(day.points.length, 24);
+  assert.deepEqual(day.totals, { passed: 2, rejected: 1, unavailable: 0 });
+  assert.equal(day.points.at(-1)!.passed, 2);
+  assert.equal(day.points.at(-3)!.rejected, 1);
+  assert.equal(day.points.at(-2)!.passed, 0);
+  assert.equal(turnstile.turnstileSeries("7d", now).points.length, 168);
+  assert.equal(turnstile.turnstileSeries("7d", now).totals.unavailable, 1);
+  assert.equal(turnstile.turnstileSeries("30d", now).points.length, 720);
+  turnstile.recordTurnstileOutcome("passed", now - 40 * 24 * H);
+  assert.equal(turnstile.pruneTurnstileStats(now), 1);
+  db.prepare("delete from turnstile_stats").run();
+});
+
+test("统计接口：未登录 401，只接受 24h/7d/30d，返回补零的整点序列", async () => {
+  assert.equal((await request(app).get("/api/admin/human-verification/stats")).status, 401);
+  const { agent } = await admin();
+  const bad = await agent.get("/api/admin/human-verification/stats?range=1y");
+  assert.equal(bad.status, 400);
+  assert.equal((await agent.get("/api/admin/human-verification/stats?range=constructor")).status, 400);
+  const week = await agent.get("/api/admin/human-verification/stats?range=7d");
+  assert.equal(week.status, 200);
+  assert.equal(week.body.data.range, "7d");
+  assert.equal(week.body.data.points.length, 168);
+  assert.equal((await agent.get("/api/admin/human-verification/stats")).body.data.points.length, 24);
+});

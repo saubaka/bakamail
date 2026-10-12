@@ -40,7 +40,9 @@ test('桌面菜单允许过渡中改选，旧请求不能清除新导航busy，�
 
 test('后台面板动效仅transform/opacity且减少动画可用，菜单没有整页动画', () => {
   const css = source('styles/admin.css');
-  assert.match(css, /\.admin-panel-enter-active \{ transition: opacity 180ms/);
+  // v0.9.0: 整页入场改为每张卡片、每个内容块各自依次入场（admin/entrance.ts），页面容器本身没有进入动画。
+  assert.doesNotMatch(css, /\.admin-panel-enter-active \{[^}]*transition: opacity 180ms/);
+  assert.doesNotMatch(css, /admin-rise/);
   assert.match(css, /prefers-reduced-motion: reduce/);
   assert.doesNotMatch(css, /\.admin-shell[^}]*animation:/);
 });

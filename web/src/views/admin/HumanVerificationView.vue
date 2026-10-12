@@ -74,20 +74,22 @@
       </template>
     </section>
 
-    <section v-if="state" v-motion="{ kind: 'compact', delay: 60 }" class="admin-panel is-wide">
+    <section v-if="state" v-motion="{ kind: 'compact', delay: 60 }" class="admin-panel is-wide hv-stats" aria-labelledby="hv-stats-title">
       <div class="panel-heading">
         <div>
           <span class="eyebrow">运行情况</span>
-          <h2>校验统计</h2>
+          <h2 id="hv-stats-title">校验趋势</h2>
         </div>
-        <span class="hv-inline">自服务启动起累计</span>
+        <RangeTabs v-model="range" :options="TREND_RANGES" label="统计范围" />
       </div>
-      <dl class="admin-status-list">
-        <div><dt>通过</dt><dd>{{ state.stats.passed }}</dd></div>
-        <div><dt>被拒绝</dt><dd>{{ state.stats.rejected }}</dd></div>
-        <div><dt>Cloudflare 无法访问</dt><dd>{{ state.stats.unavailable }}</dd></div>
-        <div><dt>最近一次问题</dt><dd>{{ state.stats.lastError || "—" }}</dd></div>
-      </dl>
+      <p v-if="statsError" v-capsule-notice class="form-error" role="alert">{{ statsError }} <button class="button button--soft" type="button" :disabled="statsLoading" @click="loadStats()">重试</button></p>
+      <div class="hv-chart" :aria-busy="statsLoading">
+        <TrendChart v-if="series" :series="chartSeries" :buckets="buckets" :range="range" :label="`最近${rangeLabel}的人机验证趋势`" />
+        <p v-else-if="!statsError" class="admin-page-state" role="status">正在读取统计…</p>
+      </div>
+      <p v-if="series" class="hv-inline hv-stats__foot">
+        最近一次问题：{{ series.lastError || "无" }}<template v-if="series.lastAt">（{{ formatTime(series.lastAt) }}）</template>
+      </p>
       <div class="hv-actions">
         <button class="button button--danger" type="button" :disabled="working || (!state.siteKey && !state.hasSecret)" @click="clearAll">{{ busy === "clear" ? "正在清除…" : "清除配置并恢复内建验证码" }}</button>
       </div>
@@ -96,13 +98,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { ApiError, toast } from "../../api";
 import {
-  checkTurnstileSecret, clearHumanVerification, loadHumanVerification, saveHumanVerification, verifyTurnstileToken,
-  type HumanPurpose, type HumanVerificationState,
+  checkTurnstileSecret, clearHumanVerification, loadHumanVerification, loadTurnstileStats, saveHumanVerification, verifyTurnstileToken,
+  type HumanPurpose, type HumanVerificationState, type TurnstileSeries,
 } from "../../api/humanVerification";
 import PasswordField from "../../components/PasswordField.vue";
+import RangeTabs from "../../components/admin/RangeTabs.vue";
+import TrendChart from "../../components/admin/TrendChart.vue";
+import { TREND_RANGES, aggregate, type TrendRange } from "../../admin/trend";
 import TurnstileWidget from "../../components/TurnstileWidget.vue";
 import { confirmDialog } from "../../dialog";
 
@@ -219,7 +224,46 @@ async function clearAll(): Promise<void> {
   if (next) { adopt(next); secretCheck.value = null; verifyMessage.value = ""; toast("已清除，邮箱入口使用内建验证码"); }
 }
 
-onMounted(() => { void load(); });
+// ---- 校验趋势 ----
+const range = ref<TrendRange>("24h");
+const series = ref<TurnstileSeries | null>(null);
+const statsLoading = ref(false);
+const statsError = ref("");
+let statsController: AbortController | null = null;
+let statsTimer = 0;
+const rangeLabel = computed(() => TREND_RANGES.find((item) => item.key === range.value)?.label ?? "");
+const buckets = computed(() => (series.value ? aggregate(series.value.points, series.value.range) : []));
+const chartSeries = computed(() => [
+  { key: "passed", label: "通过", color: "#6fa8dc", values: buckets.value.map((bucket) => bucket.passed) },
+  { key: "rejected", label: "被拒绝", color: "#d98e8e", values: buckets.value.map((bucket) => bucket.rejected) },
+  { key: "unavailable", label: "Cloudflare 无法访问", color: "#e6c273", values: buckets.value.map((bucket) => bucket.unavailable) },
+]);
+
+async function loadStats(quiet = false): Promise<void> {
+  statsController?.abort();
+  const controller = new AbortController();
+  statsController = controller;
+  const wanted = range.value;
+  if (!quiet) statsLoading.value = true;
+  statsError.value = "";
+  try {
+    const next = await loadTurnstileStats(wanted, controller.signal);
+    // 切换范围时旧请求被取消；迟到的结果不能盖掉新范围的数据。
+    if (controller.signal.aborted || range.value !== wanted) return;
+    series.value = next;
+  } catch (reason) {
+    if (controller.signal.aborted) return;
+    statsError.value = `统计读取失败：${message(reason, "请稍后重试")}`;
+  } finally {
+    if (statsController === controller) { statsLoading.value = false; statsController = null; }
+  }
+}
+watch(range, () => { void loadStats(); });
+// 页面停留时每分钟轻轻刷新一次，曲线平滑过渡到新数据。
+const startPolling = (): void => { window.clearInterval(statsTimer); statsTimer = window.setInterval(() => { if (document.visibilityState === "visible") void loadStats(true); }, 60_000); };
+
+onMounted(() => { void load(); void loadStats(); startPolling(); });
+onBeforeUnmount(() => { statsController?.abort(); window.clearInterval(statsTimer); });
 </script>
 
 <style scoped>
@@ -251,7 +295,9 @@ onMounted(() => { void load(); });
 .hv-routes__state.is-on { color: #2c7a5a; font-weight: 600; }
 .hv-routes__fixed { color: var(--text-soft); font-size: 12px; text-align: center; }
 .hv-routes li.is-fixed > span:first-child { color: var(--text-soft); }
-.hv .admin-status-list { margin-bottom: 16px; }
+.hv-stats .panel-heading { flex-wrap: wrap; gap: 14px; }
+.hv-stats__foot { margin: 14px 0 0; }
+.hv-chart { min-width: 0; }
 @media (max-width: 700px) {
   .hv-routes li { grid-template-columns: minmax(0, 1fr) 44px; }
   .hv-routes li > .hv-routes__state { grid-column: 1; grid-row: 2; text-align: left; margin-top: -10px; padding-bottom: 8px; }
