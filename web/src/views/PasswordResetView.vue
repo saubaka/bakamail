@@ -44,12 +44,13 @@
     </main>
     <footer class="login-footer">
       <p>© {{ year }} saubaka · BakaMail</p>
-      <span>自建邮局的网页端。</span>
+      <RepositoryNote />
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
+import RepositoryNote from "../components/RepositoryNote.vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import HumanCheck from "../components/HumanCheck.vue";
 import { ApiError, api } from "../api";

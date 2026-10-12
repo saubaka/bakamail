@@ -33,6 +33,7 @@
 .login-footer { flex: none; padding: 0 24px 24px; text-align: center; font-size: 11px; line-height: 1.7; color: var(--text-soft); }
 .login-footer p { margin: 0 0 3px; }
 .login-footer > span { opacity: .8; }
+.login-footer a { color: inherit; text-decoration: none; }
 @media (max-width: 480px) {
   .login-main { padding: 32px 20px 24px; }
   .login-card { padding: 28px 24px 20px; }

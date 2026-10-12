@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "af6f6ec411cc7066c1e19b49eec42921973c83b483bc87357e00953d9c7c3659",
+      "sha256": "7162ef73286f28306afce815fae0ffa2103ac2ecc68216c6f1f6a45ebd4b8327",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "d57e7411c68bd9461f8c9b2199973679c1ea987709ab912acfca4d2c2b873ffc",
+      "sha256": "2f01443ae39f89bf32966abd9012bdb959a8cf7c91e54e8b054fdea66f44e184",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "c0354baf39307b0b695626b8022d36290434aa02c95f1f8f6ee20717bcd6dee7",
+      "sha256": "265f5084f19b0597fdd918f24abb4a8e70459bb7e3f12ba71c88ee15e45975f9",
       "executable": false
     },
     "README.md": {
@@ -188,7 +188,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "12b34508a6c4ae6941afd935ecd7fc44ae4285bbe54f17b6362249f9811ea102",
+      "sha256": "6e2137961d13c847153dee5b4223ce89b82aea5286b5bfa377ec32c4a8173166",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -658,7 +658,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "8d6e42cdec4d8697f1fc001d8daac430a31b1b32c0eb46eea120de92a6c60edc",
+      "sha256": "4d223b9fa0cbfcb0a5cb67cec817e238e6eb0cc543dc61949951c999e02d511a",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -966,6 +966,11 @@
       "sha256": "6c6ac92847deda243f4ecf331e54243ba32db112ac44171e97ff2c9d6b8abb7d",
       "executable": false
     },
+    "web/src/components/RepositoryNote.vue": {
+      "source": "web/src/components/RepositoryNote.vue",
+      "sha256": "dda02f810c8ef357173e63ab698d5e6ec5df1e5e1dc31768966d5c42468b0af4",
+      "executable": false
+    },
     "web/src/components/TurnstileWidget.vue": {
       "source": "web/src/components/TurnstileWidget.vue",
       "sha256": "c2ba459beee2c8d4aa4e9203bea15851a20274e207f30ca044e8c31f1d7ffc98",
@@ -1188,7 +1193,7 @@
     },
     "web/src/styles/login.css": {
       "source": "web/src/styles/login.css",
-      "sha256": "f370595cb318ec86bb02f055588b737e4e70d6818bea65f8d9be9dc35c241480",
+      "sha256": "b6b113e4d97a78126fafe3b9fc64d06ec4921988794c713e3b97883ac33ca141",
       "executable": false
     },
     "web/src/styles/mail-overrides.css": {
@@ -1268,7 +1273,7 @@
     },
     "web/src/views/admin/AdminLoginView.vue": {
       "source": "web/src/views/admin/AdminLoginView.vue",
-      "sha256": "09f6c808c83603dd4b189208184ff8666cb33fde9d9874aaa8beb7c12a7de178",
+      "sha256": "fb09ce0043d38a416cf898d689323d321348e6a65a94acc4bea463f7e0f87bf1",
       "executable": false
     },
     "web/src/views/admin/AdminShell.vue": {
@@ -1333,7 +1338,7 @@
     },
     "web/src/views/LoginView.vue": {
       "source": "web/src/views/LoginView.vue",
-      "sha256": "bbeeb90b18373f27d9f32cfb1c856e4455add20b51f74c952005660b137bdc1c",
+      "sha256": "7504e4737810e88c39ab05eec3e5353aa429f0c6098f21ce91962e9d3f784a4d",
       "executable": false
     },
     "web/src/views/MailView.vue": {
@@ -1348,7 +1353,7 @@
     },
     "web/src/views/PasswordResetView.vue": {
       "source": "web/src/views/PasswordResetView.vue",
-      "sha256": "4a1e6126094b48e73e4ea4838db7eeb2e1b22f70b180a8a7a5d2f69dfa891792",
+      "sha256": "a5edb08103f6708fa8f6decd76e44e842b79bc07283386865589f6c87296cf90",
       "executable": false
     },
     "web/src/views/RegisterView.vue": {
@@ -1428,7 +1433,7 @@
     },
     "web/test/auth-pages-layout.test.ts": {
       "source": "web/test/auth-pages-layout.test.ts",
-      "sha256": "ffdea027620baeaab1f2b489207f6daa7ee834ed5612dea23d8d96f6cf2bb85f",
+      "sha256": "ca5e893194f6ad7011d2fcc0a390896ec5753d8d85bb272eceec083ce97aaaf9",
       "executable": false
     },
     "web/test/auth-security-ui.test.ts": {
