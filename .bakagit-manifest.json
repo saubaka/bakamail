@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "faab71926e559b37a2becad56ce03afed93d33718cb999aed50620e10bfe554e",
+      "sha256": "f1082e314380eb32a8c55465f97284d1e7f616c63f7e147b1c10076d6ddc82a1",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -41,14 +41,19 @@
       "sha256": "6d80feeaa840c2c772d56d1939bd712e4b7eb2b9cfb92a68c873710aca5b63eb",
       "executable": false
     },
+    "deploy/error-pages/403.html": {
+      "source": "deploy/error-pages/403.html",
+      "sha256": "52d81dfabd52e6528f1639bdc3d5442e8e9e129524d82c20845dd739aa8c3a72",
+      "executable": false
+    },
+    "deploy/error-pages/404.html": {
+      "source": "deploy/error-pages/404.html",
+      "sha256": "f42c261e3d3d734aad8302484ec270ce6f61ee3f520e8fd65c00221e43a4770d",
+      "executable": false
+    },
     "deploy/error-pages/500.html": {
       "source": "deploy/error-pages/500.html",
       "sha256": "154d9b0ba088600ff8732cd600c7f2b77aa5ed276faf0fc496eb3e94653f248a",
-      "executable": false
-    },
-    "deploy/error-pages/502.html": {
-      "source": "deploy/error-pages/502.html",
-      "sha256": "aba196777b9dc221b4bd3634358ab51bebf6831d2aadbf0ed33af9a23dc6aa34",
       "executable": false
     },
     "deploy/error-pages/503.html": {
@@ -56,14 +61,14 @@
       "sha256": "a844aea5fcf5e1bf72c3cad7de7dd87394b669794680049ddcc363a47f1af040",
       "executable": false
     },
-    "deploy/error-pages/504.html": {
-      "source": "deploy/error-pages/504.html",
-      "sha256": "d664ee2c634444b22842a70963fe6a2326041f0660c0fc6f11d86ede9801ba75",
-      "executable": false
-    },
     "deploy/error-pages/openresty.conf.example": {
       "source": "deploy/error-pages/openresty.conf.example",
-      "sha256": "6fb61f9a78b48de08ea93bf8e3888cc7b37c884decb940924d32e8bb19cee83b",
+      "sha256": "bcfa511de099b4892ac6bca20ff50ba019f17c1aef6879f9ff6ae46ad0357f5e",
+      "executable": false
+    },
+    "deploy/error-pages/unreachable.html": {
+      "source": "deploy/error-pages/unreachable.html",
+      "sha256": "3cb7ad1b03165099a43cd82b7ef292e4b0d9abc3e288f16083fc881a20ddd547",
       "executable": false
     },
     "deploy/export-mail-logs.py": {
@@ -88,17 +93,17 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "a1cd20b1adb8b5cb52a1db171d2f73e0df7f26b2703996903f4239a169255d65",
+      "sha256": "c693b36856d697f05a9cdc9943b9274db43e7edcf66f8000010fa5228ffb7fe2",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "25bc9443e408504bc25f0b1654f50a6d6a6e41ff5ffd37c34bb79a0e26bed4df",
+      "sha256": "da78746b7ac4cca64278f0815a7e966142de65e12e2de1615591c054adef5e26",
       "executable": false
     },
     "README.md": {
       "source": "docs/github/README.md",
-      "sha256": "663950473e28c546432ecb4ef06853d0d2ae4383123f04e2491b851cf359b110",
+      "sha256": "9d99d6de08fd86797c550be8decfe307b174e27f6436eb811f231841387bb0cf",
       "executable": false
     },
     "scripts/audit-project1-prototype.mjs": {
@@ -108,7 +113,7 @@
     },
     "scripts/build-error-pages.mjs": {
       "source": "scripts/build-error-pages.mjs",
-      "sha256": "520f224af22f13bbbf3ad10ef57d808e0ff91fbc4fc6d208db9dc7c2f939c63a",
+      "sha256": "e61d2370d19c19bac523e1fb472f71fc2277e7803486457ef4147364b3c0121c",
       "executable": false
     },
     "scripts/deployment-origin.mjs": {
@@ -138,7 +143,7 @@
     },
     "scripts/sync-bakagit.mjs": {
       "source": "scripts/sync-bakagit.mjs",
-      "sha256": "d6473a4e399303d847e290216926028513cd17fd4b0fbac999e0e0cf5e31a282",
+      "sha256": "18a6f1e685727e13dda4a882168b3df9357e4160bb0f3e5b1d3373f2469bff54",
       "executable": false
     },
     "scripts/sync-project1-styles.sh": {
@@ -183,7 +188,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "bc81e8906eb413bb894c59c7ed60de6c8240c5026d46d0679b871df58365b029",
+      "sha256": "f6699652491bdebd27d38cb2e78fe784733d086d8f03479f32966c9635b004dd",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -653,7 +658,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "c08189fb7214e909e340e27f65516e29faf4a429ba740b1f99516414b748b0ed",
+      "sha256": "b33e199ac6fa0e1bc79590ecaa7a7db6613d7f9b2d9129e1ee553538427a59d9",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -1438,7 +1443,7 @@
     },
     "web/test/error-pages.test.ts": {
       "source": "web/test/error-pages.test.ts",
-      "sha256": "792c08f7fe12dee911d60f57fe546c3cf1070afc017d26fc8e42420f7c3b2b23",
+      "sha256": "349e44bf59c921279f0086cb7cd1a6c10f0400f05db359cf472f7aa8222db53e",
       "executable": false
     },
     "web/test/fixtures/admin-entry-fixture.ts": {

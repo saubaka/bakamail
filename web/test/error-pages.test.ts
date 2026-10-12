@@ -89,15 +89,25 @@ test("脚本关闭和脚本加载失败的兜底：提示文案准确，模板�
   assert.doesNotMatch(template, /返回首页/);
 });
 
-test("给反向代理用的静态错误页与生成结果完全一致，只有 500/502/503/504，且不含后台路径；配置示例引用了全部页面", () => {
-  assert.deepEqual(STATIC_ERROR_STATUSES, [500, 502, 503, 504]);
+test("给反向代理用的静态错误页与生成结果完全一致：403/404/500/503 加一个“连不上服务”页，且不含后台路径；配置示例引用了全部页面，502/504 改成 503 透传", () => {
+  assert.deepEqual(STATIC_ERROR_STATUSES, [403, 404, 500, 503]);
+  assert.deepEqual(Object.keys(staticErrorPages()).sort(), ["403.html", "404.html", "500.html", "503.html", "unreachable.html"]);
+  const unreachable = staticErrorPages()["unreachable.html"]!;
+  assert.match(unreachable, /<title>503 暂时连不上服务<\/title>/);
+  assert.match(unreachable, /暂时连不上服务[\s\S]*邮件仍保存在邮局里，不受影响/);
+  assert.match(unreachable, /<span style="--i:0">5<\/span><span style="--i:1">0<\/span><span style="--i:2">3<\/span>/, "显示的数字和返回的状态一致，都是 503");
   for (const [name, html] of Object.entries(staticErrorPages())) {
     assert.equal(root(`deploy/error-pages/${name}`), html, `${name} 需要重新运行 node scripts/build-error-pages.mjs`);
     assert.doesNotMatch(html, /bakaadmin|\/admin|request|错误编号/i, name);
-    assert.match(html, /<a class="ep-link" href="">重试<\/a>/, `${name} 靠链接重试，不需要脚本`);
+    const copyStatus = name === "unreachable.html" ? 502 : Number(name.slice(0, 3));
+    if (ERROR_COPY[copyStatus]!.retry) assert.match(html, /<a class="ep-link" href="">重试<\/a>/, `${name} 靠链接重试，不需要脚本`);
+    else assert.doesNotMatch(html, /<a class="ep-link"/, `${name} 不可重试，不显示重试`);
   }
   const conf = root("deploy/error-pages/openresty.conf.example");
   for (const status of STATIC_ERROR_STATUSES) assert.ok(conf.includes(`error_page ${status} /_bakamail_errors/${status}.html;`), String(status));
+  assert.ok(conf.includes("error_page 502 504 =503 /_bakamail_errors/unreachable.html;"), "502/504 改成 503，避免被 Cloudflare 换成纯文本页");
+  assert.match(conf, /Cloudflare/);
+  assert.doesNotMatch(conf, /error_page 50[24] \/_bakamail_errors\/50[24]\.html/);
   assert.match(conf, /location \^~ \/_bakamail_errors\/ \{\s*internal;/);
   assert.match(conf, /proxy_intercept_errors/);
 });
