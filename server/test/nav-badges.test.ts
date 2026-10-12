@@ -15,7 +15,7 @@ process.env.BOOTSTRAP_ADMIN = "badge-root";
 process.env.BOOTSTRAP_ADMIN_PASSWORD = "isolated-test-only-2026";
 
 const { createApp } = await import("../src/app.ts");
-const { default: request } = await import("supertest");
+const { default: request } = await import("./support/loopback-request.ts");
 const { db, setSetting } = await import("../src/db.ts");
 const { createAdmin } = await import("../src/admin/accounts.ts");
 const { pendingPasswordResets, railBadges } = await import("../src/admin/navBadges.ts");

@@ -19,7 +19,7 @@ process.env.BOOTSTRAP_ADMIN_PASSWORD = "isolated-test-only-2026";
 mock.timers.enable({ apis: ["Date"], now: Math.floor(Date.now() / 30_000) * 30_000 + 15_000 });
 
 const { createApp } = await import("../src/app.ts");
-const { default: request } = await import("supertest");
+const { default: request } = await import("./support/loopback-request.ts");
 const { db } = await import("../src/db.ts");
 const totp = await import("../src/admin/totp.ts");
 const { createAdmin, findAdminByUsername } = await import("../src/admin/accounts.ts");

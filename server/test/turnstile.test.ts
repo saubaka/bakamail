@@ -17,7 +17,7 @@ process.env.BOOTSTRAP_ADMIN_PASSWORD = "isolated-test-only-2026";
 
 const projectRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const { createApp } = await import("../src/app.ts");
-const { default: request } = await import("supertest");
+const { default: request } = await import("./support/loopback-request.ts");
 const { db } = await import("../src/db.ts");
 const turnstile = await import("../src/security/turnstile.ts");
 const app = createApp({ log: () => undefined });

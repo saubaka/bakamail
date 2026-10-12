@@ -27,7 +27,7 @@ const invites=await import('../src/admin/invites.ts');
 const {createApp}=await import('../src/app.ts');
 const {hashToken}=await import('../src/security/identity.ts');
 const {createAdmin}=await import('../src/admin/accounts.ts');
-const {default:request}=await import('supertest');
+const { default: request } = await import("./support/loopback-request.ts");
 const app=createApp({bootstrapAdmin:true,log:()=>{}}),admin=request.agent(app); let csrf='';
 const row=(id:number)=>invites.listInvites(1000).find(row=>row.id===id)!;
 test.before(async()=>{

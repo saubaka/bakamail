@@ -15,7 +15,7 @@ process.env.PUBLIC_ORIGIN = "https://mail.example.test";
 process.env.MADDY_RUNNER = "disabled";
 const { clientAddress, isTrustedProxyPeer } = await import("../src/security/identity.ts");
 const { createApp } = await import("../src/app.ts");
-const { default: request } = await import("supertest");
+const { default: request } = await import("./support/loopback-request.ts");
 
 test("Docker 代理只信任明确地址，不信任整段内网或伪造来源", () => {
   assert.equal(isTrustedProxyPeer("::ffff:172.18.0.1"), true);

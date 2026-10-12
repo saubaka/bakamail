@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "cad285b844dbafef4fa6c593aca67b41e54b42bec74e6a285ea9f7969c16dcb8",
+      "sha256": "ab55696c92dead8b2a91a4b351467c74145ad77888033ac675d7c194092dfc35",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -58,12 +58,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "1ff74b773e479f87dd78afe22d91716df959fc45faca692b7deebba6c3ba5a72",
+      "sha256": "cad5182c72139198fc3a65b6c1ba7bc4ace7220c202c627bc27468907b22322d",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "90b31d952d1aa1c704ae645a27eeffee72b53cb869dbc7168d2222e1139d7377",
+      "sha256": "1040f5e46cf54d04c45302c3ff04483c874a90bc8b9e3102466eb878a840b45c",
       "executable": false
     },
     "README.md": {
@@ -148,7 +148,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "bedaaf6a1e1bbc629f4010439fd250693185138a3cf80e5e6afd0244a7a7ef88",
+      "sha256": "f6d1ae3ddee23716ff1e61668e12307e2d12983d019c5b0021ec02f1b1628a37",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -403,17 +403,17 @@
     },
     "server/test/admin-totp.test.ts": {
       "source": "server/test/admin-totp.test.ts",
-      "sha256": "02fd2afbe9b40b67f5576b0001e43516ad1db78de8ea4a5700044664553c4ffb",
+      "sha256": "11a9c08c46a74a71a13e86580bceb12c2d42b2ebdbec484712dce3a109554cf4",
       "executable": false
     },
     "server/test/api.test.ts": {
       "source": "server/test/api.test.ts",
-      "sha256": "92affc1b61465755aac948c742bb68cae83b340651a198c7ec4c19500c40f630",
+      "sha256": "167d9594294d25c705f947a6643cf29b0b72b9409126bd1aa362a493981790c3",
       "executable": false
     },
     "server/test/appearance-phase4.test.ts": {
       "source": "server/test/appearance-phase4.test.ts",
-      "sha256": "865bf4f7d2fb55a1404f56071ad156ba24660d3775635ddc93d093592d57441c",
+      "sha256": "25d6a8afbd14fa058ab03628121447b83636f57bcb834f53a33aa649601b0d72",
       "executable": false
     },
     "server/test/archive-upload.test.ts": {
@@ -428,7 +428,7 @@
     },
     "server/test/auth-security-phase2.test.ts": {
       "source": "server/test/auth-security-phase2.test.ts",
-      "sha256": "014634b572c320e0d8f5e9064708a8b47f2b9f74ed8d3a48912c25b4676b9841",
+      "sha256": "1d725b5627f221d527170164a39b135d0315555b9e2aac2cfad9abaebb2525ea",
       "executable": false
     },
     "server/test/certificateCheck.test.ts": {
@@ -443,7 +443,7 @@
     },
     "server/test/deployment-20261002.test.ts": {
       "source": "server/test/deployment-20261002.test.ts",
-      "sha256": "f5d82a4a40a0729dea3ac1544c25d0e157bc89e00d40b1c848b998b86433d309",
+      "sha256": "d0d0aee91f37cc4a3d536a5c1173b9a8a139f37254329c4ec4657538d2f2a0a5",
       "executable": false
     },
     "server/test/fixtures/fake-maddy-broken.sh": {
@@ -468,12 +468,17 @@
     },
     "server/test/installation.test.ts": {
       "source": "server/test/installation.test.ts",
-      "sha256": "1618ef5b81ccb43c2afecf28c383439c9d244a5d2d283a6d10f2195565945a35",
+      "sha256": "adeb3dbbe99bd3891c07977e9b5fa8db271f3720c36d3ea2acb33930db4cdafc",
       "executable": false
     },
     "server/test/invite-capacity.test.ts": {
       "source": "server/test/invite-capacity.test.ts",
-      "sha256": "cce7558e6be70d7c41b3fc99b6ccdb4c103b17b50cc25e207d911ee1d1f488fd",
+      "sha256": "6e0704c7c163c56a9353b033bf31d0f5ac737fcb689f22bbb0af4f97b610b28b",
+      "executable": false
+    },
+    "server/test/loopback-request.test.ts": {
+      "source": "server/test/loopback-request.test.ts",
+      "sha256": "afa71607bcd3bbba49384c378a435df47c6f3aa62c947ef52795f93d48f11d42",
       "executable": false
     },
     "server/test/mail-deletion.test.ts": {
@@ -493,17 +498,17 @@
     },
     "server/test/nav-badges.test.ts": {
       "source": "server/test/nav-badges.test.ts",
-      "sha256": "88e3f8d27ef9df9240bf617bcd97b93810df0f10282f925f5e8b0c549d2b062c",
+      "sha256": "56686c15db5bc6856efffd282532f84fc2d8d6c12255ad3e223a510b21fce821",
       "executable": false
     },
     "server/test/notification-display-phase2.test.ts": {
       "source": "server/test/notification-display-phase2.test.ts",
-      "sha256": "ccfe65c94581e763c31c210aa7e01badafdfd16b8fddb14e8a3872403515b485",
+      "sha256": "a2a3f2962af5b34a9757c62c778e88d86e83cf4c994d88242c9055a8c0d0fbda",
       "executable": false
     },
     "server/test/rate-limit-isolation.test.ts": {
       "source": "server/test/rate-limit-isolation.test.ts",
-      "sha256": "1aeb534ca5efc3a6aa3d9633e0ca42e12840d54a7b4665f69cbfb1931e34bc1f",
+      "sha256": "584a9bee0bb1078b3e3f3d98c6a46a0090a68c5301316651645304e09c9cada8",
       "executable": false
     },
     "server/test/registration.test.ts": {
@@ -518,12 +523,17 @@
     },
     "server/test/static.test.ts": {
       "source": "server/test/static.test.ts",
-      "sha256": "763b330fd131ed4ff8859a428b4619f5258a95b11b5561baf0cb7d152b3a4b18",
+      "sha256": "71c6ad6c9978042ee9c5d15cd76d8f38b601ebc8d3a7f90325f9a1de9f4816de",
+      "executable": false
+    },
+    "server/test/support/loopback-request.ts": {
+      "source": "server/test/support/loopback-request.ts",
+      "sha256": "67df06030e26a3a94c944589d23c98a1f21a8755c4eea1fd7920b11d3fe86504",
       "executable": false
     },
     "server/test/turnstile.test.ts": {
       "source": "server/test/turnstile.test.ts",
-      "sha256": "2cb069ea6b815c2995e5395cf245fe9127de43833b40a10e11edcac791f99099",
+      "sha256": "bbde84a81590fd6e0d6a3d4064edb421f1c65927043cc9733682bb9fc4b1710c",
       "executable": false
     },
     "server/tsconfig.json": {
@@ -558,7 +568,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "78af3cec020cafd9a04e1c0f350171521d9b9406bd7b492ba01ae34a9af2de6f",
+      "sha256": "1dbe20a686d88a10ef15502c5351d2eb457f0922b5dfb7255255ba411a51b97b",
       "executable": false
     },
     "web/src/admin/navigationState.ts": {
