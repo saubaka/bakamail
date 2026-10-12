@@ -9,9 +9,9 @@
     @keydown="onKeydown"
   >
     <div class="admin-rail__head">
-      <router-link class="admin-rail__brand" :to="{ name: 'admin-overview' }" title="BakaMail 后台" aria-label="BakaMail 后台首页" @click="emit('navigate')">
+      <router-link class="admin-rail__brand" :to="{ name: 'admin-overview' }" :title="`${siteInfo.siteName} 后台`" :aria-label="`${siteInfo.siteName} 后台首页`" @click="emit('navigate')">
         <span class="brand-mark"><span class="window-symbol" aria-hidden="true"><i></i><i></i></span></span>
-        <span class="admin-rail__text">BakaMail</span>
+        <span class="admin-rail__text">{{ siteInfo.siteName }}</span>
       </router-link>
       <button
         v-if="!compact"
@@ -73,6 +73,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import AdminIcon from "./AdminIcon.vue";
+import { siteInfo } from "../../siteInfo";
 import type { RailBadgeKey, RailSection } from "../../admin/navModel";
 
 const props = defineProps<{

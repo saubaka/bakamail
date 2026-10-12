@@ -16,6 +16,9 @@ import { prepareInstallation, retiredInstallationPath, InstallationError } from 
 import { installationRouter, entrySettingsRouter } from "./routes/installation.ts";
 import { newCspNonce, pageCsp, withNonce } from "./http/csp.ts";
 import { turnstileConfigured } from "./security/turnstile.ts";
+import { publicSiteInfo, renderSpaPage, robotsTxt, sitemapXml } from "./seo/page.ts";
+import { sendErrorPage, wantsHtml } from "./http/errorPage.ts";
+import { isKnownPublicPath } from "../../shared/publicRoutes.ts";
 
 export type AppOptions = {
   /** 测试时关闭引导管理员创建，避免污染断言 */
@@ -32,6 +35,34 @@ export function looksLikeAssetPath(path: string): boolean {
   return /\.[a-z0-9]{1,8}$/i.test(path);
 }
 
+/** 统一的异常出口：接口返回 JSON，浏览器打开的页面返回统一风格的错误页；两者都不泄漏异常内容。 */
+export function createErrorHandler(log: (message: string) => void): express.ErrorRequestHandler {
+  return (error: Error, request: express.Request, response: express.Response, _next: express.NextFunction): void => {
+    if (response.headersSent) return;
+    if (error instanceof InstallationError) { fail(response, error.status, error.message); return; }
+    if (error instanceof SecurityBudgetError) { rejectBudget(response, error.code, error.seconds); return; }
+    if (error instanceof RequestBodyError) {
+      if (error.closeConnection) response.setHeader("connection", "close");
+      sendJson(response, error.status, { ok: false, data: null, error: error.message, code: error.code });
+      return;
+    }
+    // Library exception messages/responseText/stacks may contain credentials or mail data.
+    // Log only a bounded category and the same ID that the caller receives.
+    const name = error instanceof Error && /^[a-zA-Z0-9._-]{1,64}$/.test(error.name)
+      ? error.name : "UnknownError";
+    const code = (error as { code?: unknown } | null)?.code;
+    const safeCode = typeof code === "string" && /^[a-zA-Z0-9._-]{1,64}$/.test(code) ? code : "unclassified";
+    log(`未处理异常: ${name} code=${safeCode} request-id=${requestId(request)}`);
+    // 浏览器打开的页面出错时显示统一风格的错误页；接口、脚本等请求仍返回 JSON。
+    if (!request.path.startsWith("/api/") && wantsHtml(request)) {
+      const status = Number((error as { status?: unknown } | null)?.status);
+      sendErrorPage(request, response, Number.isInteger(status) && status >= 400 && status < 500 ? status : 500);
+      return;
+    }
+    fail(response, 500, "服务器内部错误");
+  };
+}
+
 export function createApp(options: AppOptions = {}): express.Express {
   const log = options.log ?? ((message: string) => console.log(`[bakamail] ${message}`));
   const app = express();
@@ -45,6 +76,8 @@ export function createApp(options: AppOptions = {}): express.Express {
     response.setHeader("x-frame-options", "DENY");
     // XHR cannot opt out of redirects; keep scripted connections on this origin at the browser boundary.
     response.setHeader("content-security-policy", "connect-src 'self'");
+    // 接口响应不是给搜索引擎看的。
+    if (request.path.startsWith("/api/")) response.setHeader("x-robots-tag", "noindex, nofollow");
     next();
   });
 
@@ -57,6 +90,26 @@ export function createApp(options: AppOptions = {}): express.Express {
     ok(response, {
       status: "ok",
     });
+  });
+
+  // 公开的站点信息与搜索引擎入口：不需要登录，只暴露站点名、副标题、首页标题和描述。
+  app.get("/api/site-info", (_request, response) => {
+    response.setHeader("x-robots-tag", "noindex, nofollow");
+    ok(response, publicSiteInfo());
+  });
+  app.get("/robots.txt", (_request, response) => {
+    response.setHeader("cache-control", "public, max-age=300");
+    response.type("text/plain").send(robotsTxt());
+  });
+  app.get("/sitemap.xml", (_request, response) => {
+    const xml = sitemapXml();
+    if (xml === null) {
+      response.status(404).setHeader("cache-control", "no-store");
+      response.type("text/plain").send("Not Found");
+      return;
+    }
+    response.setHeader("cache-control", "public, max-age=300");
+    response.type("application/xml").send(xml);
   });
 
   app.use(["/api/auth", "/api/admin/auth/login", "/api/admin/human-check"], requireSameOrigin);
@@ -74,6 +127,7 @@ export function createApp(options: AppOptions = {}): express.Express {
   // Retired page URLs must never reach static files or the generic SPA index fallback.
   app.use((request, response, next) => {
     if (!isRetiredAdminPath(request.originalUrl) && !retiredInstallationPath(request.originalUrl)) { next(); return; }
+    if (wantsHtml(request)) { sendErrorPage(request, response, 404); return; }
     response.status(404).setHeader("cache-control", "no-store");
     response.type("text/plain").send("Not Found");
   });
@@ -107,7 +161,10 @@ export function createApp(options: AppOptions = {}): express.Express {
       // 每次响应生成新的 nonce，并随页面一起下发完整的内容安全策略。
       const nonce = newCspNonce();
       response.setHeader("content-security-policy", pageCsp(nonce, { turnstile: turnstileConfigured() }));
-      response.type("html").send(withNonce(readFileSync(join(webDist, "index.html"), "utf8"), nonce));
+      const page = renderSpaPage(readFileSync(join(webDist, "index.html"), "utf8"), request, response);
+      // 只有站点自己的公开页面返回 200；其他地址（含后台入口）一律 404，页面外壳照样下发，前端自己判断显示什么。
+      if (!isKnownPublicPath(request.path)) response.status(404);
+      response.type("html").send(withNonce(page, nonce));
     });
 
     // 走到这里的都是缺失的静态资源：返回不可缓存的 404
@@ -116,6 +173,7 @@ export function createApp(options: AppOptions = {}): express.Express {
         next();
         return;
       }
+      if (wantsHtml(request)) { sendErrorPage(request, response, 404); return; }
       response.status(404);
       response.setHeader("cache-control", "no-store");
       response.type("text/plain");
@@ -123,31 +181,7 @@ export function createApp(options: AppOptions = {}): express.Express {
     });
   }
 
-  app.use(
-    (
-      error: Error,
-      request: express.Request,
-      response: express.Response,
-      _next: express.NextFunction,
-    ) => {
-      if (response.headersSent) return;
-      if (error instanceof InstallationError) { fail(response, error.status, error.message); return; }
-      if (error instanceof SecurityBudgetError) { rejectBudget(response, error.code, error.seconds); return; }
-      if (error instanceof RequestBodyError) {
-        if (error.closeConnection) response.setHeader("connection", "close");
-        sendJson(response, error.status, { ok: false, data: null, error: error.message, code: error.code });
-        return;
-      }
-      // Library exception messages/responseText/stacks may contain credentials or mail data.
-      // Log only a bounded category and the same ID that the caller receives.
-      const name = error instanceof Error && /^[a-zA-Z0-9._-]{1,64}$/.test(error.name)
-        ? error.name : "UnknownError";
-      const code = (error as { code?: unknown } | null)?.code;
-      const safeCode = typeof code === "string" && /^[a-zA-Z0-9._-]{1,64}$/.test(code) ? code : "unclassified";
-      log(`未处理异常: ${name} code=${safeCode} request-id=${requestId(request)}`);
-      fail(response, 500, "服务器内部错误");
-    },
-  );
+  app.use(createErrorHandler(log));
 
   if (options.bootstrapAdmin !== false) {
     ensureBootstrapAdmin(log);

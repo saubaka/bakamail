@@ -18,6 +18,7 @@ export function createAdminRoutes(base: string): RouteRecordRaw[] { return [
       { path: "human-check", name: "admin-human-check", meta: { permission: "system.security.write" }, component: () => import("../views/admin/HumanVerificationView.vue") },
       { path: "admins", name: "admin-admins", meta: { permission: "system.admin.write" }, component: () => import("../views/admin/AdminsView.vue") },
       { path: "system", name: "admin-system", meta: { permission: "system.admin.write" }, component: () => import("../views/admin/SystemView.vue") },
+      { path: "seo", name: "admin-seo", meta: { permission: "system.seo.write" }, component: () => import("../views/admin/SeoView.vue") },
     ],
   },
 ]; }

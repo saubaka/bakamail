@@ -8,6 +8,8 @@ import { createAdminRoutes } from "./auth/adminRoutes";
 import { checkAdminEntry } from "./auth/adminEntryGate";
 import { readInstallation } from "./auth/installation";
 import { configureAdminPaths } from "../../shared/adminPaths";
+import { pageTitleFor } from "./siteInfo";
+import { isChunkLoadFailure, reportFatal } from "./errorState";
 
 let installationReady = false;
 let configuredAdminBase = "";
@@ -89,15 +91,19 @@ router.beforeEach(async (to, from) => {
   return true;
 });
 
-router.onError(() => { clearAdminNavigation(); });
+router.onError((error) => {
+  clearAdminNavigation();
+  // 页面文件没能加载（网络中断，或刚发布过新版本）：显示统一风格的提示，由用户决定何时重新加载。
+  if (isChunkLoadFailure(error)) reportFatal("route chunk load failed");
+});
 
 // 成功完成的导航一定是最新的一次；被新导航取代（cancelled）的不清，新导航自己会设置。
 router.afterEach((_to, _from, failure) => {
   if (!failure || !isNavigationFailure(failure, NavigationFailureType.cancelled)) clearAdminNavigation();
 });
 
-router.afterEach(() => {
-  document.title = "Baka Mail";
+router.afterEach((to) => {
+  document.title = pageTitleFor(to.name);
   scheduleSessionCheck();
 });
 

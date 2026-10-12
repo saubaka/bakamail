@@ -50,7 +50,7 @@ test('模态保持安全边界而视觉遮罩优先消失，所有弹出表面�
 });
 test('品牌留白和版权位置明确，强调为实线非蓝色块，减少动画保持静态可用',()=>{
   const css=source('styles/dashed-accent.css'),workspaceCss=source('styles/workspace.css');
-  assert.match(source('components/MailWorkspace.vue'),/workspace-brand[^>]*>bakamail/);
+  assert.match(source('components/MailWorkspace.vue'),/workspace-brand[^>]*>\{\{ siteInfo\.siteName \}\}/);
   assert.match(workspaceCss,/bottom: calc\(62px/);assert.match(workspaceCss,/workspace-copyright[^}]*font-size:12px/);
   assert.match(workspaceCss,/dock-menu-in 360ms/);assert.match(workspaceCss,/scale\(\.045,\.03\)/);
   assert.match(css,/\.button\.button--primary/);assert.match(css,/input\[type="checkbox"\]/);

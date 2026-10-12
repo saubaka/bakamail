@@ -17,7 +17,7 @@
           <path class="desktop-sidebar-toggle-icon__bottom" d="M5 17h14" />
         </svg>
       </button>
-      <span class="workspace-brand" aria-label="BakaMail">bakamail</span>
+      <span class="workspace-brand" :aria-label="siteInfo.siteName">{{ siteInfo.siteName }}</span>
       <span v-if="isDesktop" class="workspace-header-spacer" aria-hidden="true"></span>
     </header>
     <button v-if="!isDesktop && menuOpen && !closing" class="dock-backdrop" type="button" aria-label="关闭悬浮菜单" tabindex="-1" @click="closeMenu()" />
@@ -106,6 +106,7 @@ import { useRoute, useRouter } from "vue-router";
 import { ApiError, toast } from "../api";
 import { useMailboxStore } from "../stores/mailbox";
 import { useSessionStore } from "../stores/session";
+import { siteInfo } from "../siteInfo";
 import { mailNavigation, navigationIndex, panelNavigationDirection, workspaceKey, type PanelNavigationDirection, type WorkbenchActions } from "../mail/workspace";
 import {
   MAIL_DESKTOP_QUERY,

@@ -9,6 +9,7 @@ import { initializeNotifications, disposeNotifications } from "./notifications";
 import { initializeUiConfig, uiConfigClient } from "./notificationConfig";
 import { initializeThemeValidation, themedControlDirective } from "./themeControls";
 import { stackTableDirective } from "./stackTable";
+import { initializeSiteInfo } from "./siteInfo";
 import "./styles/vendor/project1-app.css";
 import "./styles/vendor/project1-small-window-theme.css";
 import "./styles/mail-overrides.css";
@@ -26,6 +27,7 @@ import "./styles/dialogs.css";
 import "./styles/local-theme.css";
 import "./styles/dashed-accent.css";
 
+initializeSiteInfo();
 initializeMotionPreferences();
 initializeThemeValidation();
 initializeNotifications();
@@ -44,4 +46,10 @@ app.onUnmount(() => { disposeUiConfig(); disposeConfigBoundary(); disposeNotific
 window.addEventListener('pagehide', event => {
   if (!event.persisted) { disposeUiConfig(); disposeConfigBoundary(); disposeNotifications(); }
 });
-app.mount("#app");
+try {
+  app.mount("#app");
+} catch (error) {
+  // 应用没能启动：index.html 里备好了统一风格的提示，没有它时只留下控制台记录。
+  console.error(error);
+  (window as unknown as { __bmFatal?: () => void }).__bmFatal?.();
+}

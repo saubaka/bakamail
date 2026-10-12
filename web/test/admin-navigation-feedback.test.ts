@@ -79,7 +79,7 @@ test("路由守卫：先有一个同步守卫立即记下目标；成功的导�
   assert.ok(syncGuard > 0 && asyncGuard > syncGuard, "the synchronous guard is registered first");
   assert.match(router, /if \(to\.meta\.auth === "admin" && to\.fullPath !== from\.fullPath\) beginAdminNavigation\(to\.name, to\.fullPath\)/);
   assert.match(router, /router\.afterEach\(\(_to, _from, failure\) => \{\s*if \(!failure \|\| !isNavigationFailure\(failure, NavigationFailureType\.cancelled\)\) clearAdminNavigation\(\);/);
-  assert.match(router, /router\.onError\(\(\) => \{ clearAdminNavigation\(\); \}\)/);
+  assert.match(router, /router\.onError\(\(error\) => \{\s*clearAdminNavigation\(\);/);
   // 每次后台页面切换仍然向服务端强制校验身份。
   assert.match(router, /checkAdminEntry\(\(\) => session\.restore\(true\)/);
   // 入口路径只在后台页面之间切换、且一分钟内已确认过时才复用，其他情况照旧检查。
