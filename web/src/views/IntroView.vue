@@ -53,7 +53,7 @@
       </section>
 
       <section id="faq" v-intro-reveal class="intro-faq intro-reveal--split" aria-labelledby="faq-title"><div class="intro-stagger" style="--i: 0"><p class="intro-kicker">开始之前</p><h2 id="faq-title">常见问题</h2></div><div class="intro-faq-items">
-        <details v-for="(item, index) in faq" :key="item.question" class="intro-faq-card intro-stagger" :style="{ '--i': index + 1 }"><summary class="intro-faq-trigger"><span class="intro-faq-question">{{ item.question }}</span><span class="intro-faq-plus" aria-hidden="true">+</span></summary><p>{{ item.answer }}<router-link v-if="'link' in item" :to="item.link.to">{{ item.link.label }}</router-link></p></details>
+        <details v-for="(item, index) in faq" :key="item.question" class="intro-faq-card intro-stagger" :style="{ '--i': index + 1 }"><summary class="intro-faq-trigger" @click.prevent="toggleFaq(($event.currentTarget as HTMLElement).parentElement as HTMLDetailsElement)"><span class="intro-faq-question">{{ item.question }}</span><span class="intro-faq-plus" aria-hidden="true">+</span></summary><div class="intro-faq-answer"><p>{{ item.answer }}<router-link v-if="'link' in item" :to="item.link.to">{{ item.link.label }}</router-link></p></div></details>
       </div></section>
 
       <section v-intro-reveal class="intro-closing intro-reveal--split" aria-labelledby="closing-title"><span class="intro-stagger" style="--i: 0" aria-hidden="true">✉</span><h2 id="closing-title" class="intro-stagger" style="--i: 1">已经有账号了？<br />直接登录。</h2><router-link class="intro-button intro-stagger" style="--i: 2" :to="entry">{{ signedIn ? '进入邮箱' : '登录邮箱' }}<span aria-hidden="true">↗</span></router-link></section>
@@ -71,6 +71,7 @@ import { INTRO_FAQ, INTRO_FEATURES, SEO_REPOSITORY_URL } from "../../../shared/s
 import { useSessionStore } from "../stores/session";
 import { safeMailDestination } from "../auth/entryGate";
 import { introRevealDirective as vIntroReveal } from "../intro/reveal";
+import { toggleFaq } from "../intro/faq";
 
 const route = useRoute();
 const session = useSessionStore();
