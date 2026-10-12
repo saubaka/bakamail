@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "965ca62f397c1f91c754388088779403081bc6e992c8e846fa458d02f7639854",
+      "sha256": "cc802e7734026c52904bd471477eca627cf2133e71252a838cf6ba661ddf9e1e",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "22a1967f2d5acc7da0b6f66a7cbd6769c76d5e8d7777aed597bb2965a7c442dc",
+      "sha256": "88cb26fba6aa220f4ed5cf885aa4786749bde22b1d8ee9a1df568edf1f1d3a8b",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "a99676385627821f25cf11e4fd404f80612a327a63d9700b584039a16aa606ad",
+      "sha256": "5a2acbb02435d3fa7dba239dcb93b9341df72b54e5867be22b43b8c01cc55c22",
       "executable": false
     },
     "README.md": {
@@ -188,7 +188,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "a6c5fe2f5aeff450eb46c9abcf3738f37abc1cf0402d4f3c91cad20e483a0ffb",
+      "sha256": "248bc53539a9c5750c97ceb2446f71b4f6abdae5d0a191ca55cc1c8ec6a664cc",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -658,7 +658,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "acef1ada96c337d1b2826dd823a27eea5c8a00228bd07d7ec594bcaeff465b22",
+      "sha256": "3fd45b22bae0bd57e6168a91a27a6495a9ff3e88cce42d7449b6632686bbeded",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -933,7 +933,7 @@
     },
     "web/src/components/mail/FolderRail.vue": {
       "source": "web/src/components/mail/FolderRail.vue",
-      "sha256": "30512b64a22e68b63167c497b3ee1113a4b3ec1eb95a11f55954d54e263acd9e",
+      "sha256": "c1d6a648b50a23de10abf4b512a2f72c293a194bc909d31b91ba985cdc9982f8",
       "executable": false
     },
     "web/src/components/mail/MessageListPane.vue": {
@@ -953,7 +953,7 @@
     },
     "web/src/components/MailWorkspace.vue": {
       "source": "web/src/components/MailWorkspace.vue",
-      "sha256": "597b076398be4a01aff8db104a71c8cf292971f3d6fa2030c115f51f091d08d9",
+      "sha256": "cc36169f19c9dafda3fd4f0de54723b7f4b172ce17a04ea9698b0ea3f0e67e8b",
       "executable": false
     },
     "web/src/components/PasswordField.vue": {
@@ -1023,7 +1023,7 @@
     },
     "web/src/mail/highlightMotion.ts": {
       "source": "web/src/mail/highlightMotion.ts",
-      "sha256": "1b9139a1576d35d741cceaf393434fec0ad8c259c1b1377721d2c88d75753a2b",
+      "sha256": "844869555fe71f0da2eb1d2601ce339de29d5c83cde421139c6dc0e4b5e73d77",
       "executable": false
     },
     "web/src/mail/localCache.ts": {
@@ -1059,6 +1059,11 @@
     "web/src/mail/types.ts": {
       "source": "web/src/mail/types.ts",
       "sha256": "c5d0deb9d8c8a5cdfcf4023ae5729ea64d02c9744860b7ba4eed0398e79b2259",
+      "executable": false
+    },
+    "web/src/mail/useMovingOutline.ts": {
+      "source": "web/src/mail/useMovingOutline.ts",
+      "sha256": "b12aa322a7b260dc617bb632227ebaf2b401f9dcece23b70a30ab06dc595d5a2",
       "executable": false
     },
     "web/src/mail/workspace.ts": {
@@ -1198,7 +1203,7 @@
     },
     "web/src/styles/dashed-accent.css": {
       "source": "web/src/styles/dashed-accent.css",
-      "sha256": "4120191f3e30aaa9850a005d92b71d3d2ebcdc1ea106b1a8db7300da0f0a8e23",
+      "sha256": "ae53a874916bf234c1d873dc3e7976fd3d2029661383caf9d5ecce14d8b8ba51",
       "executable": false
     },
     "web/src/styles/dialogs.css": {
@@ -1223,7 +1228,7 @@
     },
     "web/src/styles/mail-overrides.css": {
       "source": "web/src/styles/mail-overrides.css",
-      "sha256": "f19809c9c9512a73fcc5114d2c90e86e51ffe6549d954a698d6a9786cb526ecc",
+      "sha256": "279818655e210416d232ab19bc0060339e2e1392cbbb2c62035e4fb2596a8686",
       "executable": false
     },
     "web/src/styles/mail-pages.css": {
@@ -1278,7 +1283,7 @@
     },
     "web/src/styles/workspace.css": {
       "source": "web/src/styles/workspace.css",
-      "sha256": "90d183a0e3c8b6c7c65a118d385d29c21744c158ca3750084c3542e5752900b8",
+      "sha256": "ba460af11c9493d51d1bf4a6936b43e8efccbc5de97791d5550498ee739f9d7b",
       "executable": false
     },
     "web/src/surfaceLines.ts": {
@@ -1648,7 +1653,7 @@
     },
     "web/test/mail-menu-motion.test.ts": {
       "source": "web/test/mail-menu-motion.test.ts",
-      "sha256": "d6ac58710f97769ad10ded4032037e43fc3aff72016d73a3b25aad88d7b678ca",
+      "sha256": "369346d1f6b0433a4799b673716a8117b61ad15f884b390031f9c8f716fc0065",
       "executable": false
     },
     "web/test/mail-row-visibility.test.ts": {
@@ -1678,7 +1683,7 @@
     },
     "web/test/navigation-layout.test.ts": {
       "source": "web/test/navigation-layout.test.ts",
-      "sha256": "d2783b7e209c60943ab555047d1ca5ab1ff9e06dbfa61bd67d550ddbc51f0e28",
+      "sha256": "3661b6328c8ccd831009c3361b95a7cb445a57219e60fa14c390680604a0a21f",
       "executable": false
     },
     "web/test/notification-display-client-phase2.test.ts": {
@@ -1838,7 +1843,7 @@
     },
     "web/test/workspace-motion.test.ts": {
       "source": "web/test/workspace-motion.test.ts",
-      "sha256": "758d48c351bf570d384e49b31606b782e9ff8e14ab0a338e5364646e55114b31",
+      "sha256": "550fa81d8344e272848ea04da9f5fa825fca16961c301b694301f0ef45cb31d3",
       "executable": false
     },
     "web/tsconfig.json": {

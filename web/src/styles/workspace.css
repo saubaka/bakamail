@@ -44,7 +44,8 @@ body:has(.mail-workspace) { padding-bottom: 0; }
 .dock-item { display: grid; place-items: center; width: 80px; min-height: 42px; padding: 8px 12px; border: 0; border-radius: 22px; color: var(--text-soft); font: inherit; font-size: 13px; background: transparent; cursor: pointer; }
 .dock-item.is-current, .dock-item[aria-expanded="true"] { color: var(--graphite-blue); font-weight: 600; }
 .dock-item:disabled { opacity: .5; cursor: default; }
-.dock-active-pill { position: absolute; left: 6px; top: 6px; width: 80px; height: 42px; border-radius: 22px; background: transparent; z-index: -1; transition: transform 420ms cubic-bezier(.22,.85,.25,1); pointer-events: none; }
+.dock-active-pill { position: absolute; left: 0; top: 0; width: 0; height: 0; border-radius: 22px; background: transparent; opacity: 0; z-index: -1; will-change: transform, height; transition: opacity 160ms ease; pointer-events: none; }
+.dock-active-pill.is-ready { opacity: 1; }
 .dock-item:focus-visible, .dock-menu :is(button,a):focus-visible { outline: 2px solid var(--line-blue-strong); outline-offset: -2px; }
 .dock-backdrop { position: fixed; inset: 0; z-index: 70; border: 0; background: color-mix(in srgb, var(--fog-white) 45%, transparent); cursor: default; }
 .dock-menu { position: fixed; bottom: calc(140px + env(safe-area-inset-bottom)); z-index: 80; display: flex; flex-direction: column; max-height: calc(100svh - 182px - env(safe-area-inset-bottom)); border: 1px solid transparent; border-radius: 24px; background: var(--surface); box-shadow: var(--shadow-float); transform-origin: var(--menu-origin-x) bottom; will-change: transform, opacity; animation: dock-menu-in 360ms cubic-bezier(.18,.82,.22,1) both; }
@@ -158,3 +159,11 @@ html:is([data-motion="reduce"], [data-performance="low"]) .mail-panel-enter-from
 html:is([data-motion="reduce"], [data-performance="low"]) .mail-panel-leave-to { opacity:1; filter:none; transform:none!important; }
 html:is([data-motion="reduce"], [data-performance="low"]) .mail-list .mail-row,
 html:is([data-motion="reduce"], [data-performance="low"]) .mail-list .mail-row[data-row-reveal="outside"] { opacity: 1; transform: none; filter: none; animation:none; }
+
+/* 文件夹列表的选中线条：与左侧菜单同一套滑动线条；当前项自己不画框，由线条圈住。 */
+.folder-highlight { position: absolute; left: 0; top: 0; width: 0; height: 0; border-radius: 12px; background: transparent; opacity: 0; z-index: 0; pointer-events: none; will-change: transform, height; transition: opacity 160ms ease; }
+.folder-highlight.is-ready { opacity: 1; }
+.folder-tree .folder-item { position: relative; z-index: 1; }
+.folder-tree .folder-item.is-current, .folder-tree .folder-item.is-current:hover { background: transparent !important; border-color: transparent !important; outline: none !important; box-shadow: none; }
+/* 目标按钮被点中后不再显示悬停框，线条滑过来之前终点处不会先冒出一个框。 */
+.dock-navigation-item.is-active:hover { outline: none; box-shadow: none; transform: none; }

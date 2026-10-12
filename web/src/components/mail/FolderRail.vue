@@ -5,11 +5,13 @@
       <button class="icon-button icon-button--small" type="button" aria-label="新建文件夹" :disabled="folderBusy" @click="emit('create')">＋</button>
     </div>
     <div class="mail-pane__body">
-      <div class="folder-tree">
+      <div ref="tree" class="folder-tree">
+        <span ref="highlight" class="folder-highlight" :class="{ 'is-ready': outline.box.value.ready }" aria-hidden="true" :style="outline.style.value"><LineOutline /></span>
         <button
           v-for="folder in folders"
           :key="folder.path"
           class="folder-item"
+          :data-path="folder.path"
           :class="{ 'is-current': folder.path === currentFolder }"
           type="button"
           :disabled="navigationBusy"
@@ -34,9 +36,12 @@
 </template>
 
 <script setup lang="ts">
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { folderLabel, type Folder } from "../../mail/types";
+import { useMovingOutline } from "../../mail/useMovingOutline";
+import LineOutline from "../LineOutline.vue";
 
-defineProps<{
+const props = defineProps<{
   folders: Folder[];
   currentFolder: string;
   currentFolderLabel: string;
@@ -45,6 +50,29 @@ defineProps<{
   folderBusy: boolean;
   navigationBusy: boolean;
 }>();
+
+// 当前文件夹的选中线条：和左侧菜单一样，从旧文件夹平滑滑到新文件夹。
+const tree = ref<HTMLElement | null>(null);
+const highlight = ref<HTMLElement | null>(null);
+const reduced = (): boolean => {
+  const root = document.documentElement;
+  return root.dataset.motion === "reduce" || root.dataset.performance === "low" || matchMedia("(prefers-reduced-motion: reduce)").matches;
+};
+const quote = (value: string): string => value.replace(/["\\]/g, "\\$&");
+const outline = useMovingOutline({
+  container: tree,
+  highlight,
+  targetSelector: () => `.folder-item[data-path="${quote(props.currentFolder)}"]`,
+  reduced,
+});
+let observer: ResizeObserver | undefined;
+watch(() => props.currentFolder, () => { void nextTick(() => outline.measure(true)); });
+watch(() => props.folders, () => { void nextTick(() => outline.measure()); }, { deep: false });
+onMounted(() => {
+  outline.measure();
+  if (typeof ResizeObserver !== "undefined" && tree.value) { observer = new ResizeObserver(() => outline.measure()); observer.observe(tree.value); }
+});
+onBeforeUnmount(() => { observer?.disconnect(); outline.dispose(); });
 
 const emit = defineEmits<{
   create: [];
