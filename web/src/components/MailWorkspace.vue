@@ -43,7 +43,7 @@
             <span class="dock-compose-icon" aria-hidden="true">＋</span><span class="desktop-sidebar-label">写邮件</span>
           </button>
           <nav ref="navigationList" class="dock-navigation" aria-label="邮箱功能">
-            <span ref="highlightElement" class="dock-navigation-highlight" :class="{ 'is-line-shifting': lineShifting, 'is-ready': navigationHighlight.ready }" aria-hidden="true" :style="navigationHighlightStyle"><LineOutline /></span>
+            <span ref="highlightElement" class="dock-navigation-highlight" :class="{ 'is-ready': navigationHighlight.ready }" aria-hidden="true" :style="navigationHighlightStyle"><LineOutline /></span>
             <button v-for="item in mailNavigation" :key="item.path" class="dock-navigation-item" :class="{ 'is-active': highlightPath === item.path }" :data-path="item.path" type="button" :aria-current="route.path === item.path ? 'page' : undefined" :disabled="!isDesktop && navigationBusy" :title="collapsedTitle(item.label)" @click="navigate(item.path)">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path :d="item.icon" /></svg><span class="desktop-sidebar-label">{{ item.label }}</span>
             </button>
@@ -92,11 +92,11 @@
     <footer class="workspace-copyright">© {{ new Date().getFullYear() }} BakaMail</footer>
     <span class="workspace-route-status" role="status" aria-live="polite" aria-atomic="true">{{ routeAnnouncement }}</span>
     <button v-if="!isDesktop && dockHidden && !menuOpen" class="dock-reveal" type="button" aria-label="显示邮箱导航" @click="revealDock"><span aria-hidden="true"></span></button>
-    <nav v-if="!isDesktop" class="mail-bottom-dock" :class="{ 'is-scroll-hidden': dockHidden && !menuOpen }" :inert="dockHidden && !menuOpen" :aria-hidden="dockHidden && !menuOpen" aria-label="邮箱底部导航" @focusin="revealDock">
-      <span class="dock-active-pill" :class="{ 'is-line-shifting': lineShifting }" aria-hidden="true" :style="{ transform: `translateX(${dockIndex * 84}px)` }"><LineOutline /></span>
-      <button ref="menuTrigger" class="dock-item" type="button" aria-controls="mail-navigation-panel" :aria-expanded="menuOpen" @click="menuOpen ? closeMenu() : openMenu()">菜单</button>
-      <button class="dock-item" :class="{ 'is-current': dockIndex === 1 }" type="button" :disabled="navigationBusy" @click="showList">列表</button>
-      <button class="dock-item" :class="{ 'is-current': dockIndex === 2 }" type="button" :disabled="navigationBusy" @click="showReader">正文</button>
+    <nav v-if="!isDesktop" ref="dockElement" class="mail-bottom-dock" :class="{ 'is-scroll-hidden': dockHidden && !menuOpen }" :inert="dockHidden && !menuOpen" :aria-hidden="dockHidden && !menuOpen" aria-label="邮箱底部导航" @focusin="revealDock">
+      <span ref="pillElement" class="dock-active-pill" :class="{ 'is-ready': dockPill.box.value.ready }" aria-hidden="true" :style="dockPill.style.value"><LineOutline /></span>
+      <button ref="menuTrigger" class="dock-item" data-dock-index="0" type="button" aria-controls="mail-navigation-panel" :aria-expanded="menuOpen" @click="menuOpen ? closeMenu() : openMenu()">菜单</button>
+      <button class="dock-item" data-dock-index="1" :class="{ 'is-current': dockIndex === 1 }" type="button" :disabled="navigationBusy" @click="showList">列表</button>
+      <button class="dock-item" data-dock-index="2" :class="{ 'is-current': dockIndex === 2 }" type="button" :disabled="navigationBusy" @click="showReader">正文</button>
     </nav>
   </div>
 </template>
@@ -122,7 +122,7 @@ import { createDockScrollIntent, type ScrollPosition } from '../mail/scrollInten
 import LineOutline from './LineOutline.vue';
 import AdminLoader from './admin/AdminLoader.vue';
 import { navigationState } from '../admin/navigationState';
-import { planHighlightMove, HIGHLIGHT_MS, HIGHLIGHT_EASING } from '../mail/highlightMotion';
+import { useMovingOutline } from '../mail/useMovingOutline';
 const route = useRoute();
 const router = useRouter();
 const session = useSessionStore();
@@ -174,62 +174,36 @@ const highlightPath = computed(() => pendingPath.value ?? route.path);
 const navigationPending = computed(() => navigationState.pending !== "");
 const highlightElement = ref<HTMLElement | null>(null);
 const dockIndex = computed(() => menuOpen.value || route.path !== "/mail" ? 0 : view.value === "reader" ? 2 : 1);
-const lineShifting = ref(false);
-const navigationHighlight = ref({ x: 0, y: 0, width: 0, height: 0, ready: false });
-const navigationHighlightStyle = computed(() => ({
-  width: `${navigationHighlight.value.width}px`,
-  height: `${navigationHighlight.value.height}px`,
-  transform: `translate3d(${navigationHighlight.value.x}px,${navigationHighlight.value.y}px,0)`,
-}));
+const highlightMover = useMovingOutline({
+  container: navigationList,
+  highlight: highlightElement,
+  targetSelector: () => `.dock-navigation-item[data-path="${highlightPath.value}"]`,
+  reduced: () => reduced(),
+});
+const navigationHighlight = highlightMover.box;
+const navigationHighlightStyle = highlightMover.style;
+// 手机底部胶囊：同一套滑动线条。
+const dockElement = ref<HTMLElement | null>(null);
+const pillElement = ref<HTMLElement | null>(null);
+const dockPill = useMovingOutline({
+  container: dockElement,
+  highlight: pillElement,
+  targetSelector: () => `.dock-item[data-dock-index="${dockIndex.value}"]`,
+  reduced: () => reduced(),
+});
 const panelDirection = ref<PanelNavigationDirection>("neutral");
 const routeAnnouncement = ref("");
 const folderUnreadCount = computed(() => mailbox.folders.reduce((total, folder) => total + Math.max(0, Math.floor(folder.unseen || 0)), 0));
 const folderUnreadLabel = computed(() => compactUnreadCount(folderUnreadCount.value));
 const collapsedFolderLabel = computed(() => folderUnreadCount.value > 0 ? `展开文件夹，${folderUnreadCount.value} 封未读` : "展开文件夹");
-let lineTimer: ReturnType<typeof setTimeout> | undefined;
-let lineFrame = 0;
-let navigationMeasureFrame = 0;
 let folderFocusFrame = 0;
 let navigationResizeObserver: ResizeObserver | undefined;
-function pulseNavigationLine() {
-  clearTimeout(lineTimer); cancelAnimationFrame(lineFrame); lineShifting.value=false;
-  if(reduced()) return;
-  lineFrame=requestAnimationFrame(()=>{lineShifting.value=true;lineTimer=setTimeout(()=>{lineShifting.value=false;},440);});
-}
-// 一次“要播放动画”的测量不能被紧随其后的普通测量（窗口或侧栏尺寸变化触发）顶掉，否则线条会直接瞬移到目标。
-let animateRequested = false;
-function measureNavigationHighlight(animate = false) {
-  animateRequested = animateRequested || animate === true;
-  cancelAnimationFrame(navigationMeasureFrame);
-  navigationMeasureFrame = requestAnimationFrame(() => {
-    animate = animateRequested;
-    animateRequested = false;
-    const list = navigationList.value;
-    const target = list?.querySelector<HTMLElement>(`.dock-navigation-item[data-path="${highlightPath.value}"]`);
-    if (!list || !target || target.offsetWidth === 0 || target.offsetHeight === 0) {
-      navigationHighlight.value = { ...navigationHighlight.value, ready: false };
-      return;
-    }
-    const next = { x: target.offsetLeft, y: target.offsetTop, width: target.offsetWidth, height: target.offsetHeight, ready: true };
-    const element = highlightElement.value;
-    const wasReady = navigationHighlight.value.ready;
-    if (animate === true && wasReady && element && !reduced() && typeof element.animate === "function") {
-      // 从线条此刻真实的位置出发（连续点击时不会跳回上一个终点）。
-      const listBox = list.getBoundingClientRect();
-      const box = element.getBoundingClientRect();
-      const from = { x: box.left - listBox.left, y: box.top - listBox.top, width: box.width, height: box.height };
-      for (const running of element.getAnimations()) running.cancel();
-      const plan = planHighlightMove(from, next);
-      if (plan) element.animate(plan, { duration: HIGHLIGHT_MS, easing: HIGHLIGHT_EASING });
-    }
-    navigationHighlight.value = next;
-  });
-}
+const measureNavigationHighlight = (animate = false) => { highlightMover.measure(animate); dockPill.measure(animate); };
 const measureOnResize = () => measureNavigationHighlight();
 function scheduleNavigationHighlight() { void nextTick(() => measureNavigationHighlight()); }
-watch(dockIndex, () => { pulseNavigationLine(); scheduleNavigationHighlight(); });
-watch(highlightPath, () => { pulseNavigationLine(); void nextTick(() => measureNavigationHighlight(true)); });
-watch(desktopSidebarExpanded, () => { pulseNavigationLine(); scheduleNavigationHighlight(); });
+watch(dockIndex, () => { void nextTick(() => dockPill.measure(true)); });
+watch(highlightPath, () => { void nextTick(() => highlightMover.measure(true)); });
+watch(desktopSidebarExpanded, () => { scheduleNavigationHighlight(); });
 const panelStyle = computed(() => ({ left: `${menuLeft.value}px`, width: `${menuWidth.value}px`, "--menu-origin-x": `${origin.value}px` }));
 let resolveClose: (() => void) | undefined;
 let closeFlight: Promise<void> | undefined;
@@ -418,15 +392,15 @@ onMounted(() => {
   if (typeof ResizeObserver !== "undefined") {
     navigationResizeObserver = new ResizeObserver(() => measureNavigationHighlight());
     if (navigationList.value) navigationResizeObserver.observe(navigationList.value);
+    if (dockElement.value) navigationResizeObserver.observe(dockElement.value);
   }
   window.addEventListener("resize", measureOnResize, { passive: true });
   scheduleNavigationHighlight();
 });
 onBeforeUnmount(() => {
   clearTimeout(closeTimer);
-  clearTimeout(lineTimer);
-  cancelAnimationFrame(lineFrame);
-  cancelAnimationFrame(navigationMeasureFrame);
+  highlightMover.dispose();
+  dockPill.dispose();
   cancelAnimationFrame(folderFocusFrame);
   pendingFolderFocus = false;
   desktopQuery?.removeEventListener("change", syncResponsiveNavigation);

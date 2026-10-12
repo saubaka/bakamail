@@ -9,8 +9,8 @@
 .dash-part-2 { clip-path:polygon(100% 100%,0 100%,50% 50%); --fragment-x:0px; --fragment-y:3px; }
 .dash-part-3 { clip-path:polygon(0 100%,0 0,50% 50%); --fragment-x:-3px; --fragment-y:0px; }
 .is-line-shifting .dash-outline__piece { animation:dash-fragment-travel 420ms cubic-bezier(.22,.85,.25,1) backwards; }
-/* 左侧菜单的选中线条始终是同一圈实线：移动时只伸缩，移动结束后也不会重新“画”一遍（否则像又出现一圈新的包围线）。 */
-.dock-navigation-highlight .dash-outline__piece, .dock-navigation-highlight.is-line-shifting .dash-outline__piece { animation:none; }
+/* 会移动的选中线条（左侧菜单、文件夹、手机胶囊）始终是同一圈实线：只平移，不重画，终点也不会提前出现新线。 */
+.dock-navigation-highlight .dash-outline__piece, .folder-highlight .dash-outline__piece, .dock-active-pill .dash-outline__piece { animation:none; }
 @keyframes dash-contour-arrive { from { opacity:0; stroke-dashoffset:24; } to { opacity:1; stroke-dashoffset:0; } }
 @keyframes dash-contour-exit { from { opacity:1; stroke-dashoffset:0; } to { opacity:0; stroke-dashoffset:-18; } }
 @keyframes dash-fragment-travel { 0% { transform:none; opacity:1; stroke-dashoffset:0; } 28%,55% { transform:translate(var(--fragment-x),var(--fragment-y)); opacity:.6; stroke-dashoffset:8; } 100% { transform:none; opacity:1; stroke-dashoffset:0; } }

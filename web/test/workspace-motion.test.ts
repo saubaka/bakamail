@@ -97,7 +97,7 @@ test("邮件子页面使用持久工作区，桌面侧栏与移动胶囊共用�
   const workspace = readFileSync(new URL("../src/components/MailWorkspace.vue", import.meta.url), "utf8");
   assert.match(workspace, /aria-controls="mail-navigation-panel"/);
   assert.match(workspace, /v-show="isDesktop \|\| menuOpen"/);
-  assert.match(workspace, /v-if="!isDesktop" class="mail-bottom-dock"/);
+  assert.match(workspace, /v-if="!isDesktop" ref="dockElement" class="mail-bottom-dock"/);
   assert.match(workspace, /is-desktop-sidebar/);
   assert.match(workspace, /await closeMenu\(false\)/);
   assert.match(workspace, /if \(generation !== navigationGeneration\) return/);
