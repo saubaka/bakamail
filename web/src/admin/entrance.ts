@@ -1,5 +1,6 @@
 import type { Directive } from "vue";
 import { stagger } from "../stagger.ts";
+import { playCardParts } from "../cardParts.ts";
 
 /**
  * 后台入场：页面里的每张卡片、每一块文字、每一行数据，都在它真正出现的那一刻单独入场，
@@ -31,9 +32,14 @@ export const ENTRANCE_SELECTOR = `${CARD_SELECTOR}, ${BLOCK_SELECTOR}, ${ROW_SEL
 
 /** 一批里最多同时给多少行加动画，更多的直接出现（几百行的表格不需要逐行动画）。 */
 export const MAX_ROWS_PER_BATCH = 40;
-export const CHILD_START_MS = 150;
-export const CHILD_STEP_MS = 45;
-export const CHILD_MAX_STEPS = 5;
+
+/** 总览顶部的统计卡片：一张一张依次入场，每张卡片里的图标、标题、数值、说明再依次跟上。 */
+export const STAT_SELECTOR = ".baka-overview-stat";
+export const STAT_STEP_MS = 120;
+/** 第 index 张统计卡片的等待时间：第一张跟在页面节拍之后，之后每张间隔固定的一步。 */
+export function statDelay(base: number, index: number): number {
+  return base + index * STAT_STEP_MS;
+}
 
 export type EntranceKind = "card" | "block" | "row";
 export type EntranceSpec = { duration: number; distance: number; opacityOnly: boolean };
@@ -49,11 +55,6 @@ export function specFor(kind: EntranceKind, tag: string): EntranceSpec {
 /** 去掉“被同一批里别的候选包含”的元素：卡片整体入场，里面的内容跟着它，不再各播各的。 */
 export function dropNested<T>(items: T[], contains: (outer: T, inner: T) => boolean): T[] {
   return items.filter((item) => !items.some((other) => other !== item && contains(other, item)));
-}
-
-/** 卡片里第 index 个内容的等待时间：先等卡片自己出现，再依次跟上。 */
-export function childDelay(cardDelay: number, index: number): number {
-  return cardDelay + CHILD_START_MS + Math.min(index, CHILD_MAX_STEPS) * CHILD_STEP_MS;
 }
 
 export function kindOf(element: Element): EntranceKind {
@@ -80,9 +81,14 @@ function play(element: HTMLElement, spec: EntranceSpec, delay: number): void {
 }
 
 /** v-motion 卡片有自己的轮廓线入场，这里只替它排好先后顺序。 */
-function scheduleMotionTarget(element: HTMLElement, now: number): void {
+function scheduleMotionTarget(element: HTMLElement, now: number, delay: number): void {
   element.dataset.motionAssignedAt = String(now);
-  element.dataset.motionSlotDelay = String(stagger.next(now));
+  element.dataset.motionSlotDelay = String(delay);
+}
+
+function playStat(element: HTMLElement, delay: number): void {
+  play(element, { duration: 560, distance: 18, opacityOnly: false }, delay);
+  playCardParts(element, delay);
 }
 
 export function handleAdded(roots: Element[], now = performance.now()): number {
@@ -98,18 +104,30 @@ export function handleAdded(roots: Element[], now = performance.now()): number {
   const top = dropNested(ordered, (outer, inner) => outer.contains(inner));
   let rows = 0;
   let count = 0;
+  let statBase = -1;
+  let statIndex = 0;
+  // 统计卡片排在前面时，后面的内容从最后一张统计卡片开始出现的时刻起，按正常节拍依次进来。
+  let floor = -1;
+  let after = 0;
+  const slot = (): number => (floor < 0 ? stagger.next(now) : floor + Math.min(after++, 4) * 70);
   for (const element of top) {
     const kind = kindOf(element);
     if (kind === "row" && ++rows > MAX_ROWS_PER_BATCH) continue;
     element.dataset.entered = "1";
     count += 1;
-    if (element.classList.contains("motion-line-target")) { scheduleMotionTarget(element, now); continue; }
-    const cardDelay = stagger.next(now);
+    if (element.matches(STAT_SELECTOR)) {
+      if (statBase < 0) statBase = stagger.next(now);
+      const delay = statDelay(statBase, statIndex++);
+      playStat(element, delay);
+      floor = delay + 90; after = 0;
+      continue;
+    }
+    if (element.classList.contains("motion-line-target")) { scheduleMotionTarget(element, now, slot()); continue; }
+    const cardDelay = slot();
     play(element, specFor(kind, element.tagName), cardDelay);
     if (kind !== "card") continue;
-    // 卡片里的内容在卡片出现之后依次跟上（标题、说明、表单、按钮……）。
-    const children = [...element.children].filter((child): child is HTMLElement => child instanceof HTMLElement && child.getClientRects().length > 0);
-    children.forEach((child, index) => { if (!child.dataset.entered) play(child, { duration: 400, distance: 8, opacityOnly: false }, childDelay(cardDelay, index)); });
+    // 卡片里的内容在卡片出现之后依次跟上（图标、标题、说明、表单项、按钮……）。
+    playCardParts(element, cardDelay);
   }
   return count;
 }
