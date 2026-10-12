@@ -50,13 +50,26 @@ test("左侧菜单栏与右侧两个大容器同高同位：上下各留与邮�
   assert.match(css, /\.workspace-content \.mail-shell \{[^}]*padding: 14px 24px 12px;/);
 });
 
-test("菜单线条落定动画：虚线连成实线并发亮，图标落定弹一下；减少动画时全部关闭", () => {
+test("菜单线条始终是同一圈实线：整圈先朝目标移动，停在原地的线条再沿竖线收回；不再重画虚线包围；图标落定弹一下", () => {
   const accent = source("styles/dashed-accent.css");
-  assert.match(accent, /\.dock-navigation-highlight\.is-line-shifting \.dash-outline__piece \{ animation:dock-line-flow 640ms/);
-  assert.match(accent, /@keyframes dock-line-flow \{ 0% \{ stroke-dasharray:5 7;[\s\S]*100% \{ stroke-dasharray:80 0; stroke-dashoffset:0; opacity:1; \} \}/);
+  assert.match(accent, /\.dock-navigation-highlight \.dash-outline__piece, \.dock-navigation-highlight\.is-line-shifting \.dash-outline__piece \{ animation:none; \}/);
+  assert.doesNotMatch(accent, /dock-line-flow/);
+  assert.doesNotMatch(source("styles/workspace.css"), /dock-line-flow/);
+  const motion = source("mail/highlightMotion.ts");
+  assert.match(motion, /停留在原地的线条再沿着竖线收回/);
+  assert.match(motion, /不会出现新的虚线包围/);
+  assert.equal(HIGHLIGHT_STRETCH_AT, 0.5);
   const css = source("styles/workspace.css");
   assert.match(css, /\.dock-navigation-item\.is-active svg \{ animation: dock-icon-settle 520ms/);
   assert.match(css, /prefers-reduced-motion: reduce\) \{\s*\.dock-navigation-item\.is-active svg \{ animation: none; \}/);
+});
+
+test("线条移动分两段：前沿先到达（后沿留在原处），之后后沿收回；两段缓动不同", () => {
+  const frames = planHighlightMove({ x: 14, y: 100, width: 215, height: 40 }, { x: 14, y: 232, width: 215, height: 40 })!;
+  assert.ok(frames[0]!.easing && frames[1]!.easing && frames[0]!.easing !== frames[1]!.easing);
+  // 前沿（下边）从 140 走到 272；后沿（上边）在中间帧仍停在原处 100
+  assert.equal(frames[1]!.transform, "translate3d(14px,100px,0)");
+  assert.equal(Number.parseFloat(String(frames[1]!.height)) + 100, 272);
 });
 
 test("校验提示出现不再拉高、移动另一侧文本框；提示平滑展开与收起", () => {
@@ -70,4 +83,11 @@ test("校验提示出现不再拉高、移动另一侧文本框；提示平滑�
 
 test("设置页不再显示“动效和性能模式选好就生效…”那句说明", () => {
   assert.doesNotMatch(source("views/SettingsView.vue"), /动效和性能模式选好就生效/);
+});
+
+test("要播放动画的测量不会被随后的普通测量顶掉（否则线条直接瞬移到目标）", () => {
+  const workspace = source("components/MailWorkspace.vue");
+  assert.match(workspace, /let animateRequested = false;/);
+  assert.match(workspace, /animateRequested = animateRequested \|\| animate === true;/);
+  assert.match(workspace, /animate = animateRequested;\s*animateRequested = false;/);
 });
