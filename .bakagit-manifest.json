@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "c427d769e5b782768d7cd7b6a29577d8db2970fcac6628f83c6d39fb57295110",
+      "sha256": "c225cf754a6d24e526e5c0b35111645899827bac00e6c48198212a7727d438aa",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,17 +93,27 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "ab766cf744d83eab1cb2bedd7c810675bc3be351464bcb7e0b44cce49e0597d4",
+      "sha256": "92224aefbd457927c9e78e3bf7d31cc793ee514454e36b198eb5c4415be1550e",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "86fe8e0a54d45f1171611f4821b424ce6e0178aee38b2c1916a7d20e1945ee8d",
+      "sha256": "508501f7952a2bce3bbe25f039d96d83c1e14d3670c75dd5d306a12a56118853",
+      "executable": false
+    },
+    "README.en.md": {
+      "source": "docs/github/README.en.md",
+      "sha256": "06b048893829185b7cfe8925a29a4be445757ddb83dbf3430501ef558d642e82",
+      "executable": false
+    },
+    "README.ja.md": {
+      "source": "docs/github/README.ja.md",
+      "sha256": "0657980a5c6e9310d928af354c15642bf55c07c94f337b113163a134dd424fc8",
       "executable": false
     },
     "README.md": {
       "source": "docs/github/README.md",
-      "sha256": "9d99d6de08fd86797c550be8decfe307b174e27f6436eb811f231841387bb0cf",
+      "sha256": "5f7704a5de1aaccd1ab91bd1ec02263751d10b39d7ffb3266ee7188b5929f974",
       "executable": false
     },
     "scripts/audit-project1-prototype.mjs": {
@@ -143,7 +153,7 @@
     },
     "scripts/sync-bakagit.mjs": {
       "source": "scripts/sync-bakagit.mjs",
-      "sha256": "18a6f1e685727e13dda4a882168b3df9357e4160bb0f3e5b1d3373f2469bff54",
+      "sha256": "aae91e5bcbc05ebb0579678d80e27ff8ee5ec3bee8b4ed19fe3ea9789cced06d",
       "executable": false
     },
     "scripts/sync-project1-styles.sh": {
@@ -188,7 +198,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "9e50c0d95781b4ee9f0766fe3d946f1e7b70e21b2e2ac510d1174c6d7ccc269f",
+      "sha256": "b7af14cc18ed504d41d6b163d428eff85c586f1049488126f3adba41bdf5dab4",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -658,7 +668,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "8bb63f03938d9f3fea9374d9a08e9086fa2866c45966a88d6e59a8894a6dd61d",
+      "sha256": "9569ff23204ce131d3dfcff286c0510e423ece4bd3ce9df7268bfcbf8ff51d30",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {

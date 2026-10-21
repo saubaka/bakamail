@@ -27,6 +27,8 @@ export const sourceFiles = [
 ];
 export const publicTemplates = {
   'README.md': 'docs/github/README.md',
+  'README.en.md': 'docs/github/README.en.md',
+  'README.ja.md': 'docs/github/README.ja.md',
   'AGENTS.md': 'docs/github/AGENTS.md',
   '本地启动说明.md': 'docs/github/local-start.md',
 };

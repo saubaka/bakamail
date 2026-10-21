@@ -4,6 +4,10 @@
 
 <h1 align="center">Baka Mail</h1>
 
+<p align="center">
+  <b>简体中文</b> · <a href="README.en.md">English</a> · <a href="README.ja.md">日本語</a>
+</p>
+
 Baka Mail 是给自建 [Maddy](https://maddy.email/) 邮局用的网页邮箱和管理后台。用户在浏览器里收发邮件，管理员在后台管理账号、邀请码和安全策略。
 
 它不是邮件服务器。邮件的投递、IMAP、SMTP、域名签名和存储仍由 Maddy 负责，Baka Mail 只是它前面的一层网页：浏览器只访问本站的 `/api/*`，由服务端去连接 Maddy。
