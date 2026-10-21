@@ -17,7 +17,7 @@
 /* Preserve modal safety/inert until the short exit finishes; remove its visual mask first. */
 dialog.modal { border-color:transparent!important; }
 dialog.modal > .dash-outline { border-radius:inherit; }
-dialog.modal.is-danger .dash-outline__piece { stroke:var(--danger-700); }
+dialog.modal.is-danger .dash-outline__piece { stroke:var(--danger-300); }
 dialog.modal.is-closing::backdrop { opacity:0!important; background:transparent!important; -webkit-backdrop-filter:none!important; backdrop-filter:none!important; transition:none!important; animation:none!important; }
 dialog.modal.is-closing { pointer-events:none; }
 dialog.modal.is-closing > .dash-outline .dash-outline__piece,.dock-menu.is-closing > .line-outline-host .dash-outline__piece { animation:dash-contour-exit 200ms ease-in both; }
@@ -44,7 +44,7 @@ dialog.modal.is-closing > .dash-outline .dash-outline__piece,.dock-menu.is-closi
 .folder-item__count { background:var(--surface); border:1px solid var(--line-blue); }
 .button.button--primary:hover { box-shadow:var(--shadow-sm)!important; }
 .reader-security:hover,.reader-subtle:hover,.themed-popup button:hover,.password-entry__toggle:hover,.themed-number-stepper button:hover { background:var(--surface)!important; outline:1px solid var(--line-blue); outline-offset:-2px; }
-#app :is(input,select,textarea):focus,#app :is(.button,.icon-button,input,select,textarea):focus-visible { border-style:solid!important; box-shadow:none!important; outline:1px solid var(--line-blue-strong); outline-offset:3px; }
+#app :is(input,select,textarea):focus,#app :is(.button,.icon-button,input,select,textarea):focus-visible { border-style:solid!important; box-shadow:none!important; outline:1px solid var(--focus-line); outline-offset:3px; }
 #app :is(input[type="checkbox"],input[type="radio"]):checked { background:var(--surface)!important; border-style:solid!important; }
 .motion-outline__path,.intro-postal-path path { stroke-dasharray:none!important; }
 /* Override inherited prototype decoration without changing its immutable snapshot. */

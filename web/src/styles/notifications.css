@@ -10,7 +10,7 @@
 .notification-capsule__dot { flex: 0 0 7px; height: 7px; border-radius: 50%; background: var(--notice-dot); }
 .notification-capsule__text { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 13px; line-height: 1.55; }
 .notification-capsule__close { display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--fog-white); color: var(--text-soft); font-size: 21px; line-height: 1; cursor: pointer; }
-.notification-capsule__close:focus-visible { outline: 2px solid var(--line-blue-strong); outline-offset: -2px; }
+.notification-capsule__close:focus-visible { outline: 2px solid var(--focus-line); outline-offset: -2px; }
 .notification-capsule--warning { --notice-dot: var(--state-warning-700); }
 .notification-capsule--error { --notice-dot: var(--danger-700); }
 .notification-capsule.is-leaving { animation: notification-drop-out var(--notice-exit) cubic-bezier(.5, .05, .8, .4) both; pointer-events: none; }
@@ -45,7 +45,7 @@ html:is([data-motion="reduce"], [data-performance="low"]) .notification-capsule.
 #toast-region { margin:0; border:0; background:transparent; max-height:none; width:100vw; color:inherit; }
 #toast-region::backdrop { background:transparent; pointer-events:none; }
 .notification-stack-card { position:absolute; left:50%; top:max(16px,env(safe-area-inset-top)); width:min(var(--capsule-width,280px),calc(100vw - 32px)); transform:translate(-50%,calc(var(--stack-depth,0) * 9px)) scale(calc(1 - var(--stack-depth,0) * .015)); transform-origin:center top; transition:transform var(--notice-stack) cubic-bezier(.22,.85,.25,1),opacity var(--notice-stack) ease; pointer-events:auto; outline:none; }
-.notification-stack-card:focus-visible > .notification-capsule { outline:2px solid var(--line-blue-strong); outline-offset:3px; }
+.notification-stack-card:focus-visible > .notification-capsule { outline:2px solid var(--focus-line); outline-offset:3px; }
 .notification-stack-card.is-deep { opacity:0; visibility:hidden; pointer-events:none; }
 .notification-stack-card .notification-capsule { position:relative; top:auto; left:auto; width:100%; margin:0 auto; transform:none; }
 .notification-stack-card .notification-capsule:is([data-phase="capsule"],[data-phase="complete"],[data-phase="text-out"],[data-phase="text-in"]) { animation:none; opacity:1; }

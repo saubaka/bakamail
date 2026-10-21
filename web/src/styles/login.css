@@ -29,7 +29,7 @@
 .login-secondary-nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 24px; margin-top: 8px; font-size: 12px; color: var(--text-soft); }
 .login-secondary-nav a { display: inline-flex; align-items: center; min-height: 32px; }
 .login-page a:hover { text-decoration: underline; text-decoration-color: var(--line-blue-strong); text-underline-offset: 4px; }
-.login-page a:focus-visible { outline: 2px solid var(--line-blue-strong); outline-offset: 4px; border-radius: 4px; }
+.login-page a:focus-visible { outline: 2px solid var(--focus-line); outline-offset: 4px; border-radius: 4px; }
 .login-footer { flex: none; padding: 0 24px 24px; text-align: center; font-size: 11px; line-height: 1.7; color: var(--text-soft); }
 .login-footer p { margin: 0 0 3px; }
 .login-footer > span { opacity: .8; }

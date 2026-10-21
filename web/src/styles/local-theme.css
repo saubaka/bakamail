@@ -1,7 +1,15 @@
 /* Local visual revision. Keep the captured project-1 sheets byte-identical. */
 :root {
   --line-blue: #dceaf7;
-  --line-blue-strong: #bed8ef;
+  /* 所有结构线条（卡片轮廓、按钮和输入框边线、悬停与选中轮廓）统一用仪表盘统计卡片的线色。 */
+  --line-blue-strong: var(--line-blue);
+  /* 键盘聚焦环也用同一个线色（2px 加外圈浅蓝光晕），不再有更深的蓝。 */
+  --focus-line: var(--line-blue);
+  /* 浅色的可爱红：用于错误、危险操作和退出登录；字色在各浅底上对比度不低于 4.5:1。 */
+  --danger-100: #fdeff1;
+  --danger-200: #fce6e9;
+  --danger-300: #f7d3da;
+  --danger-700: #b04560;
   --border: var(--line-blue);
   --border-strong: var(--line-blue-strong);
   --silver-mist: var(--line-blue);
@@ -24,7 +32,9 @@ input:focus, select:focus, textarea:focus,
 .admin-nav-item.is-active, .admin-nav-item:hover {
   border-color: var(--line-blue-strong) !important;
 }
-:focus-visible { outline-color: var(--line-blue-strong) !important; }
+:focus-visible { outline-color: var(--focus-line) !important; }
+/* 页面主体只是切换路由时由脚本聚焦的容器：不画聚焦环，否则键盘导航后整块内容外会出现一圈粗线。 */
+#main-content:focus, #main-content:focus-visible, .admin-logout-error:focus, .admin-logout-error:focus-visible { outline: none !important; }
 .motion-outline, .motion-outline__path {
   --component-motion-color: var(--line-blue-strong);
   color: var(--line-blue-strong) !important;
@@ -39,3 +49,10 @@ input:focus, select:focus, textarea:focus,
   border-color: var(--line-blue-strong) !important;
   box-shadow: 0 0 0 3px var(--cloud-blue) !important;
 }
+.button--danger, .button--danger:hover, .button--danger:focus-visible {
+  border-color: var(--danger-300) !important;
+  color: var(--danger-700) !important;
+  box-shadow: none !important;
+}
+.button--danger { background: var(--danger-100) !important; }
+.button--danger:hover:not(:disabled) { background: var(--danger-200) !important; }

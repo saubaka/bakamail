@@ -35,7 +35,7 @@ test("搜索表单：关键词独占一行，其余四项整齐排成一行，�
 test("选择框、日期框与输入框同高同圆角同字号，聚焦样式一致；手机上输入框字号 16px 避免 iOS 自动放大", () => {
   const css = source("styles/theme-controls.css");
   assert.match(css, /#app \.field \.themed-control \{ min-height: 48px; padding: 11px 13px; border-radius: 13px; font-size: 13px; \}/);
-  assert.match(css, /#app \.themed-control:focus-visible \{ border-color: var\(--line-blue-strong\); outline: 1px solid var\(--line-blue-strong\); outline-offset: 3px; \}/);
+  assert.match(css, /#app \.themed-control:focus-visible \{ border-color: var\(--line-blue-strong\); outline: 1px solid var\(--focus-line\); outline-offset: 3px; \}/);
   assert.match(css, /@media \(max-width: 900px\) \{[^}]*textarea, select\),\s*#app \.field \.themed-control \{ font-size: 16px; \}/);
 });
 

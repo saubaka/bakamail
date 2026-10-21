@@ -17,7 +17,7 @@ const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
 .toggle > input { position: absolute !important; width: 1px !important; height: 1px !important; margin: 0 !important; padding: 0 !important; opacity: 0 !important; pointer-events: none !important; }
 .toggle__track { position: relative; width: 44px; height: 26px; border: 1px solid var(--line-blue); border-radius: 999px; background: #e9eff4; transition: background 180ms var(--ease, ease), border-color 180ms var(--ease, ease); }
 .toggle__track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(72, 105, 131, .25); transition: transform 220ms var(--spring, ease); }
-.toggle > input:checked + .toggle__track { border-color: #8fc2e1; background: #a8d0f4; }
+.toggle > input:checked + .toggle__track { border-color: var(--line-blue); background: var(--blue-200); }
 .toggle > input:checked + .toggle__track::after { transform: translateX(18px); }
 .toggle > input:focus-visible + .toggle__track { outline: 3px solid rgba(143, 198, 232, .4); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .toggle__track, .toggle__track::after { transition: none; } }

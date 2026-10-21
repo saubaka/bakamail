@@ -53,18 +53,18 @@ export const ERROR_PAGE_CSS = `
 .ep-logo svg{display:block;width:100%;height:100%}
 .ep-site{margin:10px 0 0;font-size:13px;font-weight:600;letter-spacing:.025em;color:#667085}
 .ep-code{display:flex;justify-content:center;margin:6px 0 0;font-size:clamp(64px,19vw,92px);font-weight:650;line-height:1.05;letter-spacing:.02em;color:#bed8ef;user-select:none}
-.ep--server .ep-code{color:#efc8c5}
+.ep--server .ep-code{color:#f3cbd3}
 .ep-code span{display:inline-block;animation:ep-digit .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.1s + var(--i,0)*.06s)}
 .ep-title{margin:4px 0 8px;font-size:24px;line-height:1.35;font-weight:650;letter-spacing:-.02em;color:#354052;animation:ep-fade .4s ease .2s both}
 .ep-message{max-width:340px;margin:0 auto;font-size:14px;line-height:1.75;color:#667085;overflow-wrap:anywhere;animation:ep-fade .4s ease .25s both}
 .ep-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:26px;animation:ep-fade .4s ease .3s both}
-.ep-button,.ep-link{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border:1px solid #bed8ef;border-radius:13px;font:inherit;font-size:14px;font-weight:600;color:#354052;text-decoration:none;cursor:pointer;transition:transform 180ms ease,background 180ms ease,border-color 180ms ease,box-shadow 180ms ease}
+.ep-button,.ep-link{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border:1px solid #dceaf7;border-radius:13px;font:inherit;font-size:14px;font-weight:600;color:#354052;text-decoration:none;cursor:pointer;transition:transform 180ms ease,background 180ms ease,border-color 180ms ease,box-shadow 180ms ease}
 .ep-button{background:#E5EFFB}
 .ep-link{background:#fff;border-color:#dceaf7}
-.ep-actions>.ep-link:only-child{background:#E5EFFB;border-color:#bed8ef}
+.ep-actions>.ep-link:only-child{background:#E5EFFB;border-color:#dceaf7}
 .ep-button:hover,.ep-link:hover{transform:translateY(-2px);background:#d9e9fa;box-shadow:0 1px 2px rgba(61,82,110,.06)}
 .ep-button:active,.ep-link:active{transform:translateY(0) scale(.98)}
-.ep-button:focus-visible,.ep-link:focus-visible{outline:2px solid #bed8ef;outline-offset:3px}
+.ep-button:focus-visible,.ep-link:focus-visible{outline:2px solid #dceaf7;outline-offset:3px}
 .ep-meta{margin:22px 0 0;font-size:12px;color:#667085;overflow-wrap:anywhere;animation:ep-fade .4s ease .35s both}
 .ep-meta code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:#354052}
 .ep-footer{flex:none;padding:0 24px 24px;text-align:center;font-size:11px;line-height:1.7;color:#667085}

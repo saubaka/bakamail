@@ -4,7 +4,7 @@
 .themed-control > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .themed-control:hover, .themed-control[aria-expanded="true"] { border-color: var(--line-blue-strong); background: var(--fog-white); }
 .themed-control:active { transform: scale(.985); }
-.themed-control:focus-visible, .themed-popup button:focus-visible { outline: 2px solid var(--line-blue-strong); outline-offset: 2px; }
+.themed-control:focus-visible, .themed-popup button:focus-visible { outline: 2px solid var(--focus-line); outline-offset: 2px; }
 .themed-control:disabled { opacity: .5; cursor: not-allowed; }
 .themed-control__arrow { width: 7px; height: 7px; flex: 0 0 7px; border-right: 1.5px solid var(--text-soft); border-bottom: 1.5px solid var(--text-soft); transform: rotate(45deg) translateY(-2px); transition: transform 200ms; }
 .themed-control[aria-expanded="true"] .themed-control__arrow { transform: rotate(225deg); }
@@ -27,7 +27,7 @@
 #app input[type="checkbox"]:checked::after { transform: translateY(-1px) rotate(-45deg) scale(1) !important; }
 #app input[type="radio"] { border-radius: 50% !important; }
 #app input[type="radio"]:checked::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--text-soft); }
-#app input[type="checkbox"]:focus-visible, #app input[type="radio"]:focus-visible { outline: 2px solid var(--line-blue-strong); outline-offset: 3px; }
+#app input[type="checkbox"]:focus-visible, #app input[type="radio"]:focus-visible { outline: 2px solid var(--focus-line); outline-offset: 3px; }
 #app input[type="checkbox"]:disabled, #app input[type="radio"]:disabled { opacity: .45; cursor: not-allowed; }
 .compose-file-input { display: none !important; }
 .themed-number-field { position: relative; }
@@ -43,7 +43,7 @@
 #app summary::-webkit-details-marker { display: none; }
 #app summary { list-style: none; }
 #app ::-webkit-scrollbar, .themed-popup::-webkit-scrollbar { width: 6px; height: 6px; }
-#app ::-webkit-scrollbar-thumb, .themed-popup::-webkit-scrollbar-thumb { background: var(--line-blue-strong); border-radius: 10px; }
+#app ::-webkit-scrollbar-thumb, .themed-popup::-webkit-scrollbar-thumb { background: var(--blue-200); border-radius: 10px; }
 #app ::-webkit-scrollbar-track, .themed-popup::-webkit-scrollbar-track { background: transparent; }
 @keyframes themed-popup-in { from { opacity: 0; transform: translateY(5px) scale(.98); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .themed-popup { animation: none; } .themed-control, .themed-control__arrow, .themed-popup button { transition: none; } }
@@ -52,7 +52,7 @@
 
 /* 选择框、日期框与输入框同高、同圆角、同字号，聚焦时的样式也一致（输入框是 48px 高、13px 圆角）。 */
 #app .field .themed-control { min-height: 48px; padding: 11px 13px; border-radius: 13px; font-size: 13px; }
-#app .themed-control:focus-visible { border-color: var(--line-blue-strong); outline: 1px solid var(--line-blue-strong); outline-offset: 3px; }
+#app .themed-control:focus-visible { border-color: var(--line-blue-strong); outline: 1px solid var(--focus-line); outline-offset: 3px; }
 /* 手机上输入框字号小于 16px 时 iOS 会在点击后自动放大页面，输入框和页面看起来突然变大：统一用 16px。 */
 @media (max-width: 900px) {
   #app :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]), textarea, select),

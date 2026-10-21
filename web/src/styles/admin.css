@@ -23,10 +23,11 @@
 }
 
 .button--danger {
-  border-color: var(--danger-700);
-  background: var(--danger-700);
-  color: var(--surface);
+  border-color: var(--danger-300);
+  background: var(--danger-100);
+  color: var(--danger-700);
 }
+.button--danger:hover:not(:disabled) { background: var(--danger-200); }
 
 .admin-drawer-backdrop {
   position: fixed;
@@ -260,7 +261,7 @@ html[data-performance="low"] .admin-panel-leave-active { transition: none; }
 }
 
 .baka-overview-stat.is-alert {
-  border-color: var(--danger-700);
+  border-color: var(--danger-300);
   background: var(--danger-100);
 }
 
@@ -539,16 +540,16 @@ html[data-performance="low"] .admin-panel-leave-active { transition: none; }
 .admin-rail__link:active { transform: scale(0.985); }
 .admin-rail__link.is-current { color: var(--blue-600); font-weight: 600; }
 .admin-rail__link.is-current:hover { background: transparent; }
-.admin-rail__link:focus-visible, .admin-rail__tool:focus-visible, .admin-rail__search:focus-visible { outline: 2px solid var(--blue-600); outline-offset: 2px; }
+.admin-rail__link:focus-visible, .admin-rail__tool:focus-visible, .admin-rail__search:focus-visible { outline: 2px solid var(--focus-line); outline-offset: 2px; }
 
 /* 当前页指示块：一个元素，在菜单项之间滑动 */
 .admin-rail__indicator { position: absolute; z-index: 0; top: 0; left: 4px; right: 4px; border-radius: 12px; background: var(--blue-100); opacity: 0; pointer-events: none; }
-.admin-rail__indicator::before { content: ""; position: absolute; top: 11px; bottom: 11px; left: 0; width: 3px; border-radius: 0 3px 3px 0; background: var(--blue-600); }
+.admin-rail__indicator::before { content: ""; position: absolute; top: 11px; bottom: 11px; left: 0; width: 3px; border-radius: 0 3px 3px 0; background: var(--line-blue-strong); }
 .admin-rail__indicator.is-ready { transition: transform 300ms var(--spring), height 200ms var(--ease), opacity 160ms var(--ease); }
 
 .admin-rail__badge { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; color: var(--surface); font-size: 11px; font-weight: 700; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums; }
-.admin-rail__badge.is-info { background: var(--blue-600); }
-.admin-rail__badge.is-alert { background: var(--danger-700); }
+.admin-rail__badge.is-info { background: var(--line-blue); color: var(--graphite-blue); }
+.admin-rail__badge.is-alert { background: var(--danger-200); color: var(--danger-700); }
 .admin-rail__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .admin-rail.is-collapsed .admin-rail__badge { position: absolute; top: 6px; left: 29px; box-sizing: content-box; min-width: 0; width: 8px; height: 8px; padding: 0; border: 2px solid var(--surface); font-size: 0; line-height: 0; }
 

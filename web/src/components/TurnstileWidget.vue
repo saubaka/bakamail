@@ -127,9 +127,9 @@ defineExpose({ reset, retry });
 .ts-box__failure > span:nth-child(2) { flex: 1 1 140px; min-width: 0; overflow-wrap: anywhere; }
 .ts-box__status { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--text-soft); font-size: 12px; line-height: 1.6; transition: color 200ms var(--ease, ease); }
 .ts-box.is-verified .ts-box__status { color: #2c7a5a; }
-.ts-box.is-error .ts-box__status { color: #a24c4c; }
+.ts-box.is-error .ts-box__status { color: var(--danger-700); }
 .ts-box__mark { display: inline-grid; place-items: center; flex: 0 0 16px; width: 16px; height: 16px; }
-.ts-box__mark--warn { border-radius: 50%; background: #fbe3e3; color: #b05252; font-size: 11px; font-weight: 700; }
+.ts-box__mark--warn { border-radius: 50%; background: var(--danger-100); color: var(--danger-700); font-size: 11px; font-weight: 700; }
 .ts-box__mark svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .ts-box__mark svg path { stroke-dasharray: 16; stroke-dashoffset: 16; animation: ts-check 300ms 60ms var(--ease, ease) forwards; }
 .ts-box__dot { width: 7px; height: 7px; border-radius: 50%; background: #9bc9e5; }

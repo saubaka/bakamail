@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "c225cf754a6d24e526e5c0b35111645899827bac00e6c48198212a7727d438aa",
+      "sha256": "5eaed243c9410f319cba5da592b3320c9931bbd206022fd1f3adc112ca7c69fa",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -43,22 +43,22 @@
     },
     "deploy/error-pages/403.html": {
       "source": "deploy/error-pages/403.html",
-      "sha256": "52d81dfabd52e6528f1639bdc3d5442e8e9e129524d82c20845dd739aa8c3a72",
+      "sha256": "04598f1cfbc983d6974541a8d1a052f1faa478305f2fb324a027238515ef6488",
       "executable": false
     },
     "deploy/error-pages/404.html": {
       "source": "deploy/error-pages/404.html",
-      "sha256": "f42c261e3d3d734aad8302484ec270ce6f61ee3f520e8fd65c00221e43a4770d",
+      "sha256": "9c5f981af0cc1d105242497244b82de15b009fc033ffedee7b5ca22dffeb168d",
       "executable": false
     },
     "deploy/error-pages/500.html": {
       "source": "deploy/error-pages/500.html",
-      "sha256": "154d9b0ba088600ff8732cd600c7f2b77aa5ed276faf0fc496eb3e94653f248a",
+      "sha256": "09fac46be22bebd36178bff92f9b78c74fb2decec8d5e1102d8baa540f02a204",
       "executable": false
     },
     "deploy/error-pages/503.html": {
       "source": "deploy/error-pages/503.html",
-      "sha256": "a844aea5fcf5e1bf72c3cad7de7dd87394b669794680049ddcc363a47f1af040",
+      "sha256": "6f22f1a1e6a6c5abddf2f55dc423817ce89d0368ce81f98043d5c1b2eb118b7e",
       "executable": false
     },
     "deploy/error-pages/openresty.conf.example": {
@@ -68,7 +68,7 @@
     },
     "deploy/error-pages/unreachable.html": {
       "source": "deploy/error-pages/unreachable.html",
-      "sha256": "3cb7ad1b03165099a43cd82b7ef292e4b0d9abc3e288f16083fc881a20ddd547",
+      "sha256": "370b7c5ec5168f89659f85c023916eca15310b9dbf4319b0a596327d3e6b360e",
       "executable": false
     },
     "deploy/export-mail-logs.py": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "92224aefbd457927c9e78e3bf7d31cc793ee514454e36b198eb5c4415be1550e",
+      "sha256": "cdf4296117aa7726f8685f172d27a0b154928d400024f48afc82905ce59219aa",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "508501f7952a2bce3bbe25f039d96d83c1e14d3670c75dd5d306a12a56118853",
+      "sha256": "448af29e6ab46c5526e116a5110ba44a34c70a13e665cd118fe7ec8ee9dd3a67",
       "executable": false
     },
     "README.en.md": {
@@ -198,7 +198,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "b7af14cc18ed504d41d6b163d428eff85c586f1049488126f3adba41bdf5dab4",
+      "sha256": "a51017c0c503fbca39fba3a29126b596706afc6930b5050228e51ae9be1de819",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -633,7 +633,7 @@
     },
     "shared/errorPage.ts": {
       "source": "shared/errorPage.ts",
-      "sha256": "3db0067994ce36c792d746f74ab937676d278aafe881b4e8a62e86ea1f0a43db",
+      "sha256": "de7e4729db9dc4fdf13897d0e12d46ca68ed17913075299153561e9cf8d542c6",
       "executable": false
     },
     "shared/invitePolicy.ts": {
@@ -668,7 +668,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "9569ff23204ce131d3dfcff286c0510e423ece4bd3ce9df7268bfcbf8ff51d30",
+      "sha256": "b53300286b1cda4450f9c163a17d5660022fca14dd95e2be98604469451e625e",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -898,7 +898,7 @@
     },
     "web/src/components/admin/ToggleSwitch.vue": {
       "source": "web/src/components/admin/ToggleSwitch.vue",
-      "sha256": "be32e2adf542abe9429d6e2f9d194f44e6775a1993f8388034cfa7749d3aee55",
+      "sha256": "78d3b1783200c61b4539b9955dffe6a8155903908a8985da3337b0c63f989632",
       "executable": false
     },
     "web/src/components/admin/TotpSettings.vue": {
@@ -988,7 +988,7 @@
     },
     "web/src/components/TurnstileWidget.vue": {
       "source": "web/src/components/TurnstileWidget.vue",
-      "sha256": "c2ba459beee2c8d4aa4e9203bea15851a20274e207f30ca044e8c31f1d7ffc98",
+      "sha256": "6c899380d4c24f3d72ccddf66644a58b3c1e9ef6437b249affdf3a18360c082f",
       "executable": false
     },
     "web/src/dialog.ts": {
@@ -1203,7 +1203,7 @@
     },
     "web/src/styles/admin.css": {
       "source": "web/src/styles/admin.css",
-      "sha256": "6f4f234841b86ee14460a5cbe51729d6266ab13035895320677ec21dd569af7c",
+      "sha256": "0392088bc02e211fe42add8a23eac33ed833297fbec7c67e9f5390e38d1e0633",
       "executable": false
     },
     "web/src/styles/app.css": {
@@ -1213,7 +1213,7 @@
     },
     "web/src/styles/dashed-accent.css": {
       "source": "web/src/styles/dashed-accent.css",
-      "sha256": "ae53a874916bf234c1d873dc3e7976fd3d2029661383caf9d5ecce14d8b8ba51",
+      "sha256": "ce15da263e86f994ebb1d2809d749ddc63c2928785d755ce1b137bd55b647a90",
       "executable": false
     },
     "web/src/styles/dialogs.css": {
@@ -1228,12 +1228,12 @@
     },
     "web/src/styles/local-theme.css": {
       "source": "web/src/styles/local-theme.css",
-      "sha256": "e9d4df809f4432ed13ccd776c36b2f6cf5cf86452e4d8931250d6affdae12209",
+      "sha256": "1162212b399324803bd911a5b824b31984bb3631bc58c8b18476c9788b040dfe",
       "executable": false
     },
     "web/src/styles/login.css": {
       "source": "web/src/styles/login.css",
-      "sha256": "b6b113e4d97a78126fafe3b9fc64d06ec4921988794c713e3b97883ac33ca141",
+      "sha256": "e4a9bc1ffa388f0de50df602dc04ea8a18fdaef8a2e89d9f4fcff9a148e5374c",
       "executable": false
     },
     "web/src/styles/mail-overrides.css": {
@@ -1253,12 +1253,12 @@
     },
     "web/src/styles/notifications.css": {
       "source": "web/src/styles/notifications.css",
-      "sha256": "5f6a4b209e7f60f3d6fcf3dded66f3f7b5cd3de783b43eef65051321029da82a",
+      "sha256": "1b8d362504434d799d6d349ab6ea08534fce32c74b560426c8c973485f93ea59",
       "executable": false
     },
     "web/src/styles/reader.css": {
       "source": "web/src/styles/reader.css",
-      "sha256": "d47d7a73c1193357e439c55ef705068d430a02ab76a9eacaec47c4ee5ad5a8e5",
+      "sha256": "5ce625fd357515d1df339a50b87b0fea9855ae60cc665e2c9aa010c71d410eee",
       "executable": false
     },
     "web/src/styles/search-motion.css": {
@@ -1268,7 +1268,7 @@
     },
     "web/src/styles/theme-controls.css": {
       "source": "web/src/styles/theme-controls.css",
-      "sha256": "ecb076fa3075dcb23f927cb30b1461d81ede7c0c21eb31f05295895ddede1501",
+      "sha256": "46fc7a9077c3f99f13bf5ddbb6fb32aeb56b4f6448b7823fd8160d925fdd2d5d",
       "executable": false
     },
     "web/src/styles/vendor/manifest.json": {
@@ -1293,7 +1293,7 @@
     },
     "web/src/styles/workspace.css": {
       "source": "web/src/styles/workspace.css",
-      "sha256": "18042d5ef572876531093d757e72cee02bdec2ada10cdf362a094b92a3f34df5",
+      "sha256": "90b846802df88b4982e6e198e10e526bd33b2a20fdf6d04818e91ebeeddfdd60",
       "executable": false
     },
     "web/src/surfaceLines.ts": {
@@ -1328,7 +1328,7 @@
     },
     "web/src/views/admin/HumanVerificationView.vue": {
       "source": "web/src/views/admin/HumanVerificationView.vue",
-      "sha256": "19783cf843d1957c7ff7814b96b8a21b35369ecbbf74a92ebefcc212c0fca035",
+      "sha256": "03066c34b4bc41b3d4460d7056f605ffd6b34115b8044f7830d6748e7314c41f",
       "executable": false
     },
     "web/src/views/admin/InvitesView.vue": {
@@ -1353,7 +1353,7 @@
     },
     "web/src/views/admin/SeoView.vue": {
       "source": "web/src/views/admin/SeoView.vue",
-      "sha256": "fa5b3872d349a27a18dffceb3d445a03bc14f65b670abc82e9e9f72d5bc16ce0",
+      "sha256": "69150e55dc053a7bed804c4bceef1fe5215767ac84e6d83bb124b93380d28c71",
       "executable": false
     },
     "web/src/views/admin/SystemView.vue": {
@@ -1641,6 +1641,11 @@
       "sha256": "fa8432e88e0e52fc83813cba2a334f0af3342ba67f4d35b6cb9da37cdc2d704c",
       "executable": false
     },
+    "web/test/line-color-theme.test.ts": {
+      "source": "web/test/line-color-theme.test.ts",
+      "sha256": "6bd86d3a539f2eb208ec35fb258bb4fb775cdc8889a3ab74ecb5e78e9a513703",
+      "executable": false
+    },
     "web/test/local-fluid-workspace.test.ts": {
       "source": "web/test/local-fluid-workspace.test.ts",
       "sha256": "4bad9d9ae388f3085f0a8f0ae4cc90e42760027a835b3ccc89bb9d2c914b3f0a",
@@ -1848,7 +1853,7 @@
     },
     "web/test/user-pages-polish.test.ts": {
       "source": "web/test/user-pages-polish.test.ts",
-      "sha256": "5e17ad1bcbd862e2022c16e2db84486273362d840f97521cafeaa2155f6d0092",
+      "sha256": "dbc5bde28042540958b4b233d0f53db38454d8e5c6dd7924b27b7965365e750c",
       "executable": false
     },
     "web/test/workspace-motion.test.ts": {

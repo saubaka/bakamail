@@ -12,7 +12,7 @@ body:has(.mail-workspace) { padding-bottom: 0; }
 .desktop-sidebar-toggle { display:grid; place-items:center; width:42px; height:42px; padding:0; border:1px solid var(--line-blue); border-radius:13px; background:var(--surface); color:var(--text-soft); cursor:pointer; transition:border-color 180ms ease,box-shadow 220ms ease,color 180ms ease,transform 180ms var(--ease); }
 .desktop-sidebar-toggle:hover { border-color:var(--line-blue-strong); color:var(--graphite-blue); box-shadow:var(--shadow-sm); }
 .desktop-sidebar-toggle:active { transform:scale(.96); }
-.desktop-sidebar-toggle:focus-visible { outline:2px solid var(--line-blue-strong); outline-offset:2px; }
+.desktop-sidebar-toggle:focus-visible { outline:2px solid var(--focus-line); outline-offset:2px; }
 .desktop-sidebar-toggle svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; }
 .desktop-sidebar-toggle-icon path { transform-box:fill-box; transform-origin:center; transition:transform 260ms cubic-bezier(.22,.85,.25,1),opacity 160ms ease; }
 .desktop-sidebar-toggle-icon.is-expanded .desktop-sidebar-toggle-icon__top { transform:translate3d(-1px,2.2px,0) rotate(-18deg) scaleX(.76); }
@@ -46,7 +46,7 @@ body:has(.mail-workspace) { padding-bottom: 0; }
 .dock-item:disabled { opacity: .5; cursor: default; }
 .dock-active-pill { position: absolute; left: 0; top: 0; width: 0; height: 0; border-radius: 22px; background: transparent; opacity: 0; z-index: -1; will-change: transform, height; transition: opacity 160ms ease; pointer-events: none; }
 .dock-active-pill.is-ready { opacity: 1; }
-.dock-item:focus-visible, .dock-menu :is(button,a):focus-visible { outline: 2px solid var(--line-blue-strong); outline-offset: -2px; }
+.dock-item:focus-visible, .dock-menu :is(button,a):focus-visible { outline: 2px solid var(--focus-line); outline-offset: -2px; }
 .dock-backdrop { position: fixed; inset: 0; z-index: 70; border: 0; background: color-mix(in srgb, var(--fog-white) 45%, transparent); cursor: default; }
 .dock-menu { position: fixed; bottom: calc(140px + env(safe-area-inset-bottom)); z-index: 80; display: flex; flex-direction: column; max-height: calc(100svh - 182px - env(safe-area-inset-bottom)); border: 1px solid transparent; border-radius: 24px; background: var(--surface); box-shadow: var(--shadow-float); transform-origin: var(--menu-origin-x) bottom; will-change: transform, opacity; animation: dock-menu-in 360ms cubic-bezier(.18,.82,.22,1) both; }
 .dock-menu::after { content: ""; position: absolute; left: calc(var(--menu-origin-x) - 9px); bottom: -10px; width: 18px; height: 18px; transform: rotate(45deg); border-right: 1px solid var(--line-blue-strong); border-bottom: 1px solid var(--line-blue-strong); border-radius: 0 0 7px 0; background: var(--surface); pointer-events: none; }
@@ -87,7 +87,7 @@ body:has(.mail-workspace) { padding-bottom: 0; }
 .desktop-folder-trigger.is-hidden { max-height:0; margin-top:0; border-color:transparent; opacity:0; visibility:hidden; pointer-events:none; transform:translateY(-8px) scale(.7); transition-delay:0s,0s,0s,0s,0s,0s,0s,180ms; }
 .desktop-folder-trigger:hover { border-color:var(--line-blue-strong); color:var(--graphite-blue); box-shadow:var(--shadow-sm); }
 .desktop-folder-trigger:active { transform:scale(.96); }
-.desktop-folder-trigger:focus-visible { outline:2px solid var(--line-blue-strong); outline-offset:2px; }
+.desktop-folder-trigger:focus-visible { outline:2px solid var(--focus-line); outline-offset:2px; }
 .desktop-folder-trigger svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.65; stroke-linecap:round; stroke-linejoin:round; }
 .desktop-folder-count { position:absolute; right:-3px; top:-5px; display:grid; place-items:center; min-width:18px; height:18px; padding:0 4px; border:1px solid var(--line-blue-strong); border-radius:10px; background:var(--surface); color:var(--graphite-blue); font-size:9px; font-weight:650; line-height:1; box-shadow:0 2px 8px color-mix(in srgb,var(--graphite-blue) 10%,transparent); }
 .dock-folder-host { max-height:1200px; margin-top:14px; border-top:1px solid var(--line-blue); padding-top:10px; opacity:1; visibility:visible; transform:none; transform-origin:center top; transition:max-height 300ms cubic-bezier(.22,.85,.25,1),margin 260ms cubic-bezier(.22,.85,.25,1),padding 260ms cubic-bezier(.22,.85,.25,1),border-color 160ms ease,opacity 180ms ease 70ms,transform 300ms cubic-bezier(.22,.85,.25,1),visibility 0s linear 0s; }

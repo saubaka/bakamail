@@ -12,7 +12,7 @@
 .reader-subtle,.reader-security { display:inline-flex; align-items:center; gap:8px; min-height:30px; padding:4px 9px; border:1px solid var(--line-blue); border-radius:10px; background:var(--fog-white); color:var(--text-soft); font:inherit; font-size:11px; cursor:pointer; }
 .reader-subtle { border-color:transparent; padding-left:0; background:transparent; }
 .reader-security:hover,.reader-subtle:hover { background:var(--cloud-blue); }
-.reader-content :is(button,a):focus-visible { outline:2px solid var(--line-blue-strong); outline-offset:2px; }
+.reader-content :is(button,a):focus-visible { outline:2px solid var(--focus-line); outline-offset:2px; }
 .reader-expand { display:grid; grid-template-rows:0fr; opacity:0; transition:grid-template-rows 180ms var(--ease),opacity 140ms ease; }
 .reader-expand.is-open { grid-template-rows:1fr; opacity:1; }
 .reader-expand-clip,.reader-notice-clip { min-height:0; overflow:hidden; }

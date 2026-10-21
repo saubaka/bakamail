@@ -234,9 +234,9 @@ let statsTimer = 0;
 const rangeLabel = computed(() => TREND_RANGES.find((item) => item.key === range.value)?.label ?? "");
 const buckets = computed(() => (series.value ? aggregate(series.value.points, series.value.range) : []));
 const chartSeries = computed(() => [
-  { key: "passed", label: "通过", color: "#6fa8dc", values: buckets.value.map((bucket) => bucket.passed) },
-  { key: "rejected", label: "被拒绝", color: "#d98e8e", values: buckets.value.map((bucket) => bucket.rejected) },
-  { key: "unavailable", label: "Cloudflare 无法访问", color: "#e6c273", values: buckets.value.map((bucket) => bucket.unavailable) },
+  { key: "passed", label: "通过", color: "#a9cdf0", values: buckets.value.map((bucket) => bucket.passed) },
+  { key: "rejected", label: "被拒绝", color: "#f2bcc8", values: buckets.value.map((bucket) => bucket.rejected) },
+  { key: "unavailable", label: "Cloudflare 无法访问", color: "#f0d9a0", values: buckets.value.map((bucket) => bucket.unavailable) },
 ]);
 
 async function loadStats(quiet = false): Promise<void> {
@@ -275,7 +275,7 @@ onBeforeUnmount(() => { statsController?.abort(); window.clearInterval(statsTime
 .hv-section > .hv-widget + .hv-actions { margin-top: 14px; }
 .hv-inline { color: var(--text-soft); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
 .hv-inline.is-good { color: #2c7a5a; }
-.hv-inline.is-bad { color: var(--danger-700, #a24c4c); }
+.hv-inline.is-bad { color: var(--danger-700); }
 .hv-warn { margin: 0 0 4px; color: #8a6a24; font-size: 13px; line-height: 1.7; }
 .hv-widget { max-width: 420px; }
 .hv-switch { position: relative; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text-soft); font-size: 13px; }
@@ -284,7 +284,7 @@ onBeforeUnmount(() => { statsController?.abort(); window.clearInterval(statsTime
 .hv-switch > input { position: absolute !important; width: 1px !important; height: 1px !important; margin: 0 !important; padding: 0 !important; opacity: 0 !important; pointer-events: none !important; }
 .hv-switch__track { position: relative; flex: 0 0 auto; width: 44px; height: 26px; border: 1px solid var(--line-blue); border-radius: 999px; background: #e9eff4; transition: background 180ms var(--ease, ease), border-color 180ms var(--ease, ease); }
 .hv-switch__track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(72, 105, 131, .25); transition: transform 220ms var(--spring, ease); }
-.hv-switch > input:checked + .hv-switch__track { border-color: #8fc2e1; background: #a8d0f4; }
+.hv-switch > input:checked + .hv-switch__track { border-color: var(--line-blue); background: var(--blue-200); }
 .hv-switch > input:checked + .hv-switch__track::after { transform: translateX(18px); }
 .hv-switch > input:focus-visible + .hv-switch__track { outline: 3px solid rgba(143, 198, 232, .4); outline-offset: 2px; }
 .hv-switch > input:disabled + .hv-switch__track { opacity: .6; }
