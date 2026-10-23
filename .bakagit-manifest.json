@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "82d6d6f40e75453dfdf8ecaca8a880a0916119c562f1c788f8253362af76e048",
+      "sha256": "b5352d8510be6d5f598f46f734770119e66b09a311dc0fbcc5de3a7ecd9da8ee",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "2230d81d1c94e4d96954538dacd12e280f494e3fb40cb0496a7b716bee447dca",
+      "sha256": "dc20a9d20207fe1f66c2b5914cc6aa99e045690628d9c95e538ea3970bff08a3",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "5285aa752cac805955e5d3f6257f0def5321216a75e5996bc98dc4979676106a",
+      "sha256": "e1146d0688fc1143abc5c12548e86ef72406aa46706a427c55e5ddd76ee0d969",
       "executable": false
     },
     "README.en.md": {
@@ -198,7 +198,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "7274cec89f3963f66e8f328431bfe19fc2f0fd1c9929a4d076ad315832832976",
+      "sha256": "9cd1c7cce1d82ef23a3b2144a50f6650fb90e154673696231d9f3961ad5d0806",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -658,7 +658,7 @@
     },
     "shared/seo.ts": {
       "source": "shared/seo.ts",
-      "sha256": "d7d9312be7644c7a828231b74893ac980c4427f6b287467d26942c563c950aaa",
+      "sha256": "47d82f84a364af68b69c60b53dca057dc89ad02d86bd05dff6f949336a69cf9d",
       "executable": false
     },
     "web/index.html": {
@@ -668,7 +668,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "b712594b8cac8cdfb80aacb8d7aec5f74298abd00be9f5b382000844f4cb664e",
+      "sha256": "8316e530645aa4ca8764d7ff6fb78dabaade2126895ee6c14e11aa9e924857c8",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -978,7 +978,7 @@
     },
     "web/src/components/RepositoryNote.vue": {
       "source": "web/src/components/RepositoryNote.vue",
-      "sha256": "dda02f810c8ef357173e63ab698d5e6ec5df1e5e1dc31768966d5c42468b0af4",
+      "sha256": "8d01957a31cfcd8905f319fcae9aac8a15e346fa4c034d5151c358df1dbc55d2",
       "executable": false
     },
     "web/src/components/SmoothBlock.vue": {
@@ -1373,7 +1373,7 @@
     },
     "web/src/views/IntroView.vue": {
       "source": "web/src/views/IntroView.vue",
-      "sha256": "43f202107fcb133c1e34a86e00e19f095211f5ef8c73c0fd1c9f0230ddd10518",
+      "sha256": "5972b81a427fae4f8d62df0962190d79b45c78c8d3122261b851dfe11b23e907",
       "executable": false
     },
     "web/src/views/LoginView.vue": {
@@ -1473,7 +1473,7 @@
     },
     "web/test/auth-pages-layout.test.ts": {
       "source": "web/test/auth-pages-layout.test.ts",
-      "sha256": "ca5e893194f6ad7011d2fcc0a390896ec5753d8d85bb272eceec083ce97aaaf9",
+      "sha256": "47657809edecfdeb1dbfdd42beb5ddf0c635b7ab088f7a3c4354dd3067a5c368",
       "executable": false
     },
     "web/test/auth-security-ui.test.ts": {
@@ -1628,7 +1628,7 @@
     },
     "web/test/intro-footer.test.ts": {
       "source": "web/test/intro-footer.test.ts",
-      "sha256": "f42b46b129b8d200971f229ceaccd3cc075c99dcadc8ed0199621027af1723e1",
+      "sha256": "18e9affc978b266d18fc0a351c51d03f41988cd1d4262951e84621b3fb84b4bb",
       "executable": false
     },
     "web/test/intro-reveal.test.ts": {
@@ -1798,7 +1798,7 @@
     },
     "web/test/seo-rules.test.ts": {
       "source": "web/test/seo-rules.test.ts",
-      "sha256": "791d6ea0d792e3b75ed0cc3d14721edfe5550fcfce113bf688abb47cc067de83",
+      "sha256": "24338c1d57f075dbe568f886335e04e1f9add138b87e420d8d85c9f5db49180f",
       "executable": false
     },
     "web/test/session-logout.test.ts": {

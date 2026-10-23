@@ -454,7 +454,7 @@ export function renderNoscript(eff: SeoEffective, year: number): string {
   return `<noscript><main><h1>${escapeHtml(eff.siteName)}</h1><p>${escapeHtml(eff.tagline)}</p><p>${escapeHtml(eff.description)}</p>`
     + `<h2>功能介绍</h2><ul>${features}</ul><h2>常见问题</h2><dl>${faq}</dl>`
     + `<p><a href="/login">登录邮箱</a> · <a href="/register">我有邀请码</a></p></main>`
-    + `<footer><p><a href="${SEO_REPOSITORY_URL}" rel="noopener noreferrer">开源仓库</a></p><p>© ${year} saubaka. BakaMail.</p><p>邮件服务基于 Maddy，第三方项目版权归原作者所有。</p></footer></noscript>`;
+    + `<footer><p><a href="${SEO_REPOSITORY_URL}" rel="noopener noreferrer">Github</a></p><p>© ${year} saubaka. BakaMail.</p><p>邮件服务基于 Maddy，第三方项目版权归原作者所有。</p></footer></noscript>`;
 }
 
 /** 前端启动时读取的站点信息（写在页面里，首屏就是正确的站点名）。 */

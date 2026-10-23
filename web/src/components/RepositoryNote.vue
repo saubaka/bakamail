@@ -1,5 +1,5 @@
 <template>
-  <span class="repository-note">本项目已开源：<a :href="repositoryUrl" target="_blank" rel="noopener noreferrer">开源仓库</a></span>
+  <span class="repository-note"><a :href="repositoryUrl" target="_blank" rel="noopener noreferrer">Github</a></span>
 </template>
 
 <script setup lang="ts">

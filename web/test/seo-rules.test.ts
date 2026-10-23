@@ -273,11 +273,11 @@ test("站点地图：只有首页；不收录、关闭或没有网址时不输�
   assert.ok(renderSitemapXml({ ...resolveSeo(config(), ORIGIN), origin: "https://a.example.com/?a=1&b=2" }, "")!.includes("a=1&amp;b=2"));
 });
 
-test("无脚本正文：包含站点名、描述、功能和问答，底部固定带开源仓库和版权标记，不受站点名影响", () => {
+test("无脚本正文：包含站点名、描述、功能和问答，底部固定带 Github 链接和版权标记，不受站点名影响", () => {
   const html = renderNoscript(resolveSeo(config({ siteName: "某某邮箱", tagline: "我的副标题" }), ORIGIN), 2026);
   assert.match(html, /<h1>某某邮箱<\/h1><p>我的副标题<\/p>/);
   for (const item of INTRO_FAQ) assert.ok(html.includes(item.question));
-  assert.ok(html.includes(`<a href="${SEO_REPOSITORY_URL}" rel="noopener noreferrer">开源仓库</a>`));
+  assert.ok(html.includes(`<a href="${SEO_REPOSITORY_URL}" rel="noopener noreferrer">Github</a>`));
   assert.ok(html.includes("© 2026 saubaka. BakaMail."));
   assert.ok(html.includes("邮件服务基于 Maddy，第三方项目版权归原作者所有。"));
 });
