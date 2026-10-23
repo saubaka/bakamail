@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "b5352d8510be6d5f598f46f734770119e66b09a311dc0fbcc5de3a7ecd9da8ee",
+      "sha256": "33a48f03ba8c18c3d6956b78351f6082934169db1e9c75cd86e597ea0851fb3a",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "dc20a9d20207fe1f66c2b5914cc6aa99e045690628d9c95e538ea3970bff08a3",
+      "sha256": "039603de60b9735f93f887ed547d5d362363a9a73dad615254a2f4c60b608ae5",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "e1146d0688fc1143abc5c12548e86ef72406aa46706a427c55e5ddd76ee0d969",
+      "sha256": "e5cf32beebbb592f07071bebf0c4d7d0587348e8c85f6420e5496ac2ccd84540",
       "executable": false
     },
     "README.en.md": {
@@ -198,7 +198,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "9cd1c7cce1d82ef23a3b2144a50f6650fb90e154673696231d9f3961ad5d0806",
+      "sha256": "524ffa2674b131555d576efe88d70d17894812babbdb980c4312a5ece362188c",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -668,7 +668,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "8316e530645aa4ca8764d7ff6fb78dabaade2126895ee6c14e11aa9e924857c8",
+      "sha256": "7a1266a85b093da4d6cbe08ea8fe5e5e1a99f650ff75d4631c7f7776e34d0178",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
