@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "8cb79dc6b27ecae114ca008c1fbbc872a46e01cec7fb4b2ea96593f062d23fd1",
+      "sha256": "82d6d6f40e75453dfdf8ecaca8a880a0916119c562f1c788f8253362af76e048",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "81d6a6a8fa8684e2d2a7f45045fa448c5c1a7a65e93c879d81e5c5d6c955a604",
+      "sha256": "2230d81d1c94e4d96954538dacd12e280f494e3fb40cb0496a7b716bee447dca",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "42cc80c4cdd36507cc7a2ff885ad824aa7a35228fc65e807db16ef08a5a9a6f8",
+      "sha256": "5285aa752cac805955e5d3f6257f0def5321216a75e5996bc98dc4979676106a",
       "executable": false
     },
     "README.en.md": {
@@ -198,7 +198,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "33715d97e2fd1853a49cb1009b64bf33819dafb69050ebdacd7774692c8b5ce5",
+      "sha256": "7274cec89f3963f66e8f328431bfe19fc2f0fd1c9929a4d076ad315832832976",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -668,7 +668,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "4d65f6f75557a800bb4311c029294b7070b5e971028300a4d48ebebfd2a99d17",
+      "sha256": "b712594b8cac8cdfb80aacb8d7aec5f74298abd00be9f5b382000844f4cb664e",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -1223,7 +1223,7 @@
     },
     "web/src/styles/intro.css": {
       "source": "web/src/styles/intro.css",
-      "sha256": "5de29b35075163d9b66e184dfdf712309844e527dbc275e725bb7ab8243f1e4e",
+      "sha256": "1c74b4d24cebf4fe4fb3f94bd1f5736610309c8eddee2ba7bb4fe7a13fb7868a",
       "executable": false
     },
     "web/src/styles/local-theme.css": {
@@ -1373,7 +1373,7 @@
     },
     "web/src/views/IntroView.vue": {
       "source": "web/src/views/IntroView.vue",
-      "sha256": "03519cc86b07e91563f8f74689fef10605ce28e1836398ce39844fa3a61cdedb",
+      "sha256": "43f202107fcb133c1e34a86e00e19f095211f5ef8c73c0fd1c9f0230ddd10518",
       "executable": false
     },
     "web/src/views/LoginView.vue": {

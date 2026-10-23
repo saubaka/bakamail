@@ -124,7 +124,6 @@
   .intro-project-name { margin-bottom: 20px; font-size: 13px; }
   .intro-hero h1 { font-size: 48px; }
   .intro-lead { font-size: 14px; }
-  .intro-desktop-break { display: none; }
   .intro-window { width: calc(100% - 14px); margin: 0 auto; }
   .intro-window-body { padding: 18px 22px 60px; }
   .intro-window-bar { padding: 14px 16px; gap: 10px; }

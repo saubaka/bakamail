@@ -13,8 +13,8 @@
       <section class="intro-hero" aria-labelledby="intro-title">
         <div v-intro-reveal class="intro-hero-copy intro-reveal--split">
           <span class="intro-project-name intro-stagger" style="--i: 0">{{ siteInfo.siteName }}</span>
-          <h1 id="intro-title" class="intro-stagger" style="--i: 1">自己的邮局，<br />网页上就能用。</h1>
-          <p class="intro-lead intro-stagger" style="--i: 2">{{ siteInfo.siteName }}是给自建邮局用的网页邮箱。<br class="intro-desktop-break" />打开浏览器就能收发邮件、整理文件夹、搜索旧邮件，不用安装客户端。</p>
+          <h1 id="intro-title" class="intro-stagger" style="--i: 1">高性能邮局方案！</h1>
+          <p class="intro-lead intro-stagger" style="--i: 2">{{ siteInfo.siteName }}是 Maddy 的网页端，开浏览器就能收发邮件，不用装客户端。</p>
           <div class="intro-actions intro-stagger" style="--i: 3">
             <router-link class="intro-button" :to="entry">{{ signedIn ? '进入邮箱' : '登录邮箱' }}<span aria-hidden="true">↗</span></router-link>
             <router-link v-if="!signedIn" class="intro-text-link" to="/register">我有邀请码</router-link>
@@ -35,7 +35,7 @@
             </div>
             <div class="intro-demo-copy" aria-live="polite">
               <span>{{ demo === 'inbox' ? `欢迎使用 ${siteInfo.siteName}` : '还没写完的邮件' }}</span>
-              <p>{{ demo === 'inbox' ? '这是一封示例邮件，只用来演示界面。登录之前，这里不会读取任何真实邮件。' : '写到一半可以先存成草稿，下次打开接着写。' }}</p>
+              <p>{{ demo === 'inbox' ? '喵？' : '写到一半可以先存成草稿，下次打开接着写。' }}</p>
             </div>
             <button class="intro-open-letter" type="button" :aria-pressed="opened" @click="opened = !opened">{{ opened ? '收起邮件' : '展开邮件' }}<span aria-hidden="true">{{ opened ? '−' : '+' }}</span></button>
           </div>
