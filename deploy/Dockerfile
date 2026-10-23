@@ -5,7 +5,9 @@
 #   2. 把 maddy 的二进制复制进来，账号生命周期命令直接调用它，
 #      因此不需要挂 docker socket（挂 socket 等于把主机控制权交出去）
 
-FROM node:24-alpine AS build
+# 基础镜像固定到具体版本和摘要：Node 24.22.1 修复了 2026-10-21 公布的 10 项安全问题（含 Brotli 解码器和 TLS 主机名校验）。
+# 以后升级 Node：先在 Docker Hub 确认新版本的 node:<版本>-alpine，再同时改下面两处标签和摘要。
+FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -18,7 +20,7 @@ RUN npm run build \
  && sh scripts/verify-css-parity.sh \
  && sh scripts/verify-no-protocol-leak.sh
 
-FROM node:24-alpine AS runtime
+FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 

@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "5eaed243c9410f319cba5da592b3320c9931bbd206022fd1f3adc112ca7c69fa",
+      "sha256": "8cb79dc6b27ecae114ca008c1fbbc872a46e01cec7fb4b2ea96593f062d23fd1",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -38,7 +38,7 @@
     },
     "deploy/Dockerfile": {
       "source": "deploy/Dockerfile",
-      "sha256": "6d80feeaa840c2c772d56d1939bd712e4b7eb2b9cfb92a68c873710aca5b63eb",
+      "sha256": "2d7d5a89f396b1335cf94034212578a31c02cb3ea5c85d49132b41a847482b8a",
       "executable": false
     },
     "deploy/error-pages/403.html": {
@@ -93,12 +93,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "cdf4296117aa7726f8685f172d27a0b154928d400024f48afc82905ce59219aa",
+      "sha256": "81d6a6a8fa8684e2d2a7f45045fa448c5c1a7a65e93c879d81e5c5d6c955a604",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "448af29e6ab46c5526e116a5110ba44a34c70a13e665cd118fe7ec8ee9dd3a67",
+      "sha256": "42cc80c4cdd36507cc7a2ff885ad824aa7a35228fc65e807db16ef08a5a9a6f8",
       "executable": false
     },
     "README.en.md": {
@@ -198,7 +198,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "a51017c0c503fbca39fba3a29126b596706afc6930b5050228e51ae9be1de819",
+      "sha256": "33715d97e2fd1853a49cb1009b64bf33819dafb69050ebdacd7774692c8b5ce5",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -513,7 +513,7 @@
     },
     "server/test/deployment-20261002.test.ts": {
       "source": "server/test/deployment-20261002.test.ts",
-      "sha256": "d0d0aee91f37cc4a3d536a5c1173b9a8a139f37254329c4ec4657538d2f2a0a5",
+      "sha256": "805bd2a3733dc1fda988c607c355d07811249b461d566141ba48734a4ca6c3ec",
       "executable": false
     },
     "server/test/error-pages.test.ts": {
@@ -668,7 +668,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "b53300286b1cda4450f9c163a17d5660022fca14dd95e2be98604469451e625e",
+      "sha256": "4d65f6f75557a800bb4311c029294b7070b5e971028300a4d48ebebfd2a99d17",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {

@@ -60,3 +60,19 @@ test("发布只允许保留锁定快照，所有 vendor 哈希仍须精确匹配
   });
   assert.match(output,/OK: 已校验 3 份/);
 });
+
+test("镜像基础版本固定到已修复 2026-10-21 Node 安全问题的 24.22.1 或更新版本，并带摘要；发布脚本构建时拉取最新基础层", () => {
+  const root = new URL("../../", import.meta.url);
+  const froms = [...readFileSync(new URL("deploy/Dockerfile", root), "utf8").matchAll(/^FROM (\S+)/gm)].map((match) => match[1]!);
+  assert.equal(froms.length, 2);
+  for (const image of froms) {
+    const match = image.match(/^node:(\d+)\.(\d+)\.(\d+)-alpine@sha256:[a-f0-9]{64}$/);
+    assert.ok(match, `基础镜像必须是 node:<完整版本>-alpine@sha256:<摘要>：${image}`);
+    const [major, minor, patch] = match.slice(1).map(Number) as [number, number, number];
+    assert.equal(major, 24);
+    assert.ok(minor > 22 || (minor === 22 && patch >= 1), `Node 版本过旧：${image}`);
+  }
+  assert.equal(new Set(froms).size, 1, "构建阶段和运行阶段必须使用同一个基础镜像");
+  const releasePath = new URL("scripts/deploy-green.mjs", root);
+  if (existsSync(releasePath)) assert.match(readFileSync(releasePath, "utf8"), /build --pull bakamail/);
+});
