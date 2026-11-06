@@ -54,19 +54,17 @@ test("跳转面板匹配：名称开头优先于包含，再到关键词；拼�
   assert.equal(matchItems(items, "站点名")[0]!.label, "SEO 管理");
   assert.equal(matchItems(items, "sitemap")[0]!.label, "SEO 管理");
   assert.deepEqual(matchItems(items, "zzzz"), []);
-  // 名称开头 > 名称包含：“安全”同时是“安全中心”的开头，也是关键词；排在前面的必须是名称开头的项。
   assert.equal(matchItems(items, "安全")[0]!.label, "安全中心");
-  // 大小写不敏感
   assert.equal(matchItems(items, "ACCOUNTS")[0]!.label, "邮箱账号");
 });
 
 test("匹配排序的四档优先级：名称开头、名称包含、关键词开头、关键词包含；同档保持原顺序", () => {
   const items = [
-    { label: "含关键词", keywords: "xxabc" },       // 关键词包含 → 第 4 档
-    { label: "关键词开头", keywords: "abcd" },      // 关键词开头 → 第 3 档
-    { label: "名称里有 abc", keywords: "" },        // 名称包含 → 第 2 档
-    { label: "abc 开头", keywords: "" },            // 名称开头 → 第 1 档
-    { label: "另一个含关键词", keywords: "yyabc" },  // 关键词包含 → 第 4 档，排在上一个之后
+    { label: "含关键词", keywords: "xxabc" },
+    { label: "关键词开头", keywords: "abcd" },
+    { label: "名称里有 abc", keywords: "" },
+    { label: "abc 开头", keywords: "" },
+    { label: "另一个含关键词", keywords: "yyabc" },
   ];
   assert.deepEqual(matchItems(items, "abc").map((item) => item.label), ["abc 开头", "名称里有 abc", "关键词开头", "含关键词", "另一个含关键词"]);
   assert.deepEqual(matchItems(items, "zzz"), []);
@@ -89,13 +87,10 @@ test("快捷键：Ctrl/⌘+K 随处可用；g 加字母直达；输入框内、�
   assert.equal(resolveShortcut(key("g", { altKey: true }), allow, 0, now).type, "none");
   assert.equal(resolveShortcut(key("G", { shiftKey: true }), allow, 0, now).type, "none");
   assert.equal(resolveShortcut(key("g", { isComposing: true }), allow, 0, now).type, "none");
-  // 第二个键不是页面字母：取消等待
   assert.deepEqual(resolveShortcut(key("z"), allow, armed.armedUntil, now + 100), { type: "none", armedUntil: 0 });
-  // 没有权限的页面不能直达
   const noSecurityWrite = (permission: string) => permission !== "system.security.write";
   assert.equal(resolveShortcut(key("h"), noSecurityWrite, armed.armedUntil, now + 100).type, "none");
   assert.equal(resolveShortcut(key("h"), allow, armed.armedUntil, now + 100).type, "go");
-  // Shift 本身不取消等待（为输入大写字母预留）
   assert.equal(resolveShortcut(key("Shift", { shiftKey: true }), allow, armed.armedUntil, now + 100).armedUntil, armed.armedUntil);
   assert.equal(isTypingTarget({ tagName: "DIV", isContentEditable: true } as unknown as EventTarget), true);
   assert.equal(isTypingTarget({ tagName: "BUTTON" } as unknown as EventTarget), false);
@@ -130,13 +125,12 @@ test("侧栏结构：新组件取代折叠分组，无说明文字、无 v-html�
   for (const file of ["components/admin/AdminRail.vue", "components/admin/AdminIcon.vue", "components/admin/AdminCommandPalette.vue"]) {
     assert.doesNotMatch(source(file), /v-html|innerHTML/, file);
   }
-  // 路由、导航和页面标题只有一个数据源。
   assert.doesNotMatch(shell, /label: "安全中心"|hint:/);
 });
 
 test("侧栏样式：纯色、只用项目令牌、减少动画时关闭过渡，抽屉背景不透明且锁定页面滚动", () => {
   const css = source("styles/admin.css");
-  const start = css.indexOf("后台侧栏：纯色");
+  const start = css.indexOf(".admin-shell.has-rail {");
   assert.ok(start > 0);
   const block = css.slice(start);
   assert.doesNotMatch(block, /gradient/i);
@@ -156,6 +150,6 @@ test("角标：读取失败保留旧值，只在页面可见时轮询，卸载�
   assert.match(badges, /document\.hidden/);
   assert.match(badges, /visibilitychange/);
   assert.match(badges, /onBeforeUnmount\(stop\)/);
-  assert.match(badges, /catch \{ \/\* 角标是辅助信息/);
+  assert.match(badges, /catch \{\s*\}/);
   assert.match(badges, /\/api\/admin\/nav-badges/);
 });

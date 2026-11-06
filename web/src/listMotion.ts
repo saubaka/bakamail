@@ -1,8 +1,3 @@
-/**
- * 列表项增减时的动画辅助：
- * - 离开的卡片先固定在原位置再淡出，其余卡片用 FLIP 平滑补位，而不是瞬间跳动；
- * - 工具页的滚动容器是 .workspace-route-panel，不是 window，滚到编辑区要找对容器。
- */
 export function pinLeavingItem(el: Element): void {
   const item = el as HTMLElement;
   const { offsetTop, offsetLeft, offsetWidth, offsetHeight } = item;
@@ -22,7 +17,6 @@ function reducedMotion(): boolean {
   return root.dataset.motion === "reduce" || root.dataset.performance === "low" || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-/** 把元素顶部带到可视区域（在它所在的滚动容器里），并把焦点交给 focusTarget。 */
 export function revealInScroller(element: HTMLElement, focusTarget?: HTMLElement | null): void {
   const scroller = scrollParentOf(element);
   const behavior: ScrollBehavior = reducedMotion() ? "auto" : "smooth";

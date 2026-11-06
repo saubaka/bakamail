@@ -12,7 +12,6 @@ test("菜单线条移动：整圈线条原样平移，大小不变，不拉长�
   assert.equal(frames[0]!.height, "40px");
   assert.equal(frames[1]!.transform, "translate3d(14px,232px,0)");
   assert.equal(frames[1]!.height, "40px");
-  // 向上移动同样是两帧平移
   const up = planHighlightMove({ x: 14, y: 232, width: 215, height: 40 }, { x: 14, y: 100, width: 215, height: 40 })!;
   assert.equal(up.length, 2);
   assert.ok(HIGHLIGHT_MS >= 400, "移动要有看得清的过渡时间");
@@ -51,12 +50,9 @@ test("会移动的选中线条始终是同一圈实线：只平移，不重画�
   const accent = source("styles/dashed-accent.css");
   assert.match(accent, /\.dock-navigation-highlight \.dash-outline__piece, \.folder-highlight \.dash-outline__piece, \.dock-active-pill \.dash-outline__piece \{ animation:none; \}/);
   assert.doesNotMatch(accent, /dock-line-flow/);
-  const motion = source("mail/highlightMotion.ts");
-  assert.match(motion, /不拉长、不分段、不在终点提前出现/);
   const css = source("styles/workspace.css");
   assert.match(css, /\.dock-navigation-item\.is-active svg \{ animation: dock-icon-settle 520ms/);
   assert.match(css, /prefers-reduced-motion: reduce\) \{\s*\.dock-navigation-item\.is-active svg \{ animation: none; \}/);
-  // 目标按钮被点中后不显示悬停框，终点处不会先冒出一个框
   assert.match(css, /\.dock-navigation-item\.is-active:hover \{ outline: none; box-shadow: none; transform: none; \}/);
 });
 
@@ -64,18 +60,15 @@ test("桌面左侧菜单、文件夹列表、手机底部胶囊、手机展开�
   const workspace = source("components/MailWorkspace.vue");
   const folders = source("components/mail/FolderRail.vue");
   const mover = source("mail/useMovingOutline.ts");
-  // 手机胶囊
   assert.match(workspace, /const dockPill = useMovingOutline\(\{\s*container: dockElement,\s*highlight: pillElement,\s*targetSelector: \(\) => `\.dock-item\[data-dock-index="\$\{dockIndex\.value\}"\]`/);
   assert.match(workspace, /watch\(dockIndex, \(\) => \{ void nextTick\(\(\) => dockPill\.measure\(true\)\); \}\)/);
   assert.match(workspace, /<span ref="pillElement" class="dock-active-pill"/);
-  // 文件夹列表（桌面侧栏和手机展开菜单里的都是它）
   assert.match(folders, /<span ref="highlight" class="folder-highlight"/);
   assert.match(folders, /useMovingOutline\(\{\s*container: tree,\s*highlight,\s*targetSelector: \(\) => `\.folder-item\[data-path="\$\{quote\(props\.currentFolder\)\}"\]`/);
   assert.match(folders, /watch\(\(\) => props\.currentFolder, \(\) => \{ void nextTick\(\(\) => outline\.measure\(true\)\); \}\)/);
   const css = source("styles/workspace.css");
   assert.match(css, /\.folder-tree \.folder-item\.is-current, \.folder-tree \.folder-item\.is-current:hover \{ background: transparent !important; border-color: transparent !important; outline: none !important;/);
   assert.match(css, /\.dock-active-pill \{ position: absolute; left: 0; top: 0; width: 0; height: 0;[^}]*transition: opacity 160ms ease;/);
-  // 要播放动画的测量不会被随后的普通测量顶掉；按真实盒子（含小数）量，并除掉容器缩放
   assert.match(mover, /animateRequested = animateRequested \|\| animate === true;/);
   assert.match(mover, /scaleX = container\.offsetWidth \? containerRect\.width \/ container\.offsetWidth : 1/);
 });

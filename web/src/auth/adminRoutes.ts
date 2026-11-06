@@ -8,7 +8,6 @@ export function createAdminRoutes(base: string): RouteRecordRaw[] { return [
     name: "admin-workspace-root",
     meta: { auth: "admin" },
     component: () => import("../views/admin/AdminShell.vue"),
-    // No empty child: the entry belongs exclusively to the login record above.
     children: [
       { path: "overview", name: "admin-overview", meta: { permission: "mail.account.read" }, component: () => import("../views/admin/OverviewView.vue") },
       { path: "accounts", name: "admin-accounts", meta: { permission: "mail.account.read" }, component: () => import("../views/admin/AccountsView.vue") },
@@ -23,5 +22,4 @@ export function createAdminRoutes(base: string): RouteRecordRaw[] { return [
   },
 ]; }
 
-// Legacy matcher fixture; production registers only the server-resolved saved base.
 export const adminRoutes = createAdminRoutes(ADMIN_LOGIN_PATH);

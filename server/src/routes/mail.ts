@@ -13,10 +13,6 @@ const DRAFT_BODY_LIMIT = 1024 * 1024;
 const DRAFT_PAYLOAD_LIMIT = 512 * 1024;
 const MAX_DRAFTS_PER_MAILBOX = 100;
 
-/**
- * 只为邮件相关的路径挂登录校验。
- * 如果直接 mailRouter.use(requireMail)，未匹配的 /api/* 也会返回 401 而不是 404。
- */
 const MAIL_PATHS = [
   "/folders",
   "/messages",
@@ -265,7 +261,6 @@ mailRouter.post("/messages", requireCsrf, async (request, response) => {
 
   const account = session.mailbox;
   const from = String(body.from ?? account).trim().toLowerCase() || account;
-  // maddy 侧 authorize_sender + user_to_email 只允许本人地址；加号别名归到本人
   if (!senderAddressAllowed(account, from)) {
     fail(response, 400, "发件人必须是当前登录账号");
     return;
@@ -274,7 +269,6 @@ mailRouter.post("/messages", requireCsrf, async (request, response) => {
   const to = asList(body.to);
   const cc = asList(body.cc);
   const bcc = asList(body.bcc);
-  // 抄送 / 密送可以为空，只有填了才校验
   const problem =
     addressListProblem(to) ||
     (cc.length > 0 ? addressListProblem(cc) : "") ||
@@ -348,7 +342,6 @@ mailRouter.post("/messages", requireCsrf, async (request, response) => {
       await session.append(sent, outcome.raw, ["\\Seen"]);
       savedToSent = true;
     } catch {
-      // SMTP acceptance remains confirmed even if folder lookup or IMAP APPEND fails.
       saveError = "邮局已接受邮件，但未能确认保存到已发送，请勿重复发送";
       recordAudit({
         actorType: "mailbox",
@@ -481,8 +474,6 @@ mailRouter.get("/search", async (request, response) => {
   }
 });
 
-// ---- 草稿 ----
-
 mailRouter.get("/drafts", (request, response) => {
   const owner = mailboxOf(request);
   const rows = db
@@ -495,7 +486,6 @@ mailRouter.get("/drafts", (request, response) => {
 
 mailRouter.post("/drafts", requireCsrf, async (request, response) => {
   const owner = mailboxOf(request);
-  // 草稿只保存收件人、主题和正文（附件不随草稿保存），不需要邮件那样的大额度。
   const body = await readJson<{ id?: string; payload?: unknown }>(request, { maxBytes: DRAFT_BODY_LIMIT });
   const id = String(body.id ?? "") || `draft-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const payload = JSON.stringify(body.payload ?? {});
@@ -530,8 +520,6 @@ mailRouter.delete("/drafts/:id", requireCsrf, (request, response) => {
   db.prepare("delete from drafts where id = ? and owner = ?").run(String(request.params.id ?? ""), owner);
   ok(response, { deleted: request.params.id });
 });
-
-// ---- 通讯录 ----
 
 mailRouter.get("/contacts", (request, response) => {
   const owner = mailboxOf(request);
@@ -595,8 +583,6 @@ mailRouter.delete("/contacts/:id", requireCsrf, (request, response) => {
   ok(response, { deleted: request.params.id });
 });
 
-// ---- 设置 ----
-
 const ALLOWED_SETTINGS = new Set([
   "density",
   "pageSize",
@@ -657,8 +643,6 @@ mailRouter.patch("/settings", requireCsrf, async (request, response) => {
   ok(response, { saved: true });
 });
 
-// ---- SSE 事件流 ----
-
 mailRouter.get("/events", (request, response) => {
   const session = request.mail?.session;
   if (!session) return;
@@ -680,8 +664,6 @@ mailRouter.get("/events", (request, response) => {
   });
 
   const heartbeat = setInterval(() => {
-    // 用真实事件而不是注释：浏览器需要能感知“这条流还活着”，
-    // 前端据此判断要不要退回轮询（例如反向代理开了缓冲时）。
     send("ping", { at: Date.now() });
   }, 25_000);
 

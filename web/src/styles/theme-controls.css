@@ -1,4 +1,3 @@
-/* Native inputs remain only as model carriers; visible choice UI is theme-owned. */
 #app .themed-native-state { display: none !important; }
 .themed-control { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-width: 0; min-height: 42px; padding: 10px 12px; border: 1px solid var(--line-blue); border-radius: 12px; color: var(--graphite-blue); background: var(--surface); font: inherit; font-size: 14px; text-align: left; cursor: pointer; transition: background 180ms, border-color 180ms, transform 180ms; }
 .themed-control > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -49,17 +48,12 @@
 @media (prefers-reduced-motion: reduce) { .themed-popup { animation: none; } .themed-control, .themed-control__arrow, .themed-popup button { transition: none; } }
 :root[data-motion="reduce"] .themed-popup, :root[data-performance="low"] .themed-popup { animation: none; }
 :root[data-motion="reduce"] .themed-control, :root[data-performance="low"] .themed-control { transition: none; }
-
-/* 选择框、日期框与输入框同高、同圆角、同字号，聚焦时的样式也一致（输入框是 48px 高、13px 圆角）。 */
 #app .field .themed-control { min-height: 48px; padding: 11px 13px; border-radius: 13px; font-size: 13px; }
 #app .themed-control:focus-visible { border-color: var(--line-blue-strong); outline: 1px solid var(--focus-line); outline-offset: 3px; }
-/* 手机上输入框字号小于 16px 时 iOS 会在点击后自动放大页面，输入框和页面看起来突然变大：统一用 16px。 */
 @media (max-width: 900px) {
   #app :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]), textarea, select),
   #app .field .themed-control { font-size: 16px; }
 }
-
-/* 校验提示出现时，同一行另一侧的文本框不被拉高也不移位（字段内容从顶部排起）；提示本身从无到有平滑展开，消失时平滑收起。 */
 #app .field { align-content: start; }
 .themed-field-error { overflow: hidden; animation: themed-error-in 240ms var(--ease) both; }
 .themed-field-error.is-leaving { animation: themed-error-out 200ms var(--ease) both; }

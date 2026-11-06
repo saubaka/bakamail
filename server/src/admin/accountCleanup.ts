@@ -24,7 +24,6 @@ export function hasLocalMailboxData(mailbox: string): boolean {
   });
 }
 
-/** Only after Maddy absence is confirmed; keep audit/login-attempt history. */
 export function purgeLocalMailboxData(mailbox: string): Record<string, number> {
   const deleted: Record<string, number> = {};
   db.exec("BEGIN IMMEDIATE");

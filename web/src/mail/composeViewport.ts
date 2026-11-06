@@ -1,4 +1,3 @@
-/** Keyboard/address-bar geometry only; no account data or global viewport policy. */
 export function composeVisibleViewport(layoutHeight: number, height: number, offsetTop: number): { height: number; top: number } | null {
   if (![layoutHeight, height, offsetTop].every(Number.isFinite) || layoutHeight <= 0 || height <= 0) return null;
   const visibleHeight = Math.min(height, layoutHeight);
@@ -20,7 +19,6 @@ export function bindComposeViewport(element: HTMLDialogElement, host: Window = w
     frame = null;
     if (!active) return;
     if (host.innerWidth > 900 || !viewport) { clear(); return; }
-    // Preserve native pinch zoom/panning rather than shrinking the form as it zooms.
     if (Math.abs(viewport.scale - 1) > .01) return;
     const layoutHeight = Math.max(host.innerHeight, host.document.documentElement.clientHeight);
     const visible = composeVisibleViewport(layoutHeight, viewport.height, viewport.offsetTop);

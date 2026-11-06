@@ -65,7 +65,6 @@ export function emptyFolder(path: string): Promise<{ removed: number }> {
 export function removeFolder(path: string): Promise<void> {
   return api(apiQuery("/api/folders", { path }), { method: "DELETE" });
 }
-/** Download links remain same-origin BFF endpoints; no service host is exposed. */
 export function attachmentPath(uid: number, part: string, folder: string): string {
   if (!/^\d+(?:\.\d+)*$/.test(part) || part.length > 80) throw new TypeError("附件编号不正确");
   return apiQuery(`${uidPath(uid)}/attachments/${encodeURIComponent(part)}`, { folder });

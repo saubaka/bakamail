@@ -27,7 +27,6 @@ export function decodeMailCache(raw: string | null, owner: string, now = Date.no
         && entry[1].items.length <= 500 && entry[1].items.every(validSummary)
         && Number.isSafeInteger(entry[1].total) && entry[1].total >= 0
         && (entry[1].nextBefore === null || Number.isSafeInteger(entry[1].nextBefore)))) return null;
-    // Reconstruct the allowed metadata only; never retain arbitrary extra fields/body/credentials.
     return { version: 1, owner, savedAt: value.savedAt, folder: value.folder, folders: value.folders.map(folder => ({
       path: folder.path, name: folder.name, specialUse: folder.specialUse, subscribed: folder.subscribed, messages: folder.messages, unseen: folder.unseen,
     })), pages: value.pages.map(([key, page]) => [key, { total: page.total, nextBefore: page.nextBefore, items: page.items.map(row => ({
@@ -51,5 +50,5 @@ export function writeMailCache(value: MailCache, storage = cacheStorage()): bool
 }
 export function purgeMailCaches(storage = cacheStorage()): void {
   if (!storage) return;
-  try { for (let index = storage.length - 1; index >= 0; index--) { const key = storage.key(index); if (key?.startsWith(PREFIX)) storage.removeItem(key); } } catch { /* Storage may be blocked; memory clearing still succeeds. */ }
+  try { for (let index = storage.length - 1; index >= 0; index--) { const key = storage.key(index); if (key?.startsWith(PREFIX)) storage.removeItem(key); } } catch { }
 }

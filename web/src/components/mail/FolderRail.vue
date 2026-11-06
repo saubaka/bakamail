@@ -51,7 +51,6 @@ const props = defineProps<{
   navigationBusy: boolean;
 }>();
 
-// 当前文件夹的选中线条：和左侧菜单一样，从旧文件夹平滑滑到新文件夹。
 const tree = ref<HTMLElement | null>(null);
 const highlight = ref<HTMLElement | null>(null);
 const reduced = (): boolean => {

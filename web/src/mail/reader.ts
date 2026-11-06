@@ -18,7 +18,6 @@ export function authenticationSummary(checks: AuthenticationCheck[]): string {
   const count = checks.filter(check => check.result === 'pass').length;
   return count === 3 ? '安全认证 · 全部通过' : count ? `安全认证 · ${count}/3 通过` : '安全认证 · 未确认';
 }
-/** Mail-authored scripts are stripped; the reader remains an opaque-origin sandbox. */
 export function sanitizeReaderHtml(source: string, allowRemote: boolean): { html: string; blocked: number } {
   if (!source) return { html: '', blocked: 0 };
   const doc = new DOMParser().parseFromString(source, 'text/html');
@@ -45,11 +44,6 @@ export function sanitizeReaderHtml(source: string, allowRemote: boolean): { html
   }
   return { html: doc.body.innerHTML, blocked };
 }
-/**
- * 页面由服务端下发带 nonce 的内容安全策略时，srcdoc 框架会继承它，框架里的脚本必须使用同一个 nonce。
- * 没有页面 nonce（例如本地开发服务器）时退回到每个框架自己的随机令牌。邮件作者拿不到这个值：
- * 邮件里的脚本和 nonce 属性都会被净化掉，框架内也没有别的脚本。
- */
 export function pageScriptNonce(): string {
   if (typeof document === 'undefined') return '';
   const nonce = document.querySelector<HTMLScriptElement>('script[nonce]')?.nonce ?? '';
@@ -59,7 +53,6 @@ export function readerFrameDocument(html: string, allowRemote: boolean, scrollTo
   if (scrollToken && !/^[a-f0-9]{48}$/.test(scrollToken)) throw new Error('Invalid reader scroll token');
   if (scriptNonce && !/^[A-Za-z0-9+/]{16,64}={0,2}$|^[a-f0-9]{48}$/.test(scriptNonce)) throw new Error('Invalid reader script nonce');
   const csp = `default-src 'none'; img-src data: cid:${allowRemote ? ' https: http:' : ''}; style-src 'unsafe-inline'; font-src data:; base-uri 'none'; form-action 'none'${scrollToken ? `; script-src 'nonce-${scriptNonce}'` : ''}`;
-  // This sole first-party script reports geometry only. No mail text, URLs, storage, or actions.
   const bridge = scrollToken ? `<script nonce="${scriptNonce}">(()=>{let pending=false;const report=()=>{pending=false;parent.postMessage({type:'bakamail-reader-scroll',token:'${scrollToken}',position:{top:Math.max(0,scrollY),height:innerHeight,total:Math.max(innerHeight,document.documentElement.scrollHeight)}},'*')};addEventListener('scroll',()=>{if(!pending){pending=true;requestAnimationFrame(report)}},{passive:true});addEventListener('load',report)})();</script>` : '';
   const reduced = typeof document !== 'undefined' && (document.documentElement.dataset.motion === 'reduce' || document.documentElement.dataset.performance === 'low');
   return `<!doctype html><html${reduced ? ' data-motion="reduce"' : ''}><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><base target="_blank"><style>

@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import request from "./support/loopback-request.ts";
 
-// 测试服务器必须只监听 127.0.0.1：通配监听会和同一台电脑上别的程序在同一端口共存，请求可能被别人应答。
 const seen = (calls: string[]) => (req: { socket: { localAddress?: string } }, res: { end: (body: string) => void }) => {
   calls.push(String(req.socket.localAddress));
   res.end("ok");

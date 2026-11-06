@@ -1,4 +1,3 @@
-/** Public contract: no credentials, site settings, or mail-service metadata. */
 export const NOTIFICATION_SCHEMA_VERSION = 1 as const;
 export const NOTIFICATION_TYPES = ['success', 'info', 'warning', 'error', 'loading'] as const;
 export type NotificationType = typeof NOTIFICATION_TYPES[number];
@@ -9,14 +8,12 @@ export type NotificationMotionConfig = {
 };
 export type UiConfig = {
   schemaVersion: typeof NOTIFICATION_SCHEMA_VERSION;
-  /** On PATCH this is the revision read by the editor; on GET it is the saved revision. */
   revision: number;
   notificationMotion: NotificationMotionConfig;
 };
 export const NOTIFICATION_TIMING_LIMITS = { enterMs: 3000, exitMs: 3000, textOutMs: 1000, textInMs: 1000 } as const;
 export const NOTIFICATION_STACK_LIMIT = 1500;
 
-/** Fresh objects prevent preview/edit mutations from corrupting the fallback. */
 export function defaultUiConfig(): UiConfig {
   const types = {} as Record<NotificationType, NotificationTiming>;
   for (const type of NOTIFICATION_TYPES) types[type] = { enterMs: 780, exitMs: 680, textOutMs: 160, textInMs: 340 };
@@ -31,7 +28,6 @@ function integer(value: unknown, max: number): value is number {
   return typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 && value <= max;
 }
 
-/** Complete replacement only, not a permissive merge or coercion. Also checks persisted/public data. */
 export function isUiConfig(value: unknown): value is UiConfig {
   if (!exactObject(value, ['schemaVersion', 'revision', 'notificationMotion'])
     || value.schemaVersion !== NOTIFICATION_SCHEMA_VERSION || !integer(value.revision, Number.MAX_SAFE_INTEGER)) return false;
@@ -48,7 +44,6 @@ export function isUiConfig(value: unknown): value is UiConfig {
   return true;
 }
 
-/** Normalize key order and strip object identity, so the content hash is stable. */
 export function copyUiConfig(value: UiConfig): UiConfig {
   const types = {} as Record<NotificationType, NotificationTiming>;
   for (const type of NOTIFICATION_TYPES) {

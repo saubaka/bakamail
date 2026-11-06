@@ -1,10 +1,8 @@
-/** Production router/components, simulated transports only. No real accounts or API fallback. */
 import { isUiConfig } from '../../../shared/notificationMotion.ts';
 import { copyUiConfigV2, defaultUiConfigV2, isUiConfigV2, applyLegacyMotionEdit, projectUiConfigV1 } from '../../../shared/notificationDisplay.ts';
 import { adminPathProblem } from '../../../shared/adminPaths.ts';
 import { inviteLimitsProblem, type InviteSummary } from '../../../shared/invitePolicy.ts';
 const fixtureEntry = location.href;
-// Router replaces the visible path. Keep Vite full reloads on the mock entry, not production /index.
 import.meta.hot?.on('vite:beforeFullReload', () => { history.replaceState(null, '', fixtureEntry); });
 const initial = new URL(location.href).searchParams;
 let entrySettings = { adminBase: initial.get('entry') ?? '/bakaadmin', revision: 0 };
@@ -79,7 +77,6 @@ sync(); document.body.append(controls);
 
 window.fetch = async (input, options) => {
   const raw = String(input);
-  // Deliberately no native fetch fallback, even for an unexpected endpoint.
   if (!raw.startsWith("/api/")) throw new Error("隔离验收禁止非模拟网络请求");
   const url = new URL(raw, location.origin), path = url.pathname;
   if (path === '/api/installation') return ok({ initialized: true,
@@ -98,7 +95,6 @@ window.fetch = async (input, options) => {
       rejectChallenge = false;
       return Response.json({ ok: false, code: "challenge_rate_limited", error: "请求过于频繁", data: { retryAfterSeconds: 10 } }, { status: 429, headers: { "Retry-After": "10" } });
     }
-    // A placeholder, not a solvable captcha or security bypass. Real challenge tests use the isolated BFF.
     return ok({ nonce: `fixture-display-${challengeCalls}`, image: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="176" height="56"><rect width="176" height="56" fill="#f7f9fc"/><text x="88" y="33" text-anchor="middle" fill="#354052" font-size="14">隔离挑战展示</text></svg>')}`,
       expiresIn: 600, domain: "example.test", formToken: "fixture-form-display", minFormSeconds: 2 });
   }

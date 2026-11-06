@@ -283,7 +283,7 @@ test('阶段六真实本机HTTP：后台保存到公开读取到前端时间表�
       headers: { Cookie: cookie, 'x-csrf-token': session.csrfToken, 'content-type': 'application/json' }, body: JSON.stringify(next) });
     assert.equal(saved.status, 200);
     const payload = await saved.json(); assert.equal(first.applySaved(payload.data), true);
-    assert.deepEqual(captured, original); // existing notification snapshot remains independent
+    assert.deepEqual(captured, original);
     await second.refresh(true); assert.deepEqual(second.snapshot(), payload.data);
     assert.deepEqual(notificationTimeline(second.snapshot(), 'info', false), {
       enterMs: 0, exitMs: 3000, textOutMs: 1000, textInMs: 0, stackMs: 1500, copyDelayMs: 0, copyInMs: 0, copyOutMs: 540,

@@ -4,10 +4,6 @@ import { defaultUiConfigV2 } from '../../../shared/notificationDisplay.ts';
 import { notify, beginProgressNotice } from '../../src/notifications.ts';
 import { createNotificationDisplayProbeDom, flushNotificationDisplayProbe } from './notification-display-dom.ts';
 
-/**
- * Four original gap regressions, now green and imported by the formal phase 3 test entry.
- * Also runnable explicitly with node --test; no skip/todo and no temporary v1 type cast.
- */
 function setup(ctx: TestContext) {
   ctx.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
   ctx.mock.method(performance, 'now', () => Date.now());

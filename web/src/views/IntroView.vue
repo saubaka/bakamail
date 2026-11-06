@@ -58,7 +58,7 @@
 
       <section v-intro-reveal class="intro-closing intro-reveal--split" aria-labelledby="closing-title"><span class="intro-stagger" style="--i: 0" aria-hidden="true">✉</span><h2 id="closing-title" class="intro-stagger" style="--i: 1">已经有账号了？<br />直接登录。</h2><router-link class="intro-button intro-stagger" style="--i: 2" :to="entry">{{ signedIn ? '进入邮箱' : '登录邮箱' }}<span aria-hidden="true">↗</span></router-link></section>
     </main>
-    <footer class="intro-footer"><div><strong>{{ siteInfo.siteName }}</strong><p>{{ siteInfo.tagline }}</p></div><div class="intro-footer-links"><router-link to="/">项目介绍</router-link><a :href="repositoryUrl" target="_blank" rel="noopener noreferrer">Github</a><router-link to="/password-reset">重置密码</router-link></div><p>© {{ year }} saubaka. BakaMail.<br /><span>邮件服务基于 Maddy，第三方项目版权归原作者所有。</span></p></footer>
+    <footer class="intro-footer"><div class="intro-footer-links"><router-link to="/">项目介绍</router-link><a :href="repositoryUrl" target="_blank" rel="noopener noreferrer">Github</a><router-link to="/password-reset">重置密码</router-link></div><p>© {{ year }} saubaka. BakaMail.</p></footer>
   </div>
 </template>
 
@@ -82,7 +82,6 @@ const opened = ref(false);
 const year = new Date().getFullYear();
 const features = INTRO_FEATURES;
 const faq = INTRO_FAQ;
-// 开源仓库链接和版权标记写死在页脚里，站点名、副标题等任何设置都不会改动它们。
 const repositoryUrl = SEO_REPOSITORY_URL;
 const siteInitial = computed(() => [...siteInfo.siteName][0]?.toUpperCase() ?? "B");
 </script>

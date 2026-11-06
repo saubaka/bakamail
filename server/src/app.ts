@@ -21,21 +21,14 @@ import { sendErrorPage, wantsHtml } from "./http/errorPage.ts";
 import { isKnownPublicPath } from "../../shared/publicRoutes.ts";
 
 export type AppOptions = {
-  /** 测试时关闭引导管理员创建，避免污染断言 */
   bootstrapAdmin?: boolean;
   log?: (message: string) => void;
 };
 
-/**
- * 判断一个路径是不是「静态资源」而不是前端路由。
- * 缺失的静态资源必须 404，绝不能回落到 index.html——否则浏览器会拿到
- * 200 + HTML 当作脚本执行，页面直接空白且没有任何重试信号。
- */
 export function looksLikeAssetPath(path: string): boolean {
   return /\.[a-z0-9]{1,8}$/i.test(path);
 }
 
-/** 统一的异常出口：接口返回 JSON，浏览器打开的页面返回统一风格的错误页；两者都不泄漏异常内容。 */
 export function createErrorHandler(log: (message: string) => void): express.ErrorRequestHandler {
   return (error: Error, request: express.Request, response: express.Response, _next: express.NextFunction): void => {
     if (response.headersSent) return;
@@ -46,14 +39,11 @@ export function createErrorHandler(log: (message: string) => void): express.Erro
       sendJson(response, error.status, { ok: false, data: null, error: error.message, code: error.code });
       return;
     }
-    // Library exception messages/responseText/stacks may contain credentials or mail data.
-    // Log only a bounded category and the same ID that the caller receives.
     const name = error instanceof Error && /^[a-zA-Z0-9._-]{1,64}$/.test(error.name)
       ? error.name : "UnknownError";
     const code = (error as { code?: unknown } | null)?.code;
     const safeCode = typeof code === "string" && /^[a-zA-Z0-9._-]{1,64}$/.test(code) ? code : "unclassified";
     log(`未处理异常: ${name} code=${safeCode} request-id=${requestId(request)}`);
-    // 浏览器打开的页面出错时显示统一风格的错误页；接口、脚本等请求仍返回 JSON。
     if (!request.path.startsWith("/api/") && wantsHtml(request)) {
       const status = Number((error as { status?: unknown } | null)?.status);
       sendErrorPage(request, response, Number.isInteger(status) && status >= 400 && status < 500 ? status : 500);
@@ -74,17 +64,10 @@ export function createApp(options: AppOptions = {}): express.Express {
     response.setHeader("x-content-type-options", "nosniff");
     response.setHeader("referrer-policy", "same-origin");
     response.setHeader("x-frame-options", "DENY");
-    // XHR cannot opt out of redirects; keep scripted connections on this origin at the browser boundary.
     response.setHeader("content-security-policy", "connect-src 'self'");
-    // 接口响应不是给搜索引擎看的。
     if (request.path.startsWith("/api/")) response.setHeader("x-robots-tag", "noindex, nofollow");
     next();
   });
-
-  /*
-   * 刻意不使用 express.json()：所有路由统一走 http/kit.ts 的 readJson()，
-   * 由它读取原始流并限制体积。
-   */
 
   app.get("/api/health", (_request, response) => {
     ok(response, {
@@ -92,7 +75,6 @@ export function createApp(options: AppOptions = {}): express.Express {
     });
   });
 
-  // 公开的站点信息与搜索引擎入口：不需要登录，只暴露站点名、副标题、首页标题和描述。
   app.get("/api/site-info", (_request, response) => {
     response.setHeader("x-robots-tag", "noindex, nofollow");
     ok(response, publicSiteInfo());
@@ -124,7 +106,6 @@ export function createApp(options: AppOptions = {}): express.Express {
     fail(response, 404, "接口不存在");
   });
 
-  // Retired page URLs must never reach static files or the generic SPA index fallback.
   app.use((request, response, next) => {
     if (!isRetiredAdminPath(request.originalUrl) && !retiredInstallationPath(request.originalUrl)) { next(); return; }
     if (wantsHtml(request)) { sendErrorPage(request, response, 404); return; }
@@ -134,7 +115,6 @@ export function createApp(options: AppOptions = {}): express.Express {
 
   const webDist = join(projectRoot, "web", "dist");
   if (existsSync(webDist)) {
-    // 带内容哈希的资源可以长期强缓存
     app.use(
       "/assets",
       express.static(join(webDist, "assets"), {
@@ -145,29 +125,19 @@ export function createApp(options: AppOptions = {}): express.Express {
     );
     app.use(express.static(webDist, { index: false, maxAge: "1h" }));
 
-    /*
-     * 只有「看起来像前端路由」的路径才回落到 index.html。
-     *
-     * 这里踩过一个坑：以前是无条件回落，于是请求任何不存在的 .js/.css 都会
-     * 拿到 200 + HTML。浏览器把这段 HTML 当脚本解析必然报错，页面直接空白，
-     * 而且 200 意味着没有任何信号提示它该重新拉取。现在缺失静态资源一律 404。
-     */
     app.get(/^\/(?!api\/).*/, (request, response, next) => {
       if (looksLikeAssetPath(request.path)) {
         next();
         return;
       }
       response.setHeader("cache-control", "no-cache, must-revalidate");
-      // 每次响应生成新的 nonce，并随页面一起下发完整的内容安全策略。
       const nonce = newCspNonce();
       response.setHeader("content-security-policy", pageCsp(nonce, { turnstile: turnstileConfigured() }));
       const page = renderSpaPage(readFileSync(join(webDist, "index.html"), "utf8"), request, response);
-      // 只有站点自己的公开页面返回 200；其他地址（含后台入口）一律 404，页面外壳照样下发，前端自己判断显示什么。
       if (!isKnownPublicPath(request.path)) response.status(404);
       response.type("html").send(withNonce(page, nonce));
     });
 
-    // 走到这里的都是缺失的静态资源：返回不可缓存的 404
     app.use((request, response, next) => {
       if (request.path.startsWith("/api/")) {
         next();

@@ -3,7 +3,6 @@ import { beginProgressNotice, notify, type NoticeDisplayState, type Notification
 import { notificationLabels } from './notificationAppearanceEditor.ts';
 
 export type PreviewRow = NoticeDisplayState & { id: number; label: string };
-/** Local simulations only. Real handles supply the reading clock, never a second countdown. */
 export function createNotificationAppearancePreview(sample: (rows: PreviewRow[]) => void) {
   let controller = new AbortController(), disposed = false, nextId = 0;
   const timers = new Set<ReturnType<typeof setTimeout>>();

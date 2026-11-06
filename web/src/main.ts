@@ -51,7 +51,6 @@ window.addEventListener('pagehide', event => {
 try {
   app.mount("#app");
 } catch (error) {
-  // 应用没能启动：index.html 里备好了统一风格的提示，没有它时只留下控制台记录。
   console.error(error);
   (window as unknown as { __bmFatal?: () => void }).__bmFatal?.();
 }

@@ -142,7 +142,6 @@ async function create(): Promise<void> {
   }
 }
 
-/** 服务端返回的修复项是内部英文标识，界面上显示中文名称。 */
 const repairedNames: Record<string, string> = { credential: "登录凭据", mailbox: "邮箱数据" };
 
 async function repair(row: Row): Promise<void> {

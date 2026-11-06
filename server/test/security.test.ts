@@ -45,7 +45,6 @@ test("验证码：错误答案被拒绝，正确路径一次性消费", () => {
   const png = Buffer.from(challenge.imageData.split(",")[1] ?? "", "base64");
   assert.equal(png.subarray(1, 4).toString("ascii"), "PNG");
   assert.equal(verifyHumanCheck("unit", "target-1", challenge.nonce, "ZZZZ"), false);
-  // 已经消费过，即使答案正确也不能再用
   assert.equal(verifyHumanCheck("unit", "target-1", challenge.nonce, "ZZZZ"), false);
 });
 

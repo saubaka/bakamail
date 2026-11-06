@@ -254,7 +254,6 @@ async function revoke(id: number): Promise<void> {
     }))) return;
     await api(`/api/admin/invites/${id}/revoke`, { method: "POST" });
     if (!active) return;
-    // The write has succeeded even if the following list refresh fails.
     invites.value = invites.value.map((row) => row.id === id ? { ...row, revoked_at: new Date().toISOString() } : row);
     if (createdId.value === id) {
       created.value = "";
@@ -311,7 +310,6 @@ onBeforeUnmount(() => { active = false; });
 .invite-overview { display:flex; flex-wrap:wrap; gap:8px 20px; margin:12px 0 16px; color:var(--text-soft); font-size:12px; }
 .invite-status { display:inline-flex; padding:5px 9px; border:1px solid var(--line-blue); border-radius:var(--radius-pill); background:transparent; }
 .invite-table-scroll { max-width:100%; }
-/* 短内容（人名、日期、状态、次数）不换行；只有备注、绑定地址、最近使用这类可能很长的格子才折行。 */
 .invite-table td { vertical-align:middle; white-space:nowrap; line-height:1.7; }
 .invite-table td[data-label="前缀"], .invite-table td[data-label="绑定"], .invite-table td[data-label="最近使用／占用"] { min-width:140px; max-width:240px; white-space:normal; overflow-wrap:anywhere; }
 .invite-table .invite-status { white-space:nowrap; }

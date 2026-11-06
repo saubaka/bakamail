@@ -1,7 +1,3 @@
-/**
- * 依次入场的节拍。一批同时出现的元素按出现顺序排队，每个比前一个晚一小步，
- * 超过上限后不再继续加长（页面很长时不会让最后一个等很久）；隔一小会儿没有新元素，就从头开始。
- */
 export type Stagger = { next(now: number): number; reset(): void };
 
 export const STAGGER_STEP_MS = 70;

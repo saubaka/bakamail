@@ -40,17 +40,15 @@ test("旧后台地址在静态资源与 SPA 回退之前返回无指引的 404",
     assert.doesNotMatch(response.text, /bakaadmin|index\.html|<script/i);
   }
   assert.equal((await request(app).get("/api/admin/auth/me")).status, 401);
-  // A source-only checkout need not have run the frontend build yet.
   if (existsSync(join(projectRoot, "web", "dist", "index.html"))) {
     const entry = await request(app).get("/bakaadmin");
-    // 后台入口和任意未知地址一样返回 404 状态（外壳照常下发，前端据此显示登录页或 404 页），状态码不泄漏入口。
     assert.equal(entry.status, 404);
     assert.match(entry.text, /<div id="app"><\/div>/);
   }
 });
 
 test("页面响应带完整内容安全策略，nonce 每次不同且与内联脚本一致", async () => {
-  if (!existsSync(join(projectRoot, "web", "dist", "index.html"))) return; // A source-only checkout need not have built the frontend.
+  if (!existsSync(join(projectRoot, "web", "dist", "index.html"))) return;
   const app = createApp({ bootstrapAdmin: false, log: () => undefined });
   const first = await request(app).get("/login");
   const second = await request(app).get("/login");
@@ -58,7 +56,6 @@ test("页面响应带完整内容安全策略，nonce 每次不同且与内联�
     const policy = String(response.headers["content-security-policy"]);
     const nonce = /script-src 'self' 'nonce-([A-Za-z0-9+/=]+)'/.exec(policy)?.[1];
     assert.ok(nonce && nonce.length >= 20, "policy must carry a nonce");
-    // 内联脚本使用同一个 nonce；带 src 的模块脚本不带 nonce，由 'self' 放行。
     assert.match(response.text, new RegExp(`<script nonce="${nonce.replace(/[+/=]/g, "\\$&")}">`));
     assert.doesNotMatch(response.text, /<script>/);
     for (const directive of ["default-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'", "connect-src 'self'"]) {
@@ -70,6 +67,5 @@ test("页面响应带完整内容安全策略，nonce 每次不同且与内联�
   const a = /nonce-([^']+)'/.exec(String(first.headers["content-security-policy"]))?.[1];
   const b = /nonce-([^']+)'/.exec(String(second.headers["content-security-policy"]))?.[1];
   assert.notEqual(a, b);
-  // 接口响应不受页面策略影响，仍保持仅同源连接。
   assert.equal((await request(app).get("/api/health")).headers["content-security-policy"], "connect-src 'self'");
 });

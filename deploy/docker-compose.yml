@@ -1,13 +1,5 @@
 name: bakamail
 
-# 部署到已有 Maddy：
-#   1. cp bakamail.env.example bakamail.env 并按需修改
-#   2. docker compose --env-file deploy/bakamail.env -f deploy/docker-compose.yml up -d --build
-#   3. 为实际网页域名设置 HTTPS 反向代理 → http://127.0.0.1:8790
-#
-# 端口只绑回环，公网访问全部经 openresty。
-# 日志采集可选，不挂 Docker socket。目录默认创建为空，不代表采集成功。
-
 services:
   bakamail:
     build:
@@ -16,13 +8,9 @@ services:
     image: bakamail:local
     container_name: bakamail
     restart: unless-stopped
-    # Reap subprocess descendants after bounded CLI termination.
     init: true
-    # 不允许进程通过 setuid 等方式获得更多权限，并限制进程数量，防止失控的子进程耗尽主机。
-    # 应用仍以 root 运行：maddy 数据卷里的文件属主是 root，账号命令要写入它们，改成普通用户会写不进去。
     security_opt:
       - no-new-privileges:true
-    # 丢弃全部 Linux 能力：应用只绑定 8790 端口、写自己的数据卷和 maddy 数据卷（文件属主均为 root），不需要任何额外能力。
     cap_drop:
       - ALL
     pids_limit: 512
@@ -31,7 +19,6 @@ services:
     environment:
       HOST: 0.0.0.0
       PORT: "8790"
-      # MAIL_* 均从 env_file 读取，不覆盖操作者的实际域名/主机/端口。
       MADDY_RUNNER: local
       MADDY_BIN: /usr/local/bin/maddy
       MADDY_DATA_DIR: /data
@@ -39,9 +26,7 @@ services:
     ports:
       - "127.0.0.1:8790:8790"
     volumes:
-      # 账号生命周期命令要读写 maddy 的凭据库与邮箱库
       - maddydata:/data
-      # BakaMail 自己的 SQLite（管理员、邀请码、日志、草稿、通讯录）
       - bakamail-data:/app/data
       - type: bind
         source: ${MAIL_LOG_DIRECTORY:-./mail-logs}

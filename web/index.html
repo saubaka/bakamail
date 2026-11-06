@@ -24,14 +24,8 @@
     <div id="app"></div>
     <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
     <script>
-      /*
-       * 资源自愈：如果某个 JS/CSS 加载失败（例如站点被临时停用、容器重启期间
-       * 收到过 404，浏览器把 404 缓存住了），就用带时间戳的地址重试一次，
-       * 绕过缓存里的坏响应。正常情况这段代码不会做任何事。
-       */
       (function () {
         var retried = false;
-        /* 重试后仍然加载失败（或一直没有渲染出来）时，显示服务器随页面下发的统一风格提示，而不是一片空白。 */
         function showFatal() {
           var app = document.getElementById("app");
           var template = document.getElementById("bm-fatal");
@@ -71,7 +65,6 @@
           },
           true,
         );
-        /* 页面脚本很久都没有渲染出内容（网络极慢或被拦截）：同样给出可以重试的提示，应用一旦渲染就会把它替换掉。 */
         setTimeout(showFatal, 20000);
       })();
     </script>

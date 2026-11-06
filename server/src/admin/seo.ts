@@ -6,7 +6,6 @@ import {
   type SeoConfig, type SeoEffective, type SeoReport,
 } from "../../../shared/seo.ts";
 
-/** 站点 SEO 配置存在 app_settings 的 seo 一项里（JSON）。读取永远不会失败：损坏或缺失时按默认值提供页面。 */
 const KEY = "seo";
 
 export type SeoStored = { config: SeoConfig; revision: number; updatedAt: string };
@@ -31,7 +30,6 @@ export function readSeo(): SeoStored {
   } catch { return fresh; }
 }
 
-/** 最终采用的规范网址：先看后台设置，再看服务器环境里的 PUBLIC_ORIGIN。 */
 export function resolveOrigin(stored: SeoConfig = readSeo().config): { value: string; source: "setting" | "env" | "none" } {
   if (stored.canonicalOrigin) return { value: stored.canonicalOrigin, source: "setting" };
   const env = normalizeOrigin(config.publicOrigin);
@@ -48,7 +46,6 @@ export function currentSeo(): { stored: SeoStored; origin: ReturnType<typeof res
 export type SeoView = {
   config: SeoConfig; revision: number; updatedAt: string;
   origin: ReturnType<typeof resolveOrigin>;
-  /** 服务器环境里 PUBLIC_ORIGIN 规范化后的值；后台清空“规范网址”后就会回到它。 */
   envOrigin: string;
   effective: SeoEffective; report: SeoReport;
 };
@@ -73,7 +70,6 @@ function changedKeys(before: SeoConfig, after: SeoConfig): string[] {
   return names;
 }
 
-/** revision 必须等于当前值才能写入；读取、比较、写入和审计在同一个事务里。 */
 export function writeSeo(next: SeoConfig, expectedRevision: number | null, actor: { name: string; requestId: string }, action = "seo.update"): SeoStored {
   db.exec("begin immediate");
   try {

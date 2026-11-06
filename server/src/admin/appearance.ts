@@ -15,7 +15,6 @@ export class AppearanceError extends Error {
 }
 const unavailable = () => new AppearanceError(503, 'appearance_unavailable', '通知配置暂时不可读写，请稍后重新读取；当前配置未被覆盖');
 
-/** Absent row is a new installation; corrupt/unsupported rows are NEVER editable defaults. */
 export function readAppearanceV2(): UiConfigV2 {
   try {
     const row = db.prepare('select schema_version, revision, payload from ui_appearance where id = 1').get() as
@@ -26,7 +25,6 @@ export function readAppearanceV2(): UiConfigV2 {
     const normalized = normalizeUiConfigV2(parsed);
     if (!normalized || row.schema_version !== (parsed as UiConfig | UiConfigV2).schemaVersion
       || row.revision !== normalized.revision || row.revision < 1) throw unavailable();
-    // A valid v1 row is upgraded in memory only. Reads never alter payload/revision/audit.
     return normalized;
   } catch { throw unavailable(); }
 }
@@ -49,19 +47,16 @@ export function saveAppearance(input: unknown, actor: Pick<AuditInput, 'actor' |
   if (!submitted) throw new AppearanceError(400, 'invalid_appearance', '请提交完整的第1或第2版通知配置；显示时长为1–120秒整秒，动画时长为规定范围内的毫秒整数');
   let transaction = false;
   try {
-    // Serialized across processes: read revision + write + audit are one atomic unit.
     db.exec('begin immediate'); transaction = true;
     const current = readAppearanceV2();
     if (current.revision !== submitted.revision) throw new AppearanceError(409, 'appearance_conflict', '通知配置已被其他管理员修改，请重新读取后再保存');
     if (submitted.revision === Number.MAX_SAFE_INTEGER) throw new AppearanceError(409, 'appearance_revision_exhausted', '配置版本号已达上限，请联系维护者');
-    // Legacy editors can only replace motion. The display policy is taken from the locked row.
     const next = legacy ? applyLegacyMotionEdit(current, input) : submitted;
     if (!next) throw unavailable();
     next.revision++;
     db.prepare(`insert into ui_appearance(id, schema_version, revision, payload, updated_at) values(1, ?, ?, ?, ?)
       on conflict(id) do update set schema_version=excluded.schema_version, revision=excluded.revision,
       payload=excluded.payload, updated_at=excluded.updated_at`).run(next.schemaVersion, next.revision, JSON.stringify(next), nowIso());
-    // Compact bounded audit: named timings + finite display modes, never the raw request.
     recordAudit({ ...actor, actorType: 'admin', action: 'appearance.update', targetType: 'ui_appearance',
       summary: JSON.stringify({ keys: ['enterMs', 'exitMs', 'textOutMs', 'textInMs'],
         ...Object.fromEntries(NOTIFICATION_TYPES.map(type => {

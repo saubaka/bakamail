@@ -1,4 +1,3 @@
-/** Validate an existing deployment origin without changing mail transport settings. */
 export function deploymentOrigin(value) {
   if (typeof value !== 'string' || !value) throw Error('Missing configured PUBLIC_ORIGIN');
   let url;
@@ -8,5 +7,4 @@ export function deploymentOrigin(value) {
   return url.origin;
 }
 
-// Output only this public setting, never the complete container environment.
 export const deploymentOriginProbe = `console.log(process.env.PUBLIC_ORIGIN || "")`;

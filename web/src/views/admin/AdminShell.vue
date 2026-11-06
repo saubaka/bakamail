@@ -53,7 +53,6 @@
           {{ logoutError }}
           <button class="button button--soft" type="button" :disabled="logoutBusy" @click="logout">重试退出</button>
         </p>
-        <!-- 恢复会话时没有容器可显示，只有居中的加载动画；读屏用户听到状态说明。 -->
         <p v-if="loading" class="sr-only" role="status" aria-live="polite">正在恢复管理员会话…</p>
         <section v-else-if="permissionDenied" class="managed-page-card admin-access-denied" role="alert">
           <div>
@@ -109,11 +108,7 @@ let compactQuery: MediaQueryList | null = null;
 let armedUntil = 0;
 let touchStart: { x: number; y: number } | null = null;
 const { badges, start: startBadges, refresh: refreshBadges } = useRailBadges();
-// Revalidation still runs in the route guard. Keep the authenticated shell and
-// current panel intact while it awaits the server; a revoked identity is cleared.
 const loading = computed(() => !session.initialized || !session.me);
-// 右侧内容区的加载动画：只在右侧容器本身还没出来时显示（页面切换等待校验、恢复管理员会话）。
-// 页面里的文字、表格等数据还在读取时不显示，它们自己有“正在读取”提示和入场动画。
 const busy = computed(() => Boolean(navigationState.pending) || loading.value);
 const username = computed(() => session.me?.displayName || session.me?.username || "管理员");
 const role = computed(() => session.me?.role ?? "auditor");
@@ -157,7 +152,7 @@ function readCollapsed(): boolean {
 }
 function toggleCollapsed(): void {
   collapsed.value = !collapsed.value;
-  try { localStorage.setItem("bakamail-admin-rail", collapsed.value ? "collapsed" : "expanded"); } catch { /* optional */ }
+  try { localStorage.setItem("bakamail-admin-rail", collapsed.value ? "collapsed" : "expanded"); } catch { }
 }
 
 async function logout(): Promise<void> {
@@ -196,7 +191,6 @@ async function closeMenu(returnFocus = true): Promise<void> {
   if (returnFocus) menuButton.value?.focus();
 }
 
-/** 点了菜单里的链接：手机抽屉随即收起，焦点交给下面的页面。 */
 function onRailNavigate(): void {
   if (isCompact.value) void closeMenu(false);
 }
@@ -260,7 +254,6 @@ watch(
   },
 );
 
-// 会话由路由守卫或本组件恢复都可能先完成，所以只看“身份已就绪”这个结果，就绪后才开始取角标。
 watch(() => session.me, (me) => { if (me) startBadges(); }, { immediate: true });
 
 watch(() => menuOpen.value && isCompact.value, (locked) => document.body.classList.toggle("admin-rail-open", locked));

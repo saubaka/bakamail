@@ -11,7 +11,6 @@ function reject(response: Response, error: unknown): void {
   sendJson(response, error.status, { ok: false, data: null, error: error.message, code: error.code });
 }
 
-/** Exact URL parameter parsing rejects duplicates/arrays instead of accepting ambiguous versions. */
 function requestedVersion(request: Request): AppearanceSchemaVersion | undefined {
   const params = new URL(request.originalUrl, 'http://localhost').searchParams;
   const values = params.getAll('schemaVersion');
@@ -22,7 +21,6 @@ function requestedVersion(request: Request): AppearanceSchemaVersion | undefined
   return values.length ? Number(values[0]) as AppearanceSchemaVersion : undefined;
 }
 
-// Mounted AFTER the existing requireAdmin + requireCsrf middleware.
 appearanceRouter.get('/appearance', requirePermission('system.admin.write'), (request, response) => {
   try { ok(response, readAppearance(requestedVersion(request) ?? 1)); } catch (error) { reject(response, error); }
 });
@@ -42,7 +40,6 @@ uiConfigRouter.get('/ui-config', (request, response) => {
   let version: AppearanceSchemaVersion;
   try { version = requestedVersion(request) ?? 1; } catch (error) { reject(response, error); return; }
   const { config, fallback } = readPublicAppearance(version);
-  // Hash content as well as revision, avoiding collisions with fallback/restore states.
   const etag = `"ui-${createHash('sha256').update(JSON.stringify(config)).digest('hex')}"`;
   if (!fallback) {
     response.setHeader('etag', etag);
@@ -50,7 +47,6 @@ uiConfigRouter.get('/ui-config', (request, response) => {
     const matches = request.header('if-none-match')?.split(',').some(value => value.trim().replace(/^W\//, '') === etag || value.trim() === '*');
     if (matches) { response.status(304).end(); return; }
   }
-  // Never cache a degraded fallback or return 304 for it: editors must recheck server state.
   response.status(200).setHeader('content-type', 'application/json; charset=utf-8');
   response.setHeader('cache-control', fallback ? 'no-store' : 'public, no-cache, must-revalidate');
   response.end(JSON.stringify({ ok: true, data: config, error: '' }));

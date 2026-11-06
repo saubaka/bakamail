@@ -24,7 +24,6 @@ test("回答展开是高度加透明度的“拉出来”，收起是收回去�
   assert.equal(close.duration, FAQ_CLOSE_MS);
   assert.deepEqual(close.frames, [{ height: "120px", opacity: 1 }, { height: "0px", opacity: 0 }]);
   assert.ok(FAQ_CLOSE_MS < FAQ_OPEN_MS);
-  // 连点时从当前高度接着走，不会从 0 重来
   assert.equal(faqFrames(true, 40, 120).frames[0]!.height, "40px");
   assert.equal(faqTextFrames(true)[0]!.opacity, 0);
   assert.equal(faqTextFrames(false)[1]!.opacity, 0);

@@ -43,7 +43,6 @@ import TurnstileWidget from "./TurnstileWidget.vue";
 type HumanCheckResponse = {
   nonce: string;
   image: string;
-  /** "turnstile" when the administrator enabled Cloudflare Turnstile for this entry. */
   provider?: "turnstile";
   siteKey?: string;
   formToken?: string;
@@ -79,7 +78,6 @@ let controller: AbortController | null = null;
 
 function invalidate(): void {
   if (provider.value === "turnstile") {
-    // Turnstile tokens are single use: drop the spent one and let the widget issue a fresh one.
     answer.value = ""; formToken.value = ""; formReadyAt.value = 0;
     widgetRef.value?.reset();
     return;
@@ -95,7 +93,6 @@ async function load(): Promise<void> {
   error.value = "";
   image.value = "";
   nonce.value = "";
-  // Keep a rendered Turnstile widget mounted across reloads; the token it holds is replaced on reset.
   if (provider.value !== "turnstile") answer.value = "";
   formToken.value = "";
   formReadyAt.value = 0;
@@ -108,14 +105,13 @@ async function load(): Promise<void> {
           { signal: controller.signal },
         );
     if (!active) return;
-    // 后台登录永远使用内建验证码：即使响应声称 Turnstile 也不采用。
     if (!props.admin && data.provider === "turnstile" && data.siteKey) {
       const wasTurnstile = provider.value === "turnstile";
       provider.value = "turnstile";
       siteKey.value = data.siteKey;
       image.value = "";
       nonce.value = data.nonce;
-      expiresAt = 0; // the widget tracks token expiry itself
+      expiresAt = 0;
       answer.value = "";
       if (wasTurnstile) widgetRef.value?.reset();
     } else {
@@ -161,9 +157,7 @@ onBeforeUnmount(() => { active = false; controller?.abort(); window.clearInterva
 </script>
 
 <style scoped>
-/* Keep all three controls in one compact row, including narrow auth cards. */
 .human-check {
-  /* 148px reserves the 44px button, two 8px gaps and an 88px input. */
   grid-template-columns: clamp(72px, calc(100% - 148px), 112px) 44px minmax(0, 1fr);
   align-items: start;
   gap: 7px 8px;
@@ -209,7 +203,6 @@ onBeforeUnmount(() => { active = false; controller?.abort(); window.clearInterva
   padding: 0;
   border-radius: 13px;
 }
-/* The captured theme uses !important for global icon-button translation. */
 .human-check__refresh:hover,
 .human-check__refresh:active,
 .human-check__refresh:disabled { transform: none !important; }

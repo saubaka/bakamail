@@ -31,7 +31,7 @@ async function withServer(server: Server, sockets: Set<Socket>, job: () => Promi
   assert.ok(address && typeof address !== "string");
   config.mail.host = "127.0.0.1";
   config.mail.imapPort = address.port;
-  config.mail.tlsRejectUnauthorized = false; // Self-signed loopback fixture only, never deployed configuration.
+  config.mail.tlsRejectUnauthorized = false;
   try { await job(); } finally {
     config.mail.host = previous.host;
     config.mail.imapPort = previous.port;
@@ -109,7 +109,6 @@ function imapFixture(stallNoop: boolean): { server: Server; sockets: Set<Socket>
   const commands: string[] = [];
   const server = createTlsServer({ key: readFileSync(key), cert: readFileSync(cert) }, (socket) => {
     track(socket, sockets);
-    // PREAUTH is only a loopback protocol fixture: no production credentials or mail server is involved.
     socket.write("* PREAUTH [CAPABILITY IMAP4rev1] fixture ready\r\n");
     let buffer = "";
     socket.on("data", (bytes) => {

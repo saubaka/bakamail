@@ -60,7 +60,6 @@ const showField = computed(() => dialogState.mode === "prompt" || Boolean(dialog
 const fieldLabel = computed(() =>
   dialogState.fieldLabel || (dialogState.requiredText ? "确认文字" : "请输入"),
 );
-// 密码原样提交：首尾的空格也是密码的一部分，不能被悄悄去掉；其他文字输入仍然去掉首尾空白。
 const isSecret = computed(() => dialogState.inputType === "password");
 const submitted = (): string => (isSecret.value ? dialogState.value : dialogState.value.trim());
 const problem = computed(() => (dialogState.mode === "prompt" && dialogState.value && dialogState.validate ? dialogState.validate(submitted()) : ""));

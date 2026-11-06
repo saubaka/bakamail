@@ -1,7 +1,6 @@
 import type { ObjectDirective } from "vue";
 
 const observers = new WeakMap<HTMLElement, ResizeObserver>();
-/** One bounded result region changes height; its old content stays readable while fetching. */
 export const smoothHeightDirective: ObjectDirective<HTMLElement> = {
   mounted(el) {
     const inner = el.firstElementChild as HTMLElement | null;

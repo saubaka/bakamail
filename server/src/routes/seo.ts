@@ -4,7 +4,6 @@ import { fail, ok, readJson, requestId } from "../http/kit.ts";
 import { requirePermission } from "../http/auth.ts";
 import { defaultSeoConfig, parseSeoConfig } from "../../../shared/seo.ts";
 
-/** 站点 SEO 管理。挂在后台路由的 requireAdmin + requireCsrf 之后，读写都需要 system.seo.write。 */
 export const seoRouter = Router();
 const guard = requirePermission("system.seo.write");
 
@@ -26,7 +25,6 @@ seoRouter.put("/seo", guard, async (request, response) => {
   ok(response, seoView());
 });
 
-/** 恢复默认：站点名回到 Baka Mail，其余全部回到自动。不要求版本号，因为这是明确的整体重置。 */
 seoRouter.delete("/seo", guard, (request, response) => {
   writeSeo(defaultSeoConfig(), null, { name: request.admin!.admin.username, requestId: requestId(request) }, "seo.reset");
   ok(response, seoView());

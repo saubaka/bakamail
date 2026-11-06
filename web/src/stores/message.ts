@@ -3,7 +3,6 @@ import { ref } from "vue";
 import { readMessage } from "../api/mail.ts";
 import type { MessageDetail } from "../mail/types.ts";
 
-/** The reader owns only the active message; folder pages live in useMailboxStore. */
 export const useMessageStore = defineStore("message", () => {
   const currentUid = ref<number | null>(null);
   const currentFolder = ref("");

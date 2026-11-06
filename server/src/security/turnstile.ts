@@ -5,14 +5,6 @@ import { db, getSetting, nowIso, setSetting } from "../db.ts";
 import { enforceBudget } from "./abuse.ts";
 import { openWith, sealWith } from "./secretBox.ts";
 
-/**
- * Cloudflare Turnstile 人机验证（只用于邮箱用户的公开入口，管理员登录永远使用内建验证码）。
- *
- * - 站点密钥（site key）是公开的；私有密钥（secret）加密后保存，永远不会返回给浏览器。
- * - 启用前必须用当前这组密钥完成一次真实验证（verifiedFingerprint 与当前密钥一致），
- *   配错的密钥因此不可能直接把用户挡在外面。
- * - Cloudflare 无法访问时关闭放行（返回 unavailable），由管理员在面板里停用即可恢复内建验证码。
- */
 export const SITEVERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 export const TURNSTILE_HOST = "https://challenges.cloudflare.com";
 export const TURNSTILE_PURPOSES = ["login", "register", "password-reset"] as const;
@@ -75,7 +67,6 @@ export function turnstileSecret(stored = readTurnstile()): string {
   try { return openWith(SECRET_CONTEXT, stored.secretSealed); } catch { return ""; }
 }
 
-/** 站点密钥加私有密钥的指纹：任何一个变动，之前的验证结果就不再有效。 */
 export function keyFingerprint(siteKey: string, secret: string): string {
   return createHmac("sha256", config.secretKey).update(`turnstile|${siteKey}|${secret}`).digest("hex");
 }
@@ -85,19 +76,16 @@ export function isVerified(stored = readTurnstile()): boolean {
   return Boolean(stored.siteKey && secret && stored.verifiedFingerprint === keyFingerprint(stored.siteKey, secret));
 }
 
-/** 公开入口此刻是否真的使用 Turnstile：已启用、通过过真实验证、该入口没有被单独关闭。 */
 export function turnstileFor(purpose: TurnstilePurpose): { siteKey: string } | null {
   const stored = readTurnstile();
   if (!stored.enabled || !stored.scopes[purpose] || !isVerified(stored)) return null;
   return { siteKey: stored.siteKey };
 }
 
-/** 页面内容安全策略只在保存过站点密钥时放行 challenges.cloudflare.com。 */
 export function turnstileConfigured(): boolean {
   return Boolean(readTurnstile().siteKey);
 }
 
-/** Cloudflare 公布的测试密钥永远通过或永远失败；它们的响应没有 action。 */
 export function isTestingSecret(secret: string): boolean {
   return /^[123]x0{20,}AA$/.test(secret);
 }
@@ -105,10 +93,8 @@ export function isTestingSecret(secret: string): boolean {
 export const SITE_KEY_PATTERN = /^[0-9A-Za-z_-]{8,80}$/;
 export const SECRET_PATTERN = /^[0-9A-Za-z_-]{8,160}$/;
 
-// ---- 运行统计（进程内，重启后清零；只用于面板展示，不参与任何判断） ----
 export const turnstileStats = { passed: 0, rejected: 0, unavailable: 0, lastError: "", lastAt: "" };
 
-// ---- 按小时累计的统计（写进数据库，重启后仍在；只用于面板里的趋势图，不参与任何判断） ----
 const HOUR = 3_600_000;
 export const TURNSTILE_STATS_RETENTION_DAYS = 35;
 export const TURNSTILE_RANGES = { "24h": 24 * HOUR, "7d": 7 * 24 * HOUR, "30d": 30 * 24 * HOUR } as const;
@@ -117,14 +103,13 @@ export type TurnstileOutcome = "passed" | "rejected" | "unavailable";
 
 export function recordTurnstileOutcome(outcome: TurnstileOutcome, now = Date.now()): void {
   const hour = Math.floor(now / HOUR) * HOUR;
-  const column = outcome; // 只来自上面的三个固定取值，不是用户输入
+  const column = outcome;
   db.prepare(`insert into turnstile_stats (hour_ms, ${column}) values (?, 1)
     on conflict(hour_ms) do update set ${column} = ${column} + 1`).run(hour);
 }
 
 export type TurnstilePoint = { t: number; passed: number; rejected: number; unavailable: number };
 
-/** 最近一段时间每个整点的计数；没有记录的整点补 0，前端可以直接画线。 */
 export function turnstileSeries(range: TurnstileRange, now = Date.now()): { range: TurnstileRange; points: TurnstilePoint[]; totals: Omit<TurnstilePoint, "t"> } {
   const span = TURNSTILE_RANGES[range];
   const last = Math.floor(now / HOUR) * HOUR;
@@ -150,18 +135,15 @@ export function pruneTurnstileStats(now = Date.now()): number {
 
 export type VerifyOutcome = {
   ok: boolean;
-  /** Cloudflare 没有给出结论（网络、超时、非预期响应），不是用户的问题。 */
   unavailable: boolean;
   errors: string[];
 };
 
 type SiteverifyBody = { success?: boolean; "error-codes"?: string[]; action?: string; hostname?: string };
 
-/** 把 token 交给 Cloudflare 校验。expectedAction 为空表示不检查 action（面板里的密钥检查）。 */
 export async function siteverify(secret: string, token: string, remoteIp: string, expectedAction: string): Promise<VerifyOutcome & { raw?: SiteverifyBody }> {
   if (typeof token !== "string" || token.length < 1 || token.length > TOKEN_LIMIT) return { ok: false, unavailable: false, errors: ["missing-input-response"] };
   const form = new URLSearchParams({ secret, response: token });
-  // IPv6 来源在限流里已折叠成 /64 前缀，不是合法地址；remoteip 可选，不合法就不传。
   if (remoteIp && isIP(remoteIp)) form.set("remoteip", remoteIp);
   let body: SiteverifyBody;
   try {
@@ -184,7 +166,6 @@ export async function siteverify(secret: string, token: string, remoteIp: string
   return { ok: true, unavailable: false, errors: [], raw: body };
 }
 
-/** 公开入口使用：先占用来源额度，再校验，并更新进程内统计。 */
 export async function verifyPublicTurnstile(purpose: TurnstilePurpose, token: string, remoteIp: string, budgetIdentity: string): Promise<VerifyOutcome> {
   enforceBudget("human-verify", budgetIdentity);
   const stored = readTurnstile();
@@ -198,7 +179,6 @@ export async function verifyPublicTurnstile(purpose: TurnstilePurpose, token: st
   return result;
 }
 
-/** 面板里的可读解释；未知代码原样返回，便于排查。 */
 export function explainErrors(errors: string[]): string {
   const known: Record<string, string> = {
     "invalid-input-secret": "私有密钥无效，请回 Cloudflare 复制完整的 Secret Key。",

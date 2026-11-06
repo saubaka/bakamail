@@ -5,7 +5,6 @@ import { deleteContact, listContacts, saveContact, type Contact, type ContactInp
 
 type ContactContext = { owner: string; version: number };
 
-/** Account-owned address book shared by the editor and recipient completion. */
 export const useContactStore = defineStore("mail-contacts", () => {
   const owner = ref("");
   const contacts = ref<Contact[]>([]);
@@ -57,7 +56,6 @@ export const useContactStore = defineStore("mail-contacts", () => {
 
   async function load(): Promise<boolean> {
     const current = requireOwner();
-    // A pre-commit GET must never be applied after the write. The caller retries after completion.
     if (saving.value || removingId.value !== null) return false;
     suspend();
     const read = readVersion;
@@ -86,7 +84,6 @@ export const useContactStore = defineStore("mail-contacts", () => {
     requireIdle();
     saving.value = true;
     suspend();
-    // Own the payload; edits after submission cannot change a confirmed result.
     const payload = { ...input };
     try {
       const { contact } = await saveContact(payload, id);

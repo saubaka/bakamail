@@ -1,10 +1,6 @@
 import { createCipheriv, createDecipheriv, hkdfSync, randomBytes } from "node:crypto";
 import { config } from "../config.ts";
 
-/**
- * 用 SECRET_KEY 派生的密钥加密需要落库的机密（二步验证密钥、Turnstile 密钥）。
- * 每种用途使用不同的派生标签，一种用途的密文不能拿去另一种用途解开；数据库文件泄露本身不足以还原明文。
- */
 function keyFor(context: string): Buffer {
   return Buffer.from(hkdfSync("sha256", config.secretKey, "", context, 32));
 }

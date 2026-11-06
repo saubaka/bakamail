@@ -1,4 +1,3 @@
-// Vite-only acceptance harness: ALL transports are mocked; never touches a real mailbox.
 import { createApp, h, nextTick } from 'vue';
 import { createRouter, createMemoryHistory } from 'vue-router';
 import App from '../../src/App.vue';
@@ -41,7 +40,6 @@ const navigationDelay = new URLSearchParams(location.search).get('navigationDela
 let failReadNext = false, slowReadNext = false;
 const sample = Array.from({length:48}, (_,i) => ({uid:48-i,subject:`示例邮件 ${48-i} · 阅读与排版${(48-i)%7===0?' · 长主题与窄屏换行验收'.repeat(5):''}`,from:[{name:'示例团队',address:'hello@example.test'}],to:[{name:'阅读者',address:'reader@example.test'}],date:'2026-09-27T03:20:00Z',size:4096,seen:i%3!==0,flagged:false,answered:false,hasAttachments:false}));
 const pages: Record<string, typeof sample> = { INBOX:[...sample], Archive:[] };
-// Bounded fixture-only observation evidence. Never installed in the shipped app.
 const rowObservations: unknown[] = [];
 const NativeIntersectionObserver = window.IntersectionObserver;
 window.IntersectionObserver = class extends NativeIntersectionObserver {
@@ -71,8 +69,6 @@ window.fetch = async (input, init) => {
   const reading=/^\/api\/messages\/\d+$/.test(path);
   const slow=reading&&slowReadNext, failed=reading&&failReadNext;
   if(reading){slowReadNext=false;failReadNext=false;}
-  // Intentionally allow an old delayed response to resolve after AbortSignal:
-  // the production read generation check must reject it, not this mock.
   await new Promise(resolve=>setTimeout(resolve,slow?1500:path==='/api/auth/me'&&navigationDelay?350:path==='/api/messages'||reading?220:25));
   if(failed) return new Response(JSON.stringify({ok:false,data:null,error:'隔离示例：正文读取失败'}),{status:503});
   let data: unknown = {};
@@ -104,7 +100,6 @@ window.fetch = async (input, init) => {
 };
 document.addEventListener('click',event=>{if((event.target as Element)?.closest('a[href^="/api/"]'))event.preventDefault();},true);
 const router=createRouter({history:createMemoryHistory(),routes:[{path:'/',redirect:'/mail'},{path:'/mail',component:MailWorkspace,meta:{auth:'mail'},children:[{path:'',name:'mail',component:MailView},{path:'contacts',name:'contacts',component:ContactsView},{path:'search',name:'search',component:SearchView},{path:'settings',name:'settings',component:SettingsView},{path:'drafts',name:'drafts',component:DraftsView}]}]});
-// Same forced server-session gate as production; the endpoint above is fully mocked.
 router.beforeEach(to => {
   if (to.meta.auth !== 'mail') return true;
   const session = useSessionStore(pinia);
@@ -125,7 +120,6 @@ async function runReadAcceptance(event: MouseEvent) {
   };
   control.disabled=true; output.textContent='运行中';
   try {
-    // The production list intentionally fills rows one by one. Do not capture a partial UID baseline.
     await waitFor(()=>document.querySelectorAll('.mail-row').length === pages.INBOX!.length
       && !document.querySelector('.mail-pane--list .mail-pane__head')!.textContent?.includes('同步中'));
     initial=Array.from(document.querySelectorAll<HTMLElement>('.mail-row')).map(r=>r.dataset.uid);
@@ -138,7 +132,7 @@ async function runReadAcceptance(event: MouseEvent) {
       const subject=row.querySelector('.mail-row__subject')!.textContent;
       await waitFor(()=>!document.querySelector('.mail-pane--list .mail-pane__head')!.textContent?.includes('同步中'));
       row.querySelector<HTMLButtonElement>('.mail-row__open')!.click();
-      await nextTick(); // Same-UID repeats must await the new reader, not old HTML.
+      await nextTick();
       if(!row.classList.contains('is-current')) {
         await waitFor(()=>!document.querySelector('.mail-pane--list .mail-pane__head')!.textContent?.includes('同步中'));
         row.querySelector<HTMLButtonElement>('.mail-row__open')!.click(); await nextTick();

@@ -207,7 +207,6 @@ test("来源窗口预约是原子的，拒绝请求不增加状态或延长窗�
   const wait = reserveBudget("unit-request", "a", policy);
   assert.ok(wait > 0 && wait <= 60);
   assert.equal(reserveBudget("unit-request", "b", policy), 0);
-  // 全站窗口已满，但 c 是第一次出现的来源，不能因为别人的用量被拒绝。
   assert.equal(reserveBudget("unit-request", "c", policy), 0);
   assert.equal((db.prepare("select count(*) as n from security_budgets where bucket = 'unit-request'").get() as { n: number }).n, 4);
   db.prepare("update security_budgets set created_ms = created_ms - 60001 where bucket = 'unit-request'").run();
@@ -222,7 +221,6 @@ test("验证码签发洪泛被独立预算拦截，不继续生成 PNG 或新增
   assert.equal(denied.body.code, "challenge_admin_rate_limited");
   assert.ok(Number(denied.headers["retry-after"]) > 0);
   assert.equal((db.prepare("select count(*) as n from human_challenges").get() as { n: number }).n, before);
-  // 同一来源刷光后台验证码，邮箱登录的验证码额度仍可用；反之亦然。
   assert.equal((await request(app).get("/api/auth/human-check?purpose=login").set("x-real-ip", source)).status, 200);
   const mailSource = "198.51.100.122";
   for (let index = 0; index < 6; index++) assert.equal((await request(app).get("/api/auth/human-check?purpose=login").set("x-real-ip", mailSource)).status, 200);

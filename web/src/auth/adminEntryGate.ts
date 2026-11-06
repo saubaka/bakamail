@@ -6,7 +6,6 @@ export function adminLoginDestination(destination: unknown) {
   return { path: ADMIN_LOGIN_PATH, query: { redirect: safeAdminDestination(destination) } };
 }
 
-/** The callback must revalidate server state, not just return the cached identity. */
 export async function checkAdminEntry(restore: () => Promise<unknown>, clear: () => void, destination: string) {
   try {
     await restore();

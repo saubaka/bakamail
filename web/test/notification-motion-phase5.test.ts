@@ -195,7 +195,6 @@ test('前景停留计时不被重复激活重置；隐藏时暂停，恢复只�
     ctx.mock.timers.tick(1000); browser.doc.hidden = true; browser.doc.dispatchEvent(new Event('visibilitychange'));
     ctx.mock.timers.tick(10000); assert.equal(browser.region.children.length, 1);
     browser.doc.hidden = false; browser.doc.dispatchEvent(new Event('visibilitychange'));
-    // v1 previews upgrade to the v2 info default of 6s, not the old fixed 5.2s.
     ctx.mock.timers.tick(2999); assert.equal(browser.region.children.length, 1);
     ctx.mock.timers.tick(1); await flush(); assert.equal(browser.region.children.length, 0);
   } finally { browser.restore(); }

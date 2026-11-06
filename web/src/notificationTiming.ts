@@ -9,7 +9,6 @@ export function notificationTimeline(config: Pick<UiConfig, 'notificationMotion'
     copyInMs: enterMs - copyDelayMs, copyOutMs: Math.round(exitMs * .18) };
 }
 
-/** Stack transitions pause reading until the transform reaches its new position. */
 export function waitForNoticeTransition(element: EventTarget, duration: number, done: () => void): PhaseJob {
   let settled = false, timer: ReturnType<typeof setTimeout> | undefined;
   const cleanup = () => { clearTimeout(timer); element.removeEventListener('transitionend', ended); };
@@ -20,7 +19,6 @@ export function waitForNoticeTransition(element: EventTarget, duration: number, 
   return { finish, cancel() { if (settled) return; settled = true; cleanup(); } };
 }
 export type PhaseJob = { finish: () => void; cancel: () => void };
-/** animationend is primary; a bounded fallback handles hidden/background/canceled CSS animations. */
 export function waitForNoticeAnimation(element: EventTarget, name: string, duration: number, done: () => void): PhaseJob {
   let settled = false;
   let timer: ReturnType<typeof setTimeout> | undefined;

@@ -1,9 +1,3 @@
-/**
- * 错误页面：文案、样式和 HTML 都集中在这里。
- * 服务器返回的错误页、前端的 404/不可用页、脚本加载失败的兜底页、给反向代理用的静态 502/504 页共用同一份，
- * 外观不会各画各的。全部是纯函数，不依赖运行环境；页面不含脚本，只靠链接重试。
- */
-
 export type ErrorCopy = { title: string; message: string; retry: boolean };
 
 export const ERROR_COPY: Record<number, ErrorCopy> = {
@@ -20,29 +14,23 @@ export const ERROR_COPY: Record<number, ErrorCopy> = {
   504: { title: "服务响应太慢", message: "等了很久也没有得到回应，请稍后再试。", retry: true },
 };
 
-/** 脚本没能加载或页面运行出错时显示，不对应真实的 HTTP 状态。 */
 export const LOAD_FAILURE_COPY: ErrorCopy = { title: "页面没有加载出来", message: "网络可能不稳定，或者页面刚刚更新过。重新加载一次通常就好了。", retry: true };
-/** 页面需要脚本才能使用，浏览器关闭了脚本时显示。 */
 export const NOSCRIPT_COPY: ErrorCopy = { title: "需要开启 JavaScript", message: "这个页面需要 JavaScript 才能使用，请在浏览器里开启后刷新。", retry: false };
 
 export const errorCopy = (status: number): ErrorCopy => ERROR_COPY[status] ?? ERROR_COPY[status >= 500 ? 500 : 400]!;
-/** 5xx 用偏暖的数字颜色，4xx 用主题浅蓝。 */
 export const isServerError = (status: number): boolean => status >= 500;
 export const SUPPORTED_ERROR_STATUSES = Object.keys(ERROR_COPY).map(Number);
 
 const escapeHtml = (value: string): string =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
-/** 与 web/public/logo.svg 相同的标志（去掉了标题和尺寸属性），内联后页面不依赖任何外部文件。 */
 export const ERROR_LOGO_SVG = '<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect width="40" height="40" rx="13" fill="#e5effb"/>'
   + '<g transform="rotate(-2 20 20)" fill="#fff" fill-opacity=".42" stroke="#bed8ef" stroke-width="1.5">'
   + '<path d="M14.333 11.25H14.333A3.417 3.417 0 0 1 17.75 14.667V24.5A4.25 4.25 0 0 1 13.5 28.75H12.667A3.417 3.417 0 0 1 9.25 25.333V16.333A5.083 5.083 0 0 1 14.333 11.25Z"/>'
   + '<path d="M25.667 11.25H25.667A5.083 5.083 0 0 1 30.75 16.333V25.333A3.417 3.417 0 0 1 27.333 28.75H26.5A4.25 4.25 0 0 1 22.25 24.5V14.667A3.417 3.417 0 0 1 25.667 11.25Z" transform="translate(0 2) rotate(3 26.5 20)"/></g></svg>';
 
-/** 图标内联成数据地址：后端挂掉时反向代理返回的静态页也能带上图标，不再向服务请求。 */
 const ERROR_FAVICON = `data:image/svg+xml,${encodeURIComponent(ERROR_LOGO_SVG.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" '))}`;
 
-/** 页面外观。颜色取自站点主题：雾白底、浅蓝描边、石墨蓝文字；动画在“减少动画”时全部关闭。 */
 export const ERROR_PAGE_CSS = `
 .ep-body,.ep-page{box-sizing:border-box;margin:0;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;background:#F7F9FC;color:#354052;font-family:ui-rounded,"Microsoft YaHei UI","PingFang SC","Noto Sans CJK SC",system-ui,-apple-system,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}
 .ep-page{position:relative;z-index:1}
@@ -77,18 +65,14 @@ export const ERROR_PAGE_CSS = `
 @media (prefers-reduced-motion:reduce){.ep-card,.ep-logo,.ep-code span,.ep-title,.ep-message,.ep-actions,.ep-meta{animation:none!important}.ep-button,.ep-link{transition:none!important}}
 `.trim();
 
-/** 嵌进应用页面时（样式文件可能也没加载），去掉浏览器默认的页边距并铺上主题底色。 */
 const EMBEDDED_BODY_CSS = "body{margin:0;background:#F7F9FC}";
 
 export type ErrorCardOptions = {
-  /** 显示的状态码；没有时不显示大数字（例如脚本加载失败）。 */
   status?: number;
   copy?: ErrorCopy;
   siteName?: string;
   requestId?: string;
-  /** 429 / 503 的建议等待秒数。 */
   retryAfter?: number;
-  /** 重试链接的地址；不填则刷新当前页。 */
   retryHref?: string;
   homeHref?: string;
   showHome?: boolean;
@@ -96,14 +80,12 @@ export type ErrorCardOptions = {
 
 const REQUEST_ID = /^[A-Za-z0-9._:-]{1,64}$/;
 
-/** 页面中间那张卡片的 HTML，不含 <html> 外壳，可以放进 <template> 或页面里。 */
 export function renderErrorCard(options: ErrorCardOptions): string {
   const status = options.status;
   const copy = options.copy ?? (status ? errorCopy(status) : LOAD_FAILURE_COPY);
   const server = status === undefined || isServerError(status);
   const digits = status === undefined ? "" : `<p class="ep-code" aria-hidden="true">${[...String(status)].map((digit, index) => `<span style="--i:${index}">${digit}</span>`).join("")}</p>`;
   const wait = options.retryAfter && Number.isFinite(options.retryAfter) && options.retryAfter > 0 ? `请大约等待 ${Math.ceil(options.retryAfter)} 秒后再试。` : "";
-  // 错误编号只对服务器内部的错误有用；找不到页面这类情况不显示，避免干扰。
   const id = server && options.requestId && REQUEST_ID.test(options.requestId) ? `<p class="ep-meta">错误编号 <code>${escapeHtml(options.requestId)}</code></p>` : "";
   const retry = copy.retry ? `<a class="ep-link" href="${escapeHtml(options.retryHref ?? "")}">重试</a>` : "";
   const home = options.showHome === false ? "" : `<a class="ep-button" href="${escapeHtml(options.homeHref ?? "/")}">返回首页</a>`;
@@ -120,7 +102,6 @@ export function renderErrorCard(options: ErrorCardOptions): string {
 
 export const ERROR_FOOTER = (year: number): string => `<footer class="ep-footer"><p>© ${year} saubaka. BakaMail.</p></footer>`;
 
-/** 完整的独立页面（服务器直接返回，或存成静态文件给反向代理用）。 */
 export function renderErrorDocument(options: ErrorCardOptions & { year?: number; title?: string }): string {
   const status = options.status;
   const copy = options.copy ?? (status ? errorCopy(status) : LOAD_FAILURE_COPY);
@@ -132,10 +113,6 @@ export function renderErrorDocument(options: ErrorCardOptions & { year?: number;
     + `<body class="ep-body">\n<main class="ep-main" id="main-content">${renderErrorCard(options)}</main>\n${ERROR_FOOTER(year)}\n</body>\n</html>\n`;
 }
 
-/**
- * 浏览器关闭脚本时，普通页面显示的提示。样式放在 <head> 里的 <noscript>（规范允许），提示本身放在 <body> 里的 <noscript>；
- * 两段要分别插进页面。
- */
 export function renderNoscriptRequired(year: number): { head: string; body: string } {
   return {
     head: `<noscript><style>${ERROR_PAGE_CSS}${EMBEDDED_BODY_CSS}</style></noscript>`,
@@ -143,7 +120,6 @@ export function renderNoscriptRequired(year: number): { head: string; body: stri
   };
 }
 
-/** 前端脚本没有加载起来时的兜底：放在 <template> 里，由页面里的小脚本在需要时取出来显示。 */
 export function renderLoadFailureTemplate(year: number): string {
   return `<template id="bm-fatal"><style>${ERROR_PAGE_CSS}${EMBEDDED_BODY_CSS}</style><div class="ep-page"><main class="ep-main">${renderErrorCard({ copy: LOAD_FAILURE_COPY, showHome: false })}</main>${ERROR_FOOTER(year)}</div></template>`;
 }

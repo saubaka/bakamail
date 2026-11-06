@@ -13,7 +13,6 @@ const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
 <style scoped>
 .toggle { position: relative; display: inline-flex; flex: 0 0 auto; cursor: pointer; }
 .toggle.is-disabled { cursor: not-allowed; opacity: .6; }
-/* 全局样式会覆盖原生复选框，必须 !important 才能真正藏起来。 */
 .toggle > input { position: absolute !important; width: 1px !important; height: 1px !important; margin: 0 !important; padding: 0 !important; opacity: 0 !important; pointer-events: none !important; }
 .toggle__track { position: relative; width: 44px; height: 26px; border: 1px solid var(--line-blue); border-radius: 999px; background: #e9eff4; transition: background 180ms var(--ease, ease), border-color 180ms var(--ease, ease); }
 .toggle__track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(72, 105, 131, .25); transition: transform 220ms var(--spring, ease); }

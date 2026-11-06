@@ -1,17 +1,9 @@
 import { randomBytes, scrypt, scryptSync, timingSafeEqual } from "node:crypto";
 
-/**
- * 管理员密码哈希。
- *
- * 规划里写的是 argon2id；实现改用 Node 内置的 scrypt，原因是 argon2 需要原生
- * 编译依赖，而本项目的部署原则是不引入原生依赖（SQLite 也走 node:sqlite）。
- * scrypt 同样是内存硬函数，配合下面的参数足以对抗离线爆破。
- */
 const N = 1 << 15;
 const r = 8;
 const p = 1;
 const KEY_LEN = 32;
-// scrypt 需要 128 * N * r 字节，默认 maxmem 32 MiB 不够
 const MAX_MEM = 96 * 1024 * 1024;
 
 export function hashPassword(password: string): string {
@@ -25,7 +17,6 @@ export function hashPassword(password: string): string {
   return ["scrypt", N, r, p, salt.toString("base64"), derived.toString("base64")].join("$");
 }
 
-/** Initialization must not stall the event loop; callers bound concurrent hash jobs. */
 export async function hashPasswordAsync(password: string): Promise<string> {
   const salt = randomBytes(16);
   const derived = await new Promise<Buffer>((resolve, reject) => {
@@ -52,18 +43,15 @@ export function verifyPassword(stored: string, password: string): boolean {
   return derived.length === expected.length && timingSafeEqual(derived, expected);
 }
 
-/** 密码强度：至少 10 位，且不是纯数字或纯字母。 */
 export function passwordProblem(password: string): string {
   if (password.length < 10) return "密码至少 10 位";
   if (password.length > 200) return "密码过长";
-  // 密码会通过标准输入交给邮件服务，换行等控制字符会让实际生效的密码被截断，从而绕过长度与强度规则。
   if (/[\u0000-\u001f\u007f]/.test(password)) return "密码不能包含换行或其他控制字符";
   if (/^\d+$/.test(password)) return "密码不能是纯数字";
   if (/^[a-zA-Z]+$/.test(password)) return "密码不能是纯字母";
   return "";
 }
 
-/** Login uses the bounded libuv work queue, never scryptSync on the event loop. */
 export async function verifyPasswordAsync(stored: string, password: string): Promise<boolean> {
   const parts = stored.split("$");
   if (parts.length !== 6 || parts[0] !== "scrypt" || password.length > 200) return false;

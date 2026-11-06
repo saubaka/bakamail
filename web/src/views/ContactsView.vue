@@ -114,7 +114,6 @@ const editorPanel = ref<HTMLElement | null>(null);
 const nameInput = ref<HTMLInputElement | null>(null);
 function edit(contact: Contact): void {
   Object.assign(form, contact);
-  // 页面在 .workspace-route-panel 里滚动，不是 window：把编辑区带到眼前并聚焦名字框。
   if (editorPanel.value) revealInScroller(editorPanel.value, nameInput.value);
 }
 
@@ -129,7 +128,6 @@ async function save(): Promise<void> {
     if (!(await contactStore.save(payload, id)) || !active || !contactStore.isCurrent(current)) return;
     toast(id ? "联系人已更新" : "联系人已添加");
     reset();
-    // Reading is separate from the confirmed write. Its failure must not restore old data/input.
     await contactStore.load().catch(() => undefined);
   } catch (reason) {
     if (active && contactStore.isCurrent(current)) error.value = reason instanceof ApiError ? reason.message : "保存失败";

@@ -23,7 +23,6 @@ test("人机验证就绪判断：内建验证码必须正好四位，Turnstile �
 test("Turnstile 脚本只从 challenges.cloudflare.com 加载，且只在组件需要时才请求", () => {
   assert.equal(TURNSTILE_ORIGIN, "https://challenges.cloudflare.com");
   assert.equal(TURNSTILE_SCRIPT, "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit");
-  // 页面入口和公共模块不预先加载，加载只发生在 loadTurnstile() 里。
   assert.doesNotMatch(readFileSync(new URL("../index.html", import.meta.url), "utf8"), /cloudflare/i);
   assert.doesNotMatch(source("main.ts"), /turnstile/i);
   const loader = source("auth/turnstileLoader.ts");
@@ -48,7 +47,6 @@ test("验证码组件：由服务端响应决定采用 Turnstile，后台登录�
   const admin = source("views/admin/AdminLoginView.vue");
   assert.doesNotMatch(admin, /Turnstile/i);
   assert.match(admin, /<HumanCheck[^>]*\badmin\b/);
-  // 令牌失效后的重置路径：提交失败调用 invalidate()/refresh() 都会让组件换新令牌。
   assert.match(human, /defineExpose\(\{ refresh, load, invalidate \}\)/);
 });
 
@@ -70,15 +68,12 @@ test("后台人机验证面板：路由需要安全写权限，入口在安全�
   const model = source("admin/navModel.ts");
   assert.match(model, /name: "admin-human-check", label: "人机验证"[^}]*permission: "system\.security\.write"[^}]*section: "security"/);
   const view = source("views/admin/HumanVerificationView.vue");
-  // 后台登录一行固定显示内建验证码，且不提供开关。
   assert.match(view, /<li class="is-fixed">\s*<span>后台登录<\/span>\s*<span class="hv-routes__state">内建验证码<\/span>\s*<span class="hv-routes__fixed">固定<\/span>/);
-  // 私有密钥框只用本地输入；adopt() 在每次读取或保存后清空它，永远不用接口数据回填。
   assert.match(view, /function adopt\([\s\S]*secret\.value = "";/);
   assert.doesNotMatch(view, /secret\.value = (next|state)/);
   assert.match(view, /confirmDialog\(\{\s*title: "启用 Turnstile"/);
   assert.match(view, /title: "清除人机验证配置"[\s\S]*tone: "danger"/);
   assert.match(view, /v-model:token="previewToken"[\s\S]*:action="state\.panelAction"/);
-  // 未通过真实验证前，总开关不可用。
   assert.match(view, /:disabled="busy \|\| \(!state\.verified && !state\.enabled\)"|:disabled="working \|\| \(!state\.verified && !state\.enabled\)"/);
   assert.doesNotMatch(view, /localStorage|sessionStorage/);
 });
@@ -96,7 +91,6 @@ test("人机验证面板与组件是纯色扁平样式：没有渐变，复选�
   }
   const view = source("views/admin/HumanVerificationView.vue");
   assert.match(view, /\.hv-switch > input \{ position: absolute !important;/);
-  // 面板不再使用步骤条、提示卡和每行一张卡片的写法。
   assert.doesNotMatch(view, /hv-steps|hv-lock|hv-note/);
   const widget = source("components/TurnstileWidget.vue");
   assert.match(widget, /\.ts-box__skeleton \{[^}]*animation: ts-pulse/);

@@ -5,7 +5,6 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-// @ts-expect-error Deployment helper is intentionally plain Node ESM.
 import { uploadArchiveByExec } from "../../scripts/upload-archive.mjs";
 
 const destination = "/root/mail/backups/bakamail-20260926T010101Z/release.tar.gz";

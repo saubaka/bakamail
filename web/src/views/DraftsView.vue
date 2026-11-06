@@ -55,7 +55,6 @@ function preview(value = ""): string {
 }
 
 async function load(): Promise<void> {
-  // 刷新时保留已有的草稿，不先换成“正在读取”再整页重画。
   loading.value = true;
   try {
     const data = await listDrafts();

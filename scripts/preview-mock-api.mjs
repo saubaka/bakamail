@@ -1,4 +1,3 @@
-/** Local-only visual QA fixture. No mail server is contacted; simulated sends never leave this process. */
 import { createServer } from "node:http";
 
 if (process.env.NODE_ENV === "production") {

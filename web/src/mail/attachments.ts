@@ -1,4 +1,3 @@
-/** Cancel actual FileReader work as well as ignoring its late callbacks. */
 export function readFileBase64(file: File, signal: AbortSignal): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

@@ -2,7 +2,6 @@ import { MailboxPartialError } from "./accounts.ts";
 
 export type AccountOperation = "create" | "repair" | "password" | "remove";
 
-/** Safe business outcome only. Never copy a CLI message, stderr, stack, or nested cause. */
 export function accountFailure(operation: AccountOperation, error: unknown): {
   code: string; message: string; outcome: "partial" | "unconfirmed";
 } {

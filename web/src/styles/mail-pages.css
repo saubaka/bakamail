@@ -454,19 +454,12 @@
     transform: none;
   }
 }
-
-/* ---- 用户端工具页（搜索、草稿、联系人、设置）统一样式 ---- */
-/* 基座把 managed-page-card 当作“等高卡片网格”的格子（最小高度 264px、三行拉伸）；这里它只是内容容器，高度由内容决定。 */
 .mail-utility-shell .managed-page-card { grid-template-rows: none; grid-auto-rows: auto; align-content: start; min-height: 0; height: auto; background-color: var(--surface); background-image: none; }
 .mail-utility-shell .managed-page-card:hover { transform: none; }
 .mail-utility-shell .draft-card { align-content: center; }
-/* 编辑联系人的卡片和下面的列表一样宽，页面里所有卡片左右边缘对齐。 */
 .contact-editor-panel { max-width: none; }
-/* 搜索表单：关键词独占一行，文件夹、起止日期和状态选项整齐排成一行。 */
 .mail-search-form { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .mail-search-query { grid-column: 1 / -1; }
-
-/* 列表增减：高度平滑变化，离开的卡片淡出，其余卡片平滑补位。 */
 .smooth-block { margin: -6px; overflow: hidden; transition: height 260ms var(--ease); }
 .smooth-block__inner { position: relative; display: flow-root; padding: 6px; }
 .card-list { position: relative; }
@@ -482,7 +475,6 @@
 .settings-feedback { display: grid; gap: 10px; justify-items: start; }
 .settings-feedback:empty { display: none; }
 .contact-card.is-editing { border-color: var(--line-blue-strong); }
-/* 滚动时卡片的入场与出场（scrollReveal 指令）。 */
 [data-scroll-reveal] { transition: opacity 260ms ease, transform 420ms var(--ease); }
 [data-scroll-reveal="outside"]:not(:focus-within) { opacity: 0; transform: translate3d(0, var(--reveal-offset, 14px), 0); }
 @media (max-width: 980px) {

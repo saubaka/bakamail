@@ -257,7 +257,7 @@ test("存储损坏时页面和接口仍可用：按默认值提供，管理端�
 });
 
 test("已构建前端时：首页和其他页面的真实响应带上设置的标题和 noindex，CSP 随页面下发，页面自己的脚本仍带 nonce", async () => {
-  if (!hasDist) return; // 只有源码的检出可以没有构建产物。
+  if (!hasDist) return;
   setSetting("seo", JSON.stringify({ config: { ...defaultSeoConfig(), siteName: "构建后检查", canonicalOrigin: "https://mail.example.com" }, revision: 9, updatedAt: "2026-10-12T00:00:00.000Z" }));
   const home = await request(app).get("/");
   assert.equal(home.status, 200);

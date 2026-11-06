@@ -6,7 +6,6 @@ import { createNotificationDisplayTimer, type NotificationDisplayClock } from '.
 export type NotificationTone = 'success' | 'info' | 'warning' | 'error';
 type ProgressState = { message?: string; updateMessage?: string; version: number; tone?: NotificationTone; settled: boolean;
   canceled?: boolean; listeners: Set<() => void>; owner?: ProgressOwner };
-/** Audited exception: an unknown SMTP result can make a blind retry duplicate delivery. */
 export type NoticeOptions = { manualReason?: 'delivery-unconfirmed'; action?: { label: string; run: () => void | Promise<void> };
   previewConfig?: UiConfig | UiConfigV2; signal?: AbortSignal; clock?: NotificationDisplayClock };
 export type Notification = { message: string; tone: NotificationTone; progress?: ProgressState; options?: NoticeOptions };
@@ -21,7 +20,6 @@ function duration(config: UiConfigV2, type: NotificationType, reason?: NoticeOpt
   return !(type === 'error' && reason === 'delivery-unconfirmed') && (policy.mode === 'timed' || policy.mode === 'timedHide') ? policy.durationMs : null;
 }
 
-/** Kept for callers needing strictly serial work; UI notifications use the stack below. */
 export function createNotificationQueue(show: (notice: Notification, done: () => void) => void) {
   const pending: Notification[] = []; let active: Notification | null = null;
   function next() { if (active || !pending.length) return; active = pending.shift()!; let finished = false; show(active, () => { if (finished) return; finished = true; active = null; next(); }); }
@@ -41,7 +39,6 @@ type Card = { notice: Notification; wrapper: HTMLDivElement; node: HTMLDivElemen
   restack: (index: number, ms: number) => void; inspect: () => NoticeDisplayState; stackMs: number; leaving: boolean };
 const allCards = new Set<Card>();
 const stack = createNotificationStack<Card>(items => items.forEach((card, index) => {
-  // A shared switching timeline for the whole stack, from the current foreground snapshot.
   card.wrapper.style.setProperty('--notice-stack', `${reducedMotion() ? 0 : items[0]!.stackMs}ms`);
   card.wrapper.style.setProperty('--stack-depth', String(Math.min(index, 3)));
   card.wrapper.style.setProperty('--capsule-width', `${Math.max(...items.map(item => item.width))}px`);
@@ -62,7 +59,6 @@ function reducedMotion(): boolean {
 }
 function ensureRegion(): HTMLElement | null {
   const region = document.getElementById('toast-region'); if (!region) return null;
-  // Keep controls inside the active modal's inert boundary, and lift the host above its backdrop.
   const dialogs = [...document.querySelectorAll<HTMLDialogElement>('dialog[open]')];
   const parent = dialogs.at(-1) ?? document.body;
   if (region.parentElement !== parent) {
@@ -71,7 +67,7 @@ function ensureRegion(): HTMLElement | null {
   }
   if ('showPopover' in region) {
     region.setAttribute('popover', 'manual');
-    if (!region.matches(':popover-open')) { try { region.showPopover(); } catch { /* Old browsers use the fixed host. */ } }
+    if (!region.matches(':popover-open')) { try { region.showPopover(); } catch { } }
   }
   return region;
 }
@@ -158,7 +154,6 @@ function displayNotification(notice: Notification): ViewHandle | undefined {
   function settleEnter() { if (node.dataset.phase === 'enter') { jobs.get('enter')?.finish(); } }
   function reduce() {
     applyTiming(); wrapper.style.setProperty('--notice-stack', '0ms');
-    // Snapshotting keys avoids canceling newly created phases; new zero-ms jobs settle in a microtask.
     for (const key of [...jobs.keys()]) jobs.get(key)?.finish();
   }
   function restack(index: number, ms: number) {
@@ -173,8 +168,6 @@ function displayNotification(notice: Notification): ViewHandle | undefined {
     resume();
   }
   applyTiming();
-  // A morphing capsule owns its CSS border. Do not fit a separately measured,
-  // clipped SVG to intermediate droplet geometry (including background cards).
   const resize = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => {
     if (stack.items[0] === card) region.style.setProperty('--stack-front-height', `${Math.max(56, node.offsetHeight)}px`);
   }) : undefined;
@@ -229,7 +222,6 @@ function displayNotification(notice: Notification): ViewHandle | undefined {
       node.dataset.phase = 'text-in';
       phase('text-in', text, 'notification-word-in', timeline().textInMs, () => {
         node.classList.remove('is-content-arriving'); node.dataset.phase = completed ? 'complete' : 'capsule';
-        // A task has one terminal version; ordinary updates keep the loading timer's remainder.
         if (completed) readTimer.reset(duration(snapshot, currentTone, notice.options?.manualReason));
         contentBusy = false;
         applyProgress(); resume();
@@ -272,7 +264,7 @@ export function beginProgressNotice(message = '正在拉取邮件…', options?:
     owner.view = undefined;
     if (disposed) return;
     if (progress.settled && owner.resultPresented) dispose();
-    else if (progress.settled) render(); // A result arriving during the loading exit waits for clean removal.
+    else if (progress.settled) render();
   }
   function dispose() {
     if (disposed) return; disposed = true; progress.canceled = true;

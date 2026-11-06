@@ -2,7 +2,6 @@ import { createHash } from "node:crypto";
 
 const quote = (value) => `'${String(value).replaceAll("'", "'\\''")}'`;
 
-/** SSH exec fallback for a stalled SFTP channel; never print archive bytes. */
 export function uploadArchiveByExec(bytes, destination, remote) {
   if (!Buffer.isBuffer(bytes) || bytes.length === 0 || bytes.length > 16 * 1024 * 1024) throw new Error("发布包大小不受支持");
   if (!/^\/root\/mail\/backups\/bakamail-\d{8}T\d{6}Z\/release\.tar\.gz$/.test(destination)) throw new Error("发布包目标不匹配");
@@ -12,7 +11,6 @@ export function uploadArchiveByExec(bytes, destination, remote) {
   execute(`import os
 fd=os.open(${JSON.stringify(part)},os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
 os.close(fd)`);
-  // Keep command arguments well below macOS/SSH argument-size limits.
   for (let offset = 0; offset < bytes.length; offset += 16 * 1024) {
     const chunk = bytes.subarray(offset, offset + 16 * 1024).toString("base64");
     execute(`import os,stat,base64

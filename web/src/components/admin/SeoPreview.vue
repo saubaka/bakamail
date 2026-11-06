@@ -40,7 +40,6 @@ watch(() => props.imageUrl, () => { imageFailed.value = false; });
 
 const host = computed(() => props.origin ? props.origin.replace(/^https?:\/\//, "") : "your-domain.example");
 const shownUrl = computed(() => props.origin ? `${props.origin} › ` : "https://your-domain.example › ");
-// 搜索结果里标题约显示 30 个汉字、描述约 80 个汉字，超出的部分会被省略号替代。
 const shownTitle = computed(() => truncateByWidth(props.title, 60));
 const shownDescription = computed(() => truncateByWidth(props.description, 160));
 </script>

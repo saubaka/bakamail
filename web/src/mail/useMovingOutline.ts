@@ -3,10 +3,6 @@ import { HIGHLIGHT_EASING, HIGHLIGHT_MS, planHighlightMove } from "./highlightMo
 
 export type OutlineBox = { x: number; y: number; width: number; height: number; ready: boolean };
 
-/**
- * 一圈会移动的选中线条：容器里有一个绝对定位的线条元素，目标按钮由选择器给出。
- * 目标变化时从线条此刻真实的位置滑到新按钮；窗口、侧栏尺寸变化只重新量位置、不播放动画。
- */
 export function useMovingOutline(options: {
   container: Ref<HTMLElement | null>;
   highlight: Ref<HTMLElement | null>;
@@ -20,7 +16,6 @@ export function useMovingOutline(options: {
     transform: `translate3d(${box.value.x}px,${box.value.y}px,0)`,
   }));
   let frame = 0;
-  // 一次“要播放动画”的测量不能被紧随其后的普通测量顶掉，否则线条会直接瞬移到目标。
   let animateRequested = false;
 
   function measure(animate = false): void {
@@ -36,7 +31,6 @@ export function useMovingOutline(options: {
         box.value = { ...box.value, ready: false };
         return;
       }
-      // 按真实盒子量（含小数），并除掉容器自身的缩放（入场动画期间容器可能带缩放），线条才能严丝合缝地圈住按钮。
       const containerRect = container.getBoundingClientRect();
       const targetRect = target.getBoundingClientRect();
       const scaleX = container.offsetWidth ? containerRect.width / container.offsetWidth : 1;
@@ -50,7 +44,6 @@ export function useMovingOutline(options: {
       };
       const element = options.highlight.value;
       if (play && box.value.ready && element && !options.reduced() && typeof element.animate === "function") {
-        // 从线条此刻真实的位置出发（连续点击时不会跳回上一个终点）。
         const current = element.getBoundingClientRect();
         const from = {
           x: (current.left - containerRect.left) / scaleX - container.clientLeft,

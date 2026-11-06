@@ -6,7 +6,6 @@ import { DEFAULT_MAIL_PREFERENCES, normalizeMailPreferences, readMailSettings,
 
 type Context = { owner: string; generation: number };
 
-/** One account-owned confirmed preference snapshot shared by Settings and MailView. */
 export const usePreferenceStore = defineStore("mail-preferences", () => {
   const owner = ref("");
   const settings = ref<MailPreferences>({ ...DEFAULT_MAIL_PREFERENCES });
@@ -53,7 +52,6 @@ export const usePreferenceStore = defineStore("mail-preferences", () => {
 
   async function load(): Promise<boolean> {
     const current = requireOwner();
-    // Never let a pre-write read replace a confirmed write with older values.
     if (saving.value) return false;
     suspend();
     const read = readGeneration;

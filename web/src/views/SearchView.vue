@@ -121,7 +121,6 @@ async function search(): Promise<void> {
   error.value = "";
   try {
     if (await searchStore.run(input)) {
-      // Commit displayed data, its source folder and transition key in one render.
       results.value = [...searchStore.results];
       resultFolder.value = searchStore.resultFolder;
       searched.value = true;

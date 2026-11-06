@@ -40,7 +40,6 @@ test("部署包含共享运行模块并保留旧 hashed assets，不打包会话
   const root = new URL("../../", import.meta.url);
   assert.match(readFileSync(new URL("deploy/Dockerfile",root),"utf8"), /COPY shared \.\/shared/);
   assert.doesNotMatch(readFileSync(new URL(".dockerignore",root),"utf8"), /^web\/dist$/m);
-  // The operator-specific release script is deliberately not part of public source.
   const releasePath = new URL("scripts/deploy-green.mjs",root);
   if (existsSync(releasePath)) {
     const release = readFileSync(releasePath,"utf8");

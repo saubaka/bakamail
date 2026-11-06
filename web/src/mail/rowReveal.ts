@@ -4,9 +4,6 @@ const groups = new WeakMap<Element, Group>();
 const owners = new WeakMap<HTMLElement, Element>();
 export const rowRevealDirective: ObjectDirective<HTMLElement> = {
   mounted(el) {
-    // Vue owns className (is-current/is-unread). Keep reveal state in a separate
-    // attribute so selecting or marking a row cannot erase its visibility.
-    // Fail open: only a confirmed non-intersection may hide content.
     el.dataset.rowReveal = "visible";
     const root = el.closest(".mail-pane__body");
     if (!root || typeof IntersectionObserver === "undefined") return;

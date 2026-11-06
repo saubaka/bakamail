@@ -9,7 +9,6 @@ export type RevealRuntime = {
   onPreferenceChange(callback: () => void): () => void;
 };
 
-/** Visibility is progressive enhancement: missing APIs or reduced motion never hide content. */
 export function attachIntroReveal(element: HTMLElement, runtime: RevealRuntime): () => void {
   let intersecting = false;
   let disposed = false;
@@ -42,7 +41,6 @@ export function attachIntroReveal(element: HTMLElement, runtime: RevealRuntime):
   };
 }
 
-/** 区块里每一项文字、卡片各自在进入视野的那一刻入场，同时进来的几项按从上到下依次排队。 */
 export const ITEM_STEP_MS = 90;
 export const ITEM_MAX_STEPS = 6;
 export type ItemEntry = { isIntersecting: boolean; target: HTMLElement };
@@ -52,7 +50,6 @@ export type ItemRuntime = {
   top(element: HTMLElement): number;
 };
 
-/** 同一批进入视野的元素：按位置排好，返回它们各自的等待时间。 */
 export function itemDelays(count: number): number[] {
   return Array.from({ length: count }, (_, index) => Math.min(index, ITEM_MAX_STEPS) * ITEM_STEP_MS);
 }
@@ -72,7 +69,6 @@ export function attachIntroItems(root: HTMLElement, runtime: ItemRuntime): () =>
     });
     for (const entry of entries) {
       if (entry.isIntersecting) continue;
-      // 完全离开视野才收回，下次进来再入场一遍。
       entry.target.style.setProperty("--d", "0ms");
       entry.target.classList.remove("is-seen");
     }

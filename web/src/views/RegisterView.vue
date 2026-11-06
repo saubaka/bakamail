@@ -50,7 +50,6 @@
           v-model:domain="domain"
           purpose="register"
         />
-        <!-- 蜜罐字段：正常用户看不见也不会填 -->
         <label class="honeypot" aria-hidden="true">
           <span>网址</span>
           <input v-model="website" tabindex="-1" autocomplete="off" />

@@ -67,7 +67,6 @@ function enhance(native: NativeControl): Controller {
   }
   function choose(value: string) {
     native.value = value;
-    // Preserve Vue v-model, its .number modifier, and existing application handlers.
     if (!isSelect) native.dispatchEvent(new Event("input", { bubbles: true }));
     native.dispatchEvent(new Event("change", { bubbles: true }));
     sync(); close(true);
@@ -187,7 +186,6 @@ export const themedControlDirective: ObjectDirective<NativeControl> = {
   beforeUnmount(native) { controls.get(native)?.destroy(); controls.delete(native); },
 };
 
-/** Keep browser constraint validation, replace only its unstyleable tooltip. */
 export function initializeThemeValidation(): void {
   const errors = new WeakMap<HTMLInputElement, { node: HTMLSpanElement; previous: string | null }>();
   let focusing = false;
@@ -195,7 +193,6 @@ export function initializeThemeValidation(): void {
     const error = errors.get(input); if (!error) return;
     const root = document.documentElement;
     const still = !root || typeof matchMedia !== "function" || root.dataset.motion === "reduce" || root.dataset.performance === "low" || matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // 提示淡出收起之后再移除，下面的内容平滑上移，而不是瞬间跳一下。
     if (still) error.node.remove(); else { error.node.classList.add("is-leaving"); setTimeout(() => error.node.remove(), 220); }
     errors.delete(input);
     const descriptions = (input.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(id => id && id !== error.node.id);

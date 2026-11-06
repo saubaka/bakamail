@@ -7,7 +7,6 @@ import { baseParse } from '@vue/compiler-dom';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 
-/** Source-only inventory; no network, database, message content, or credential reads. */
 export function collectNotificationDisplayInventory(root = projectRoot) {
   const sites = [];
   function scanScript(content, file, startLine = 1) {
@@ -24,7 +23,6 @@ export function collectNotificationDisplayInventory(root = projectRoot) {
         if (['notify', 'toast', 'beginProgressNotice'].includes(exported)) bindings.set(binding.name.text, exported);
       }
     }
-    // The notification module's own async-action error calls its exported notify function.
     if (file === 'web/src/notifications.ts') bindings.set('notify', 'notify');
     function visit(node) {
       if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && bindings.has(node.expression.text)) {

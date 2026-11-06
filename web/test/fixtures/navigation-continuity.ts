@@ -1,4 +1,3 @@
-/** Local-only DOM/rAF evidence for the real shells. No server, credentials or mail writes. */
 import type { Router } from 'vue-router';
 import { nextTick } from 'vue';
 
@@ -47,7 +46,6 @@ export function installNavigationContinuity(router: Router, kind: 'admin' | 'mai
         changes.push({ path, shellSame: shell === document.querySelector(shellSelector), sidebarSame: sidebar === document.querySelector(sidebarSelector),
           documentSame: documentRoot === document.getElementById('app'), panels: document.querySelectorAll(kind === 'admin' ? '.admin-route-panel' : '.workspace-route-panel').length });
       }
-      // Exercise actual mail menu click handlers while the preceding transition is still running.
       let latestIntent = true;
       let currentPageIntent = true;
       if (kind === 'mail') {
@@ -61,7 +59,6 @@ export function installNavigationContinuity(router: Router, kind: 'admin' | 'mai
         buttons.find(b => b.textContent?.trim() === '设置')?.click();
         await pause(850);
         latestIntent = router.currentRoute.value.path === '/mail/settings';
-        // Clicking the already-active page must cancel an older pending destination too.
         buttons.find(b => b.textContent?.trim() === '搜索')?.click();
         await pause(40);
         buttons.find(b => b.textContent?.trim() === '设置')?.click();

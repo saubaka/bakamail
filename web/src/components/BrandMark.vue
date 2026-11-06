@@ -10,7 +10,6 @@
 <script setup lang="ts">
 import { siteInfo } from "../siteInfo";
 
-// 不传标题时显示后台设置的站点名。
 withDefaults(
   defineProps<{ title?: string; subtitle?: string; auth?: boolean }>(),
   { title: undefined, subtitle: "自建邮局", auth: false },

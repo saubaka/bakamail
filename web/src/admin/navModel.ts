@@ -1,4 +1,3 @@
-/** 后台导航的唯一数据源：侧栏、跳转面板、快捷键和页面标题都从这里生成。 */
 export type IconName =
   | "overview" | "accounts" | "invites" | "ops" | "security" | "human" | "admins" | "system" | "seo"
   | "logout" | "mail" | "search" | "panel" | "return"
@@ -7,15 +6,12 @@ export type IconName =
 export type RailBadgeKey = "accounts" | "security";
 
 export type RailItem = {
-  /** 路由名，与 adminRoutes.ts 一致。 */
   name: string;
   label: string;
   icon: IconName;
   permission: string;
   section: "main" | "mail" | "ops" | "security" | "system";
-  /** 跳转面板的搜索词：拼音首字母、英文和常见叫法，不显示在界面上。 */
   keywords: string;
-  /** `g` 之后的第二个键。 */
   shortcut: string;
   badge?: RailBadgeKey;
 };
@@ -44,7 +40,6 @@ export const PAGE_TITLES: Record<string, string> = Object.fromEntries(RAIL_ITEMS
 
 export type RailSection = { key: RailItem["section"]; label: string; items: RailItem[] };
 
-/** 只保留当前管理员有权限的页面；没有页面的分区整个隐藏。 */
 export function railSections(can: (permission: string) => boolean): RailSection[] {
   return RAIL_SECTIONS
     .map((section) => ({ ...section, items: RAIL_ITEMS.filter((item) => item.section === section.key && can(item.permission)) }))
@@ -55,10 +50,6 @@ export function visibleItems(can: (permission: string) => boolean): RailItem[] {
   return railSections(can).flatMap((section) => section.items);
 }
 
-/**
- * 跳转面板的匹配：名称开头 > 名称包含 > 关键词开头 > 关键词包含；空查询按原顺序列出全部。
- * 同一档内保持导航顺序，结果稳定可预期。
- */
 export function matchItems<T extends { label: string; keywords?: string }>(items: T[], query: string): T[] {
   const q = query.trim().toLowerCase();
   if (!q) return items;

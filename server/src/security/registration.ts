@@ -5,7 +5,6 @@ import { attemptCount } from "./rateLimit.ts";
 export const REGISTER_REASON_MAX_LENGTH = 500;
 export const REGISTER_REASON_MAX_LINKS = 2;
 
-/** Optional for invite holders; never render or log the submitted content as markup. */
 export function registrationReasonProblem(value: unknown): string | null {
   if (value === undefined) return null;
   if (typeof value !== "string") return "申请理由格式不正确";
@@ -22,7 +21,6 @@ export function registrationLimits(): { perHour: number; perDay: number } {
   };
 }
 
-/** One SQLite statement reserves both sliding-window budgets before any external await. */
 export function reserveRegistrationAttempt(identity: string, account: string):
   | { attemptId: number; limited: false }
   | { limited: true; window: "hour" | "day"; retryAfterSeconds: number } {

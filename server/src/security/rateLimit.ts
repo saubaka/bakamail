@@ -28,7 +28,6 @@ export function recordLoginAttempt(
   return Number(result.lastInsertRowid);
 }
 
-/** Reserve the request budget before awaiting external work, then finalize the same log row. */
 export function completeLoginAttempt(id: number, success: boolean, reason: string): void {
   db.prepare("update login_logs set success = ?, reason = ? where id = ? and reason = 'pending'")
     .run(success ? 1 : 0, reason.slice(0, 200), id);
@@ -55,7 +54,6 @@ export function failureCount(
   return row?.n ?? 0;
 }
 
-/** Persisted reservation bounds expensive work even when several BFF workers share SQLite. */
 export function reserveLoginAttempt(scope: "mail-login" | "admin-login", identityHash: string, account: string): number | null {
   db.exec("begin immediate");
   try {
@@ -63,8 +61,6 @@ export function reserveLoginAttempt(scope: "mail-login" | "admin-login", identit
       .run(new Date(Date.now() - 120_000).toISOString());
     const state = loginLimitState(scope, identityHash, account);
     if (state.limited) { db.exec("commit"); return null; }
-    // 只看来源自己的失败记录：已经在猜密码的来源只能使用部分名额；后台留 1 个、邮箱留 2 个给其他人。
-    // 不能用“账号被别处猜过”来判断，否则攻击者乱猜管理员账号，真正的管理员也会被当成可疑来源。
     const suspicious = state.failures > 0;
     const lease = reserveLease(scope, identityHash, account, scope === "admin-login" ? 4 : 8, 2,
       scope === "admin-login" ? 1 : 2, suspicious);
@@ -129,7 +125,6 @@ export function failureLimit(scope: LoginScope = "mail-login"): number {
   );
 }
 
-/** Only a source is hard-cooled. Account-wide risk escalates verification, never locks a victim account. */
 export function loginLimitState(scope: LoginScope, identityHash: string, account = ""): LimitState {
   db.prepare("delete from security_cooldowns where until_ms < ?").run(Date.now() - 86400_000);
   const windowMs = limitWindowMs(scope);
@@ -198,7 +193,6 @@ export function listBlockedIdentities(limit = 100): BlockedIdentity[] {
 export function unblockIdentity(identityHash: string): boolean {
   const result = db.prepare("delete from blocked_identities where identity_hash = ?").run(identityHash);
   const cooldown = db.prepare("update security_cooldowns set until_ms = ? where identity_hash = ? and until_ms > ?").run(Date.now(), identityHash, Date.now());
-  // Administrative recovery resets source failures, not another source's account risk or request budgets.
   if (result.changes) {
     const scopes = db.prepare("select distinct scope from login_logs where identity_hash = ? and scope in ('mail-login','admin-login')").all(identityHash) as { scope: string }[];
     for (const row of scopes) db.prepare(`insert into security_cooldowns(scope, identity_hash, until_ms) values (?, ?, ?)
@@ -207,7 +201,6 @@ export function unblockIdentity(identityHash: string): boolean {
   return Number(result.changes ?? 0) + Number(cooldown.changes ?? 0) > 0;
 }
 
-/** Captcha-cleared account risk adds a bounded non-blocking delay while holding the expensive-work slot. */
 export async function loginRiskBackoff(scope: LoginScope, identity: string, account: string): Promise<void> {
   const risk = loginLimitState(scope, identity, account).accountFailures;
   if (risk >= 3) await new Promise<void>((resolve) => setTimeout(resolve, Math.min(400, risk * 50)));

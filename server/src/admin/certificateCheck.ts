@@ -23,7 +23,6 @@ export function assessCertificate(
     `${hostname} 信任链及主机名校验通过；到期 ${certificate.valid_to}（${days ? `剩余 ${days} 天` : "剩余不足 1 天"}）`);
 }
 
-/** Diagnostic handshake only: no credentials or IMAP commands are sent. */
 export function certificateCheck(hostname: string, host: string, port: number, ca?: string): Promise<CertificateResult> {
   return new Promise((resolve) => {
     let finished = false;
@@ -35,7 +34,6 @@ export function certificateCheck(hostname: string, host: string, port: number, c
       socket.destroy();
       resolve(result);
     };
-    // A wall-clock bound also covers slow handshakes that repeatedly emit bytes.
     const timer = setTimeout(() => done({ key: "certificate", label: "TLS 证书", status: "unknown", detail: "证书检查连接超时" }), 8000);
     socket.once("secureConnect", () => {
       try { done(assessCertificate(hostname, socket.getPeerCertificate(), socket.authorized)); }

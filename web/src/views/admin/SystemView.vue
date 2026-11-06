@@ -148,7 +148,6 @@ async function loadSettings(): Promise<void> {
   try {
     const site = await api<{ settings: SiteSettings; domain: string; mailHost: string }>("/api/admin/site-settings");
     if (!active) return;
-    // 站点名称现在在“SEO 管理”里修改，接口里的旧字段不再带进来。
     settings.announcement = site.settings.announcement;
     settings.registrationMode = site.settings.registrationMode;
     settings.welcomeMail = site.settings.welcomeMail;

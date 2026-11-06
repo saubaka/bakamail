@@ -38,7 +38,6 @@ test("runMaddy 在执行之前拒绝零、负数、非整数或超过四次的�
 });
 
 test("maddy 退出码为 0 但配置解析失败时，必须当成失败", async () => {
-  // 用一个独立的子进程，因为 MADDY_RUNNER 是启动时读取的
   const script = `
 process.env.DATA_DIR = ${JSON.stringify(mkdtempSync(join(tmpdir(), "bakamail-broken-")))};
 process.env.SECRET_KEY = "test-secret-key";

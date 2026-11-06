@@ -29,7 +29,6 @@ export class CommandExecutionError extends Error {
 type WaitingJob = { deadline: number; timer: ReturnType<typeof setTimeout> | null;
   start: () => Promise<void>; expire: () => void };
 
-/** Count active + waiting jobs. Expired closures are removed, never executed later. */
 export class BoundedSerialQueue {
   private active = false;
   private waiting: WaitingJob[] = [];
@@ -84,7 +83,6 @@ type CommandOptions = {
   timeoutMs?: number; killGraceMs?: number; maxOutputBytes?: number; maxStdinBytes?: number;
 };
 
-/** No shell. On POSIX, signal only the new process group belonging to this invocation. */
 export function runBoundedCommand(command: string, args: string[], options: CommandOptions = {}): Promise<CommandResult> {
   const timeoutMs = options.timeoutMs ?? MADDY_COMMAND_LIMITS.commandMs;
   const graceMs = options.killGraceMs ?? MADDY_COMMAND_LIMITS.killGraceMs;
@@ -111,12 +109,11 @@ export function runBoundedCommand(command: string, args: string[], options: Comm
       try {
         if (processGroup && child.pid && child.pid > 0) process.kill(-child.pid, value);
         else child.kill(value);
-      } catch { /* ESRCH is expected if the command has already exited. */ }
+      } catch { }
     }
     function stop(code: CommandFailureCode): void {
       if (closed || failure) return;
       failure = new CommandExecutionError(code);
-      // Do not retain partial protocol output after any uncertain execution failure.
       stdout.length = 0; stderr.length = 0;
       child.stdin?.destroy();
       signal("SIGTERM");
@@ -137,7 +134,6 @@ export function runBoundedCommand(command: string, args: string[], options: Comm
       closed = true;
       clearTimeout(deadline);
       if (killTimer) clearTimeout(killTimer);
-      // A descendant may have closed its pipes but ignored TERM. Kill the owned group before releasing the queue.
       if (failure) { signal("SIGKILL"); reject(failure); }
       else resolve({ code: code ?? -1, stdout: Buffer.concat(stdout).toString("utf8"), stderr: Buffer.concat(stderr).toString("utf8") });
     });

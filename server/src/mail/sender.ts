@@ -44,7 +44,6 @@ function classify(error: unknown): SendFailure {
   return "unknown";
 }
 
-/** 发信必须走 submission（465 / 587），25 只收信。 */
 export async function sendMail(
   account: string,
   password: string,
@@ -58,7 +57,6 @@ export async function sendMail(
     auth: { user: account, pass: password },
     tls: {
       rejectUnauthorized: config.mail.tlsRejectUnauthorized,
-      // 容器内连的是 maddymail 别名，证书给的是 mail.example.test
       servername: config.mail.hostname,
     },
     connectionTimeout: 15_000,
@@ -68,12 +66,6 @@ export async function sendMail(
   const transporter = nodemailer.createTransport(transportOptions);
 
   try {
-    /*
-     * 自己先把邮件编译成原始 MIME。
-     * nodemailer 7 的 sendMail 结果里不再带 info.message，
-     * 而写回「已发送」必须是逐字节相同的原始邮件，所以在这里构建一次，
-     * 再用 raw + envelope 投递。
-     */
     const raw = await new MailComposer({
       from: message.from,
       to: message.to,
@@ -120,7 +112,6 @@ export function addressListProblem(addresses: string[]): string {
   return "";
 }
 
-/** 发件人仅能使用本人地址，或同一域名下的本人加号别名。 */
 export function senderAddressAllowed(account: string, candidate: string): boolean {
   const [accountLocal, accountDomain, ...accountRest] = account.toLowerCase().split("@");
   const [candidateLocal, candidateDomain, ...candidateRest] = candidate.toLowerCase().split("@");

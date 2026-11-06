@@ -1,4 +1,3 @@
-/** Vite-only real motion/read-clock harness. Never contacts production or mail services. */
 import { defaultUiConfigV2 } from '../../../shared/notificationDisplay.ts';
 import { notify, beginProgressNotice, disposeNotifications, type NoticeDisplayState } from '../../src/notifications.ts';
 import '../../src/styles/vendor/project1-app.css';

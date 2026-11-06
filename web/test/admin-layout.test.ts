@@ -80,7 +80,6 @@ test("堆叠表格指令：按表头给每个单元格补列名，保留已有�
   rows.push([cell("n1"), cell("n2"), cell("n3")]);
   stackTableDirective.updated!(table, {} as never, {} as never, null as never);
   assert.deepEqual(rows[2]!.map((c) => c.attrs.get("data-label")), ["邮箱", "状态", "操作"]);
-  // 多出来的单元格（表头没有对应列）不会被写成 undefined
   rows.push([cell("1"), cell("2"), cell("3"), cell("extra")]);
   stackTableDirective.updated!(table, {} as never, {} as never, null as never);
   assert.equal(rows[3]![3]!.attrs.has("data-label"), false);
@@ -88,7 +87,7 @@ test("堆叠表格指令：按表头给每个单元格补列名，保留已有�
 
 test("页面版式规则：多卡片页面有统一间距，管理卡片按内容定高，窄屏表格堆叠，按钮不再被拉伸", () => {
   const css = source("styles/admin.css");
-  const tail = css.slice(css.indexOf("后台页面版式：卡片间距"));
+  const tail = css.slice(css.indexOf(".admin-page-stack {"));
   assert.match(tail, /\.admin-page-stack \{ display: grid; gap: 20px;/);
   assert.match(tail, /\.admin-route-panel \{ display: grid; gap: 20px;/);
   assert.match(tail, /\.admin-main \.managed-page-card \{ grid-template-rows: none; grid-auto-rows: auto; align-content: start; min-height: 0; height: auto; \}/);

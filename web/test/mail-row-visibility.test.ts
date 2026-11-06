@@ -23,7 +23,7 @@ test('Vue 选中/已读 patchClass 不能抹掉行可见性状态', () => {
   const h = harness();
   try {
     (rowRevealDirective.mounted as Function)(h.row); h.emit(.8);
-    h.classes.clear(); // Vue replaces className when is-current/is-unread changes.
+    h.classes.clear();
     assert.equal((h.row.dataset as Record<string, string>).rowReveal, 'visible');
   } finally { h.restore(); }
 });

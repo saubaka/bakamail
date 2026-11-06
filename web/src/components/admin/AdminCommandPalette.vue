@@ -112,7 +112,6 @@ function onKeydown(event: KeyboardEvent): void {
     const entry = results.value[active.value];
     if (entry) run(entry);
   } else if (event.key === "Tab") {
-    // 面板里只有一个输入框，焦点不离开面板。
     event.preventDefault();
   }
 }

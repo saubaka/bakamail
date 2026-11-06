@@ -14,7 +14,6 @@ test("忘记密码页沿用登录页的结构：同一套页面、卡片、logo�
     assert.ok(login.includes(part), `登录页缺少 ${part}`);
   }
   assert.doesNotMatch(reset, /BrandMark|auth-shell|auth-icon/);
-  // logo 的图形与登录页完全相同
   const svg = (text: string) => /<svg viewBox="0 0 40 40"[\s\S]*?<\/svg>/.exec(text)?.[0];
   assert.equal(svg(reset), svg(login));
 });

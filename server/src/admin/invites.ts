@@ -48,7 +48,7 @@ export function createInvite(input: {
       (input.note ?? "").slice(0, 200),
       input.createdBy,
       nowIso(),
-      expiresAt ?? '', // Empty sentinel keeps the legacy NOT NULL schema and rollback compatible.
+      expiresAt ?? '',
       maxUses,
     );
   return { code, id: Number(result.lastInsertRowid), expiresAt, maxUses };
@@ -89,7 +89,6 @@ export function checkInvite(code: string, account: string): InviteCheck {
   return { ok: true, invite };
 }
 
-/** Reserve a slot atomically across processes; never count an in-flight mailbox as successful. */
 export function consumeInvite(id: number, usedBy: string): string | null {
   const token = randomToken(24), claimedAt = nowIso();
   db.exec('begin immediate');
@@ -107,7 +106,6 @@ export function consumeInvite(id: number, usedBy: string): string | null {
   } catch (error) { db.exec('rollback'); throw error; }
 }
 
-/** Only a confirmed clean provisioning failure may release this exact claim. */
 export function releaseInviteClaim(id: number, usedBy: string, token: string): boolean {
   return finishClaim(id, usedBy, token, false);
 }
@@ -137,7 +135,6 @@ function finishClaim(id: number, usedBy: string, token: string, completed: boole
   } catch (error) { db.exec('rollback'); throw error; }
 }
 
-/** No TTL auto-release: an interrupted/partial provision may already have created an account. */
 export function retainInviteClaim(id: number, usedBy: string, token: string): void {
   db.exec('begin immediate');
   try {

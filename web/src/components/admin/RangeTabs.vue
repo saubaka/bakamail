@@ -24,7 +24,6 @@ const emit = defineEmits<{ "update:modelValue": [value: K] }>();
 const root = ref<HTMLElement | null>(null);
 const activeIndex = computed(() => Math.max(0, props.options.findIndex((option) => option.key === props.modelValue)));
 
-/** 方向键在选项之间移动并选中（单选组的标准键盘操作）。 */
 function onKeydown(event: KeyboardEvent): void {
   const last = props.options.length - 1;
   let next = -1;
@@ -40,7 +39,6 @@ function onKeydown(event: KeyboardEvent): void {
 </script>
 
 <style scoped>
-/* 分段选择：一个浅蓝的滑块在选项之间滑动；纯色，无渐变。 */
 .range-tabs { position: relative; display: inline-grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); padding: 3px; border: 1px solid var(--line-blue); border-radius: 14px; background: var(--surface-soft, #fbfcfe); isolation: isolate; }
 .range-tabs__indicator { position: absolute; z-index: 0; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / var(--n)); border: 1px solid var(--line-blue-strong); border-radius: 11px; background: var(--cloud-blue, #e5effb); transform: translate3d(calc(var(--i) * 100%), 0, 0); transition: transform 360ms var(--spring, cubic-bezier(.2, 1.25, .35, 1)); }
 .range-tabs__option { position: relative; z-index: 1; min-width: 64px; min-height: 34px; padding: 0 14px; border: 0; border-radius: 11px; background: transparent; color: var(--text-soft); font: inherit; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: color 200ms var(--ease, ease); }

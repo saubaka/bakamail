@@ -40,8 +40,6 @@ for (const entry of manifest.files) {
   if (existsSync(source)) {
     const sourceHash = sha256(readFileSync(source));
     if (sourceHash !== targetHash) {
-      // Releases use the immutable, hash-verified snapshot, not a sibling project's later edits.
-      // Normal development remains strict so upstream drift is not silently ignored.
       if (process.env.BAKAMAIL_PINNED_VENDOR === "1") {
         console.warn(`WARN: ${entry.id}: 上级源文件已更新，本次发布保留 manifest 锁定快照`);
       } else failures.push(`${entry.id}: 快照与当前文件夹 1 源文件不一致`);

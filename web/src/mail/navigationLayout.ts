@@ -47,6 +47,5 @@ export function writeDesktopSidebarPreference(
     if (!target) return;
     target.setItem(MAIL_SIDEBAR_PREFERENCE_KEY, expanded ? "expanded" : "collapsed");
   } catch {
-    // Storage can be unavailable in private/restricted contexts. The in-memory state remains usable.
   }
 }

@@ -1,4 +1,3 @@
-/** Cloudflare Turnstile 浏览器脚本的按需加载。只在启用了 Turnstile 的页面里才会请求，且全站只加载一次。 */
 export const TURNSTILE_ORIGIN = "https://challenges.cloudflare.com";
 export const TURNSTILE_SCRIPT = `${TURNSTILE_ORIGIN}/turnstile/v0/api.js?render=explicit`;
 
@@ -29,7 +28,6 @@ declare global { interface Window { turnstile?: TurnstileApi } }
 export const CSP_BLOCKED = "csp-blocked";
 let pending: Promise<TurnstileApi> | null = null;
 
-/** 失败（网络被拦、超时）后允许下次重新尝试，不会缓存失败结果。 */
 export function loadTurnstile(timeoutMs = 15_000): Promise<TurnstileApi> {
   if (typeof window === "undefined") return Promise.reject(new Error("no window"));
   if (window.turnstile) return Promise.resolve(window.turnstile);
@@ -39,8 +37,6 @@ export function loadTurnstile(timeoutMs = 15_000): Promise<TurnstileApi> {
     script.src = TURNSTILE_SCRIPT;
     script.async = true;
     script.defer = true;
-    // 页面的内容安全策略在打开那一刻就定下来了：保存站点密钥之前打开的页面不会放行 Cloudflare，
-    // 这种情况单独识别，提示刷新一次页面，而不是笼统地说“网络不通”。
     const onViolation = (event: SecurityPolicyViolationEvent): void => {
       if (event.blockedURI.startsWith(TURNSTILE_ORIGIN)) settle(new Error(CSP_BLOCKED));
     };
@@ -64,7 +60,6 @@ export function loadTurnstile(timeoutMs = 15_000): Promise<TurnstileApi> {
   return pending;
 }
 
-/** 常见错误代码的人话解释；其余原样显示代码，便于对照 Cloudflare 文档。 */
 export function turnstileErrorText(code?: string): string {
   if (!code) return "人机验证出错，请点击重试";
   if (code === "110200") return "此域名不在站点密钥允许的域名列表里";

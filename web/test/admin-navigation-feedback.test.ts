@@ -42,7 +42,6 @@ test("界面请求在途数量实时通知，成功、失败、取消都会归�
     stop();
     globalThis.fetch = originalFetch;
   }
-  // 取消订阅之后不再通知
   seen.length = 0;
   globalThis.fetch = (async () => Response.json({ ok: true, data: {}, error: "" })) as typeof fetch;
   try { await api("/api/admin/overview"); } finally { globalThis.fetch = originalFetch; }
@@ -76,21 +75,17 @@ test("加载动画时机：很快完成的操作不出现；出现后至少停�
   const events: boolean[] = [];
   const { timers, advance } = fakeTimers();
   const loader = createLoader((visible) => events.push(visible), timers);
-  // 快速完成：在出现之前就结束，什么都不发生。
   loader.setBusy(true); advance(START_DELAY_MS - 20); loader.setBusy(false); advance(2000);
   assert.deepEqual(events, []);
-  // 正常加载：延迟之后出现；结束得太早时停留到最短时间再收起。
   loader.setBusy(true); advance(START_DELAY_MS + 1);
   assert.deepEqual(events, [true]);
   advance(100); loader.setBusy(false);
   advance(MIN_SHOW_MS - 150); assert.deepEqual(events, [true], "出现不久就结束时，停留到最短时间才收起");
   advance(200); assert.deepEqual(events, [true, false]);
-  // 加载足够久之后结束：容器出现的那一刻立刻收起，没有额外缓冲。
   events.length = 0;
   loader.setBusy(true); advance(START_DELAY_MS + 1); advance(MIN_SHOW_MS + 500);
   loader.setBusy(false); advance(1);
   assert.deepEqual(events, [true, false], "不再等待缓冲期");
-  // 收起前又忙起来：不收起也不重新出现。
   events.length = 0;
   loader.setBusy(true); advance(START_DELAY_MS + 1); advance(MIN_SHOW_MS);
   loader.setBusy(false); loader.setBusy(true); advance(2000);
@@ -155,13 +150,10 @@ test("路由守卫：先有一个同步守卫立即记下目标；成功的导�
   const syncGuard = router.indexOf("router.beforeEach((to, from) => {");
   const asyncGuard = router.indexOf("router.beforeEach(async (to, from) => {");
   assert.ok(syncGuard > 0 && asyncGuard > syncGuard, "the synchronous guard is registered first");
-  // v0.9.8: 邮箱页面切换也走同一个同步守卫，右侧同样显示加载动画
   assert.match(router, /\(to\.meta\.auth === "admin" \|\| to\.meta\.auth === "mail"\) && to\.fullPath !== from\.fullPath\) beginAdminNavigation\(to\.name, to\.fullPath\)/);
   assert.match(router, /router\.afterEach\(\(_to, _from, failure\) => \{\s*if \(!failure \|\| !isNavigationFailure\(failure, NavigationFailureType\.cancelled\)\) clearAdminNavigation\(\);/);
   assert.match(router, /router\.onError\(\(error\) => \{\s*clearAdminNavigation\(\);/);
-  // 每次后台页面切换仍然向服务端强制校验身份。
   assert.match(router, /checkAdminEntry\(\(\) => session\.restore\(true\)/);
-  // 入口路径只在后台页面之间切换、且一分钟内已确认过时才复用，其他情况照旧检查。
   assert.match(router, /const ENTRY_RECHECK_MS = 60_000/);
   assert.match(router, /to\.meta\.auth === "admin" && from\.meta\.auth === "admin" && installationReady\s*\n?\s*&& Date\.now\(\) - entryCheckedAt < ENTRY_RECHECK_MS/);
   assert.match(router, /if \(!reuseEntryCheck && to\.name !== "unavailable"/);
@@ -172,7 +164,6 @@ test("外壳：菜单跟随目标页立即高亮，右侧加载动画只覆盖�
   const shell = source("views/admin/AdminShell.vue");
   assert.match(shell, /:pending="navigationState\.pending"/);
   assert.match(shell, /<AdminLoader :active="busy" \/>/);
-  // v0.9.1: 只在右侧容器还没加载好时显示，页面内数据请求在途不再触发。
   assert.match(shell, /Boolean\(navigationState\.pending\) \|\| loading\.value/);
   assert.doesNotMatch(shell, /onApiActivity|requestsInFlight/);
   assert.match(shell, /:aria-busy="busy \? 'true' : 'false'"/);

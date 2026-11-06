@@ -4,7 +4,6 @@ export function validScrollPosition(value: unknown): value is ScrollPosition {
   const p = value as ScrollPosition;
   return [p.top,p.height,p.total].every(n => Number.isFinite(n) && n >= 0 && n < 10000000) && p.height > 0 && p.total >= p.height;
 }
-/** Downward reading hides chrome; upward review, top, and end-of-content reveal it. */
 export function createDockScrollIntent() {
   let source = '', last = 0, distance = 0, direction = 0, hidden = false;
   return {

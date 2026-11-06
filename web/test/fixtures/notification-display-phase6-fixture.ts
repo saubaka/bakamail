@@ -1,4 +1,3 @@
-/** Browser-only joint acceptance: real timers/animations, no network, no mailbox writes. */
 import { defaultUiConfigV2, type UiConfigV2 } from '../../../shared/notificationDisplay.ts';
 import { notify, beginProgressNotice, disposeNotifications, type NoticeDisplayState, type NoticeHandle, type NotificationTone } from '../../src/notifications.ts';
 import { openDialog, closeDialog } from '../../src/dialog.ts';
@@ -53,7 +52,6 @@ const sampling=setInterval(()=>{
     if(['capsule','complete'].includes(item.state.phase)&&item.state.pauseReasons.length===0)item.record.foregroundMs+=at-item.at;
     const key=JSON.stringify([state.type,state.phase,state.pauseReasons]);
     if(key!==item.last){item.last=key;item.record.checkpoints.push({at,state});
-      // A background card is settled early; it is not yet a readable foreground sample.
       if(['capsule','complete'].includes(state.phase)&&!state.pauseReasons.some(reason=>reason==='background'||reason==='stack')&&!item.record.readable){item.record.readable=at;item.record.geometry=geometry();}
       if(state.phase==='exit'&&!item.record.exit)item.record.exit=at;
       if(state.phase==='disposed'&&!item.record.removed){item.record.removed=at;const expected=item.record.expectedMs;

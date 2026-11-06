@@ -1,10 +1,6 @@
 import type { ObjectDirective } from "vue";
 import { scrollParentOf } from "./listMotion.ts";
 
-/**
- * 滚动时卡片的入场与出场：进入视野时从下方（或上方）浮入，完全离开视野后淡出，滚回来再入场。
- * 状态放在 data-scroll-reveal 里，不碰 Vue 管理的 class；没有 IntersectionObserver 时保持可见。
- */
 type Group = { observer: IntersectionObserver; items: Set<HTMLElement> };
 const groups = new WeakMap<Element, Group>();
 const owners = new WeakMap<HTMLElement, Element>();

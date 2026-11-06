@@ -23,7 +23,6 @@ function readRow(): InstallationRow {
   return row;
 }
 
-/** Upgrade existing databases once, including installs with disabled admins; never reopen setup. */
 export function installationInitialized(): boolean {
   db.prepare(`update installation set initialized=1 where id=1 and initialized=0
     and exists(select 1 from admin_users)`).run();
@@ -35,7 +34,6 @@ export function entrySettings(): EntrySettings {
   return { adminBase, revision };
 }
 
-/** Only an exact candidate matches. The root status response never discloses the saved entry. */
 export function resolveAdminEntry(candidate: unknown): EntrySettings | null {
   if (!installationInitialized() || typeof candidate !== "string" || adminPathProblem(candidate)) return null;
   const saved = entrySettings();
@@ -64,7 +62,6 @@ function setupToken(): string {
   } finally { closeSync(fd); }
 }
 
-/** Atomic, stable key shared by workers. No token or credential is printed into logs. */
 export function prepareInstallation(log: (message: string) => void): void {
   if (installationInitialized()) return;
   const temporary = join(config.dataDir, `.setup-${process.pid}-${randomBytes(8).toString('hex')}.key`);
@@ -72,7 +69,6 @@ export function prepareInstallation(log: (message: string) => void): void {
   try {
     writeFileSync(fd, randomBytes(32).toString("base64url"));
     fsyncSync(fd);
-    // link publishes a fully written file atomically, and never replaces another worker's key.
     try { linkSync(temporary, setupKeyPath); }
     catch (error) { if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error; }
   } finally { closeSync(fd); unlinkSync(temporary); }
@@ -99,7 +95,6 @@ export async function initializeInstallation(body: Record<string, unknown>, audi
   const problem = passwordProblem(body.password as string) || adminPathProblem(body.adminBase);
   if (problem) throw new InstallationError(400, problem);
   const passwordHash = await hashPasswordAsync(body.password as string);
-  // No await inside the transaction: simultaneous requests/processes can claim only once.
   db.exec("begin immediate");
   try {
     if (installationInitialized()) throw new InstallationError(409, "初始化已完成，不能重复创建管理员");
@@ -112,8 +107,7 @@ export async function initializeInstallation(body: Record<string, unknown>, audi
       targetType: "installation", summary: "网页初始化完成，首位超级管理员已创建" });
     db.exec("commit");
   } catch (error) { db.exec("rollback"); throw error; }
-  // The permanent marker is authoritative, even if a crash/permission issue prevents key removal.
-  try { unlinkSync(setupKeyPath); } catch { /* A consumed key never reopens setup. */ }
+  try { unlinkSync(setupKeyPath); } catch { }
   return entrySettings();
 }
 

@@ -1,6 +1,3 @@
-/** Opt-in DOM acceptance: layout viewport stays tall while a simulated visual viewport shrinks.
- * This is NOT a real phone/soft-keyboard acceptance claim. All mail transports remain mocked.
- */
 export function installComposeViewportFixture(): void {
   if (new URLSearchParams(location.search).get('keyboard') !== '1') return;
   let keyboard = false;

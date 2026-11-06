@@ -19,7 +19,6 @@ type MotionRecord = {
   delayTimer: number;
   disabled: boolean;
   version: number;
-  /** 当前这段动画开始的时间，用来发现被浏览器挂起而卡在半途的动画。 */
   startedAt: number;
 };
 
@@ -67,16 +66,13 @@ function resumeMotion(element: HTMLElement): void {
   const record = records.get(element);
   if (!record?.disabled) return;
   record.disabled = false;
-  // 元素已经是“完成”状态：动画效果不需要留着，留着会让滤镜和变换常驻，线条会被重新采样而发虚。
   for (const animation of record.animations) animation.cancel();
 }
 
-/** 动画结束后撤掉效果：最终样子由样式负责，不再有常驻的滤镜、变换和合成层。 */
 function releaseEffects(record: MotionRecord): void {
   for (const animation of record.animations) animation.cancel();
 }
 
-/** 反向播放前，把时间放回终点（撤掉效果之后需要重新定位）。 */
 function prepare(record: MotionRecord, forward: boolean): void {
   for (const animation of record.animations) {
     animation.playbackRate = forward ? 1 : -1;
@@ -105,7 +101,6 @@ export function applyMotionPreferences(
       localStorage.setItem("bakamail-motion", motion);
       localStorage.setItem("bakamail-performance", performance);
     } catch {
-      // Browser storage is optional; the current page still honors the selection.
     }
   }
   syncMountedMotion();
@@ -140,20 +135,13 @@ function createOutline(element: HTMLElement): { outline: SVGSVGElement; path: SV
 }
 
 function configureGeometry(element: HTMLElement, outline: SVGSVGElement, path: SVGRectElement): void {
-  // 线条贴着元素最外沿（含边框），背景不会在线条外面多出一圈；细节见 outlineGeometry.ts。
   applyOutline(outline, [path], element, element, 1);
 }
 
-/**
- * 入场前的等待：自己设置的延迟，加上同一批元素里排的位置。
- * 后台页面由 admin/entrance.ts 按页面上的先后顺序统一排好（motionSlotDelay），
- * 其他地方在这里按“进入视野的先后”排队，同时出现的多张卡片不会一起弹出来。
- */
 function entranceDelay(element: HTMLElement): number {
   const own = Number(element.dataset.motionDelay ?? 0);
   const now = performance.now();
   const assignedAt = Number(element.dataset.motionAssignedAt ?? 0);
-  // 加载动画还在（或还在淡出）时，容器线条要等它完全收起之后才开始画。
   const gate = loaderGate.delay(now);
   if (assignedAt > 0) return own + gate + (now - assignedAt < 1500 ? Number(element.dataset.motionSlotDelay ?? 0) : 0);
   return own + gate + stagger.next(now);
@@ -178,7 +166,6 @@ function play(record: MotionRecord, forward: boolean, element: HTMLElement): voi
     record.startedAt = performance.now();
     prepare(record, forward);
     for (const animation of record.animations) animation.play();
-    // 卡片出现的同时，里面的图标、标题、文字、按钮依次跟上（控件类小元素除外）。
     if (forward && element.dataset.motionKind !== "control") playCardParts(element, 0);
     const anchor = record.animations[0];
     anchor.finished
@@ -187,7 +174,6 @@ function play(record: MotionRecord, forward: boolean, element: HTMLElement): voi
         element.classList.remove("is-motion-active");
         element.classList.toggle("is-revealed", forward);
         element.dataset.motionState = forward ? "settled" : "idle";
-        // 完全显示后不留任何动画效果；退回隐藏状态时才需要保持起点。
         if (forward) releaseEffects(record);
       })
       .catch(() => undefined);
@@ -195,10 +181,6 @@ function play(record: MotionRecord, forward: boolean, element: HTMLElement): voi
   record.delayTimer = window.setTimeout(run, forward ? entranceDelay(element) : 0);
 }
 
-/**
- * 页面在后台时浏览器会挂起动画，回来后可能停在半途（线条发虚、卡片半透明）。
- * 回到前台或窗口重新获得焦点时，把已经超时的动画直接推到终点。
- */
 export function settleStalledMotion(now = performance.now()): number {
   let settled = 0;
   for (const element of mountedElements) {
@@ -207,7 +189,7 @@ export function settleStalledMotion(now = performance.now()): number {
     const record = records.get(element);
     if (!record || record.disabled || now - record.startedAt < record.duration + 400) continue;
     for (const animation of record.animations) {
-      try { animation.finish(); } catch { /* 动画已经被取消 */ }
+      try { animation.finish(); } catch { }
     }
     settled += 1;
   }
@@ -222,7 +204,6 @@ export function initializeMotionPreferences(): void {
     savedMotion = localStorage.getItem("bakamail-motion") === "reduce" ? "reduce" : "system";
     savedPerformance = localStorage.getItem("bakamail-performance") === "low" ? "low" : "normal";
   } catch {
-    // Local storage is optional.
   }
   applyMotionPreferences(savedMotion, savedPerformance, false);
   root.dataset.componentMotionStyle = "soft";
@@ -263,7 +244,6 @@ export const motionDirective: Directive<HTMLElement, MotionOptions | MotionKind 
     };
     const animations = [
       path.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], timing),
-      // 终点用 none 而不是 blur(0)、scale(1)：效果撤掉后样式就是终点，不会留下常驻的滤镜和变换。
       outline.animate(
         [
           { opacity: 0.2, filter: "blur(.7px)", transform: "scale(.988)" },

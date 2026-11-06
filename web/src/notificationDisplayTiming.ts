@@ -1,4 +1,3 @@
-/** Reading time uses a monotonic, injectable clock; animation jobs are independent. */
 export type NotificationDisplayClock = {
   now: () => number;
   setTimeout: (callback: () => void, ms: number) => unknown;
@@ -29,7 +28,7 @@ export function createNotificationDisplayTimer(expire: () => void, clock: Notifi
       if (disposed || expired || version !== generation) return;
       armed = false; started = null; remaining = 0; expired = true;
       if (!disposed) expire();
-    }, remaining); // No minimum-second top-up when resuming a partially read notice.
+    }, remaining);
   }
   return {
     reset(durationMs: number | null) { if (disposed) return; stop(); remaining = durationMs; expired = false; arm(); },

@@ -24,11 +24,9 @@ import { ensureErrorStyles } from "../errorStyles";
 import { siteInfo } from "../siteInfo";
 
 const props = withDefaults(defineProps<{
-  /** 状态码；不传表示不是 HTTP 错误（例如页面加载失败）。 */
   status?: number;
   title?: string;
   message?: string;
-  /** 显示“重试”按钮，点击时触发 retry 事件。 */
   retryable?: boolean;
   retryLabel?: string;
   showHome?: boolean;

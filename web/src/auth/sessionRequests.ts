@@ -1,4 +1,3 @@
-/** Cancellation is not an authentication failure: guards must not clear a newer identity. */
 export class SessionSupersededError extends Error {
   constructor() {
     super("会话读取已作废");
@@ -6,7 +5,6 @@ export class SessionSupersededError extends Error {
   }
 }
 
-/** Per-store runtime only; promises/controllers never enter persisted/reactive session state. */
 export class SessionRequests<T> {
   generation = 0;
   pending: Promise<T> | null = null;

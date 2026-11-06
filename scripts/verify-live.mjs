@@ -1,16 +1,4 @@
 #!/usr/bin/env node
-/**
- * 真实链路自检：对着一台已经登录过的邮局，把收发信、整理、删除全跑一遍。
- *
- * 用法（开发机）：
- *   BAKAMAIL_BASE=http://127.0.0.1:8790 \
- *   BAKAMAIL_ACCOUNT=bakamail-verify \
- *   BAKAMAIL_PASSWORD=... \
- *   node scripts/verify-live.mjs
- *
- * 为了证明「发信走 submission、写回已发送」这条链路是通的，脚本会真的
- * 发一封邮件给自己，然后轮询收件箱把它取回来。
- */
 
 const base = process.env.BAKAMAIL_BASE ?? "http://127.0.0.1:8790";
 const account = process.env.BAKAMAIL_ACCOUNT ?? "";
@@ -154,7 +142,6 @@ async function main() {
     send.payload?.data?.saveError || "写回成功",
   );
 
-  // 发信成功后应当用 IMAP APPEND 写回 Sent
   let sentCopy = null;
   const sentDeadline = Date.now() + 15_000;
   while (Date.now() < sentDeadline && !sentCopy) {
@@ -217,7 +204,6 @@ async function main() {
     });
     record("移入垃圾箱", Boolean(trashed.payload?.ok), trashed.payload?.error ?? "");
 
-    // UIDs are scoped to each mailbox. Never reuse the Archive UID in Trash.
     const trashPage = await call(`/api/messages?folder=${encodeURIComponent(trashFolder)}&limit=20`);
     const trashCopy = (trashPage.payload?.data?.items ?? []).find((item) => item.subject === marker);
     record("垃圾箱中的测试副本", Boolean(trashCopy));

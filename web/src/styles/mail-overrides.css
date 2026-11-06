@@ -1,10 +1,3 @@
-/*
- * BakaMail 的邮件专用增量样式。
- *
- * 规则：这里只允许新增邮件特有的结构类，颜色、圆角、阴影、缓动一律引用
- * app.css 里的既有令牌，不另起一套视觉。app.css 本身保持逐字节不变。
- */
-
 .mail-shell {
   display: grid;
   grid-template-columns: 232px minmax(280px, 380px) minmax(0, 1fr);

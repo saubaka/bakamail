@@ -8,7 +8,7 @@ import { syncBakagit, sourceFiles, sourceTrees, publicTemplates } from '../sync-
 
 function fixture(t) {
   const root = mkdtempSync(join(tmpdir(), 'bakamail-source-mirror-test-'));
-  t.after(() => rmSync(root, { recursive: true, force: true })); // Only this freshly created temporary fixture.
+  t.after(() => rmSync(root, { recursive: true, force: true }));
   const put = (path, content = `fixture ${path}\n`) => {
     mkdirSync(dirname(join(root, path)), { recursive: true });
     writeFileSync(join(root, path), content);
@@ -114,7 +114,6 @@ test('cannot recursively export the release mirror', t => {
 
 test('parent release excludes nested mirror and local rules mandate sync/check', () => {
   const root = new URL('../../', import.meta.url);
-  // Template fixture files deliberately need not contain project-specific prose.
   const agents = readFileSync(new URL('AGENTS.md', root), 'utf8');
   assert.match(agents, /EVERY change/);
   assert.match(agents, /npm run sync:bakagit/);

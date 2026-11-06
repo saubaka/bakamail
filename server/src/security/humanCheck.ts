@@ -6,11 +6,9 @@ import { enforceBudget } from "./abuse.ts";
 
 const { PNG } = pngjs;
 
-/** 去掉 I O 0 1 等易混字符 */
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const LENGTH = 4;
 
-/** 5x7 点阵字模，每个字符 7 行、每行 5 位 */
 const GLYPHS: Record<string, string[]> = {
   A: ["01110", "10001", "10001", "11111", "10001", "10001", "10001"],
   B: ["11110", "10001", "10001", "11110", "10001", "10001", "11110"],
@@ -52,10 +50,10 @@ const SCALE = 6;
 
 type Rgba = [number, number, number];
 
-const INK: Rgba = [53, 64, 82]; // --text #354052
-const PAPER: Rgba = [247, 249, 252]; // --canvas #f7f9fc
-const ACCENT: Rgba = [168, 208, 244]; // --blue-300 #a8d0f4
-const FAINT: Rgba = [207, 216, 228]; // --gray-300 #cfd8e4
+const INK: Rgba = [53, 64, 82];
+const PAPER: Rgba = [247, 249, 252];
+const ACCENT: Rgba = [168, 208, 244];
+const FAINT: Rgba = [207, 216, 228];
 
 function setPixel(image: InstanceType<typeof PNG>, x: number, y: number, color: Rgba): void {
   if (x < 0 || y < 0 || x >= image.width || y >= image.height) return;
@@ -119,7 +117,6 @@ function renderPng(answer: string): Buffer {
     x += glyphWidth + gap;
   }
 
-  // 干扰线：两条穿字，两条只走背景
   for (let i = 0; i < 4; i += 1) {
     const color = i < 2 ? ACCENT : FAINT;
     drawLine(
@@ -131,7 +128,6 @@ function renderPng(answer: string): Buffer {
       color,
     );
   }
-  // 噪点
   for (let i = 0; i < 220; i += 1) {
     setPixel(image, randomInt(0, WIDTH), randomInt(0, HEIGHT), i % 3 === 0 ? FAINT : ACCENT);
   }
@@ -156,7 +152,6 @@ export function issueHumanCheck(
   targetKey = "",
   identityHash = "",
 ): HumanChallenge {
-  // 后台登录的验证码额度独立于邮箱用户，同一出口 IP 下的其他人刷验证码不会让管理员拿不到验证码。
   enforceBudget(purpose.startsWith("admin-") ? "challenge-admin" : "challenge", identityHash || targetKey);
   purgeExpiredChallenges();
   const answer = Array.from({ length: LENGTH }, () => ALPHABET[randomInt(0, ALPHABET.length)])
@@ -180,7 +175,6 @@ export function issueHumanCheck(
     identityHash,
   );
 
-  // 只保留最近 8 条同类挑战，与规划一致
   db.prepare(
     `delete from human_challenges
      where purpose = ? and target_key = ? and id not in (
@@ -216,7 +210,6 @@ export function verifyHumanCheck(
     | undefined;
 
   if (!row) return false;
-  // 一次性消费：无论成功失败都标记，防止重放
 
   if (normalized.length !== LENGTH) return false;
   if (row.expires_at <= Math.floor(Date.now() / 1000)) return false;

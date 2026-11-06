@@ -156,7 +156,7 @@ test('手动关闭等待不取消任务，隐藏期间更新不重显，终态�
     dom.region.children[0]!.children[0]!.children[0]!.children.at(-1)!.dispatchEvent(new Event('click')); await flush();
     assert.equal(dom.region.children.length, 0); assert.equal(p.inspect().phase, 'hidden'); p.update('继续进行'); await flush(); assert.equal(dom.region.children.length, 0);
     p.finish('完成后重新显示', 'error'); await flush(); assert.equal(dom.region.children.length, 1); assert.equal(p.inspect().remainingMs, null);
-    dom.region.children[0]!.dispatchEvent(new Event('keydown')); // Other keys cannot dismiss.
+    dom.region.children[0]!.dispatchEvent(new Event('keydown'));
     dom.region.children[0]!.children[0]!.children[0]!.children.at(-1)!.dispatchEvent(new Event('click')); await flush();
     p.finish('迟到结果'); ctx.mock.timers.tick(120000); assert.equal(dom.region.children.length, 0); assert.equal(p.inspect().phase, 'disposed');
   } finally { dom.restore(); }

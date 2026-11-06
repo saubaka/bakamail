@@ -11,8 +11,6 @@ export const installationRouter = Router();
 installationRouter.get("/installation", (request, response) => {
   const initialized = installationInitialized();
   const candidate = request.query.entry;
-  // 只对“看起来像后台路径”的猜测限流，且只计失败：正常管理员打开自己的路径不会被消耗。
-  // 已经猜错过多的来源在冷却期内连正确的答案也拿不到，因此限流不会变成猜路径的探测器。
   const probing = initialized && typeof candidate === "string" && !adminPathProblem(candidate);
   const identity = fingerprint("entry-probe", clientAddress(request.headers, request.socket.remoteAddress));
   if (probing) {

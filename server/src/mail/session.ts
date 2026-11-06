@@ -5,11 +5,6 @@ import { withMailAbort, withMailDeadline } from "./deadline.ts";
 
 type SessionTimeouts = { connectionTimeoutMs?: number; authenticationTimeoutMs?: number };
 
-/**
- * 容器内连的是 maddymail 这个别名，证书却是给 mail.example.test 签的。
- * 直接连别名会因主机名校验失败而拒绝连接；指定 servername 让 TLS 用
- * 真实主机名做 SNI 与证书校验，既连得上又不用关闭校验。
- */
 function tlsOptions(): { rejectUnauthorized: boolean; servername: string } {
   return {
     rejectUnauthorized: config.mail.tlsRejectUnauthorized,
@@ -17,7 +12,6 @@ function tlsOptions(): { rejectUnauthorized: boolean; servername: string } {
   };
 }
 
-/** 可被停止标记打断的等待，避免关闭会话时被退避睡眠拖住 */
 function sleepInterruptibly(ms: number, isStopping: () => boolean): Promise<void> {
   return new Promise((resolve) => {
     const step = 100;
@@ -56,7 +50,6 @@ export class TrashUnavailableError extends Error {
   }
 }
 
-/** An ordinary delete must never silently become an irreversible IMAP delete. */
 export function requireTrashDestination(folder: string, trash: string | null): string {
   if (!trash || trash === folder) throw new TrashUnavailableError();
   return trash;
@@ -127,22 +120,11 @@ function firstHeader(headers: Map<string, unknown>, key: string): string {
   return "";
 }
 
-/**
- * 一条已登录的邮箱会话。
- *
- * 密码只存在内存里，不落库——这是规划里明确的要求，
- * 代价是服务重启后所有邮箱会话需要重新登录。
- */
 export class MailboxSession {
   readonly id: string;
   readonly mailbox: string;
   private readonly password: string;
   private client: ImapFlow | null = null;
-  /**
-   * 单独一条连接专门跑 IDLE。
-   * 如果和命令共用一条连接，IDLE 期间后续命令会被阻塞（IMAP 协议限制），
-   * 界面就会卡在加载状态。
-   */
   private idleClient: ImapFlow | null = null;
   private connecting: Promise<void> | null = null;
   private readonly connectingClients = new Set<ImapFlow>();
@@ -159,7 +141,6 @@ export class MailboxSession {
     this.id = id;
     this.mailbox = mailbox;
     this.password = password;
-    // Optional shorter limits support isolated transport tests; callers cannot raise production budgets.
     this.connectionTimeoutMs = Math.min(15_000, Math.max(1, timeouts.connectionTimeoutMs ?? 15_000));
     this.authenticationTimeoutMs = Math.min(20_000, Math.max(1, timeouts.authenticationTimeoutMs ?? 20_000));
   }
@@ -169,10 +150,6 @@ export class MailboxSession {
     return () => this.listeners.delete(listener);
   }
 
-  /**
-   * 只给 SMTP 发信使用：nodemailer 需要原始密码。
-   * 返回值不会写进日志，也不落库。
-   */
   revealPassword(): string {
     return this.password;
   }
@@ -182,12 +159,10 @@ export class MailboxSession {
       try {
         listener(event);
       } catch {
-        // 单个订阅者报错不影响其他订阅者
       }
     }
   }
 
-  /** 同一会话上的 IMAP 操作串行执行，避免抢占 mailbox lock。 */
   private run<T>(job: () => Promise<T>): Promise<T> {
     const attempt = async (): Promise<T> => {
       if (this.stopping) throw new Error("邮箱会话已关闭");
@@ -195,7 +170,6 @@ export class MailboxSession {
         return await job();
       } catch (error) {
         if (this.stopping) throw error;
-        // 连接被对端断掉时，丢弃旧连接重试一次；其余错误直接抛出
         const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
         if (!/Command failed|Connection not available|Not connected|ECONNRESET|socket|Closed/i.test(message)) {
           throw error;
@@ -229,7 +203,6 @@ export class MailboxSession {
         tls: tlsOptions(),
         logger: false,
         disableAutoIdle: true,
-        // Let our deadline close the transport and return a stable MailDeadlineError first.
         connectionTimeout: this.connectionTimeoutMs + 1000,
         greetingTimeout: this.connectionTimeoutMs + 1000,
         socketTimeout: 30_000,
@@ -269,7 +242,7 @@ export class MailboxSession {
       connectionTimeout: this.connectionTimeoutMs + 1000,
       greetingTimeout: this.connectionTimeoutMs + 1000,
     });
-    client.on("error", () => { /* IDLE loop owns retry/error state; do not let EventEmitter throw. */ });
+    client.on("error", () => { });
     client.on("exists", (data: { path: string; count: number }) => {
       if (!this.stopping) this.emit({ type: "exists", folder: data.path, count: data.count });
     });
@@ -285,7 +258,7 @@ export class MailboxSession {
   }
 
   private closeClient(client: ImapFlow): void {
-    try { client.close(); } catch { /* Teardown cannot keep an HTTP request pending. */ }
+    try { client.close(); } catch { }
   }
 
   private async connectClient(client: ImapFlow, activate: () => void): Promise<void> {
@@ -296,7 +269,6 @@ export class MailboxSession {
         await client.connect();
       }, this.connectionTimeoutMs, () => this.closeClient(client), "邮局连接超时", this.shutdown.signal);
       if (this.stopping || !client.usable) throw new Error("邮箱会话已关闭或连接不可用");
-      // Transfer ownership synchronously before removing the connecting entry: close() must always find it.
       activate();
     } catch (error) {
       this.closeClient(client);
@@ -567,7 +539,6 @@ export class MailboxSession {
     });
   }
 
-  /** 按 UID 批量取摘要（搜索结果用） */
   async summariesByUid(folder: string, uids: number[]): Promise<SessionMessageSummary[]> {
     if (uids.length === 0) return [];
     return this.run(async () => {
@@ -596,7 +567,6 @@ export class MailboxSession {
     return hit?.path ?? null;
   }
 
-  /** IDLE 长连接：收到变化就通知订阅者，断线自动退避重连。 */
   startIdle(): void {
     if (this.idleTask || this.stopping) return;
     this.idleTask = (async () => {
@@ -632,7 +602,6 @@ export class MailboxSession {
     this.shutdown.abort();
     const task = this.idleTask;
     this.idleTask = null;
-    // Cancel pending connections too. LOGOUT can queue behind a stalled command indefinitely.
     const clients = new Set(this.connectingClients);
     if (this.client) clients.add(this.client);
     if (this.idleClient) clients.add(this.idleClient);
@@ -640,7 +609,6 @@ export class MailboxSession {
     this.idleClient = null;
     this.connectingClients.clear();
     for (const client of clients) this.closeClient(client);
-    // 最多等 2 秒，绝不把请求卡在 IDLE 结束上
     if (task) {
       await withMailDeadline(() => task, 2000, () => {}, "等待邮箱连接结束超时").catch(() => undefined);
     }

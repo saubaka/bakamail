@@ -12,7 +12,6 @@ export const DEFAULT_MAIL_PREFERENCES: Readonly<MailPreferences> = Object.freeze
   density: "comfortable", pageSize: "50", timeFormat: "24h", remoteImages: "ask", signature: "",
 });
 
-/** Validate server values at the browser boundary; never adopt arbitrary settings or invalid enum values. */
 export function normalizeMailPreferences(raw: Record<string, string>): MailPreferences {
   return {
     density: raw.density === "compact" ? "compact" : "comfortable",

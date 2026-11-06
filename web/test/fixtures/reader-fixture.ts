@@ -1,4 +1,3 @@
-// Standalone Vite-only fixture. No mailbox API requests, writes, or real message data.
 import { createApp, ref } from 'vue/dist/vue.esm-bundler.js';
 import Reader from '../../src/components/mail/MessageReaderPane.vue';
 import { pressFeedbackDirective } from '../../src/pressFeedback';
@@ -9,7 +8,6 @@ import '../../src/styles/mail-pages.css';
 import '../../src/styles/workspace.css';
 import '../../src/styles/reader.css';
 import '../../src/styles/local-theme.css';
-// Even a mistaken download click in this fixture must not reach a real mailbox UID.
 document.getElementById('reader-fixture')!.addEventListener('click', event => {
   if ((event.target as Element)?.closest('a[href^="/api/"]')) event.preventDefault();
 }, true);

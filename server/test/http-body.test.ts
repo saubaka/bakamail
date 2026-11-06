@@ -95,7 +95,6 @@ test("真实回环 HTTP：声明超额和分块超额都先得到 JSON 413，再
         client.on("error", reject);
         client.setTimeout(2000, () => client.destroy(new Error("413 did not arrive before the rest of the body")));
         client.write('{"text":"' + "x".repeat(24));
-        // Intentionally never end/send the remaining body: rejection must be prompt.
       });
       assert.equal(result.status, 413);
       assert.equal(result.connection, "close");

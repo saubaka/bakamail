@@ -5,7 +5,6 @@ import { folderLabel, type Folder, type MessageSummary } from "../mail/types.ts"
 import { ApiError } from "../api.ts";
 import { purgeMailCaches, readMailCache, writeMailCache } from "../mail/localCache.ts";
 
-/** Folder pages survive route changes, but never a mailbox-account change. */
 export const useMailboxStore = defineStore("mailbox", () => {
   const account = ref("");
   const folders = ref<Folder[]>([]);
@@ -29,7 +28,6 @@ export const useMailboxStore = defineStore("mailbox", () => {
       folders: folders.value, pages: [...snapshots.entries()].slice(-12).map(([key, page]) => [key, { ...page, items: page.items.slice(0, 500),
         nextBefore: page.items.length > 500 ? page.items[499]!.uid : page.nextBefore }]) });
   }
-  /** Called only after server authentication. Local storage is not an identity source. */
   function restoreLocal(owner: string, pageSize: string): boolean {
     if (!owner) return false;
     if (account.value && account.value !== owner) clear();
@@ -105,7 +103,6 @@ export const useMailboxStore = defineStore("mailbox", () => {
     persist();
   }
 
-  /** Apply a confirmed folder write before any follow-up read can fail or arrive late. */
   function acknowledgeFolderCreated(path: string): void {
     folderGeneration += 1;
     if (!folders.value.some((folder) => folder.path === path)) {
@@ -155,7 +152,6 @@ export const useMailboxStore = defineStore("mailbox", () => {
     persist();
   }
 
-  /** Keep snapshots across routes, but ignore any request from the old workbench. */
   function suspend(): void {
     persist();
     listGeneration += 1;
@@ -176,8 +172,6 @@ export const useMailboxStore = defineStore("mailbox", () => {
   }
 
   function loadMessages(pageSize: string, reset = true): Promise<boolean> {
-    // SSE expunge/exists and a confirmed write can request the same page at once.
-    // Join that read instead of invalidating it and misreporting cancellation as failure.
     if (reset && refreshFlight?.generation === listGeneration && refreshFlight.folder === currentFolder.value && refreshFlight.pageSize === pageSize) return refreshFlight.promise;
     const promise = readMessagePage(pageSize, reset);
     if (reset) {
@@ -233,7 +227,6 @@ export const useMailboxStore = defineStore("mailbox", () => {
       : [...selectedUids.value, uid];
   }
 
-  /** Apply an acknowledged write to every page-size snapshot, then ignore older in-flight reads. */
   function patchMessages(folder: string, uids: number[], patch: Partial<Pick<MessageSummary, "seen" | "flagged">>): void {
     const ids = new Set(uids);
     if (ids.size === 0) return;
@@ -251,7 +244,6 @@ export const useMailboxStore = defineStore("mailbox", () => {
     persist();
   }
 
-  /** A successful move/delete must not resurrect rows from a cached or late list response. */
   function removeMessages(folder: string, uids: number[]): void {
     const ids = new Set(uids);
     if (ids.size === 0) return;

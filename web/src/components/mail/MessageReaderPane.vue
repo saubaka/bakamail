@@ -102,7 +102,6 @@ onMounted(() => window.addEventListener('message', receiveScroll));
 onBeforeUnmount(() => window.removeEventListener('message', receiveScroll));
 watch(frameHtml, () => { frameLoaded.value = false; }, { flush: 'sync' });
 function approveImages(element: Element) {
-  // Only explicit per-message approval can load remote resources, after the notice leaves.
   if (!mediaApproving.value || props.remoteImages === 'block' || element.getAttribute('data-message-key') !== messageKey.value) return;
   allowImages.value = true;
   void nextTick(() => bodyFrame.value?.focus({ preventScroll: true }));

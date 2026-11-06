@@ -19,7 +19,6 @@ export class MaddyError extends Error {
   }
 }
 
-/** Explicit recovery state, not a classification guessed from exception text. */
 export class MailboxPartialError extends AggregateError {
   readonly operation: "create" | "repair" | "remove";
   constructor(operation: "create" | "repair" | "remove", causes: unknown[]) {
@@ -34,10 +33,6 @@ export class MailboxPartialError extends AggregateError {
   }
 }
 
-/**
- * 所有 maddy 子命令串行执行。
- * 原因：maddy 正在运行时会读写同一个 SQLite，并发调用容易撞 database is locked。
- */
 const queue = new BoundedSerialQueue();
 
 function spawnOnce(command: string, args: string[], stdin: string): Promise<MaddyResult> {
@@ -45,10 +40,6 @@ function spawnOnce(command: string, args: string[], stdin: string): Promise<Madd
     cwd: config.maddy.runner === "local" ? config.maddy.dataDir : undefined,
     env: {
       ...process.env,
-      /*
-       * maddy.conf 里用了 $(hostname) 与 $(primary_domain)，它们来自这两个环境变量。
-       * 不带的话配置解析会失败（而且 maddy 失败时退出码仍是 0，非常隐蔽）。
-       */
       MADDY_HOSTNAME: config.mail.hostname,
       MADDY_DOMAIN: config.mail.domain,
     },
@@ -70,7 +61,6 @@ function buildInvocation(args: string[]): { command: string; args: string[] } {
   );
 }
 
-/** 调用一次 maddy 子命令，遇到 SQLite 锁会自动退避重试。 */
 export async function runMaddy(args: string[], stdin = "", attempts = 4): Promise<MaddyResult> {
   if (!Number.isSafeInteger(attempts) || attempts < 1 || attempts > MADDY_COMMAND_LIMITS.attempts) {
     throw new RangeError("邮局命令重试次数不合法");
@@ -90,12 +80,6 @@ export async function runMaddy(args: string[], stdin = "", attempts = 4): Promis
 }
 
 function assertOk(result: MaddyResult, context: string): void {
-  /*
-   * 两个失败信号都要看：
-   *   1. 退出码非 0
-   *   2. stderr 里出现 app.Run failed —— maddy 配置解析失败时退出码是 0，
-   *      只看退出码会把「什么都没做」当成成功。
-   */
   const runFailed = /app\.Run failed|invalid .* rule|reason":/i.test(result.stderr);
   if (result.code !== 0 || runFailed) {
     const detail = result.stderr.trim() || result.stdout.trim() || `退出码 ${result.code}`;
@@ -140,7 +124,6 @@ async function createCredential(address: string, password: string): Promise<void
 }
 
 async function removeCredential(address: string): Promise<void> {
-  // maddy 的 creds remove 会交互确认，退出码为 0 也可能表示取消。
   const result = await runMaddy(
     ["creds", "remove", "--cfg-block", "local_authdb", address],
     "y\n",
@@ -159,10 +142,6 @@ async function createImapAccount(address: string): Promise<void> {
   assertOk(account, `创建邮箱 ${address}`);
 }
 
-/**
- * 建账号必须两条命令：只建凭据是登不进 IMAP 的，
- * imap-acct create 才会创建默认文件夹并打上 special-use 标记。
- */
 export async function createMailbox(address: string, password: string): Promise<void> {
   await createCredential(address, password);
   try {
@@ -218,11 +197,6 @@ export async function changeMailboxPassword(address: string, password: string): 
 }
 
 export async function removeMailbox(address: string): Promise<void> {
-  /*
-   * `maddy creds remove` 没有 --yes 开关，会交互式问 "Are you sure? [y/N]"；
-   * 不喂这行 y 的话它会静默取消（并且 stderr 里带 app.Run failed），
-   * 结果就是「看起来删掉了，其实还在」。
-   */
   await removeCredential(address);
   try {
     const result = await runMaddy([

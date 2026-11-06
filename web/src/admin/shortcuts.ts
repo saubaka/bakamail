@@ -1,6 +1,5 @@
 import { RAIL_ITEMS } from "./navModel.ts";
 
-/** 连按 `g` 再按页面字母的等待时间。 */
 export const SEQUENCE_WINDOW_MS = 1200;
 
 export type ShortcutKeyEvent = {
@@ -19,7 +18,6 @@ export type ShortcutResult =
   | { type: "go"; name: string; armedUntil: 0 }
   | { type: "none"; armedUntil: number };
 
-/** 正在输入文字时，单个字母键不能触发快捷键。 */
 export function isTypingTarget(target: EventTarget | null): boolean {
   const element = target as Partial<HTMLElement> | null;
   if (!element || typeof element.tagName !== "string") return false;
@@ -28,12 +26,6 @@ export function isTypingTarget(target: EventTarget | null): boolean {
     || (typeof element.closest === "function" && element.closest("[contenteditable='true']") !== null);
 }
 
-/**
- * 纯函数，便于测试：
- * - Ctrl/⌘ + K 在任何位置都打开跳转面板；
- * - 不在输入框里时，`g` 之后 1.2 秒内按页面字母直达该页；
- * - 其他任何按键取消等待，带修饰键的组合不会被当作单字母快捷键。
- */
 export function resolveShortcut(
   event: ShortcutKeyEvent,
   can: (permission: string) => boolean,

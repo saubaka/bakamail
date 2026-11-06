@@ -6,7 +6,6 @@ type Source = { signature: string; controller: AbortController; defaultTone: Not
 const published = new WeakMap<HTMLElement, Source>();
 let nextId = 0;
 
-/** Durable description survives a timed capsule; field validation stays independently associated. */
 function publish(el: HTMLElement, state: Source) {
   const copy = el.cloneNode(true) as HTMLElement;
   copy.querySelectorAll('button').forEach(button => button.remove());
@@ -14,7 +13,7 @@ function publish(el: HTMLElement, state: Source) {
   const tone = state.options?.tone ?? state.defaultTone;
   const signature = JSON.stringify([text, tone, state.options?.manualReason, state.options?.action?.label]);
   el.classList.add('capsule-feedback-source'); el.removeAttribute('aria-hidden');
-  el.removeAttribute('role'); el.setAttribute('aria-live', 'off'); // Only capsule announces; source remains a description.
+  el.removeAttribute('role'); el.setAttribute('aria-live', 'off');
   if (state.signature === signature && state.outerSignal === state.options?.signal) return;
   state.unlink?.(); state.controller.abort();
   state.controller = new AbortController(); state.signature = signature;

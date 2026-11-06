@@ -72,7 +72,7 @@ for (const scope of ["mail", "admin"] as const) {
       const canceled = assert.rejects(restoring, SessionSupersededError);
       await turn();
       await session.logout();
-      await canceled; // fetch intentionally ignores abort and has not settled yet.
+      await canceled;
       assert.equal(signal?.aborted, true);
       assert.equal(session.loading, false);
       response.resolve(envelope(data("old")));
@@ -122,7 +122,7 @@ for (const scope of ["mail", "admin"] as const) {
     try {
       const exiting = session.logout();
       await turn();
-      session.clear(); // same boundary used after a successful new login.
+      session.clear();
       await session.restore();
       response.resolve(envelope({ loggedOut: true }));
       await exiting;

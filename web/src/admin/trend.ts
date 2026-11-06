@@ -1,5 +1,3 @@
-/** 趋势图用到的纯函数：坐标轴刻度、平滑曲线、按范围聚合、补间。 */
-
 export type Bucket = { t: number; end: number; passed: number; rejected: number; unavailable: number };
 export type TrendRange = "24h" | "7d" | "30d";
 export const TREND_RANGES: { key: TrendRange; label: string }[] = [
@@ -13,10 +11,6 @@ const HOUR = 3_600_000;
 
 const pad = (value: number): string => String(value).padStart(2, "0");
 
-/**
- * 把每小时的计数按范围聚合：24 小时按小时，7 天按本地时间每 6 小时，30 天按本地日期。
- * 聚合按浏览器的本地时区，所以“每天”和你看到的日期一致。
- */
 export function aggregate(points: HourPoint[], range: TrendRange): Bucket[] {
   if (range === "24h") return points.map((point) => ({ ...point, end: point.t + HOUR }));
   const keyOf = (t: number): string => {
@@ -36,7 +30,6 @@ export function aggregate(points: HourPoint[], range: TrendRange): Bucket[] {
   return buckets;
 }
 
-/** 纵轴的上限：取 1、2、5 乘以 10 的幂里不小于数据最大值的那个，最小 4（空数据也有刻度）。 */
 export function niceMax(max: number): number {
   if (!Number.isFinite(max) || max <= 4) return 4;
   const power = 10 ** Math.floor(Math.log10(max));
@@ -50,7 +43,6 @@ export function yTicks(top: number): number[] {
 
 export type Pt = { x: number; y: number };
 
-/** 单调三次插值（Fritsch–Carlson）：曲线平滑，且不会在两个点之间冲出范围（计数不会画到 0 以下）。 */
 export function monotonePath(points: Pt[]): string {
   const n = points.length;
   if (n === 0) return "";
@@ -79,7 +71,6 @@ export function monotonePath(points: Pt[]): string {
   return d;
 }
 
-/** 把一组数线性重采样到新的长度，用于切换范围时让旧曲线平滑地变成新曲线。 */
 export function resample(values: number[], length: number): number[] {
   if (length <= 0) return [];
   if (values.length === 0) return new Array(length).fill(0);
@@ -99,7 +90,6 @@ export function lerpValues(from: number[], to: number[], progress: number): numb
   return to.map((target, i) => (from[i] ?? 0) + (target - (from[i] ?? 0)) * eased);
 }
 
-/** 横轴刻度：最多 max 个，均匀取点（含第一个），返回下标。 */
 export function xTickIndexes(count: number, max = 6): number[] {
   if (count <= 0) return [];
   if (count <= max) return Array.from({ length: count }, (_, i) => i);

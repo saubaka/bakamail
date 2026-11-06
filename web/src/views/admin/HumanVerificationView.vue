@@ -191,7 +191,6 @@ async function confirmToken(): Promise<void> {
   const next = await run("verify", () => verifyTurnstileToken(previewToken.value), "核对失败，请稍后重试");
   if (next) { adopt(next); toast("真实验证通过，现在可以启用了"); }
   else verifyMessage.value = error.value;
-  // 结果令牌只能用一次，无论成败都换新的。
   previewToken.value = "";
   widgetRef.value?.reset();
 }
@@ -224,7 +223,6 @@ async function clearAll(): Promise<void> {
   if (next) { adopt(next); secretCheck.value = null; verifyMessage.value = ""; toast("已清除，邮箱入口使用内建验证码"); }
 }
 
-// ---- 校验趋势 ----
 const range = ref<TrendRange>("24h");
 const series = ref<TurnstileSeries | null>(null);
 const statsLoading = ref(false);
@@ -248,7 +246,6 @@ async function loadStats(quiet = false): Promise<void> {
   statsError.value = "";
   try {
     const next = await loadTurnstileStats(wanted, controller.signal);
-    // 切换范围时旧请求被取消；迟到的结果不能盖掉新范围的数据。
     if (controller.signal.aborted || range.value !== wanted) return;
     series.value = next;
   } catch (reason) {
@@ -259,7 +256,6 @@ async function loadStats(quiet = false): Promise<void> {
   }
 }
 watch(range, () => { void loadStats(); });
-// 页面停留时每分钟轻轻刷新一次，曲线平滑过渡到新数据。
 const startPolling = (): void => { window.clearInterval(statsTimer); statsTimer = window.setInterval(() => { if (document.visibilityState === "visible") void loadStats(true); }, 60_000); };
 
 onMounted(() => { void load(); void loadStats(); startPolling(); });
@@ -280,7 +276,6 @@ onBeforeUnmount(() => { statsController?.abort(); window.clearInterval(statsTime
 .hv-widget { max-width: 420px; }
 .hv-switch { position: relative; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text-soft); font-size: 13px; }
 .hv-switch.is-locked { cursor: not-allowed; opacity: .6; }
-/* 全局样式会覆盖原生复选框，必须 !important 才能真正藏起来（安全设置卡同理）。 */
 .hv-switch > input { position: absolute !important; width: 1px !important; height: 1px !important; margin: 0 !important; padding: 0 !important; opacity: 0 !important; pointer-events: none !important; }
 .hv-switch__track { position: relative; flex: 0 0 auto; width: 44px; height: 26px; border: 1px solid var(--line-blue); border-radius: 999px; background: #e9eff4; transition: background 180ms var(--ease, ease), border-color 180ms var(--ease, ease); }
 .hv-switch__track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(72, 105, 131, .25); transition: transform 220ms var(--spring, ease); }

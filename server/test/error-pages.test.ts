@@ -73,7 +73,7 @@ test("接口的 404 仍是 JSON，不被换成网页", async () => {
 });
 
 test("未知地址返回真正的 404 状态（页面外壳照常下发，前端显示 404 页）；公开页面是 200；后台入口与任意乱写的地址无法区分", async () => {
-  if (!hasDist) return; // 只有源码的检出可以没有构建产物。
+  if (!hasDist) return;
   for (const path of ["/", "/login", "/register", "/password-reset", "/unavailable", "/setup", "/mail", "/mail/search", "/login/"]) {
     const response = await request(app).get(path).set(HTML);
     assert.equal(response.status, 200, path);

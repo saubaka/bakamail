@@ -81,7 +81,6 @@ import type { RailBadgeKey, RailSection } from "../../admin/navModel";
 const props = defineProps<{
   sections: RailSection[];
   current: string;
-  /** 已点击但服务端校验还没完成的目标页；菜单先于页面响应。 */
   pending?: string;
   badges: Partial<Record<RailBadgeKey, number>>;
   collapsed: boolean;
@@ -110,7 +109,6 @@ const indicatorStyle = computed(() => ({
   transform: `translate3d(0, ${indicator.y}px, 0)`,
 }));
 
-/** 指示块跟随当前页的位置滑动；首次定位不做动画，避免进入页面时从顶部飞过来。 */
 function measure(): void {
   const link = navElement.value?.querySelector<HTMLElement>(".admin-rail__link.is-current");
   if (!link) { indicator.visible = false; return; }
@@ -123,7 +121,6 @@ watch(() => [active.value, props.sections, props.collapsed, props.compact], asyn
 
 onMounted(() => {
   measure();
-  // 字体和首屏布局稳定之后才开启滑动，避免进入页面时指示块从错误位置滑到正确位置。
   const settled = typeof document !== "undefined" && document.fonts?.ready ? document.fonts.ready : Promise.resolve();
   void settled.then(() => {
     measure();
@@ -136,7 +133,6 @@ onMounted(() => {
 });
 onBeforeUnmount(() => { cancelAnimationFrame(frame); observer?.disconnect(); });
 
-/** 方向键、Home、End 在菜单项之间移动，不必按很多次 Tab。 */
 function onKeydown(event: KeyboardEvent): void {
   const target = event.target as HTMLElement | null;
   if (!target?.classList.contains("admin-rail__link")) return;

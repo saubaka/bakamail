@@ -61,9 +61,9 @@ test("按站点名自动生成的标题、描述、关键词随站点名变化�
 test("标题长度分档：太短未达标、偏短建议、合适达标、偏长建议、过长未达标；边界值", () => {
   const cases: [string, string][] = [
     ["邮箱", "fail"], ["Baka", "fail"], ["邮箱主页入口", "warn"], ["八个汉字的标题啊", "pass"],
-    ["一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十", "pass"], // 30 个汉字 = 宽度 60
-    ["一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一", "warn"], // 31 个汉字 = 宽度 62
-    ["一二三四五六七八九十".repeat(5) + "一", "fail"],                           // 51 个汉字 = 宽度 102
+    ["一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十", "pass"],
+    ["一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一", "warn"],
+    ["一二三四五六七八九十".repeat(5) + "一", "fail"],
   ];
   for (const [title, expected] of cases) assert.equal(level(config({ homeTitle: title, siteName: "x" }), "title-length"), expected, title);
 });
@@ -279,5 +279,5 @@ test("无脚本正文：包含站点名、描述、功能和问答，底部固�
   for (const item of INTRO_FAQ) assert.ok(html.includes(item.question));
   assert.ok(html.includes(`<a href="${SEO_REPOSITORY_URL}" rel="noopener noreferrer">Github</a>`));
   assert.ok(html.includes("© 2026 saubaka. BakaMail."));
-  assert.ok(html.includes("邮件服务基于 Maddy，第三方项目版权归原作者所有。"));
+  assert.ok(!html.includes("第三方项目版权归原作者所有"));
 });

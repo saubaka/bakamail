@@ -2,7 +2,6 @@ import type { Request, Response, NextFunction } from "express";
 import { config } from "../config.ts";
 import { sendJson } from "../http/kit.ts";
 
-/** Browser login/registration CSRF boundary. Non-browser clients with no Origin remain rate-limited. */
 export function requireSameOrigin(request: Request, response: Response, next: NextFunction): void {
   const origin = request.headers.origin;
   const expected = config.publicOrigin || `${request.protocol}://${request.get("host")}`;

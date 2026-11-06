@@ -154,7 +154,6 @@ async function loadMessages(reset = true): Promise<boolean> {
   try {
     const folder = currentFolder.value;
     let refreshed = await mailbox.loadMessages(mailSettings.value.pageSize, reset);
-    // A confirmed write can invalidate an earlier read; retry/join its successor, not a failed mutation.
     if (!refreshed && reset && workbenchActive && folder === currentFolder.value) refreshed = await mailbox.loadMessages(mailSettings.value.pageSize, true);
     if (refreshed) pageError.value = "";
     return refreshed;
@@ -369,7 +368,7 @@ async function openDraft(id: string): Promise<void> {
 }
 
 async function handleSent(notice: string): Promise<void> {
-  sendNotice.value = ''; // Compose already publishes the delivery notice; do not duplicate it.
+  sendNotice.value = '';
   const [listResult, folderResult] = await Promise.allSettled([loadMessages(true), loadFolders()]);
   if (listResult.status !== "fulfilled" || !listResult.value || folderResult.status !== "fulfilled") {
     pageError.value = "邮件已发送，但邮箱刷新失败；可手动刷新确认最新状态。";
@@ -624,7 +623,6 @@ onMounted(async () => {
     else if (route.query.compose === "new") {
       openCompose(undefined, "reply", typeof route.query.to === "string" ? route.query.to : "");
     }
-    // 写信、打开草稿的意图只用一次：从地址里去掉，关闭写信窗口后刷新或回退不会再次弹出。
     if (consumedIntent && workbenchActive) {
       const { draft: _draft, compose: _compose, to: _to, ...rest } = route.query;
       await router.replace({ name: route.name ?? "mail", query: rest }).catch(() => undefined);

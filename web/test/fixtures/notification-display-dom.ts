@@ -2,7 +2,6 @@ import { disposeNotifications } from '../../src/notifications.ts';
 import { applySavedUiConfig } from '../../src/notificationConfig.ts';
 import { defaultUiConfigV2 } from '../../../shared/notificationDisplay.ts';
 
-/** Isolated DOM for timer probes. Never mounts Vue, requests an API, or opens a real mailbox. */
 class ProbeElement extends EventTarget {
   readonly tag: string;
   constructor(tag = 'div') { super(); this.tag = tag; }
@@ -56,7 +55,6 @@ export function createNotificationDisplayProbeDom(options: { reduced?: boolean }
   const previous = { document: globalThis.document, window: globalThis.window, matchMedia: globalThis.matchMedia,
     MutationObserver: globalThis.MutationObserver, ResizeObserver: globalThis.ResizeObserver };
   const body = new ProbeElement(), region = new ProbeElement(), root = new ProbeElement();
-  // Remove animation time from the probe, leaving only the requested reading duration.
   root.dataset.motion = options.reduced === false ? 'system' : 'reduce'; body.append(region);
   const document = Object.assign(new EventTarget(), { documentElement: root, body, hidden: false, focused: true, activeElement: null as ProbeElement | null,
     hasFocus: (): boolean => document.focused, createElement: (tag: string) => new ProbeElement(tag), getElementById: (id: string) => id === 'toast-region' ? region : null,

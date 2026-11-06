@@ -44,11 +44,9 @@ authRouter.get("/human-check", (request, response) => {
   );
   const identity = fingerprint(`mail-${purpose}`, address);
   const budgetIdentity = fingerprint("auth-source", address);
-  // Reserve the cheaper token before rendering a PNG; both issuance budgets are independently enforced.
   const formToken = purpose === "register" ? issueFormToken("register", 1800, identity) : "";
   const turnstile = turnstileFor(purpose as TurnstilePurpose);
   if (turnstile) {
-    // 启用 Turnstile 后不再生成图片，浏览器改为渲染 Cloudflare 组件，提交时把结果令牌放在 humanAnswer 里。
     enforceBudget("challenge", budgetIdentity);
     ok(response, {
       purpose,
@@ -94,7 +92,6 @@ authRouter.post("/login", anonymousRequestBudget("login"), async (request, respo
   if (!(await admitLogin("mail-login", identity, account, fingerprint("auth-source", address),
     String(body.humanNonce ?? ""), String(body.humanAnswer ?? ""), response, address))) return;
 
-  // Existing mailboxes may predate the stricter new-account naming policy (e.g. "me").
   const local = account.endsWith(`@${config.mail.domain}`) ? account.slice(0, -config.mail.domain.length - 1) : "";
   if (!/^[a-z0-9][a-z0-9_.+-]{0,63}$/.test(local) || !password || password.length > 200) {
     recordLoginAttempt("mail-login", identity, account, false, "missing");
@@ -221,7 +218,6 @@ authRouter.post("/register", anonymousRequestBudget("register"), async (request,
     request.socket.remoteAddress,
   );
   const identity = fingerprint("register", address);
-  // 人机校验的 target 必须与 GET /human-check 时用的一致，否则永远匹配不上
   const humanIdentity = fingerprint("mail-register", address);
   const requestedAccount = normalizeMailboxAccount(String(body.account ?? ""), config.mail.domain);
 
@@ -249,7 +245,6 @@ authRouter.post("/register", anonymousRequestBudget("register"), async (request,
   response.once("finish", () => completeLoginAttempt(attemptId, response.statusCode < 400, attemptReason));
   response.once("close", () => completeLoginAttempt(attemptId, false, "interrupted"));
 
-  // 蜜罐字段：正常用户看不到也不会填
   if (String(body.website ?? "").trim() !== "") {
     attemptReason = "honeypot";
     fail(response, 400, "请求被拒绝");
@@ -262,7 +257,6 @@ authRouter.post("/register", anonymousRequestBudget("register"), async (request,
       data: { fieldErrors: { reason: reasonProblem } }, error: reasonProblem });
     return;
   }
-  // 填写耗时下限：脚本往往瞬间提交
   if (!consumeFormToken("register", String(body.formToken ?? ""), humanIdentity, config.security.minFormSeconds)) {
     attemptReason = "form-token";
     fail(response, 400, "表单已失效或提交过快，请换一张验证码后重新填写");
@@ -334,7 +328,6 @@ authRouter.post("/register", anonymousRequestBudget("register"), async (request,
     fail(response, 409, "该邮箱地址不可注册，请使用其他账号名");
     return;
   }
-  // Preflight awaits the mail service; a policy change during that wait must still prevent provisioning.
   if (getSetting("registration_mode", "invite") !== "invite") {
     attemptReason = "registration-closed";
     sendJson(response, 403, { ok: false, code: "registration_closed", data: null,
@@ -357,9 +350,9 @@ authRouter.post("/register", anonymousRequestBudget("register"), async (request,
       if (!credentials.includes(requestedAccount) && !accounts.includes(requestedAccount)) {
         released = releaseInviteClaim(invite.invite.id, requestedAccount, claimedAt);
       }
-    } catch { /* Fail closed: do not reuse an invite if partial account state is unknown. */ }
+    } catch { }
     if (!released) {
-      try { retainInviteClaim(invite.invite.id, requestedAccount, claimedAt); } catch { /* The reserved slot remains fail-closed. */ }
+      try { retainInviteClaim(invite.invite.id, requestedAccount, claimedAt); } catch { }
     }
     const code = released ? "mailbox_create_failed" : "mailbox_create_unconfirmed";
     recordAudit({ actorType: "invite", actor: requestedAccount, action: "mailbox.create-failed",
@@ -372,7 +365,6 @@ authRouter.post("/register", anonymousRequestBudget("register"), async (request,
     return;
   }
 
-  // Mailbox creation has completed. Never release its slot even if the bookkeeping write fails.
   try {
     if (!completeInviteClaim(invite.invite.id, requestedAccount, claimedAt)) throw Error('Invite completion unconfirmed');
   } catch {
@@ -451,7 +443,6 @@ authRouter.post("/password-reset", async (request, response) => {
     requestId: requestId(request),
     identityHash: identity,
   });
-  // 不返回账号是否存在，避免枚举
   ok(response, { accepted: true });
 });
 
@@ -459,7 +450,6 @@ function normalizeMailboxAddress(input: string): string {
   return input.trim().toLowerCase().slice(0, 200);
 }
 
-/** 管理后台改密码后强制该账号重新登录 */
 export async function forceMailboxRelogin(mailbox: string): Promise<number> {
   const revoked = revokeMailSessionsFor(mailbox);
   await dropSessionsForMailbox(mailbox);

@@ -1,4 +1,3 @@
-/** Local source-only export. No network, dependencies, database or environment reads. */
 import { createHash } from 'node:crypto';
 import { existsSync, lstatSync, readdirSync, readFileSync, mkdirSync, copyFileSync,
   chmodSync, unlinkSync, writeFileSync, renameSync } from 'node:fs';
@@ -71,7 +70,7 @@ function scan(root, prefix = '', ignoreGit = false) {
   assertPlain(join(root, prefix), true);
   const files = [];
   for (const item of readdirSync(join(root, prefix)).sort()) {
-    if (!prefix && ignoreGit && item === '.git') continue; // Never inspect/change repository metadata.
+    if (!prefix && ignoreGit && item === '.git') continue;
     const path = prefix ? `${prefix}/${item}` : item;
     const stat = lstatSync(join(root, path));
     if (stat.isSymbolicLink()) throw new Error(`拒绝符号链接：${path}`);
@@ -93,7 +92,6 @@ export function syncBakagit(project, { check = false } = {}) {
   const expected = new Map();
   const add = (destination, source) => {
     if (forbidden(destination)) throw new Error(`禁止发布：${destination}`);
-    // Validate every ancestor, not only the leaf, to prevent copying through links.
     let current = project;
     for (const part of source.split('/').slice(0, -1)) { current = join(current, part); assertPlain(current, true); }
     const path = join(project, source), stat = assertPlain(path);
@@ -127,7 +125,6 @@ export function syncBakagit(project, { check = false } = {}) {
     }
   }
   const changes = [], stale = [];
-  // Preflight everything before copying/pruning. Unknown files are never silently uploaded or removed.
   if (existsSync(target)) for (const path of scan(target, '', true)) {
     if (path === manifestName) continue;
     if (forbidden(path)) throw new Error(`镜像含禁止文件，请移出后再同步：${path}`);
@@ -153,7 +150,6 @@ export function syncBakagit(project, { check = false } = {}) {
       copyFileSync(join(project, expected.get(path).source), join(target, path));
       chmodSync(join(target, path), expected.get(path).executable ? 0o755 : 0o644);
     }
-    // Only unchanged old source files recorded by this script may be removed; never recursive deletion.
     for (const path of stale) unlinkSync(join(target, path));
     if (manifestChanged) {
       const temp = join(target, `${manifestName}.next`);

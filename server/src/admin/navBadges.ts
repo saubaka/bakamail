@@ -3,19 +3,12 @@ import { db, getIntSetting } from "../db.ts";
 import { globalFailureCount } from "../security/rateLimit.ts";
 import { hasPermission, type AdminRole } from "./accounts.ts";
 
-/**
- * 后台侧栏的角标：只给当前管理员有权限进入的页面返回数字，没有需要处理的事就不出现。
- *
- * - accounts：最近 7 天内用户申请了重置密码、且之后还没有管理员为该邮箱重置过密码的邮箱数。
- * - security：最近 15 分钟的登录失败次数已经达到告警阈值时返回失败次数。
- */
 export type RailBadges = { accounts?: number; security?: number };
 
 const REQUEST_WINDOW_MS = 7 * 24 * 60 * 60_000;
 const REQUEST_LIMIT = 500;
 const CAP = 99;
 
-/** 用户可能只填账号名，管理员重置时记录的是完整邮箱，比较时统一去掉域名。 */
 const localPart = (address: string): string => {
   const lower = address.trim().toLowerCase();
   const suffix = `@${config.mail.domain.toLowerCase()}`;

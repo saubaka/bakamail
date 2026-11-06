@@ -105,7 +105,6 @@ adminRouter.get("/human-check", (request, response) => {
   });
 });
 
-/** 创建后台会话并下发 Cookie；密码直接登录和二步验证登录共用，保证两条路径的会话行为完全一致。 */
 function startAdminSession(request: Request, response: Response, admin: AdminUser, identity: string,
   method: "password" | "totp" | "recovery"): void {
   const created = createAdminSession(admin.id, identity, String(request.headers["user-agent"] ?? ""));
@@ -168,7 +167,6 @@ adminRouter.post("/auth/login", anonymousRequestBudget("admin-login"), async (re
   }
 
   if (totpEnabled(verified.admin.id)) {
-    // 密码正确但还差第二因素：不创建会话，只签发一张短时、单次、绑定来源的票据。
     completeLoginAttempt(attemptId, false, "totp-pending");
     attemptFinished = true;
     ok(response, { totpRequired: true, ticket: issueLoginTicket(verified.admin.id, identity), expiresInSeconds: TICKET_TTL_MS / 1000 });
@@ -179,11 +177,6 @@ adminRouter.post("/auth/login", anonymousRequestBudget("admin-login"), async (re
   } finally { if (!attemptFinished) completeLoginAttempt(attemptId, success, success ? "ok" : "interrupted"); }
 });
 
-/**
- * 二步验证的第二步：用第一步签发的票据加动态码（或恢复码）换会话。
- * 不再要求图形验证码（密码和验证码在第一步已通过），但沿用同一套来源冷却：猜错动态码计入失败，
- * 来源被冷却时连正确的码也不接受；票据本身还限制 5 次尝试、5 分钟、只能用一次，并且绑定签发时的来源。
- */
 adminRouter.post("/auth/login/totp", anonymousRequestBudget("admin-login"), async (request, response) => {
   const body = await readJson<{ ticket?: string; code?: string }>(request, { maxBytes: 2048 });
   const address = clientAddress(request.headers as Record<string, unknown>, request.socket.remoteAddress);
@@ -250,10 +243,7 @@ adminRouter.use(appearanceRouter);
 adminRouter.use(humanVerificationRouter);
 adminRouter.use(seoRouter);
 
-// 侧栏角标：只读，已通过 requireAdmin；每个管理员只能看到自己有权限的页面的数字。
 adminRouter.get("/nav-badges", (request, response) => { ok(response, railBadges(request.admin!.admin.role as AdminRole)); });
-
-// ---- 我的二步验证（已登录管理员自助管理，需要 CSRF；停用必须再次提供密码和动态码） ----
 
 function totpBudget(request: Request): void {
   enforceBudget("admin-totp", fingerprint("admin-totp", clientAddress(request.headers as Record<string, unknown>, request.socket.remoteAddress)));
@@ -298,8 +288,6 @@ adminRouter.post("/auth/totp/disable", async (request, response) => {
   ok(response, { disabled: true });
 });
 
-// ---- 概览 ----
-
 adminRouter.get("/overview", requirePermission("mail.account.read"), async (_request, response) => {
   const stats = mailboxStats();
   const queue = queueEntries();
@@ -315,8 +303,6 @@ adminRouter.get("/overview", requirePermission("mail.account.read"), async (_req
     maddyRunner: config.maddy.runner,
   });
 });
-
-// ---- 邮箱账号 ----
 
 adminRouter.get("/accounts", requirePermission("mail.account.read"), async (_request, response) => {
   let credentials: string[];
@@ -352,7 +338,6 @@ adminRouter.get("/accounts", requirePermission("mail.account.read"), async (_req
       messages: stat?.messages ?? 0,
       unseen: stat?.unseen ?? 0,
       folders: stat?.folders.length ?? 0,
-      // 只有凭据或只有邮箱都是坏状态：前者登不进，后者没有密码
       broken: hasCredential !== hasMailbox || needsCleanup,
       needsCleanup,
     });
@@ -474,8 +459,6 @@ adminRouter.post(
     try {
       await changeMailboxPassword(account, String(body.password ?? ""));
     } catch (error) {
-      // The command may have changed the password before the transport failed.
-      // Never leave old authenticated connections active when the outcome is uncertain.
       const revoked = revokeMailSessionsFor(account);
       await dropSessionsForMailbox(account);
       reportAccountFailure(request, response, "password", account, error, revoked);
@@ -515,11 +498,6 @@ adminRouter.post(
         fail(response, 404, "账号及关联数据不存在");
         return;
       }
-      /*
-       * 先断掉这个账号的在线连接再删账号。
-       * maddy 在账号仍被 IMAP 会话占用时可能跳过删除（而且退出码是 0），
-       * 顺序反了就会留下「凭据没了、邮箱还在」的半成品。
-       */
       revoked = revokeMailSessionsFor(account);
       await dropSessionsForMailbox(account);
       if (!alreadyAbsent) {
@@ -545,7 +523,7 @@ adminRouter.post(
           summary: "邮局账号已不存在；BFF 关联数据清理未确认，需要按原地址重试删除",
           requestId: requestId(request),
         });
-      } catch { /* The database may itself be unavailable; keep the HTTP outcome explicit. */ }
+      } catch { }
       sendJson(response, 502, { ok: false, code: "account_data_cleanup_failed",
         error: "邮局账号已移除，但关联数据清理未确认；请刷新列表后对原地址重试删除",
         data: { account, outcome: "mailbox_removed_data_pending", requiresAdminReview: true,
@@ -564,8 +542,6 @@ adminRouter.post(
     ok(response, { removed: account, alreadyAbsent, purged });
   },
 );
-
-// ---- 邀请码 ----
 
 adminRouter.get("/invites", requirePermission("mail.invite.read"), (_request, response) => {
   ok(response, { invites: listInvites() });
@@ -631,14 +607,11 @@ adminRouter.post(
       String(body.code ?? ""),
       normalizeMailboxAccount(String(body.account ?? ""), config.mail.domain),
     );
-    // 查询用的哈希不需要给前端；只返回判断结果和邀请码的基本信息。
     if (!result.ok) { ok(response, result); return; }
     const { code_hash: _hash, ...invite } = result.invite;
     ok(response, { ok: true, invite });
   },
 );
-
-// ---- 队列与日志 ----
 
 adminRouter.get("/queue", requirePermission("mail.queue.read"), (_request, response) => {
   ok(response, { entries: queueEntries(), statsAvailable: statsAvailable() });
@@ -671,8 +644,6 @@ adminRouter.get(
     ok(response, { checks: await domainCheck(), statsAvailable: statsAvailable() });
   },
 );
-
-// ---- 安全与审计 ----
 
 adminRouter.get("/audit-logs", requirePermission("system.audit.read"), (request, response) => {
   const limit = Math.min(Number(request.query.limit ?? 100), 500);
@@ -829,8 +800,6 @@ adminRouter.post(
   },
 );
 
-// ---- 管理员账号 ----
-
 adminRouter.get("/admins", requirePermission("system.admin.write"), (request, response) => {
   ok(response, {
     admins: listAdmins(),
@@ -903,7 +872,6 @@ adminRouter.patch(
       return;
     }
     if (body.resetTotp === true) {
-      // 设备丢失时由超级管理员代为重置。重置自己必须走“停用”流程（需要密码和动态码），避免被盗会话借此摘掉第二因素。
       if (id === request.admin?.admin.id) { fail(response, 400, "请在“我的二步验证”里停用自己的二步验证"); return; }
       disableTotp(id);
       revokeAdminSessionsFor(id);
@@ -929,8 +897,6 @@ adminRouter.patch(
     ok(response, { updated: id });
   },
 );
-
-// ---- 系统 ----
 
 adminRouter.get(
   "/site-settings",

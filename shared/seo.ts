@@ -1,13 +1,6 @@
-/**
- * 站点 SEO：配置结构、校验、默认文案、达标评分，以及首页 <head>、robots.txt、sitemap.xml 的生成。
- * 全部是不依赖运行环境的纯函数：服务端用它生成真正输出的页面，后台页面用同一份代码实时预览和评分，
- * 所以“预览看到的”和“搜索引擎抓到的”不会出现两套逻辑。
- */
-
 export const SEO_DEFAULT_SITE_NAME = "Baka Mail";
 export const SEO_DEFAULT_TAGLINE = "自建邮局的网页端";
 export const SEO_DEFAULT_OG_IMAGE = "/og-image.png";
-/** 默认分享图的真实尺寸；自定义图片尺寸未知，不声明宽高。 */
 export const SEO_DEFAULT_OG_SIZE = { width: 1200, height: 630 } as const;
 export const SEO_DEFAULT_THEME_COLOR = "#F7F9FC";
 export const SEO_REPOSITORY_URL = "https://github.com/saubaka/bakamail";
@@ -18,7 +11,6 @@ export const SEO_LIMITS = {
 
 export const VERIFICATION_KEYS = ["google", "bing", "baidu", "yandex", "so360"] as const;
 export type VerificationKey = (typeof VERIFICATION_KEYS)[number];
-/** 各家站长平台要求的 meta 名称。 */
 export const VERIFICATION_META: Record<VerificationKey, string> = {
   google: "google-site-verification",
   bing: "msvalidate.01",
@@ -31,23 +23,15 @@ export const VERIFICATION_LABELS: Record<VerificationKey, string> = {
 };
 
 export type SeoConfig = {
-  /** 站点名：浏览器标题、页面品牌、分享卡片都用它。 */
   siteName: string;
-  /** 品牌旁边的一句话。留空使用默认。 */
   tagline: string;
-  /** 首页标题。留空则按站点名自动生成。 */
   homeTitle: string;
-  /** 首页描述。留空则按站点名自动生成。 */
   description: string;
-  /** 关键词。留空则自动生成。 */
   keywords: string[];
-  /** 站点的规范网址（只有协议和域名）。留空使用服务器配置的公开地址。 */
   canonicalOrigin: string;
-  /** 允许搜索引擎收录首页。其他页面（登录、注册、邮箱、后台）永远不收录。 */
   indexHome: boolean;
   sitemap: boolean;
   structuredData: boolean;
-  /** 分享图片：站内路径或 https 地址。留空使用默认图。 */
   ogImage: string;
   twitterCard: "summary" | "summary_large_image";
   themeColor: string;
@@ -75,7 +59,6 @@ export const defaultDescription = (siteName: string): string =>
   `${siteName}是给自建 Maddy 邮局用的网页邮箱：凭邀请码注册，在浏览器里收发邮件、整理文件夹、搜索旧邮件，不用安装客户端，开源可自行部署。`;
 export const defaultKeywords = (siteName: string): string[] => [siteName, "网页邮箱", "自建邮箱", "Maddy", "Webmail", "开源邮箱"];
 
-/** 首页的功能介绍与常见问题：页面显示、noscript 内容和结构化数据共用这一份，保证三处一致。 */
 export const INTRO_FEATURES = [
   { title: "收发和整理", text: "可以收发邮件、管理文件夹，也支持搜索、联系人和草稿。" },
   { title: "注册和登录有限制", text: "新用户需要邀请码。登录要填验证码，连续输错会被暂时限制，管理后台和普通登录分开。" },
@@ -87,9 +70,6 @@ export const INTRO_FAQ = [
   { question: "我的邮件安全吗？", answer: "邮件保存在站点自己的邮件服务器上，网页只通过本站的服务读取它们，浏览器不会直接连接邮件服务器。邮件正文在隔离的窗口里显示，里面的脚本不会运行。" },
 ] as const;
 
-// ---------- 文字宽度 ----------
-
-/** 汉字、全角符号按 2 计，其余按 1 计：与搜索结果里的截断位置大致对应。 */
 export function textWidth(text: string): number {
   let width = 0;
   for (const char of text) {
@@ -98,7 +78,6 @@ export function textWidth(text: string): number {
   }
   return width;
 }
-/** 约合多少个汉字，用于给人看的字数。 */
 export const approxChars = (text: string): number => Math.round(textWidth(text) / 2);
 
 export function truncateByWidth(text: string, maxWidth: number): string {
@@ -112,13 +91,10 @@ export function truncateByWidth(text: string, maxWidth: number): string {
   return `${out.trimEnd()}…`;
 }
 
-// ---------- 校验 ----------
-
 const CONTROL = /[\u0000-\u001f\u007f\u2028\u2029]/;
 const squash = (value: string): string => value.replace(/\s+/g, " ").trim();
 const codePoints = (value: string): number => [...value].length;
 
-/** 把用逗号、顿号、分号或换行分隔的文字拆成关键词列表。 */
 export function parseKeywords(text: string): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
@@ -130,7 +106,6 @@ export function parseKeywords(text: string): string[] {
   return out;
 }
 
-/** 允许直接粘贴整段 <meta …> 标签，只取 content 的值。 */
 export function extractVerification(value: string): string {
   const text = value.trim();
   const match = text.match(/content\s*=\s*["']([^"']*)["']/i);
@@ -139,7 +114,6 @@ export function extractVerification(value: string): string {
 
 const VERIFICATION_PATTERN = /^[A-Za-z0-9_-]{8,100}$/;
 
-/** 规范网址：只保留协议 + 域名（+ 端口）。http 仅允许本机地址。 */
 export function normalizeOrigin(value: string): { ok: true; origin: string } | { ok: false; message: string } {
   const text = value.trim();
   if (!text) return { ok: true, origin: "" };
@@ -176,7 +150,6 @@ export type SeoParse = { ok: true; config: SeoConfig } | { ok: false; message: s
 
 const ALLOWED_KEYS = new Set<string>(Object.keys(defaultSeoConfig()));
 
-/** 完整校验并规范化一份提交的配置。缺失字段取默认值之外的“当前值”由调用方先合并。 */
 export function parseSeoConfig(input: unknown): SeoParse {
   if (!input || typeof input !== "object" || Array.isArray(input)) return { ok: false, message: "SEO 设置格式不对" };
   const raw = input as Record<string, unknown>;
@@ -253,17 +226,13 @@ export function parseSeoConfig(input: unknown): SeoParse {
   };
 }
 
-// ---------- 生效值 ----------
-
 export type SeoEffective = {
   siteName: string; tagline: string; title: string; description: string; keywords: string[];
   origin: string; indexHome: boolean; sitemap: boolean; structuredData: boolean;
-  /** 分享图片的绝对地址；没有可用的网址时为空。 */
   ogImageUrl: string; ogImageIsDefault: boolean; twitterCard: SeoConfig["twitterCard"]; themeColor: string;
   verification: SeoConfig["verification"];
 };
 
-/** 把“留空 = 自动”的字段补全。origin 是服务器最终采用的规范网址（设置值或环境里的公开地址）。 */
 export function resolveSeo(config: SeoConfig, origin = config.canonicalOrigin): SeoEffective {
   const siteName = config.siteName || SEO_DEFAULT_SITE_NAME;
   const image = config.ogImage || SEO_DEFAULT_OG_IMAGE;
@@ -282,8 +251,6 @@ export function resolveSeo(config: SeoConfig, origin = config.canonicalOrigin): 
     verification: config.verification,
   };
 }
-
-// ---------- 达标评分 ----------
 
 export type SeoLevel = "pass" | "warn" | "fail" | "info";
 export type SeoCheck = { id: string; group: "标题与描述" | "收录与地址" | "分享与结构化" | "站长平台"; level: SeoLevel; label: string; detail: string; weight: number };
@@ -372,12 +339,9 @@ export function evaluateSeo(config: SeoConfig, origin = config.canonicalOrigin):
   return { score, grade, checks, counts };
 }
 
-// ---------- 页面输出 ----------
-
 export const escapeHtml = (value: string): string =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
-/** 放进 <script> 里的 JSON：把能提前结束脚本或破坏页面的字符全部转义。 */
 export const safeJson = (value: unknown): string =>
   JSON.stringify(value).replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026")
     .replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
@@ -407,7 +371,6 @@ export function structuredData(eff: SeoEffective): unknown {
 const meta = (name: string, content: string): string => `<meta name="${name}" content="${escapeHtml(content)}" />`;
 const property = (name: string, content: string): string => `<meta property="${name}" content="${escapeHtml(content)}" />`;
 
-/** 首页完整的 SEO 头部标签（不含 <title>，标题单独返回）。 */
 export function renderHomeHead(eff: SeoEffective): string {
   const lines: string[] = [];
   lines.push(meta("description", eff.description));
@@ -442,32 +405,24 @@ export function renderHomeHead(eff: SeoEffective): string {
   return lines.join("\n    ");
 }
 
-/** 其他页面（登录、注册、邮箱、后台……）：不收录，只保留站点名和主题色。 */
 export function renderPrivateHead(eff: SeoEffective): string {
   return [meta("robots", "noindex, nofollow"), meta("theme-color", eff.themeColor), meta("application-name", eff.siteName)].join("\n    ");
 }
 
-/** 不执行脚本的抓取工具看到的首页正文；底部的开源和版权标记是固定内容，不受 SEO 设置影响。 */
 export function renderNoscript(eff: SeoEffective, year: number): string {
   const features = INTRO_FEATURES.map((item) => `<li><strong>${escapeHtml(item.title)}</strong>：${escapeHtml(item.text)}</li>`).join("");
   const faq = INTRO_FAQ.map((item) => `<dt>${escapeHtml(item.question)}</dt><dd>${escapeHtml(item.answer)}</dd>`).join("");
   return `<noscript><main><h1>${escapeHtml(eff.siteName)}</h1><p>${escapeHtml(eff.tagline)}</p><p>${escapeHtml(eff.description)}</p>`
     + `<h2>功能介绍</h2><ul>${features}</ul><h2>常见问题</h2><dl>${faq}</dl>`
     + `<p><a href="/login">登录邮箱</a> · <a href="/register">我有邀请码</a></p></main>`
-    + `<footer><p><a href="${SEO_REPOSITORY_URL}" rel="noopener noreferrer">Github</a></p><p>© ${year} saubaka. BakaMail.</p><p>邮件服务基于 Maddy，第三方项目版权归原作者所有。</p></footer></noscript>`;
+    + `<footer><p><a href="${SEO_REPOSITORY_URL}" rel="noopener noreferrer">Github</a></p><p>© ${year} saubaka. BakaMail.</p></footer></noscript>`;
 }
 
-/** 前端启动时读取的站点信息（写在页面里，首屏就是正确的站点名）。 */
 export type SiteInfo = { siteName: string; tagline: string; title: string; description: string };
 export const siteInfoOf = (eff: SeoEffective): SiteInfo => ({ siteName: eff.siteName, tagline: eff.tagline, title: eff.title, description: eff.description });
 
-/**
- * 登录、注册、邮箱和后台页面不在这里禁止抓取：它们靠 noindex 标记（页面头和响应头都有）排除出搜索结果，
- * 如果在 robots.txt 里禁止抓取，搜索引擎看不到 noindex，反而可能把网址本身收进去。这里也不会写出后台入口路径。
- */
 export function renderRobotsTxt(eff: SeoEffective): string {
   if (!eff.indexHome) return "User-agent: *\nDisallow: /\n";
-  // 只写需要禁止的：默认就允许抓取，不写 Allow，免得按书写顺序匹配的解析器把后面的 Disallow 判成无效。
   const lines = ["User-agent: *", "Disallow: /api/"];
   if (eff.sitemap && eff.origin) lines.push("", `Sitemap: ${eff.origin}/sitemap.xml`);
   return `${lines.join("\n")}\n`;
@@ -475,7 +430,6 @@ export function renderRobotsTxt(eff: SeoEffective): string {
 
 const xml = (value: string): string => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 
-/** 站点只有一个值得收录的页面。没有规范网址或不允许收录时返回 null（调用方回 404）。 */
 export function renderSitemapXml(eff: SeoEffective, lastModified: string): string | null {
   if (!eff.indexHome || !eff.sitemap || !eff.origin) return null;
   const lastmod = /^\d{4}-\d{2}-\d{2}/.test(lastModified) ? `<lastmod>${lastModified.slice(0, 10)}</lastmod>` : "";

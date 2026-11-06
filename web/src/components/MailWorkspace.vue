@@ -168,7 +168,6 @@ const menuLeft = ref(16);
 const menuWidth = ref(360);
 const origin = ref(44);
 const selectedIndex = computed(() => navigationIndex(route.path));
-// 点击菜单的那一刻就记下目标：高亮线条立刻开始移动，不等服务端校验和页面文件加载；右侧用加载动画表示等待。
 const pendingPath = ref<string | null>(null);
 const highlightPath = computed(() => pendingPath.value ?? route.path);
 const navigationPending = computed(() => navigationState.pending !== "");
@@ -182,7 +181,6 @@ const highlightMover = useMovingOutline({
 });
 const navigationHighlight = highlightMover.box;
 const navigationHighlightStyle = highlightMover.style;
-// 手机底部胶囊：同一套滑动线条。
 const dockElement = ref<HTMLElement | null>(null);
 const pillElement = ref<HTMLElement | null>(null);
 const dockPill = useMovingOutline({

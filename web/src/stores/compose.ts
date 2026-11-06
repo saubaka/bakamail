@@ -134,7 +134,6 @@ export const useComposeStore = defineStore("mail-compose", () => {
     clearDraftTimer();
     const current = context();
     if (!isCurrent(current) || !isOpen.value || sending.value || openingDraft.value) return false;
-    // All waiters re-check the flight; only one can create the next write after it settles.
     while (saveFlight?.generation === generation) {
       await saveFlight.promise;
       if (!isCurrent(current) || sending.value || !isOpen.value) return false;
@@ -229,7 +228,6 @@ export const useComposeStore = defineStore("mail-compose", () => {
       queueDraftSave();
       return null;
     }
-    // A send may have committed. Never retry it or perform cleanup with a newer account's cookie.
     if (!isCurrent(current)) return null;
     let cleanupFailed = false;
     if (draftId.value) {

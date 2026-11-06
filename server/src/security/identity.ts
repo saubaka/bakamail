@@ -2,10 +2,6 @@ import { createHmac, randomBytes } from "node:crypto";
 import { isIP } from "node:net";
 import { config } from "../config.ts";
 
-/**
- * 用 HMAC 把作用域 + 来源地址折叠成一个不可逆指纹。
- * 限流、审计、封禁都只保存这个指纹，不直接落 IP。
- */
 export function fingerprint(scope: string, address: string): string {
   return createHmac("sha256", config.secretKey)
     .update(`${scope}|${address}`)
@@ -21,11 +17,6 @@ export function randomToken(bytes = 32): string {
   return randomBytes(bytes).toString("base64url");
 }
 
-/**
- * 一个 IPv6 用户通常拥有整段 /64。限流若按完整地址计数，攻击者在自己的段内换地址
- * 就能无限制地制造“新来源”。因此对全球单播 IPv6 只保留前 64 位作为来源标识。
- * 回环、IPv4 映射和链路本地地址保持原样；这个值只用于限流和审计指纹。
- */
 export function rateLimitSource(address: string): string {
   if (isIP(address) !== 6 || address === "::1") return address;
   const groups = expandIpv6(address);
@@ -45,7 +36,6 @@ function expandIpv6(address: string): number[] | null {
   return groups.length === 8 && groups.every((value) => Number.isInteger(value) && value >= 0 && value <= 0xffff) ? groups : null;
 }
 
-/** 1Panel overwrites X-Real-IP; Docker may translate the loopback peer into its bridge gateway. */
 export function clientAddress(
   headers: Record<string, unknown>,
   socketAddress?: string,
@@ -65,7 +55,6 @@ export function clientAddress(
 export function normalizeIp(value: string): string {
   if (value.startsWith("::ffff:") && isIP(value.slice(7)) === 4) return value.slice(7);
   if (!isIP(value)) return "";
-  // WHATWG URL serialization canonicalizes equivalent IPv6 spellings.
   if (isIP(value) !== 6) return value;
   try { return new URL(`http://[${value}]/`).hostname.slice(1, -1); } catch { return ""; }
 }

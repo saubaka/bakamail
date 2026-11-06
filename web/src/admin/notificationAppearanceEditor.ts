@@ -51,7 +51,6 @@ export function createNotificationAppearanceEditor(deps: Dependencies) {
     try {
       const result = await request('/api/admin/appearance?schemaVersion=2');
       if (!active) return;
-      // Never turn a management v1/future/invalid response into editable defaults.
       if (!isUiConfigV2(result)) throw new Error('配置版本或格式不兼容，保存已禁用');
       deps.apply(copyUiConfigV2(result));
       if (state.saved && dirty.value) {
@@ -103,7 +102,6 @@ export function createNotificationAppearanceEditor(deps: Dependencies) {
     try {
       const result = await request('/api/admin/appearance?schemaVersion=2', { method: 'PATCH', body: submitted });
       if (!active) return;
-      // A valid but wrong response does not prove that this editor's whole draft was saved.
       if (!isUiConfigV2(result) || result.revision !== submitted.revision + 1
         || JSON.stringify({ ...copyUiConfigV2(result), revision: submitted.revision }) !== JSON.stringify(submitted))
         throw new Error('无法确认完整保存结果');

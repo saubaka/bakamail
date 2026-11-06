@@ -1,13 +1,6 @@
 import { reactive } from "vue";
 import { attachSurfaceLines } from './surfaceLines.ts';
 
-/**
- * 复刻基座的弹窗动效契约。
- *
- * app.css 里 dialog.modal 默认 opacity:0，必须补上 .is-present 才会显形，
- * 关闭前要先挂 .is-closing 播退场动画。少了这两步弹窗就是「打开了但看不见」。
- */
-
 const CLOSE_MS = 260;
 const lifecycles = new WeakMap<HTMLDialogElement, { version: number; timer: number | null; lines?: () => void }>();
 function lifecycle(element: HTMLDialogElement) {
@@ -30,7 +23,6 @@ export type DialogOptions = {
   initialValue?: string;
   inputType?: "text" | "password";
   requiredText?: string;
-  /** 返回不符合的原因；空字符串表示通过。有原因时确认按钮保持禁用，并在输入框下面显示原因。 */
   validate?: (value: string) => string;
 };
 

@@ -23,7 +23,6 @@ process.env.MADDY_DATA_DIR = stateDir;
 process.env.MAIL_LOG_SNAPSHOT_PATH = join(stateDir, "mail-log.json");
 process.env.FAKE_MADDY_STATE = stateDir;
 process.env.MAIL_DOMAIN = "example.test";
-// 指向一个必然拒绝连接的端口，让登录失败得又准又快
 process.env.MAIL_HOST = "127.0.0.1";
 process.env.MAIL_IMAP_PORT = "1";
 process.env.LOGIN_MAX_FAILURES = "5";
@@ -41,7 +40,6 @@ const { fingerprint } = await import("../src/security/identity.ts");
 const { recordLoginAttempt, blockIdentity, unblockIdentity, failureCount, globalFailureCount } = await import("../src/security/rateLimit.ts");
 
 const app = createApp({ bootstrapAdmin: true, log: () => undefined });
-// These legacy feature tests share one app/source. Dedicated phase2 tests exercise persistent abuse budgets.
 test.afterEach(() => db.exec("delete from security_budgets"));
 const admin = request.agent(app);
 const user = request.agent(app);
@@ -124,7 +122,6 @@ test("非 JSON 和压缩内容拒绝为 415，空请求体仍允许", async () =
   const compressed = await mailRequest("post", "/api/contacts")
     .set("content-encoding", "gzip").send({});
   assert.equal(compressed.status, 415);
-  // The business validator, not the JSON decoder, rejects missing contact fields.
   const empty = await mailRequest("post", "/api/contacts");
   assert.equal(empty.status, 400);
   assert.equal(empty.body.code, undefined);
@@ -569,7 +566,6 @@ async function registerPayload(
   if (address) challengeRequest.set("x-real-ip", address);
   const challenge = await challengeRequest;
   assert.equal(challenge.status, 200);
-  // Test-only clock aging instead of waiting or trusting the forged client elapsedMs.
   if (overrides.elapsedMs !== 50) db.prepare("update form_tokens set issued_at = issued_at - 5000 where token_hash = ?")
     .run((await import("../src/security/identity.ts")).hashToken(challenge.body.data.formToken));
   return {

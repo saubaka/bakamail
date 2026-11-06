@@ -21,7 +21,6 @@ export type MailLogResult = {
   source?: "snapshot" | "docker-logs"; stale?: boolean; truncated?: boolean; hint?: string;
 };
 
-/** Same file handle for validation and bounded reading; never follow a substituted symlink. */
 export async function readMailLogSnapshot(path: string, container: string, limit: number, now = Date.now()): Promise<MailLogResult> {
   let file;
   try { file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK); }
@@ -59,13 +58,11 @@ export async function readMailLogSnapshot(path: string, container: string, limit
   } finally { await file.close(); }
 }
 
-/** Legacy docker-exec deployments: bounded duration/output and explicit failures. */
 export function readDockerMailLogs(container: string, limit: number): Promise<MailLogResult> {
   return new Promise((resolve, reject) => {
     execFile("docker", ["logs", "--timestamps", "--tail", String(limit), container],
       { timeout: 8000, maxBuffer: MAX_BYTES, encoding: "utf8" }, (error, stdout, stderr) => {
         if (error) { reject(new Error("无法读取邮局容器日志")); return; }
-        // Docker sends application stderr separately; snapshot mode preserves its original ordering.
         const lines = `${stdout}\n${stderr}`.split("\n").filter(Boolean);
         resolve({ available: true, lines: lines.slice(-limit).map(redactLogLine),
           capturedAt: new Date().toISOString(), source: "docker-logs", stale: false,

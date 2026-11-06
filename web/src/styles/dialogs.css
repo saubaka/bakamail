@@ -1,4 +1,3 @@
-/* Native top-layer behavior, with bounded surfaces instead of inherited blog dialog grids. */
 dialog.modal { box-sizing:border-box; max-width:calc(100vw - 32px); max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px); margin:auto; overflow:auto; border-color:var(--line-blue); background:var(--surface); }
 dialog.modal :is(form,.field,.button-row,.modal__header) { min-width:0; box-sizing:border-box; }
 dialog.modal :is(input,textarea,select) { max-width:100%; box-sizing:border-box; }
@@ -6,12 +5,8 @@ dialog.modal .modal__header { align-items:center; gap:12px; }
 dialog.modal .modal__header h2 { min-width:0; overflow-wrap:anywhere; font-size:20px; line-height:1.4; }
 dialog.modal .modal__header > button { flex:none; }
 dialog.modal .button-row { flex-wrap:wrap; gap:8px; }
-/* A definite viewport-bounded height avoids an auto-sized dialog's zero-percent flex basis.
-   Only the form scrolls; the close control stays reachable even in a short viewport. */
 dialog.modal.compose-dialog { --dialog-width:760px; height:min(780px,calc(100vh - 32px)); height:min(780px,calc(100dvh - 32px)); padding:0; border-radius:24px; overflow:hidden; }
 dialog.compose-dialog[open] { display:grid; grid-template-rows:auto minmax(0,1fr); }
-/* JS measures only the mobile visual viewport (including keyboard occlusion).
-   Native centering remains the fallback when that API is absent. */
 dialog.modal.compose-dialog[data-compose-viewport] {
   --compose-surface-height:min(780px,calc(var(--compose-visible-height) - 32px));
   height:var(--compose-surface-height); max-height:var(--compose-surface-height);
@@ -41,5 +36,4 @@ dialog.baka-confirm-dialog[open] { display:block; grid-template-columns:none; pa
   .compose-form .button-row .button { flex:1 1 auto; }
   .compose-form textarea { min-height:150px; }
 }
-/* Also covers phones held in landscape. */
 @media(max-width:900px) { .compose-form :is(input,textarea) { font-size:16px; } }

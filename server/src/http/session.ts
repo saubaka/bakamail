@@ -109,7 +109,6 @@ export function createAdminSession(
   return { id, token, csrfToken, expiresAt };
 }
 
-/** 后台会话按空闲时间续期，超过空闲上限即失效。 */
 export function findAdminSession(token: string): AdminSessionRow | undefined {
   if (!token) return undefined;
   const row = db

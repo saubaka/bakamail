@@ -83,7 +83,6 @@ watch(() => props.account, (account) => {
   store.bindOwner(account);
 }, { immediate: true, flush: "sync" });
 watch(() => store.isOpen, (isOpen) => {
-  // Freeze the measured bounds during the short exit instead of jumping below the keyboard.
   releaseViewport?.(!isOpen); releaseViewport = null;
   if (isOpen && dialogRef.value) releaseViewport = bindComposeViewport(dialogRef.value);
   if (!isOpen) { filePickVersion += 1; closeDialog(dialogRef.value); }

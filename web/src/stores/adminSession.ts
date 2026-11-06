@@ -55,7 +55,6 @@ export const useAdminSessionStore = defineStore("admin-session", {
       try {
         await api("/api/admin/auth/logout", { method: "POST" });
       } catch (error) {
-        // An expired or revoked session is already logged out. Transient failures are not.
         if (!(error instanceof ApiError && error.status === 401)) throw error;
       }
       if (runtime(this).generation === generation) this.clear();

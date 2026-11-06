@@ -1,4 +1,3 @@
-/** Real Vue directive/runtime and activation client. All data/config/tasks are disposable mocks. */
 import { createApp, defineComponent, h, onBeforeUnmount, ref, withDirectives } from 'vue';
 import { createRouter, createMemoryHistory, RouterView, RouterLink } from 'vue-router';
 import { defaultUiConfigV2, copyUiConfigV2, isUiConfigV2, projectUiConfigV1 } from '../../../shared/notificationDisplay.ts';
@@ -15,7 +14,6 @@ import '../../src/styles/dialogs.css';
 import '../../src/styles/local-theme.css';
 import '../../src/styles/dashed-accent.css';
 
-// Label only disposable tabs, so a human can distinguish native activation targets.
 const clientLabel=new URLSearchParams(location.search).get('client');
 if(clientLabel==='A'||clientLabel==='B')document.title=`BakaMail 隔离配置 ${clientLabel}`;
 

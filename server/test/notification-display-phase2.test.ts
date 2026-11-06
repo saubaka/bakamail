@@ -323,7 +323,6 @@ test('阶段6真实HTTP保存→公开客户端→中央DOM实时时钟，收起
     const progress=beginProgressNotice('真实计时收起等待');await flush();
     await until(()=>progress.inspect().phase==='hidden');progress.update('提示隐藏期间任务继续');
     await sleep(40);assert.equal(dom.region.children.length,0);
-    // A later admin save cannot alter this pending task's captured result policy.
     const changed=client.snapshotV2();changed.notificationDisplay.types.error={mode:'manual'};
     const reply=await patch(changed);assert.equal(reply.status,200);await client.refresh(true);applySavedUiConfig(client.snapshotV2());
     progress.finish('旧任务结果仍为一秒','error');await flush();

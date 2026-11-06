@@ -3,7 +3,6 @@ import { ref } from "vue";
 import { searchMessages, type SearchInput } from "../api/mail.ts";
 import type { MessageSummary } from "../mail/types.ts";
 
-/** Results own their folder: an edited form must never change the meaning of an old UID. */
 export const useSearchStore = defineStore("mail-search", () => {
   const results = ref<MessageSummary[]>([]);
   const resultFolder = ref("");

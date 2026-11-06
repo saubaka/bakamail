@@ -14,7 +14,6 @@ const p = (d: string, extra: Record<string, string | number> = {}): Shape => ["p
 const rect = (x: number, y: number, width: number, height: number, rx: number): Shape => ["rect", { x, y, width, height, rx }];
 const circle = (cx: number, cy: number, r: number): Shape => ["circle", { cx, cy, r }];
 
-/** 统一的线性图标，全部是固定的静态形状，不接收任何外部输入。 */
 const shapes: Record<IconName, Shape[]> = {
   overview: [rect(3.5, 3.5, 7, 7, 1.8), rect(13.5, 3.5, 7, 7, 1.8), rect(3.5, 13.5, 7, 7, 1.8), rect(13.5, 13.5, 7, 7, 1.8)],
   accounts: [circle(9, 8, 3.4), p("M2.8 19.5c0-3.4 2.8-5.6 6.2-5.6s6.2 2.2 6.2 5.6"), p("M15.6 4.8a3.4 3.4 0 0 1 0 6.4M18 14.2c2 .6 3.2 2.4 3.2 5.3")],

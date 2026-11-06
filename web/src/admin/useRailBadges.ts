@@ -7,10 +7,6 @@ export type RailBadges = Partial<Record<RailBadgeKey, number>>;
 const MIN_GAP_MS = 15_000;
 const POLL_MS = 60_000;
 
-/**
- * 侧栏角标：进入后台时读取一次，之后只在页面可见时每分钟刷新，路由切换时按最短间隔补刷。
- * 读取失败时保留上一次的数字，不打扰用户。
- */
 export function useRailBadges() {
   const badges = ref<RailBadges>({});
   let timer = 0;
@@ -25,7 +21,7 @@ export function useRailBadges() {
     try {
       const next = await api<RailBadges>("/api/admin/nav-badges", { quiet: true });
       if (active) { badges.value = next; last = Date.now(); }
-    } catch { /* 角标是辅助信息，失败时保留旧值 */ }
+    } catch { }
     finally { inflight = false; }
   }
 

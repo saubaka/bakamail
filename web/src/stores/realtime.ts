@@ -31,7 +31,6 @@ const defaultRuntime: RealtimeRuntime = {
   },
 };
 
-/** One live mail stream per mounted workbench; no mail data is kept in this store. */
 export const useRealtimeStore = defineStore("realtime", () => {
   const status = ref<StreamStatus>("stopped");
   const mailStatus = ref<MailStatus>("unknown");
@@ -155,7 +154,7 @@ export const useRealtimeStore = defineStore("realtime", () => {
           if (state.status === "connected" || state.status === "reconnecting" || state.status === "closed") {
             mailStatus.value = state.status;
           }
-        } catch { /* A malformed state event does not make the transport stale. */ }
+        } catch { }
       });
       stream.onerror = () => {
         if (currentGeneration !== generation) return;

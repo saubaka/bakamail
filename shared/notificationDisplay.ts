@@ -3,16 +3,13 @@ import {
   type NotificationMotionConfig, type NotificationType, type UiConfig,
 } from './notificationMotion.ts';
 
-/** V2 display contract; legacy animation clients use explicit v1 projections. */
 export const NOTIFICATION_DISPLAY_SCHEMA_VERSION = 2 as const;
 export const NOTIFICATION_DISPLAY_DURATION_LIMITS = Object.freeze({ minMs: 1000, maxMs: 120000, stepMs: 1000 });
-/** Editor suggestions when changing a manual/untilSettled policy to a timed policy. */
 export const DEFAULT_TIMED_DISPLAY_MS: Readonly<Record<NotificationType, number>> = Object.freeze({
   success: 5000, info: 6000, warning: 8000, error: 10000, loading: 15000,
 });
 
 export type ResultDisplayPolicy = { mode: 'timed'; durationMs: number } | { mode: 'manual' };
-/** timedHide hides only the waiting notice, never cancels its underlying business operation. */
 export type LoadingDisplayPolicy = { mode: 'untilSettled' } | { mode: 'timedHide'; durationMs: number };
 export type NotificationDisplayConfig = {
   types: Record<Exclude<NotificationType, 'loading'>, ResultDisplayPolicy> & { loading: LoadingDisplayPolicy };
@@ -47,7 +44,6 @@ function validPolicy(value: unknown, loading: boolean): boolean {
   return (exactObject(value, ['mode']) && value.mode === indefinite)
     || (exactObject(value, ['mode', 'durationMs']) && value.mode === timed && validDuration(value.durationMs));
 }
-/** Strict complete policies: no coercion, duration on non-timed modes, or unknown types/keys. */
 export function isNotificationDisplay(value: unknown): value is NotificationDisplayConfig {
   if (!exactObject(value, ['types']) || !exactObject(value.types, NOTIFICATION_TYPES)) return false;
   const types = value.types;
@@ -60,7 +56,6 @@ function copyResultPolicy(value: ResultDisplayPolicy): ResultDisplayPolicy {
 function copyLoadingPolicy(value: LoadingDisplayPolicy): LoadingDisplayPolicy {
   return value.mode === 'timedHide' ? { mode: value.mode, durationMs: value.durationMs } : { mode: value.mode };
 }
-/** Like the v1 copy helper, callers validate untrusted values before copying. */
 export function copyNotificationDisplay(value: NotificationDisplayConfig): NotificationDisplayConfig {
   return { types: {
     success: copyResultPolicy(value.types.success), info: copyResultPolicy(value.types.info),
@@ -88,7 +83,6 @@ export function copyUiConfigV2(value: UiConfigV2): UiConfigV2 {
   return { schemaVersion: NOTIFICATION_DISPLAY_SCHEMA_VERSION, revision: legacy.revision,
     notificationMotion: legacy.notificationMotion, notificationDisplay: copyNotificationDisplay(value.notificationDisplay) };
 }
-/** Pure upgrade: no write or revision increment; invalid/future versions are NOT editable defaults. */
 export function upgradeUiConfigV1(value: unknown): UiConfigV2 | null {
   if (!isUiConfig(value)) return null;
   const legacy = copyUiConfig(value);
@@ -98,15 +92,9 @@ export function upgradeUiConfigV1(value: unknown): UiConfigV2 | null {
 export function normalizeUiConfigV2(value: unknown): UiConfigV2 | null {
   return isUiConfigV2(value) ? copyUiConfigV2(value) : upgradeUiConfigV1(value);
 }
-/** Projection for an old client, never an instruction to downgrade persisted configuration. */
 export function projectUiConfigV1(value: UiConfigV2): UiConfig {
   return copyUiConfig(legacyFields(value));
 }
-/**
- * Prepare a legacy motion-only edit at the same revision, preserving current display policies.
- * The server must read/check inside its write transaction, increment revision, and audit there.
- * This helper does not perform persistence, authorization, or concurrency locking.
- */
 export function applyLegacyMotionEdit(current: UiConfigV2, input: unknown): UiConfigV2 | null {
   if (!isUiConfigV2(current) || !isUiConfig(input) || input.revision !== current.revision) return null;
   const next = copyUiConfigV2(current);

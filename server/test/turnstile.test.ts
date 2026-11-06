@@ -39,7 +39,7 @@ test.after(() => { globalThis.fetch = realFetch; });
 
 let adminCounter = 0;
 async function admin() {
-  const source = `203.0.113.${100 + (adminCounter += 1)}`; // 每次换一个来源，避免触发同一来源的验证码额度。
+  const source = `203.0.113.${100 + (adminCounter += 1)}`;
   const agent = request.agent(app);
   const challenge = await agent.get("/api/admin/human-check").set("x-real-ip", source);
   const signed = await agent.post("/api/admin/auth/login").set("x-real-ip", source)
@@ -89,11 +89,9 @@ test("保存密钥：格式校验、私有密钥只存密文且永不返回、�
   assert.equal(saved.body.data.verified, false);
   assert.equal(JSON.stringify(saved.body).includes(SECRET), false);
   assert.equal(JSON.stringify((await agent.get("/api/admin/human-verification")).body).includes(SECRET), false);
-  // 数据库里不是明文
   const row = db.prepare("select value from app_settings where key = 'turnstile'").get() as { value: string };
   assert.equal(row.value.includes(SECRET), false);
   assert.equal(row.value.includes("0123456789abcdef"), false);
-  // 没通过真实验证不能启用
   const early = await put({ enabled: true });
   assert.equal(early.status, 409);
   assert.match(early.body.error, /真实验证/);
@@ -127,7 +125,7 @@ test("真实验证：令牌被 Cloudflare 接受且 action 对得上才算通过
   assert.equal((await verify("x".repeat(3000))).status, 400);
   assert.equal(calls.length, 1, "empty and oversized tokens never reach Cloudflare");
   assert.equal(turnstile.isVerified(), false);
-  behaviour = echoAction("login"); // 令牌来自别的入口
+  behaviour = echoAction("login");
   assert.equal((await verify("good-1")).status, 400);
   assert.equal(turnstile.isVerified(), false);
   behaviour = () => new Error("fetch failed");
@@ -152,14 +150,12 @@ test("通过验证后才能启用；换密钥会自动停用并要求重新验�
   const partial = await put({ scopes: { "password-reset": false } });
   assert.deepEqual(partial.body.data.active, ["login", "register"]);
   await put({ scopes: { "password-reset": true } });
-  // 换站点密钥：自动停用，验证结果作废
   const swapped = await put({ siteKey: "0x4AAAAAAAotherSiteKey2" });
   assert.equal(swapped.status, 200);
   assert.equal(swapped.body.data.enabled, false);
   assert.equal(swapped.body.data.autoDisabled, true);
   assert.equal(swapped.body.data.verified, false);
   assert.equal((await put({ enabled: true })).status, 409);
-  // 换回原来的站点密钥并不会恢复验证结果：指纹按“当前这组密钥”算，需要重新验证。
   await put({ siteKey: SITE });
   assert.equal(turnstile.isVerified(), false);
   behaviour = echoAction("admin-test");
@@ -194,10 +190,8 @@ test("启用后：注册、登录、重置密码入口改用 Turnstile，不再�
   const bad = await request(app).post("/api/auth/password-reset").set("x-real-ip", "198.51.100.21").send(resetBody("rejected-token"));
   assert.equal(bad.status, 400);
   assert.equal(bad.body.error, "人机校验未通过");
-  // 旧的四位验证码答案在 Turnstile 模式下无效
   const legacy = await request(app).post("/api/auth/password-reset").set("x-real-ip", "198.51.100.22").send({ account: "a@example.test", humanNonce: "whatever", humanAnswer: "ABCD" });
   assert.equal(legacy.status, 400);
-  // 令牌来自别的入口（action 对不上）
   behaviour = echoAction("register");
   assert.equal((await request(app).post("/api/auth/password-reset").set("x-real-ip", "198.51.100.23").send(resetBody("good-wrong-form"))).status, 400);
 });
@@ -264,7 +258,6 @@ test("邮箱登录入口：失败达到阈值后改要 Turnstile；服务不可�
   assert.equal(rejected.status, 429);
   assert.equal(rejected.body.code, "human_required");
   assert.equal(failures(), counted + 1, "a rejected token counts like a failed captcha");
-  // 通过的令牌放行到后面的账号密码校验（此处邮件服务未接入，不会是 human_required）
   const through = await login({ humanNonce: "turnstile", humanAnswer: "good-login-ok" });
   assert.notEqual(through.body.code, "human_required");
   assert.notEqual(through.body.code, "human_unavailable");
@@ -282,7 +275,6 @@ test("管理员登录永远使用内建验证码：即使 Turnstile 已启用，
     .send({ username: "ts-root", password: "isolated-test-only-2026", humanNonce: issued.body.data.nonce, humanAnswer: "ABCD" });
   assert.equal(signed.status, 200);
   assert.equal(calls.length, 0, "admin login never talks to Cloudflare");
-  // 把 Turnstile 令牌当作后台验证码答案也不会被接受（不走 Cloudflare）
   const fake = await request(app).post("/api/admin/auth/login").set("x-real-ip", "203.0.113.61")
     .send({ username: "ts-root", password: "isolated-test-only-2026", humanNonce: "turnstile", humanAnswer: "good-token-value" });
   assert.notEqual(fake.status, 200);

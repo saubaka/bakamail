@@ -48,21 +48,17 @@ export function finishInstallation(base: string): void {
   installAdminRoutes(base);
 }
 
-// 第一个守卫是同步的：点击菜单的那一刻就记下目标，菜单高亮和右侧加载动画立刻响应（后台和邮箱都一样），
-// 服务端校验（下面的守卫）要几百毫秒到几秒，期间右侧保留旧页面。
 router.beforeEach((to, from) => {
   if ((to.meta.auth === "admin" || to.meta.auth === "mail") && to.fullPath !== from.fullPath) beginAdminNavigation(to.name, to.fullPath);
   return true;
 });
 
-/** 后台页面之间切换时，入口路径最多每分钟向服务端确认一次；身份校验仍然每次都做。 */
 const ENTRY_RECHECK_MS = 60_000;
 let entryCheckedAt = 0;
 
 router.beforeEach(async (to, from) => {
   const reuseEntryCheck = to.meta.auth === "admin" && from.meta.auth === "admin" && installationReady
     && Date.now() - entryCheckedAt < ENTRY_RECHECK_MS;
-  // Fail closed on unavailable status, never render a fresh admin form on assumed defaults.
   if (!reuseEntryCheck && to.name !== "unavailable" && (!installationReady || to.name === "setup" || to.meta.auth === "admin" || to.name === "not-found" || to.name === "admin-login")) {
     try {
       const status = await readInstallation(to.path, AbortSignal.timeout(15_000));
@@ -93,11 +89,9 @@ router.beforeEach(async (to, from) => {
 
 router.onError((error) => {
   clearAdminNavigation();
-  // 页面文件没能加载（网络中断，或刚发布过新版本）：显示统一风格的提示，由用户决定何时重新加载。
   if (isChunkLoadFailure(error)) reportFatal("route chunk load failed");
 });
 
-// 成功完成的导航一定是最新的一次；被新导航取代（cancelled）的不清，新导航自己会设置。
 router.afterEach((_to, _from, failure) => {
   if (!failure || !isNavigationFailure(failure, NavigationFailureType.cancelled)) clearAdminNavigation();
 });
@@ -113,7 +107,6 @@ async function recheckSession(): Promise<void> {
   if (current.meta.auth !== "mail") return;
   const session = useSessionStore(pinia);
   const result = await checkMailEntry(() => session.restore(true), () => session.clear(), false, current.fullPath);
-  // A navigation in flight owns its own guard; never redirect a newer page.
   if (router.currentRoute.value !== current || result === false) return;
   if (result !== true) await router.replace(result);
   else scheduleSessionCheck();

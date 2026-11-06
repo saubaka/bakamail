@@ -1,6 +1,4 @@
 #!/bin/sh
-# 测试替身：模拟 maddy 的账号管理子命令。
-# 只实现 BakaMail 用到的部分，状态存在 $FAKE_MADDY_STATE 目录里。
 set -eu
 
 STATE="${FAKE_MADDY_STATE:?fake-maddy 需要 FAKE_MADDY_STATE 环境变量}"
@@ -13,7 +11,6 @@ group="${1:-}"
 sub="${1:-}"
 [ $# -gt 0 ] && shift
 
-# 丢掉 --cfg-block X / --yes / --no-specialuse 之类的选项，剩下的就是位置参数
 while [ $# -gt 0 ]; do
   case "$1" in
     --cfg-block)
@@ -70,7 +67,6 @@ case "$group:$sub" in
       echo "${FAKE_MADDY_FAIL_DETAIL:-forced credential removal failure}" >&2
       exit 1
     fi
-    # 真实 maddy 这里会问 "Are you sure? [y/N]"，没有 --yes 开关
     IFS= read -r confirmation || confirmation=""
     case "$confirmation" in
       y|Y|yes|YES) ;;

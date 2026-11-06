@@ -11,7 +11,6 @@ export class MailSessionClosedError extends Error {
   constructor() { super("邮箱会话已关闭"); this.name = "MailSessionClosedError"; }
 }
 
-/** Do not rely on a third-party connect/command promise settling when its socket is destroyed. */
 export async function withMailAbort<T>(job: () => Promise<T>, signal: AbortSignal): Promise<T> {
   if (signal.aborted) throw new MailSessionClosedError();
   let onAbort: (() => void) | undefined;
@@ -29,14 +28,12 @@ export async function withMailAbort<T>(job: () => Promise<T>, signal: AbortSigna
   }
 }
 
-/** Stop the real transport before releasing its request budget; observe late rejections. */
 export async function withMailDeadline<T>(job: () => Promise<T>, ms: number, abort: () => void, message: string, signal?: AbortSignal): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const deadline = new Promise<never>((_resolve, reject) => {
     timer = setTimeout(() => {
-      // Queue our stable error before the client's close-induced error can win the race.
       reject(new MailDeadlineError(message));
-      try { abort(); } catch { /* The deadline must still settle if transport teardown throws. */ }
+      try { abort(); } catch { }
     }, ms);
   });
   try {

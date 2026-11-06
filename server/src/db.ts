@@ -5,11 +5,6 @@ import { config } from "./config.ts";
 export const db = new DatabaseSync(join(config.dataDir, "bakamail.db"));
 
 db.exec("pragma busy_timeout = 5000");
-/*
- * 把库切换到 WAL 需要独占锁，而且 SQLite 不会为这条语句等待 busy_timeout：
- * 多个进程同时启动并首次转换同一个库时，其中一些会直接报 database is locked。
- * 已经是 WAL 的库不会触发；这里只在锁冲突时做有上限的短重试，其他错误照常抛出。
- */
 function enableWal(): void {
   for (let attempt = 0; ; attempt += 1) {
     try { db.exec("pragma journal_mode = wal"); return; }
@@ -22,7 +17,6 @@ function enableWal(): void {
 enableWal();
 db.exec("pragma foreign_keys = on");
 
-/** 建表语句全部幂等，启动时执行一次即可。 */
 db.exec(`
 create table if not exists admin_users (
   id integer primary key autoincrement,
@@ -173,7 +167,6 @@ export function nowIso(): string {
   return new Date().toISOString();
 }
 
-// Additive migrations preserve accounts, invites, cookies and historical logs.
 db.exec("begin immediate");
 try {
 for (const [table, column, declaration] of [
@@ -183,7 +176,6 @@ for (const [table, column, declaration] of [
   const columns = db.prepare(`pragma table_info(${table})`).all() as { name: string }[];
   if (!columns.some((row) => row.name === column)) db.exec(`alter table ${table} add column ${column} ${declaration}`);
 }
-// Migrate legacy one-shot codes once. Never reopen a used/revoked/expired invitation.
 const inviteColumns = db.prepare('pragma table_info(invites)').all() as { name: string }[];
 if (!inviteColumns.some(row => row.name === 'used_count')) {
   db.exec(`alter table invites add column used_count integer not null default 0 check(used_count >= 0);

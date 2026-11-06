@@ -30,7 +30,7 @@ export function parseCookies(request: IncomingMessage): Record<string, string> {
     const key = part.slice(0, index).trim();
     const value = part.slice(index + 1).trim();
     if (key && value.length <= 512) {
-      try { out[key] = decodeURIComponent(value); } catch { /* malformed cookies are unauthenticated */ }
+      try { out[key] = decodeURIComponent(value); } catch { }
     }
   }
   return out;
@@ -54,7 +54,6 @@ export function buildCookie(name: string, value: string, options: CookieOptions 
   return parts.join("; ");
 }
 
-/** 会话 Cookie 的属性只在这里定义一次。 */
 export function sessionCookie(
   name: string,
   token: string,
@@ -79,7 +78,6 @@ export function clearCookie(response: ServerResponse, name: string, path = "/"):
 }
 
 export const FORM_BODY_LIMIT = 64 * 1024;
-// Base64 attachments need more space than the decoded 32 MiB mail limit.
 export const MAIL_BODY_LIMIT = 48 * 1024 * 1024;
 
 export class RequestBodyError extends Error {
@@ -117,8 +115,6 @@ export async function readJson<T = Record<string, unknown>>(
 
   const chunks: Buffer[] = [];
   let size = 0;
-  // The default async iterator destroys the request on early exit, losing the 413 response.
-  // Keep it alive until the error boundary flushes its response and closes the connection.
   for await (const chunk of request.iterator({ destroyOnReturn: false })) {
     const buffer = typeof chunk === "string" ? Buffer.from(chunk) : (chunk as Buffer);
     size += buffer.length;

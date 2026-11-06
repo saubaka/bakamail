@@ -12,10 +12,6 @@ import {
 } from "../security/turnstile.ts";
 import { fingerprint } from "../security/identity.ts";
 
-/**
- * 邮箱用户入口的 Cloudflare Turnstile 管理。挂在后台路由的 requireAdmin + requireCsrf 之后，
- * 读写都需要 system.security.write。管理员登录不使用 Turnstile，所以这里配错也不会把管理员挡在外面。
- */
 export const humanVerificationRouter = Router();
 const guard = requirePermission("system.security.write");
 const PANEL_ACTION = "admin-test";
@@ -32,7 +28,6 @@ function view() {
     verified,
     verifiedAt: verified ? stored.verifiedAt : "",
     updatedAt: stored.updatedAt,
-    // 此刻真正生效的入口（已启用、已验证、入口未被单独关闭）。
     active: stored.enabled && verified ? TURNSTILE_PURPOSES.filter((item) => stored.scopes[item]) : [],
     testingKeys: Boolean(secret) && isTestingSecret(secret),
     panelAction: PANEL_ACTION,
@@ -46,7 +41,6 @@ function budget(request: import("express").Request): void {
 
 humanVerificationRouter.get("/human-verification", guard, (_request, response) => { ok(response, view()); });
 
-/** 趋势图的数据：最近 24 小时 / 7 天 / 30 天，每个整点一个点（没有记录的整点补 0）。 */
 humanVerificationRouter.get("/human-verification/stats", guard, (request, response) => {
   const range = String(request.query.range ?? "24h");
   if (!Object.prototype.hasOwnProperty.call(TURNSTILE_RANGES, range)) { fail(response, 400, "统计范围只能是 24h、7d 或 30d"); return; }
@@ -96,7 +90,6 @@ humanVerificationRouter.put("/human-verification", guard, async (request, respon
   if (enabled && !(next.siteKey && secret)) { fail(response, 409, "请先填写并保存站点密钥和私有密钥"); return; }
   if (enabled && !verified) {
     if ("enabled" in body && body.enabled === true) { fail(response, 409, "这组密钥还没有通过真实验证。请先保存密钥，在下方完成一次验证，再启用。"); return; }
-    // 已启用期间换了密钥：旧的验证结果不再适用，先自动停用，避免用没验证过的密钥把用户挡在外面。
     enabled = false; autoDisabled = true;
   }
   if (enabled && !TURNSTILE_PURPOSES.some((key) => next.scopes[key])) { fail(response, 400, "至少需要保留一个适用入口"); return; }
@@ -111,7 +104,6 @@ humanVerificationRouter.put("/human-verification", guard, async (request, respon
   ok(response, { ...view(), autoDisabled });
 });
 
-/** 用一个明显无效的结果令牌问 Cloudflare：返回“密钥无效”说明私有密钥不对，返回“结果无效”说明密钥被接受了。 */
 humanVerificationRouter.post("/human-verification/check-secret", guard, async (request, response) => {
   budget(request);
   const secret = turnstileSecret();
@@ -122,7 +114,6 @@ humanVerificationRouter.post("/human-verification/check-secret", guard, async (r
   ok(response, { valid: !rejectedSecret, message: rejectedSecret ? explainErrors(result.errors) : "Cloudflare 接受了这个私有密钥。" });
 });
 
-/** 用面板里渲染出的真实组件结果令牌做一次完整校验；通过后才允许启用。 */
 humanVerificationRouter.post("/human-verification/verify", guard, async (request, response) => {
   budget(request);
   const body = await readJson<{ token?: unknown }>(request, { maxBytes: 4096 });

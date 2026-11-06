@@ -74,7 +74,6 @@ const password = ref("");
 const humanNonce = ref("");
 const humanAnswer = ref("");
 const humanVisible = ref(true);
-// 已启用二步验证的账号：密码通过后换一张短时票据，再输入动态码完成登录。
 const step = ref<"password" | "totp">("password");
 const ticket = ref("");
 const totpCode = ref("");
@@ -148,7 +147,6 @@ async function submit(): Promise<void> {
       const seconds = error.retryAfterSeconds ?? payload?.retryAfterSeconds ?? 0;
       if (seconds > 0) retryUntil.value = Date.now() + seconds * 1000;
       if (step.value === "totp") {
-        // 票据过期、失效或账号不可用时回到第一步；只是动态码输错则留在这里继续试。
         totpCode.value = "";
         if (error.status === 401 && /超时|失效|不可用/.test(error.message)) backToPassword();
         return;

@@ -52,7 +52,7 @@ function setState(next: WidgetState): void {
 }
 
 function remove(): void {
-  if (api && widgetId) { try { api.remove(widgetId); } catch { /* the widget may already be gone */ } }
+  if (api && widgetId) { try { api.remove(widgetId); } catch { } }
   widgetId = "";
 }
 
@@ -86,7 +86,6 @@ async function render(): Promise<void> {
         setState("error");
       },
     });
-    // 无需交互的验证会很快直接通过；否则等 before-interactive 回调切换状态。
     if (state.value === "loading") setState("ready");
   } catch (reason) {
     if (!active) return;
@@ -101,11 +100,10 @@ async function render(): Promise<void> {
 function retry(): void { void render(); }
 function reloadPage(): void { window.location.reload(); }
 
-/** 令牌只能使用一次：提交失败或需要重新验证时调用。 */
 function reset(): void {
   token.value = "";
   if (api && widgetId) {
-    try { api.reset(widgetId); setState("ready"); return; } catch { /* fall through to a full render */ }
+    try { api.reset(widgetId); setState("ready"); return; } catch { }
   }
   void render();
 }
@@ -117,7 +115,6 @@ defineExpose({ reset, retry });
 </script>
 
 <style scoped>
-/* 组件本身没有外框和底色：Cloudflare 的验证框自带边框，再包一层卡片只会重复。 */
 .ts-box { display: grid; gap: 8px; min-width: 0; animation: ts-arrive 240ms var(--ease, ease) both; }
 .ts-box__stage { position: relative; min-height: 65px; }
 .ts-box__mount { width: 100%; min-height: 65px; transition: opacity 200ms var(--ease, ease); }

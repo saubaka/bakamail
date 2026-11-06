@@ -53,11 +53,9 @@ test("待处理重置申请：同一邮箱只算一次，管理员之后重置�
   audit("mailbox.password-reset-request", "carol", ago(2 * DAY));
   audit("mailbox.password-reset-request", "old-timer", ago(9 * DAY));
   assert.equal(pendingPasswordResets(), 3, "alice, bob and carol are pending; the 9 day old request is ignored");
-  // 管理员在申请之后重置了 carol（记录里是完整邮箱）和 bob
   audit("admin.account.password", "carol@example.test", ago(DAY));
   audit("admin.account.password", "BOB", ago(60 * 60_000));
   assert.equal(pendingPasswordResets(), 1, "only alice is still waiting");
-  // 重置发生在申请之前，不算已处理
   audit("admin.account.password", "alice", ago(5 * 60_000));
   assert.equal(pendingPasswordResets(), 1, "a reset older than the latest request does not clear it");
   audit("admin.account.password", "alice", ago(10_000));
@@ -70,7 +68,6 @@ test("角标数字上限 99；三种角色都有账号读取权限所以都能�
   assert.equal((await root.get("/api/admin/nav-badges")).body.data.accounts, 99);
   const auditor = await login("badge-auditor", "auditor-pass-2026-xx");
   assert.equal((await auditor.get("/api/admin/nav-badges")).body.data.accounts, 99);
-  // 权限检查是兜底：没有 mail.account.read / system.audit.read 的角色不会通过角标得知任何数字。
   assert.deepEqual(railBadges("nobody" as never), {});
 });
 

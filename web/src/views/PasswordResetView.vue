@@ -69,7 +69,6 @@ const retryUntil = ref(0);
 const tick = ref(Date.now());
 const lockedSeconds = computed(() => Math.max(0, Math.ceil((retryUntil.value - tick.value) / 1000)));
 const lockedLabel = computed(() => (lockedSeconds.value >= 120 ? `${Math.ceil(lockedSeconds.value / 60)} 分钟后可重试` : `${lockedSeconds.value} 秒后可重试`));
-// 验证码一直显示：和登录页相同，提交按钮在验证码填好之前、忙碌或冷却期间保持不可用。
 const submission = computed(() => loginSubmissionState(busy.value, lockedSeconds.value, true, nonce.value, answer.value));
 let timer = 0;
 watch(lockedSeconds, (seconds, previous) => {

@@ -21,7 +21,7 @@ SENSITIVE = re.compile(r"password|passwd|credential|secret|token|authorization|\
 def snapshot_lines(raw, was_truncated=False):
     lines = raw.decode("utf-8", errors="replace").splitlines()
     if was_truncated and lines:
-        lines = lines[1:]  # discard the partially retained first line
+        lines = lines[1:]
     truncated = was_truncated or len(lines) > 2000 or any(len(line) > 1000 for line in lines)
     safe = ["[含认证或邮件内容的日志已隐藏]" if SENSITIVE.search(line) else line[:1000] for line in lines[-2000:]]
     return safe, truncated
@@ -64,7 +64,6 @@ def encode_snapshot(payload):
         encoded = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         if len(encoded) <= MAX_SNAPSHOT_BYTES:
             return encoded
-        # Escaped control characters can inflate JSON beyond the raw capture bound.
         payload["lines"] = payload["lines"][max(1, len(payload["lines"]) // 2):]
         payload["truncated"] = True
 
@@ -72,7 +71,6 @@ def encode_snapshot(payload):
 def main():
     if os.geteuid() != 0:
         raise RuntimeError("root required")
-    # Deployment creates this directory. Refuse unexpected ownership or symlinks.
     info = os.lstat(DIRECTORY)
     if not stat.S_ISDIR(info.st_mode) or info.st_uid != 0 or stat.S_IMODE(info.st_mode) != 0o700:
         raise RuntimeError("unsafe snapshot directory")
@@ -105,5 +103,4 @@ if __name__ == "__main__":
     try:
         main()
     except Exception:
-        # Do not print raw subprocess output or overwrite the last successful sample.
         raise SystemExit("mail log export failed; previous snapshot preserved")

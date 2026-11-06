@@ -12,7 +12,6 @@
     <p v-if="error" v-capsule-notice class="form-error" role="alert">{{ error }}</p>
     <button v-if="!state && !loading" class="button button--soft" type="button" @click="load">重新读取</button>
 
-    <!-- 刚启用：恢复码只显示这一次 -->
     <div v-if="recoveryCodes.length" class="totp-recovery" role="region" aria-label="恢复码">
       <strong>请现在保存这 {{ recoveryCodes.length }} 个恢复码</strong>
       <p class="totp-note">手机丢失或无法使用验证器时，每个恢复码可以代替动态码登录一次。它们只显示这一次，请存放在密码管理器或其他安全的地方。</p>
@@ -23,7 +22,6 @@
       </div>
     </div>
 
-    <!-- 未启用 -->
     <template v-else-if="state && !state.enabled">
       <button v-if="!setup" v-press-feedback class="button button--primary" type="button" :disabled="busy" @click="begin">启用二步验证</button>
       <form v-else class="form-grid totp-setup" @submit.prevent="confirm">
@@ -51,7 +49,6 @@
       </form>
     </template>
 
-    <!-- 已启用 -->
     <template v-else-if="state?.enabled">
       <p class="totp-note">登录时需要验证码。剩余可用恢复码 <strong>{{ state.recoveryRemaining }}</strong> 个。<span v-if="state.recoveryRemaining <= 2" class="totp-warn">恢复码快用完了，建议停用后重新启用来生成一批新的。</span></p>
       <form class="form-grid" @submit.prevent="disable">

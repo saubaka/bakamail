@@ -16,15 +16,10 @@ function imapsqlPath(): string {
   return join(config.maddy.dataDir, "imapsql.db");
 }
 
-/** maddy 数据目录是否可读（生产环境挂载 maddydata 卷后为真） */
 export function statsAvailable(): boolean {
   return existsSync(imapsqlPath());
 }
 
-/**
- * 直接只读打开 maddy 的 imapsql.db 取统计。
- * 只读连接不会干扰 maddy 的写入；这也是 QUOTA 扩展缺失时的替代方案。
- */
 export function mailboxStats(): MailboxStat[] {
   if (!statsAvailable()) return [];
   const db = new DatabaseSync(imapsqlPath(), { readOnly: true });
@@ -70,7 +65,6 @@ export function mailboxStats(): MailboxStat[] {
   }
 }
 
-/** 出站投递队列，目录为空即没有积压 */
 export function queueEntries(): QueueEntry[] {
   const dir = join(config.maddy.dataDir, "remote_queue");
   if (!existsSync(dir)) return [];

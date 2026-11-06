@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// Exact source recovery; no passwords, sessions, invites or mailboxes are changed.
 const args = process.argv.slice(2);
 const identity = args[0] ?? "";
 const apply = args[1] === "--apply";

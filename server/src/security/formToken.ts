@@ -2,10 +2,6 @@ import { db, nowIso } from "../db.ts";
 import { hashToken, randomToken } from "./identity.ts";
 import { enforceBudget } from "./abuse.ts";
 
-/**
- * 一次性表单令牌：页面加载时下发，提交时必须原样带回。
- * 绑定用途/来源并以服务端时间检查填写耗时；不代替验证码或请求预算。
- */
 export function issueFormToken(purpose: string, ttlSeconds = 1800, contextHash = ""): string {
   enforceBudget("form-token", contextHash);
   const token = randomToken(24);

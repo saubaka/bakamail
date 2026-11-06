@@ -38,7 +38,6 @@ export function requireMail(request: Request, response: Response, next: NextFunc
   }
   const session = getSession(row.id);
   if (!session) {
-    // 进程重启后内存里的 IMAP 连接与密码都没了，必须重新登录
     fail(response, 401, "服务已重启，请重新登录");
     return;
   }

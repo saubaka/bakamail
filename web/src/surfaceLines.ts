@@ -1,7 +1,6 @@
 import { applyOutline } from './outlineGeometry.ts';
 const NS = 'http://www.w3.org/2000/svg';
 const surfaces = new WeakMap<HTMLElement, { svg: SVGSVGElement; dispose: () => void; measure: () => void }>();
-/** A bounded, pointer-transparent four-part outline. Geometry is measured, never mail data. */
 export function attachSurfaceLines(element: HTMLElement): () => void {
   const existing = surfaces.get(element);
   if (existing) { if (!element.contains(existing.svg)) element.append(existing.svg); existing.measure(); return existing.dispose; }
@@ -13,7 +12,6 @@ export function attachSurfaceLines(element: HTMLElement): () => void {
   });
   element.append(svg);
   function measure() {
-    // 宿主 span 铺满父元素的内边距盒，边框和圆角属于父元素；弹窗等直接挂载的元素就是自己。
     const reference = element.classList?.contains('line-outline-host') ? (element.parentElement ?? element) : element;
     applyOutline(svg, pieces, reference, element, 1);
   }

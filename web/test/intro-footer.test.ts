@@ -19,9 +19,12 @@ test("页尾在“项目介绍”右侧提供 Github 链接，并在新标签页
 });
 
 test("开源标记和版权标记是固定内容：不读取站点名、副标题或任何 SEO 设置，也不能被条件隐藏", () => {
-  assert.match(footer, /<p>© \{\{ year \}\} saubaka\. BakaMail\.<br \/><span>邮件服务基于 Maddy，第三方项目版权归原作者所有。<\/span><\/p>/);
-  const fixed = footer.slice(footer.indexOf('<div class="intro-footer-links">'));
-  assert.doesNotMatch(fixed, /siteInfo|tagline|v-if|v-show|display\s*:\s*none/, "固定部分不引用可配置内容，也没有条件渲染");
-  // 可配置的只有页脚左侧的品牌名和副标题。
-  assert.match(footer, /<div><strong>\{\{ siteInfo\.siteName \}\}<\/strong><p>\{\{ siteInfo\.tagline \}\}<\/p><\/div>/);
+  assert.match(footer, /<p>© \{\{ year \}\} saubaka\. BakaMail\.<\/p>/);
+  assert.doesNotMatch(footer, /siteInfo|tagline|v-if|v-show|display\s*:\s*none/, "页脚不引用可配置内容，也没有条件渲染");
+});
+
+test("页脚不再显示站点名与副标题，也不再显示 Maddy 版权说明", () => {
+  assert.doesNotMatch(footer, /<strong>/);
+  assert.doesNotMatch(footer, /自建邮局的网页端|Maddy|第三方项目版权/);
+  assert.equal(footer.match(/<p>/g)?.length, 1, "页脚只剩一行版权标记");
 });

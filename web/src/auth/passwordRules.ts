@@ -1,7 +1,3 @@
-/**
- * 密码规则的浏览器端镜像，与服务端 `server/src/security/passwords.ts` 的 `passwordProblem` 保持一致，
- * 用来在提交前就告诉管理员哪里不符合；服务端仍然是最终裁判，这里只是提前提示。
- */
 export function passwordProblem(password: string): string {
   if (password.length < 10) return "密码至少 10 位";
   if (password.length > 200) return "密码过长";

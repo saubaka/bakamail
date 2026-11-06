@@ -44,7 +44,6 @@ test("生产路由的全局导航完成钩子按站点信息设置标题：首�
     assert.equal(document.title, name === "intro" ? "Baka Mail - 自建邮局的网页邮箱" : "Baka Mail", String(name));
   }
   assert.equal(checks, routes.length);
-  // 站点名改掉以后，所有页面的标题立刻跟着变。
   applySiteInfo({ siteName: "某某邮箱", tagline: "t", title: "某某邮箱 - 自建邮局的网页邮箱", description: "d" });
   afterEach({ name: "login" }); assert.equal(document.title, "某某邮箱");
   afterEach({ name: "intro" }); assert.equal(document.title, "某某邮箱 - 自建邮局的网页邮箱");

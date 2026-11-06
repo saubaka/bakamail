@@ -1,4 +1,3 @@
-/** null removes only this invite's limit; registration security budgets stay active. */
 export const INVITE_MAX_USES = 1_000_000;
 export const INVITE_MAX_TTL_HOURS = 720;
 export type InviteLimits = { maxUses: number | null; ttlHours: number | null };

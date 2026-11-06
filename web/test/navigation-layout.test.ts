@@ -105,9 +105,7 @@ test("桌面选中轮廓按真实按钮几何移动，并在侧栏变形和窗�
   const workspace = readFileSync(new URL("../src/components/MailWorkspace.vue", import.meta.url), "utf8");
   const css = readFileSync(new URL("../src/styles/workspace.css", import.meta.url), "utf8");
   assert.match(workspace, /ref="navigationList"/);
-  // v0.9.8: 高亮跟随“目标”（点击的那一刻就是目标，不等路由完成），aria-current 仍然只跟随真实路由
   assert.match(workspace, /targetSelector: \(\) => `\.dock-navigation-item\[data-path="\$\{highlightPath\.value\}"\]`/);
-  // v0.9.10: 量位置的逻辑集中在 useMovingOutline（按真实盒子含小数量，并除掉容器缩放）
   const mover = readFileSync(new URL("../src/mail/useMovingOutline.ts", import.meta.url), "utf8");
   assert.match(mover, /x: \(targetRect\.left - containerRect\.left\) \/ scaleX - container\.clientLeft/);
   assert.match(mover, /height: targetRect\.height \/ scaleY/);

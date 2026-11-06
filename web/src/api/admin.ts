@@ -32,7 +32,6 @@ export function setAdminUserActive(id: number, active: boolean): Promise<void> {
   return api(adminPath(id), { method: "PATCH", body: { active } });
 }
 
-/** 设备丢失时由超级管理员代为重置别人的二步验证；对方会话同时失效。 */
 export function resetAdminUserTotp(id: number): Promise<void> {
   return api(adminPath(id), { method: "PATCH", body: { resetTotp: true } });
 }

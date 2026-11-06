@@ -7,16 +7,12 @@ export type BudgetPolicy = { sourceMinute: number; sourceHour: number; globalMin
 export const SECURITY_BUDGETS = {
   initialize: { sourceMinute: 5, sourceHour: 20, globalMinute: 20, globalHour: 100 },
   login: { sourceMinute: 20, sourceHour: 100, globalMinute: 200, globalHour: 2000 },
-  // 后台登录独立计数：邮箱用户的洪泛、同一出口 IP 下的其他用户都不能挤占管理员的名额。
   "admin-login": { sourceMinute: 10, sourceHour: 60, globalMinute: 100, globalHour: 1000 },
   challenge: { sourceMinute: 6, sourceHour: 30, globalMinute: 120, globalHour: 1000 },
   "challenge-admin": { sourceMinute: 6, sourceHour: 30, globalMinute: 60, globalHour: 500 },
   "human-verify-admin": { sourceMinute: 15, sourceHour: 60, globalMinute: 100, globalHour: 800 },
-  // 已登录管理员管理二步验证（启用、停用）时的尝试次数，防止会话被盗后在线猜密码或动态码。
-  // 管理员在人机验证面板里检查密钥、做真实验证：每次都会请求 Cloudflare，单独限额。
   "admin-turnstile": { sourceMinute: 10, sourceHour: 60, globalMinute: 60, globalHour: 300 },
   "admin-totp": { sourceMinute: 8, sourceHour: 40, globalMinute: 80, globalHour: 400 },
-  // 只统计“猜了一个不存在的后台路径”的请求，正常访问不计数。
   "entry-probe": { sourceMinute: 20, sourceHour: 100, globalMinute: 200, globalHour: 1000 },
   "form-token": { sourceMinute: 6, sourceHour: 30, globalMinute: 60, globalHour: 500 },
   "human-verify": { sourceMinute: 15, sourceHour: 60, globalMinute: 200, globalHour: 1500 },
@@ -35,7 +31,6 @@ export function enforceBudget(bucket: keyof typeof SECURITY_BUDGETS, identity: s
   if (seconds) throw new SecurityBudgetError(`${bucket.replaceAll("-", "_")}_rate_limited`, seconds);
 }
 
-/** Reserve before reading the JSON stream, including malformed/oversized submissions. */
 export function anonymousRequestBudget(bucket: "login" | "admin-login" | "register") {
   return (request: Request, _response: Response, next: NextFunction): void => {
     enforceBudget(bucket, fingerprint("auth-source", clientAddress(request.headers, request.socket.remoteAddress)));
@@ -43,13 +38,6 @@ export function anonymousRequestBudget(bucket: "login" | "admin-login" | "regist
   };
 }
 
-/**
- * 一条带条件的 SQLite INSERT 同时检查所有滑动窗口，保证跨进程原子预占。
- *
- * 来源窗口永远生效：一个来源超限，只会拒绝它自己。
- * 全站窗口只约束“用量已经偏高”的来源。用量很低的来源（正常用户通常每分钟只有一两次请求）
- * 不会因为别人制造的洪泛而被拒绝，否则任何人都能靠大量请求把所有人锁在外面。
- */
 export function reserveBudget(bucket: string, identity: string, policy: BudgetPolicy): number {
   const now = Date.now();
   db.prepare("delete from security_budgets where created_ms <= ?").run(now - 3600_000);
@@ -93,7 +81,6 @@ export function reserveBudget(bucket: string, identity: string, policy: BudgetPo
   return retry;
 }
 
-/** 只读检查：来源窗口是否已满。用于“先判断能否继续，再决定是否计数”的场景，返回需等待的秒数，0 表示可继续。 */
 export function peekBudget(bucket: string, identity: string, policy: BudgetPolicy): number {
   const now = Date.now();
   let retry = 0;
@@ -110,11 +97,6 @@ export function rejectBudget(response: Response, code: string, seconds: number, 
   sendJson(response, 429, { ok: false, code, error: message, data: { retryAfterSeconds: Math.max(1, seconds) } });
 }
 
-/**
- * Global and per-source concurrency plus one registration per normalized account, before any await.
- * `reservedForClean` 个名额只留给没有近期失败记录的来源：已经在猜密码的来源最多占满其余名额，
- * 无法把正常用户和管理员挡在外面。
- */
 export function reserveLease(scope: string, identity: string, account: string, globalLimit: number, sourceLimit = 2,
   reservedForClean = 0, suspicious = false): string | null {
   const now = Date.now();
@@ -134,7 +116,6 @@ export function reserveLease(scope: string, identity: string, account: string, g
 
 export function releaseLease(id: string): void { db.prepare("delete from security_leases where id = ?").run(id); }
 
-/** Provisioning can span several bounded CLI calls; a live operation renews, a crashed worker expires. */
 export function keepLeaseAlive(id: string): () => void {
   const timer = setInterval(() => db.prepare("update security_leases set expires_ms = ? where id = ?").run(Date.now() + 120_000, id), 15_000);
   timer.unref();

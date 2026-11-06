@@ -25,7 +25,7 @@ test("工具页卡片高度由内容决定，不再被基座的 264px 最小高�
 
 test("搜索表单：关键词独占一行，其余四项整齐排成一行，窄屏依次变成两列和一列", () => {
   const css = source("styles/mail-pages.css");
-  const tail = css.slice(css.indexOf("用户端工具页"));
+  const tail = css.slice(css.indexOf(".mail-utility-shell .managed-page-card {"));
   assert.match(tail, /\.mail-search-form \{ grid-template-columns: repeat\(4, minmax\(0, 1fr\)\); \}/);
   assert.match(tail, /\.mail-search-query \{ grid-column: 1 \/ -1; \}/);
   assert.match(tail, /@media \(max-width: 980px\) \{\s*\.mail-search-form \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); \}/);
@@ -52,9 +52,7 @@ test("联系人、草稿、设置：列表增减和提示出现都平滑过渡�
   }
   assert.match(settings, /<SmoothBlock>[\s\S]*<transition-group name="card-list-swap"/);
   assert.match(search, /<button v-for="item in results" :key="item\.uid" v-scroll-reveal/);
-  // 工具页的主卡片不再 reversible:false，滚动出视野后也有出场动画
   for (const view of [contacts, drafts, settings, search]) assert.doesNotMatch(view, /reversible: false/);
-  // 删除草稿后本地先移除，不整页换成“正在读取”
   assert.match(drafts, /drafts\.value = drafts\.value\.filter\(\(item\) => item\.id !== id\)/);
   assert.match(drafts, /loading && drafts\.length === 0/);
 });
@@ -96,17 +94,14 @@ test("桌面端：搜索、草稿、联系人、设置整页是一个大容器�
     assert.match(source(view), /<div v-motion="\{ kind: 'feature' \}" class="mail-utility-page">\s*<main id="main-content" class="page-shell mail-utility-shell"/);
   }
   const css = source("styles/workspace.css");
-  const tail = css.slice(css.indexOf("桌面端：搜索、草稿、联系人、设置的大容器"));
-  // 邮箱页的外壳内边距是 14px 上、12px 下，工具页的容器用同样的间距，侧栏也是 margin:14px 0 12px
+  const tail = css.slice(css.indexOf(".mail-utility-page > .motion-outline { display: none; }"));
   assert.match(tail, /\.workspace-route-panel:has\(> \.mail-utility-page\) \{[^}]*padding: 14px 24px 12px; overflow: hidden;/);
   assert.match(tail, /\.mail-utility-page \{ position: relative; width: 100%; max-width: 1552px; height: 100%;/);
   assert.match(css, /\.workspace-content \.mail-shell \{[^}]*padding: 14px 24px 12px;/);
   assert.match(css, /\.dock-menu\.is-desktop-sidebar \{[^}]*margin:14px 0 12px; height:calc\(100% - 26px\);/);
-  // 里面的几块内容用分隔线隔开，容器内部滚动，不再各自带边框
   assert.match(tail, /\.mail-utility-shell \.motion-outline \{ display: none; \}/);
   assert.match(tail, /overflow-y: auto;/);
   assert.match(tail, /\.admin-panel \+ \.admin-panel,[\s\S]*box-shadow: inset 0 1px 0 var\(--line-blue\) !important;/);
   assert.match(tail, /\.search-result-content \.mail-result-list \{ max-height: none; overflow: visible; \}/);
-  // 手机上保持原来的卡片布局：整页大容器的外轮廓只在桌面端显示
   assert.match(css, /\.mail-utility-page > \.motion-outline \{ display: none; \}\n@media \(min-width: 901px\)/);
 });

@@ -7,7 +7,6 @@ const transportCodes = new Set([
   "SELF_SIGNED_CERT_IN_CHAIN", "UNABLE_TO_GET_ISSUER_CERT_LOCALLY", "UNABLE_TO_GET_ISSUER_CERT",
 ]);
 
-/** Positive transport evidence only; do not trust free-form error messages or expose them to clients. */
 export function isMailServiceFailure(error: unknown): boolean {
   if (error instanceof MailDeadlineError || error instanceof MailSessionClosedError) return true;
   if (!error || typeof error !== "object") return false;

@@ -47,22 +47,17 @@ test("来源按 IPv6 /64 归并：同一段内换地址不能制造新来源，�
   assert.equal(a, b);
   assert.notEqual(a, c);
   assert.equal(a, "2001:db8:1:2::/64");
-  // IPv4、回环、IPv4 映射地址保持原样，不受归并影响。
   assert.equal(rateLimitSource("198.51.100.9"), "198.51.100.9");
   assert.equal(rateLimitSource("::1"), "::1");
   assert.equal(clientAddress({ "x-real-ip": "198.51.100.10" }, "::ffff:127.0.0.1"), "198.51.100.10");
-  // 缩写写法与完整写法得到同一个来源。
   assert.equal(rateLimitSource("2001:0db8:0001:0002:0000:0000:0000:0001"), rateLimitSource("2001:db8:1:2::1"));
 });
 
 test("大量低用量来源制造的全站压力不会拒绝新的正常用户，用量偏高的来源仍被全站上限约束", () => {
   const policy = SECURITY_BUDGETS.login;
-  // 250 个来源各发一次，超过旧版 200 次/分钟的全站上限。
   for (let i = 0; i < 250; i++) assert.equal(reserveBudget("login", `flood-${i}`, policy), 0, `source ${i}`);
-  // 之后第一次出现的正常用户照常通过。
   assert.equal(reserveBudget("login", "innocent-user", policy), 0);
   assert.equal(reserveBudget("login", "innocent-user", policy), 0);
-  // 但一个自己就在高频请求的来源（超过低用量门槛）会被全站上限拦住。
   const heavy = "heavy-source";
   let denied = 0;
   for (let i = 0; i < 10; i++) if (reserveBudget("login", heavy, policy) > 0) denied++;
@@ -91,11 +86,9 @@ test("同一来源猜错后台密码被冷却后，其他来源的管理员仍�
   const cooled = await adminLogin(attacker, "wrong-password-value");
   assert.equal(cooled.status, 429);
   assert.equal(cooled.body.code, "login_cooldown");
-  // 管理员从别的地址登录，不受影响。
   const admin = await adminLogin("203.0.113.51");
   assert.equal(admin.status, 200);
   assert.equal(admin.body.data.username, "isolation-admin");
-  // 另一个正常来源的登录请求也不受这个攻击者影响。
   assert.equal((await adminLogin("203.0.113.52")).status, 200);
 });
 
@@ -108,9 +101,7 @@ test("多个来源的并发校验不会让干净来源拿不到名额：已有�
     reserveLoginAttempt("admin-login", dirty[1]!, "lease-account-3"),
   ];
   assert.ok(taken.every((id) => id !== null));
-  // 可疑来源想占第四个名额会被拒绝……
   assert.equal(reserveLoginAttempt("admin-login", dirty[1]!, "lease-account-4"), null);
-  // ……这个名额留给没有失败记录的管理员。
   const clean = reserveLoginAttempt("admin-login", "lease-clean-admin", "lease-account-5");
   assert.ok(clean !== null);
   for (const id of [...taken, clean]) completeLoginAttempt(id!, false, "interrupted");
@@ -128,21 +119,16 @@ test("租约预留只在调用方声明可疑时生效，注册等其他场景�
 test("后台路径探测限流：只计猜错，猜错过多的来源连正确答案也拿不到，其他来源不受影响", async () => {
   const base = entrySettings().adminBase;
   const probe = (source: string, entry: string) => request(app).get(`/api/installation?entry=${encodeURIComponent(entry)}`).set("x-real-ip", source);
-  // 正常管理员反复打开自己的路径，不消耗额度。
   for (let i = 0; i < 40; i++) assert.equal((await probe("198.51.100.201", base)).body.data.entry?.adminBase, base);
-  // 不像后台路径的地址（如 /login）不计数。
   for (let i = 0; i < 40; i++) assert.equal((await probe("198.51.100.202", "/login")).status, 200);
-  // 猜错 20 次之后被冷却。
   const guesser = "198.51.100.203";
   for (let i = 0; i < SECURITY_BUDGETS["entry-probe"].sourceMinute; i++) assert.equal((await probe(guesser, `/guess-${i}x`)).status, 200);
   const limited = await probe(guesser, "/another-guess");
   assert.equal(limited.status, 429);
   assert.equal(limited.body.code, "entry_probe_rate_limited");
-  // 冷却期内即使猜对了也只得到 429，限流不会变成探测器。
   const correct = await probe(guesser, base);
   assert.equal(correct.status, 429);
   assert.equal(correct.body.data?.entry, undefined);
-  // 其他来源不受影响。
   assert.equal((await probe("198.51.100.204", base)).body.data.entry.adminBase, base);
 });
 
@@ -204,7 +190,6 @@ test("草稿有数量和大小上限：达到上限后不能再新建，已有�
   assert.equal(update.status, 200);
   const tooLarge = await send({ id: last.body.data.id, payload: { text: "x".repeat(600 * 1024) } });
   assert.equal(tooLarge.status, 413);
-  // 别的账号的额度不受这个账号影响。
   const other = createMailSession("draft-quota-other@example.test", "quota-other", "quota-test");
   putSession(new MailboxSession(other.id, "draft-quota-other@example.test", "never-used"));
   const fine = await request(app).post("/api/drafts").set("Cookie", `${MAIL_COOKIE}=${other.token}`).set("x-csrf-token", other.csrfToken).send({ payload: { text: "正常" } });

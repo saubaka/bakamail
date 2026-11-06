@@ -264,7 +264,6 @@ const parsed = computed(() => parseSeoConfig(candidate.value));
 const problem = computed(() => (parsed.value.ok ? "" : parsed.value.message));
 const keywordList = computed(() => parseKeywords(form.keywordsText));
 
-// 输入暂时不合法时，评分和预览沿用上一次合法的内容，避免整页跳变。
 const lastGood = ref<SeoConfig>(defaultSeoConfig());
 watch(parsed, (value) => { if (value.ok) lastGood.value = value.config; }, { immediate: true });
 const live = computed(() => (parsed.value.ok ? parsed.value.config : lastGood.value));
@@ -277,7 +276,6 @@ const canSave = computed(() => dirty.value && parsed.value.ok && !busy.value);
 
 const autoTitle = computed(() => defaultTitle(live.value.siteName));
 const autoDescription = computed(() => defaultDescription(live.value.siteName));
-// 预览直接用填写的值（站内路径同源加载，https 地址由浏览器加载），不依赖规范网址是否已经能访问。
 const previewImage = computed(() => live.value.ogImage || "/og-image.png");
 const swatch = computed(() => (/^#[0-9a-fA-F]{6}$/.test(form.themeColor.trim()) ? form.themeColor.trim() : "transparent"));
 
@@ -296,7 +294,6 @@ const levelById = computed(() => Object.fromEntries(report.value.checks.map((che
 const tone = (id: string): string => ({ pass: "is-good", warn: "is-warn", fail: "is-bad", info: "" } as const)[levelById.value[id] ?? "info"];
 const chars = (text: string): number => [...text].length;
 
-/** 评分项对应的输入框，点评分项直接定位过去。 */
 const fieldFor: Record<string, string> = {
   "site-name": "seo-site-name", "title-length": "seo-title", "title-brand": "seo-title", "description-length": "seo-description",
   "description-distinct": "seo-description", keywords: "seo-keywords", canonical: "seo-origin", "index-home": "seo-index-home",
@@ -318,7 +315,6 @@ const message = (reason: unknown, fallback: string): string => (reason instanceo
 function adopt(next: SeoState): void {
   state.value = next;
   fill(next.config);
-  // 品牌和浏览器标题立即跟着新的站点名变化，不用刷新页面。
   applySiteInfo(siteInfoOf(next.effective));
   document.title = siteInfo.siteName;
 }

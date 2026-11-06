@@ -80,7 +80,6 @@ const areaPath = computed(() => {
   const line = paths.value[first.key] ?? "";
   return line ? `${line}L${points.value[points.value.length - 1]!.x} ${plot.value.bottom}L${points.value[0]!.x} ${plot.value.bottom}Z` : "";
 });
-// 刻度数值取目标上限，位置随补间滑动。
 const ticks = computed(() => yTicks(targetTop.value).map((value) => ({ value, y: yOf(value) })));
 const xTicks = computed(() => xTickIndexes(count.value, width.value < 480 ? 4 : 6).map((index, order, all) => ({
   index, x: points.value[index]?.x ?? 0, label: props.buckets[index] ? tickLabel(props.buckets[index]!, props.range) : "",
@@ -90,7 +89,7 @@ const xTicks = computed(() => xTickIndexes(count.value, width.value < 480 ? 4 : 
 const totalOf = (key: string): number => (props.series.find((item) => item.key === key)?.values ?? []).reduce((sum, value) => sum + value, 0);
 const toggle = (key: string): void => {
   if (hidden.has(key)) hidden.delete(key);
-  else if (visibleSeries.value.length > 1) hidden.add(key); // 至少留一条线
+  else if (visibleSeries.value.length > 1) hidden.add(key);
 };
 
 const tooltip = computed(() => {
@@ -123,12 +122,10 @@ function onKeydown(event: KeyboardEvent): void {
   event.preventDefault();
 }
 
-/** 把显示值平滑地补间到目标值：数据长度变了（切换范围）先把旧曲线重采样到新长度，线条就是“变形”过去而不是跳变。 */
 function animateTo(): void {
   const targets = Object.fromEntries(props.series.map((item) => [item.key, visibleSeries.value.includes(item) ? item.values : item.values.map(() => 0)]));
   const topTarget = targetTop.value;
   window.cancelAnimationFrame(frame);
-  // 第一次有数据时直接显示最终形状（线条由 CSS 从左向右画出来），不再叠加一次“从 0 升起”的补间。
   const first = Object.keys(shown).length === 0;
   if (reduced() || width.value === 0 || first) {
     for (const [key, values] of Object.entries(targets)) shown[key] = values.slice();
@@ -159,7 +156,6 @@ onMounted(async () => {
   if (stage.value) resizeObserver?.observe(stage.value);
   await nextTick();
   animateTo();
-  // 第一次出现时线条从左向右画出来。
   drawTimer = window.setTimeout(() => { drawing.value = false; }, reduced() ? 0 : 1300);
 });
 onBeforeUnmount(() => { resizeObserver?.disconnect(); window.cancelAnimationFrame(frame); window.clearTimeout(drawTimer); });

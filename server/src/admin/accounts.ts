@@ -36,7 +36,6 @@ const ROLE_PERMISSIONS: Record<AdminRole, string[]> = {
   ],
 };
 
-// 未知账号也执行同等成本的密码校验，避免从响应时间猜测管理员账号是否存在。
 const DUMMY_ADMIN_HASH = hashPassword("bakamail-nonexistent-admin-placeholder");
 
 export function normalizeRole(value: string): AdminRole {
@@ -136,16 +135,11 @@ export async function verifyAdminCredentials(
 ): Promise<{ ok: true; admin: AdminUser } | { ok: false; reason: string }> {
   const admin = findAdminByUsername(username);
   const passwordMatches = await verifyPasswordAsync(admin?.password_hash ?? DUMMY_ADMIN_HASH, password);
-  // Re-read activity/hash after awaiting: admin revocation/password changes win over an in-flight login.
   const current = admin ? findAdminById(admin.id) : undefined;
   if (!current || !current.is_active || current.password_hash !== admin?.password_hash || !passwordMatches) return { ok: false, reason: "账号或密码错误" };
   return { ok: true, admin: current };
 }
 
-/**
- * 只在库里一个管理员都没有时创建引导账号。
- * 仅供显式设置引导密码的隔离测试；正式新安装使用网页初始化。
- */
 export function ensureBootstrapAdmin(log: (message: string) => void): void {
   if (countAdmins() > 0) return;
   if (process.env.NODE_ENV !== "test" || !config.bootstrap.password) return;

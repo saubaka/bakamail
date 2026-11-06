@@ -29,7 +29,6 @@ const saving = ref(false);
 const loaded = ref(false);
 const uncertain = ref(false);
 const error = ref("");
-// 输入时就提示不合法的路径并禁用保存，不必等服务端拒绝；没改动或为空时不提示。
 const draftProblem = computed(() => (draft.value && draft.value !== saved.value?.adminBase ? adminPathProblem(draft.value) : ""));
 const savedUrl = computed(() => saved.value ? `${window.location.origin}${saved.value.adminBase}` : "");
 let active = true;

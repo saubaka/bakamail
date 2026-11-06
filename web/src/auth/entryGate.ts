@@ -1,7 +1,6 @@
 import { ApiError } from "../api/client.ts";
 import { SessionSupersededError } from "./sessionRequests.ts";
 
-/** The server is authoritative: cached identity alone never grants entry. */
 export async function checkMailEntry(restore: () => Promise<void>, clear: () => void,
   publicPage: boolean, destination: string): Promise<true | false | { name: string; query: Record<string, string> }> {
   try {

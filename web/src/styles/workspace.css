@@ -1,5 +1,3 @@
-/* One persistent canvas: a desktop rail and the existing mobile liquid dock share one navigation DOM. */
-/* The workspace already reserves dock/safe-area space; don't add the legacy body spacer again. */
 body:has(.mail-workspace) { padding-bottom: 0; }
 .mail-workspace { --workspace-sidebar-width:0px; display:flex; flex-direction:column; height: 100svh; min-width: 0; background: var(--fog-white); overflow: hidden; }
 .mail-workspace { --rail-w: var(--workspace-sidebar-width); }
@@ -159,22 +157,13 @@ html:is([data-motion="reduce"], [data-performance="low"]) .mail-panel-enter-from
 html:is([data-motion="reduce"], [data-performance="low"]) .mail-panel-leave-to { opacity:1; filter:none; transform:none!important; }
 html:is([data-motion="reduce"], [data-performance="low"]) .mail-list .mail-row,
 html:is([data-motion="reduce"], [data-performance="low"]) .mail-list .mail-row[data-row-reveal="outside"] { opacity: 1; transform: none; filter: none; animation:none; }
-
-/* 文件夹列表的选中线条：与左侧菜单同一套滑动线条；当前项自己不画框，由线条圈住。 */
 .folder-highlight { position: absolute; left: 0; top: 0; width: 0; height: 0; border-radius: 12px; background: transparent; opacity: 0; z-index: 0; pointer-events: none; will-change: transform, height; transition: opacity 160ms ease; }
 .folder-highlight.is-ready { opacity: 1; }
 .folder-tree .folder-item { position: relative; z-index: 1; }
 .folder-tree .folder-item.is-current, .folder-tree .folder-item.is-current:hover { background: transparent !important; border-color: transparent !important; outline: none !important; box-shadow: none; }
-/* 目标按钮被点中后不再显示悬停框，线条滑过来之前终点处不会先冒出一个框。 */
 .dock-navigation-item.is-active:hover { outline: none; box-shadow: none; transform: none; }
-
-/* 加载动画显示期间，右侧旧内容先淡出，加载动画和容器线条不会同时出现。 */
 html[data-route-loading] .workspace-route-panel:not(.mail-panel-leave-active) { opacity: 0; transition: opacity 200ms ease; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .workspace-route-panel, html[data-route-loading] .workspace-route-panel { transition: none; } }
-
-/* ---- 桌面端：搜索、草稿、联系人、设置的大容器与邮箱页的两个大容器、左侧菜单栏同高同位 ----
-   邮箱页的列表和阅读区上下各留 14px / 12px（见 .mail-shell 的内边距），这里整页做成一个大容器，
-   上下边界线与它们、与左侧菜单栏对齐；里面的几块内容用分隔线隔开，内容多时在容器内部滚动。 */
 .mail-utility-page > .motion-outline { display: none; }
 @media (min-width: 901px) {
   .workspace-route-panel:has(> .mail-utility-page) { display: grid; justify-items: center; align-items: stretch; padding: 14px 24px 12px; overflow: hidden; }
@@ -185,7 +174,6 @@ html[data-route-loading] .workspace-route-panel:not(.mail-panel-leave-active) { 
   .mail-utility-page .mail-utility-shell > .admin-panel,
   .mail-utility-page .mail-utility-shell > .search-result-slot { margin: 0; border: 0; border-radius: 0; background: transparent; background-image: none; box-shadow: none; padding: 32px 40px; }
   .mail-utility-page .mail-utility-shell > .search-result-slot { padding: 0; }
-  /* 结果多时由整个大容器滚动，不再在容器里再套一个滚动区。 */
   .mail-utility-page .search-result-content .mail-result-list { max-height: none; overflow: visible; }
   .mail-utility-page .mail-utility-shell > .search-result-slot > .search-result-clip > .search-result-panel { padding: 32px 40px; }
   .mail-utility-page .mail-utility-shell > .admin-panel + .admin-panel,

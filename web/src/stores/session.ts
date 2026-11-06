@@ -67,7 +67,6 @@ export const useSessionStore = defineStore("mail-session", {
       try {
         await api(all ? "/api/auth/logout-all" : "/api/auth/logout", { method: "POST" });
       } catch (error) {
-        // An expired session is already logged out; a transient server failure is not.
         if (!(error instanceof ApiError && error.status === 401)) throw error;
       }
       if (runtime(this).generation === generation) this.clear();
