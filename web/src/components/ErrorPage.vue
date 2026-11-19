@@ -2,7 +2,7 @@
   <div class="ep-page">
     <main id="main-content" class="ep-main" tabindex="-1">
       <section class="ep-card" :class="{ 'ep--server': server }" aria-labelledby="ep-title">
-        <p class="ep-site">{{ siteInfo.siteName }}</p>
+        <p class="ep-site"><AppLogo class="ep-logo" small />{{ siteInfo.siteName }}</p>
         <p v-if="status" class="ep-code" aria-hidden="true"><span v-for="(digit, index) in digits" :key="index" :style="{ '--i': index }">{{ digit }}</span></p>
         <h1 id="ep-title" class="ep-title">{{ shownTitle }}</h1>
         <p class="ep-message">{{ shownMessage }}</p>
@@ -17,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+import AppLogo from "./AppLogo.vue";
 import { computed } from "vue";
 import { LOAD_FAILURE_COPY, errorCopy, isServerError } from "../../../shared/errorPage";
 import { ensureErrorStyles } from "../errorStyles";

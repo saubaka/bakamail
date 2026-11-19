@@ -18,7 +18,7 @@
           <path class="desktop-sidebar-toggle-icon__bottom" d="M5 17h14" />
         </svg>
       </button>
-      <span class="workspace-brand" :aria-label="siteInfo.siteName">{{ siteInfo.siteName }}</span>
+      <span class="workspace-brand"><AppLogo class="workspace-brand__logo" small /><span>{{ siteInfo.siteName }}</span></span>
       <span v-if="isDesktop" class="workspace-header-spacer" aria-hidden="true"></span>
     </header>
     <button v-if="!isDesktop && menuOpen && !closing" class="dock-backdrop" type="button" aria-label="关闭悬浮菜单" tabindex="-1" @click="closeMenu()" />
@@ -101,6 +101,7 @@
 </template>
 
 <script setup lang="ts">
+import AppLogo from "./AppLogo.vue";
 import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ApiError, toast } from "../api";

@@ -28,6 +28,7 @@ html[data-route-loading] .admin-route-panel { opacity: 0; pointer-events: none; 
 .admin-rail > * { margin-inline: 10px; }
 .admin-rail__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; margin-top: 10px; padding: 0 2px 0 4px; }
 .admin-rail__brand { display: flex; align-items: center; gap: 10px; min-width: 0; color: var(--ink); font-size: 15px; font-weight: 650; text-decoration: none; }
+.admin-rail__logo { --logo-size: 28px; }
 .admin-rail__text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: opacity 160ms var(--ease); }
 .admin-rail.is-collapsed .admin-rail__text { opacity: 0; pointer-events: none; }
 .admin-rail.is-collapsed .admin-rail__brand { display: none; }

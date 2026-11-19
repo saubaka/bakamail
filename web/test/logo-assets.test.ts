@@ -8,7 +8,9 @@ const text = (path: string) => read(path).toString("utf8");
 
 test("logo 是纯矢量 SVG：有 viewBox、没有位图或外部引用、没有脚本", () => {
   const svg = text("public/logo.svg");
-  assert.match(svg, /<svg [^>]*viewBox="0 0 40 40"/);
+  assert.match(svg, /<svg [^>]*viewBox="0 0 128 128"/);
+  assert.match(svg, /<rect x="18" y="38" width="92" height="56" rx="28"/, "胶囊信封");
+  assert.match(svg, /<circle cx="101" cy="39" r="13" fill="#f0a0ba"/, "粉色未读点");
   assert.doesNotMatch(svg, /<image|<script|<foreignObject|href=|url\(|data:/i);
   assert.match(svg, /<title>Baka Mail<\/title>/);
 });

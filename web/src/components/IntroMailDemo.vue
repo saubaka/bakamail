@@ -17,13 +17,13 @@
       <div class="intro-demo-stage">
         <section class="intro-demo-panel" :class="{ 'is-active': state.tab === 'inbox' }" :inert="state.tab !== 'inbox'" aria-label="收件箱示例">
           <TransitionGroup tag="ul" name="intro-mail" class="intro-demo-list">
-            <li v-for="row in state.rows" :key="row.mail.id" class="intro-demo-item">
-              <button class="intro-demo-row" type="button" :aria-pressed="state.selected === row.mail.id"
-                :class="{ 'is-unread': row.unread, 'is-fresh': row.fresh }" @click="demo.chooseMail(row.mail.id)">
-                <span class="intro-demo-avatar" :data-tone="row.mail.tone" aria-hidden="true">{{ initial(row.mail.sender) }}</span>
+            <li v-for="row in state.rows" :key="row.key" class="intro-demo-item">
+              <button class="intro-demo-row" type="button" :aria-pressed="state.selected === row.key"
+                :class="{ 'is-unread': row.unread, 'is-fresh': row.fresh }" @click="demo.chooseMail(row.key)">
+                <span class="intro-demo-avatar" :data-tone="row.mail.tone" aria-hidden="true"><svg class="intro-demo-mark" :viewBox="row.mail.mark.viewBox" focusable="false"><path :d="row.mail.mark.d" fill="currentColor" /></svg></span>
                 <span class="intro-demo-row-main">
-                  <span class="intro-demo-row-top"><span class="intro-demo-sender">{{ row.mail.sender }}</span><span class="intro-demo-time">{{ row.time }}</span></span>
-                  <span class="intro-demo-subject">{{ row.mail.subject }}</span>
+                  <span class="intro-demo-row-top"><span class="intro-demo-sender" lang="en">{{ row.mail.sender }}</span><span class="intro-demo-time">{{ row.time }}</span></span>
+                  <span class="intro-demo-subject" lang="en">{{ row.mail.subject }}</span>
                 </span>
                 <span class="intro-demo-unread" aria-hidden="true"></span>
               </button>
@@ -31,10 +31,13 @@
           </TransitionGroup>
           <div class="intro-demo-reader">
             <Transition name="intro-read" mode="out-in">
-              <div :key="reading.id" class="intro-demo-letter">
-                <p class="intro-demo-letter-subject">{{ reading.subject }}</p>
-                <p class="intro-demo-letter-meta">来自 {{ reading.sender }}</p>
-                <p class="intro-demo-letter-body">{{ reading.body }}</p>
+              <div :key="state.reading.key" class="intro-demo-letter">
+                <p class="intro-demo-letter-subject" lang="en">{{ state.reading.mail.subject }}</p>
+                <p class="intro-demo-letter-meta">来自 <span lang="en">{{ state.reading.mail.sender }}</span></p>
+                <div class="intro-demo-letter-code">
+                  <span class="intro-demo-code" :aria-label="`验证码 ${state.reading.code}`">{{ spacedCode(state.reading.code) }}</span>
+                  <span class="intro-demo-letter-note" lang="en">{{ state.reading.mail.note }}</span>
+                </div>
               </div>
             </Transition>
           </div>
@@ -58,17 +61,14 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { siteInfo } from "../siteInfo";
-import { createMailDemo, demoMails, DRAFT_DEMO } from "../intro/mailDemo";
+import { createMailDemo, DRAFT_DEMO, spacedCode } from "../intro/mailDemo";
 
-const demo = createMailDemo({ siteName: siteInfo.siteName });
+const demo = createMailDemo();
 const state = demo.state;
 const draft = DRAFT_DEMO;
 const root = ref<HTMLElement>();
 const unread = computed(() => state.rows.filter(row => row.unread).length);
-const reading = computed(() => demoMails(siteInfo.siteName).find(mail => mail.id === state.selected) ?? state.rows[0]!.mail);
 const typedText = computed(() => [...draft.body].slice(0, state.typed).join(""));
-const initial = (name: string) => [...name.trim()][0]?.toUpperCase() ?? "";
 
 function hover(on: boolean) { demo.setPaused("hover", on); }
 function keyboardFocusInside() {

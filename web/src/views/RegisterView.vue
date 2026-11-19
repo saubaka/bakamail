@@ -2,6 +2,7 @@
   <main id="main-content" class="auth-shell">
     <section v-motion="{ kind: 'feature', reversible: false }" class="auth-card card" aria-labelledby="register-title">
       <header class="login-heading">
+        <AppLogo class="login-logo" />
         <span class="login-product-name">{{ siteInfo.siteName }}</span>
         <h1 id="register-title">用邀请码开通邮箱</h1>
         <p>填写邀请码和账号信息，提交后开通你的邮箱。</p>
@@ -62,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import AppLogo from "../components/AppLogo.vue";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { siteInfo } from "../siteInfo";

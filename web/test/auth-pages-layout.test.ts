@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 const source = (name: string) => readFileSync(new URL(`../src/${name}`, import.meta.url), "utf8");
 const markup = (name: string) => { const text = source(name); return text.slice(0, text.indexOf("<script setup")); };
 
-test("忘记密码页沿用登录页的结构：同一套页面、卡片、标题、提交按钮、次要入口和页脚，不放图片标志", () => {
+test("忘记密码页沿用登录页的结构：同一套页面、卡片、标题、提交按钮、次要入口和页脚，品牌位用主题 logo 组件", () => {
   const reset = markup("views/PasswordResetView.vue");
   const login = markup("views/LoginView.vue");
   for (const part of ['class="login-page"', 'class="login-main"', "login-card card", 'class="login-heading"', 'class="login-product-name"',
@@ -14,7 +14,7 @@ test("忘记密码页沿用登录页的结构：同一套页面、卡片、标�
     assert.ok(login.includes(part), `登录页缺少 ${part}`);
   }
   assert.doesNotMatch(reset, /BrandMark|auth-shell|auth-icon/);
-  for (const text of [reset, login]) assert.doesNotMatch(text, /login-logo|soft-icon|<svg|<img/);
+  for (const text of [reset, login]) { assert.match(text, /<header class="login-heading">\s*<AppLogo class="login-logo" \/>\s*<span class="login-product-name">/); assert.doesNotMatch(text, /soft-icon|<svg|<img/); }
 });
 
 test("忘记密码页沿用登录页的逻辑：忙碌/冷却/验证码未填时按钮不可用，冷却倒计时与验证码刷新，失败后重置验证码", () => {
@@ -30,11 +30,11 @@ test("忘记密码页沿用登录页的逻辑：忙碌/冷却/验证码未填时
   assert.match(text, /purpose="password-reset"/);
 });
 
-test("邀请码开通页复刻登录页的标题位置，不放图片标志，表单和其余内容不变", () => {
+test("邀请码开通页复刻登录页的标题位置，品牌位用主题 logo 组件，表单和其余内容不变", () => {
   const register = markup("views/RegisterView.vue");
   const login = markup("views/LoginView.vue");
-  assert.match(register, /<header class="login-heading">\s*<span class="login-product-name">\{\{ siteInfo\.siteName \}\}<\/span>[\s\S]*?<h1 id="register-title">[^<]+<\/h1>\s*<p>/);
-  assert.doesNotMatch(register, /BrandMark|auth-icon|INVITE ONLY|login-logo|<svg|<img/);
+  assert.match(register, /<header class="login-heading">\s*<AppLogo class="login-logo" \/>\s*<span class="login-product-name">\{\{ siteInfo\.siteName \}\}<\/span>[\s\S]*?<h1 id="register-title">[^<]+<\/h1>\s*<p>/);
+  assert.doesNotMatch(register, /BrandMark|auth-icon|INVITE ONLY|<svg|<img/);
   assert.match(register, /class="auth-card card"/);
   assert.match(register, /purpose="register"/);
   assert.match(register, /v-model:formReadyAt="formReadyAt"/);

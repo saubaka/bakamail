@@ -163,7 +163,8 @@ test("前端页面：404 和暂时无法连接都用统一的错误页组件；�
   const page = source("components/ErrorPage.vue");
   assert.match(page, /import \{ LOAD_FAILURE_COPY, errorCopy, isServerError \} from "\.\.\/\.\.\/\.\.\/shared\/errorPage"/);
   assert.match(page, /<p>© \{\{ year \}\} saubaka\. BakaMail\.<\/p>/);
-  assert.doesNotMatch(page, /ep-logo|v-html|<svg|<img/, "错误卡片不放图片标志，也不用 v-html");
+  assert.match(page, /<p class="ep-site"><AppLogo class="ep-logo" small \/>/, "站点名前用主题 logo 组件");
+  assert.doesNotMatch(page, /v-html|<svg|<img/, "错误卡片不内嵌原始图片，也不用 v-html");
 });
 
 test("全局错误边界：只有渲染阶段出错才换成错误页；路由文件加载失败才提示；成功切换页面自动恢复；只有用户点按钮才整页重载", () => {

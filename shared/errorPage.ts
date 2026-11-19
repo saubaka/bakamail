@@ -24,10 +24,10 @@ export const SUPPORTED_ERROR_STATUSES = Object.keys(ERROR_COPY).map(Number);
 const escapeHtml = (value: string): string =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
-export const ERROR_LOGO_SVG = '<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect width="40" height="40" rx="13" fill="#eaf4fc"/>'
-  + '<g transform="rotate(-2 20 20)" fill="#fff" fill-opacity=".75" stroke="#8cc2ee" stroke-width="1.6">'
-  + '<path d="M14.333 11.25H14.333A3.417 3.417 0 0 1 17.75 14.667V24.5A4.25 4.25 0 0 1 13.5 28.75H12.667A3.417 3.417 0 0 1 9.25 25.333V16.333A5.083 5.083 0 0 1 14.333 11.25Z"/>'
-  + '<path d="M25.667 11.25H25.667A5.083 5.083 0 0 1 30.75 16.333V25.333A3.417 3.417 0 0 1 27.333 28.75H26.5A4.25 4.25 0 0 1 22.25 24.5V14.667A3.417 3.417 0 0 1 25.667 11.25Z" transform="translate(0 2) rotate(3 26.5 20)"/></g></svg>';
+export const ERROR_LOGO_SVG = '<svg class="ep-logo" viewBox="0 0 128 128" aria-hidden="true" focusable="false"><rect width="128" height="128" rx="36" fill="#eaf4fc"/>'
+  + '<rect x="18" y="38" width="92" height="56" rx="28" fill="#ffffff" stroke="#8cc2ee" stroke-width="10"/>'
+  + '<path d="M40 55 64 71 88 55" fill="none" stroke="#8cc2ee" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>'
+  + '<circle cx="101" cy="39" r="13" fill="#f0a0ba" stroke="#eaf4fc" stroke-width="6"/></svg>';
 
 const ERROR_FAVICON = `data:image/svg+xml,${encodeURIComponent(ERROR_LOGO_SVG.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" '))}`;
 
@@ -37,7 +37,8 @@ export const ERROR_PAGE_CSS = `
 .ep-main{flex:1;display:grid;place-items:center;padding:48px 24px 32px;min-width:0}
 .ep-main:focus{outline:none}
 .ep-card{position:relative;box-sizing:border-box;width:min(440px,100%);padding:34px 34px 30px;overflow:hidden;border:1px solid #ebe6e9;border-radius:26px;background:#fff;box-shadow:0 2px 6px rgba(150,130,140,.08),0 18px 44px rgba(150,130,140,.14);text-align:center;animation:ep-rise .9s cubic-bezier(.22,1,.36,1) both}
-.ep-site{margin:0;font-size:13px;font-weight:600;letter-spacing:.02em;color:#8a8387}
+.ep-site{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;font-size:13px;font-weight:600;letter-spacing:.02em;color:#8a8387}
+.ep-logo{--logo-size:26px;display:block;flex:none;width:26px;height:26px}
 .ep-code{display:flex;justify-content:center;margin:6px 0 0;font-size:clamp(64px,19vw,92px);font-weight:650;line-height:1.05;letter-spacing:-.025em;color:#a8d2f3;user-select:none;font-variant-numeric:tabular-nums}
 .ep--server .ep-code{color:#f6c3d4}
 .ep-code span{display:inline-block;animation:ep-digit .9s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(.1s + var(--i,0)*.07s)}
@@ -88,7 +89,7 @@ export function renderErrorCard(options: ErrorCardOptions): string {
   const retry = copy.retry ? `<a class="ep-link" href="${escapeHtml(options.retryHref ?? "")}">重试</a>` : "";
   const home = options.showHome === false ? "" : `<a class="ep-button" href="${escapeHtml(options.homeHref ?? "/")}">返回首页</a>`;
   return `<section class="ep-card${server ? " ep--server" : ""}" aria-labelledby="ep-title">`
-    + (options.siteName ? `<p class="ep-site">${escapeHtml(options.siteName)}</p>` : "")
+    + (options.siteName ? `<p class="ep-site">${ERROR_LOGO_SVG}${escapeHtml(options.siteName)}</p>` : "")
     + digits
     + `<h1 class="ep-title" id="ep-title">${escapeHtml(copy.title)}</h1>`
     + `<p class="ep-message">${escapeHtml(copy.message)}${wait ? ` ${wait}` : ""}</p>`

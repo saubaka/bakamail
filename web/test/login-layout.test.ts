@@ -6,10 +6,10 @@ const login = readFileSync(new URL("../src/views/LoginView.vue", import.meta.url
 const intro = readFileSync(new URL("../src/views/IntroView.vue", import.meta.url), "utf8");
 const css = readFileSync(new URL("../src/styles/login.css", import.meta.url), "utf8");
 
-test("登录页去除外部品牌与图片标志，只留站点名文字和卡片外版权", () => {
+test("登录页不用外部品牌组件，卡片顶部是主题 logo 与站点名，卡片外版权", () => {
   assert.doesNotMatch(login, /BrandMark|>✉</);
-  assert.doesNotMatch(login, /login-logo|<svg|<img/);
-  assert.match(login, /<header class="login-heading">\s*<span class="login-product-name">/);
+  assert.doesNotMatch(login, /<svg|<img/);
+  assert.match(login, /<header class="login-heading">\s*<AppLogo class="login-logo" \/>\s*<span class="login-product-name">/);
   assert.match(login, /<\/main>\s*<footer class="login-footer">/);
   assert.match(login, /© \{\{ year \}\} saubaka · BakaMail/);
 });

@@ -3,6 +3,7 @@
     <main id="main-content" class="login-main" tabindex="-1">
       <section v-motion="{ kind: 'feature', reversible: false }" class="login-card card" aria-labelledby="login-title">
         <header class="login-heading">
+          <AppLogo class="login-logo" />
           <span class="login-product-name">{{ siteInfo.siteName }}</span>
           <h1 id="login-title">登录邮箱</h1>
           <p>输入账号和密码，进入你的邮箱。</p>
@@ -52,6 +53,7 @@
 </template>
 
 <script setup lang="ts">
+import AppLogo from "../components/AppLogo.vue";
 import RepositoryNote from "../components/RepositoryNote.vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";

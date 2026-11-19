@@ -10,6 +10,7 @@
   >
     <div class="admin-rail__head">
       <router-link class="admin-rail__brand" :to="{ name: 'admin-overview' }" :title="`${siteInfo.siteName} 后台`" :aria-label="`${siteInfo.siteName} 后台首页`" @click="emit('navigate')">
+        <AppLogo class="admin-rail__logo" small />
         <span class="admin-rail__text">{{ siteInfo.siteName }}</span>
       </router-link>
       <button
@@ -75,6 +76,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import AdminIcon from "./AdminIcon.vue";
 import { siteInfo } from "../../siteInfo";
+import AppLogo from "../AppLogo.vue";
 import type { RailBadgeKey, RailSection } from "../../admin/navModel";
 
 const props = defineProps<{

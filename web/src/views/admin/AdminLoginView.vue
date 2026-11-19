@@ -3,6 +3,7 @@
     <main id="main-content" class="login-main" tabindex="-1">
       <section v-motion="{ kind: 'feature', reversible: false }" class="login-card card" aria-labelledby="admin-login-title">
         <header class="login-heading">
+          <AppLogo class="login-logo" />
           <span class="login-product-name">{{ siteInfo.siteName }}</span>
           <h1 id="admin-login-title">登录后台</h1>
           <p>{{ step === "totp" ? "密码已通过，请再输入验证器应用里的 6 位数字。" : "请使用管理员账号登录。" }}</p>
@@ -50,6 +51,7 @@
 </template>
 
 <script setup lang="ts">
+import AppLogo from "../../components/AppLogo.vue";
 import RepositoryNote from "../../components/RepositoryNote.vue";
 import { probeLoginSession } from "../../auth/sessionProbe";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";

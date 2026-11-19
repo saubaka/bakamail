@@ -124,7 +124,7 @@ test("品牌名：登录、注册、重置、404、邮箱侧栏和后台侧栏�
     assert.match(source(file), /了解 \{\{ siteInfo\.siteName \}\}/, file);
     assert.match(source(file), /© \{\{ year \}\} saubaka · BakaMail/, `${file} 的版权行固定`);
   }
-  assert.match(source("components/ErrorPage.vue"), /<p class="ep-site">\{\{ siteInfo\.siteName \}\}<\/p>/);
+  assert.match(source("components/ErrorPage.vue"), /<p class="ep-site"><AppLogo class="ep-logo" small \/>\{\{ siteInfo\.siteName \}\}<\/p>/);
   assert.match(source("components/ErrorPage.vue"), /© \{\{ year \}\} saubaka\. BakaMail\./);
   assert.match(source("components/admin/AdminRail.vue"), /\{\{ siteInfo\.siteName \}\}<\/span>/);
   assert.match(source("components/MailWorkspace.vue"), /© \{\{ new Date\(\)\.getFullYear\(\) \}\} BakaMail<\/footer>/);

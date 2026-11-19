@@ -4,7 +4,9 @@ body:has(.mail-workspace) { padding-bottom: 0; }
 .mail-workspace.is-desktop-layout.is-desktop-sidebar-expanded { --workspace-sidebar-width: 248px; }
 .workspace-header { flex: none; display: grid; grid-template-columns: 48px minmax(0, 1fr) 48px; align-items: center; min-height: 60px; padding: 8px 18px 0; }
 .workspace-header:not(:has(.desktop-sidebar-toggle)) { grid-template-columns: 1fr; }
-.workspace-brand { display: grid; place-items: center; min-width: 0; min-height: 42px; color: var(--ink); font-size: 16px; font-weight: 650; letter-spacing: .02em; }
+.workspace-brand { display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; min-height: 42px; color: var(--ink); font-size: 16px; font-weight: 650; letter-spacing: .02em; }
+.workspace-brand > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.workspace-brand__logo { --logo-size: 26px; }
 .workspace-header-spacer { width: 42px; height: 42px; }
 .desktop-sidebar-toggle { display: grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--glass); color: var(--ink-2); cursor: pointer; box-shadow: var(--shadow-1); transition: color var(--t-fast) var(--ease), box-shadow .45s var(--ease), transform .45s var(--spring); }
 .desktop-sidebar-toggle:hover { color: var(--ink); box-shadow: var(--shadow-2); transform: translateY(-1px); }
