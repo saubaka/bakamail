@@ -126,13 +126,13 @@
 .intro-about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 62px; padding: 70px 0 78px; scroll-margin-top: 72px; }
 .intro-body-copy { max-width: 590px; margin-bottom: 36px; color: var(--ink-2); font-size: 15px; line-height: 1.9; }
 .intro-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.intro-features article { padding: 18px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--surface-2); transition: translate .45s var(--ease), box-shadow .45s var(--ease), background-color .45s var(--ease); }
-.intro-features article:hover { translate: 0 -3px; background: var(--surface); box-shadow: var(--shadow-1); }
+.intro-features article { --card-hover: translate .6s var(--spring-soft), box-shadow .5s var(--ease), background-color .4s var(--ease), border-color .4s var(--ease); padding: 18px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--surface-2); transition: var(--card-hover); }
+.intro-features article:hover { translate: 0 -4px; border-color: var(--card-line); background: var(--surface); box-shadow: var(--shadow-1); }
 .intro-features h3 { margin-bottom: 8px; font-size: 15px; font-weight: 650; }
 .intro-features p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.8; }
 .intro-faq { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 62px; padding: 56px 0 66px; scroll-margin-top: 84px; }
 .intro-faq-items { display: grid; align-content: start; gap: 12px; width: 100%; min-width: 0; }
-.intro-page .intro-faq-card { width: 100%; max-width: 100%; min-width: 0; margin: 0; overflow: hidden; border: 1px solid var(--card-line); border-radius: var(--r-l); background: var(--surface); box-shadow: var(--shadow-1); transition: box-shadow .5s var(--ease); }
+.intro-page .intro-faq-card { --card-hover: box-shadow .5s var(--ease); width: 100%; max-width: 100%; min-width: 0; margin: 0; overflow: hidden; border: 1px solid var(--card-line); border-radius: var(--r-l); background: var(--surface); box-shadow: var(--shadow-1); transition: var(--card-hover); }
 .intro-page .intro-faq-card:hover { box-shadow: var(--shadow-2); }
 .intro-page .intro-faq-trigger { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-width: 0; min-height: 58px; padding: 16px 20px; border: 0; border-radius: 0; background: transparent; color: var(--ink); font-size: 15px; font-weight: 600; list-style: none; cursor: pointer; transition: background-color var(--t-fast) var(--ease); }
 .intro-page .intro-faq-trigger::after { content: none; }
@@ -163,6 +163,8 @@
 .intro-reveal--split.intro-reveal--ready .intro-stagger:focus-within { opacity: 1; filter: none; transform: none; }
 .intro-reveal--split.intro-reveal--ready .intro-faq-card.intro-stagger { transform: translate3d(0, 28px, 0) scale(.96); transform-origin: 50% 0; }
 .intro-reveal--split.intro-reveal--ready .intro-faq-card.intro-stagger.is-seen, .intro-reveal--split.intro-reveal--ready .intro-faq-card.intro-stagger:focus-within { transform: none; }
+.intro-reveal--split.intro-reveal--ready :is(.intro-features article, .intro-faq-card).intro-stagger { transition: opacity .3s var(--ease), transform .45s var(--ease), filter .3s var(--ease), var(--card-hover); }
+.intro-reveal--split.intro-reveal--ready :is(.intro-features article, .intro-faq-card).intro-stagger.is-seen { transition: opacity .9s var(--ease) var(--d, 0ms), transform .9s var(--ease) var(--d, 0ms), filter .9s var(--ease) var(--d, 0ms), var(--card-hover); }
 .intro-window.intro-reveal--ready.is-in-view { transition-delay: 320ms; }
 .intro-header > * { animation: intro-header-in .9s var(--ease) backwards; }
 .intro-header > :nth-child(2) { animation-delay: 120ms; }

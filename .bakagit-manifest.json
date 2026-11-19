@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "375e8a10ed1dfa9cd3a8d75563b3715ee7e94d1c384df51b96ba5b496ec2598f",
+      "sha256": "7d84a750d9254ce441430246a9900e08680eb369e6662dd85db87f3e235c6647",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -88,12 +88,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "d93d70db6a563d3d8fa69208d4f69d8888393bf0423db7e635e7fcbf278ad8c0",
+      "sha256": "f607b267d7b147bdce7dd48054f531e3a29f4dc52121a3414786e15be351da75",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "b0d2e3e3a6ad096fee6e36df10aa9383a870b70343dfbf7ec3a06c542156ecf7",
+      "sha256": "6404f0b44ad35a53c692b67d060408ca7d27e40ec5396c4791edc44529763aeb",
       "executable": false
     },
     "README.en.md": {
@@ -183,7 +183,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "b0723dfd464cb959a98bc5a8438ae9aec6412025d7a5ab611445ee8357335972",
+      "sha256": "e68974ca11ee57631f145e249020855a3427966106538c7826ef7aabcaf00a97",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -653,7 +653,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "94efb9b45d8e4d3eb88ba1cd2b6d69ee339b66f8c3c12b6c7f7220b963d29273",
+      "sha256": "1f42702c590a069a0cd1e243e3c66798a19549d51e40b227c61d2d2c4b226507",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -1203,7 +1203,7 @@
     },
     "web/src/styles/intro.css": {
       "source": "web/src/styles/intro.css",
-      "sha256": "1f91352018745301d2282b5fa0c5412e9a245f462ff822ec166a139a7ab0fda1",
+      "sha256": "05b651dcd0f77cb4b739ab3a4ea59d4d941c0b23c6e326356a698be461a4b537",
       "executable": false
     },
     "web/src/styles/login.css": {
@@ -1584,6 +1584,11 @@
     "web/test/human-check-layout.test.ts": {
       "source": "web/test/human-check-layout.test.ts",
       "sha256": "cf447d8bb31d58ed9819f9296ef00815cdf7de4633f43d4a76176a69a4636d25",
+      "executable": false
+    },
+    "web/test/intro-card-hover.test.ts": {
+      "source": "web/test/intro-card-hover.test.ts",
+      "sha256": "f35edb743136166e10733f2a3e1027d05cca96a0267f828ffb15a10c66ca11e9",
       "executable": false
     },
     "web/test/intro-faq-motion.test.ts": {
