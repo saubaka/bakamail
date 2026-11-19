@@ -38,10 +38,22 @@ type Card = { notice: Notification; wrapper: HTMLDivElement; node: HTMLDivElemen
   pause: () => void; resume: () => void; dismiss: () => void; reduce: () => void; dispose: () => void; settleEnter: () => void;
   restack: (index: number, ms: number) => void; inspect: () => NoticeDisplayState; stackMs: number; leaving: boolean };
 const allCards = new Set<Card>();
+const CAPSULE_MIN_WIDTH = 220, CAPSULE_MAX_WIDTH = 380;
+let measureContext: CanvasRenderingContext2D | null | undefined;
+function textWidth(element: HTMLElement, value: string): number {
+  measureContext ??= document.createElement('canvas').getContext?.('2d') ?? null;
+  if (!measureContext) return 0;
+  measureContext.font = getComputedStyle(element).font;
+  return measureContext.measureText(value).width;
+}
+function syncStackWidth(items: readonly Card[]) {
+  const width = Math.max(...items.map(item => item.width));
+  for (const card of items) card.wrapper.style.setProperty('--capsule-width', `${width}px`);
+}
 const stack = createNotificationStack<Card>(items => items.forEach((card, index) => {
   card.wrapper.style.setProperty('--notice-stack', `${reducedMotion() ? 0 : items[0]!.stackMs}ms`);
   card.wrapper.style.setProperty('--stack-depth', String(Math.min(index, 3)));
-  card.wrapper.style.setProperty('--capsule-width', `${Math.max(...items.map(item => item.width))}px`);
+  if (index === 0) syncStackWidth(items);
   card.wrapper.style.zIndex = String(100 - index);
   card.wrapper.classList.toggle('is-background', index > 0);
   card.wrapper.classList.toggle('is-deep', index > 3);
@@ -125,9 +137,11 @@ function displayNotification(notice: Notification): ViewHandle | undefined {
     }); body.append(action);
   }
   body.append(close); node.append(body); wrapper.append(node); region.append(wrapper);
-  const width = Math.min(340, Math.max(notice.options?.action ? 310 : 250, Math.min(notice.message.length * 9, 260) + (notice.options?.action ? 95 : 55)));
+  const naturalWidth = () => { node.classList.add('is-measuring'); const value = node.offsetWidth; node.classList.remove('is-measuring'); return Number.isFinite(value) && value > 0 ? value + 2 : CAPSULE_MIN_WIDTH; };
+  const clampWidth = (value: number) => Math.min(CAPSULE_MAX_WIDTH, Math.max(CAPSULE_MIN_WIDTH, value));
+  const width = clampWidth(naturalWidth());
   wrapper.style.setProperty('--capsule-width', `${width}px`); node.dataset.phase = 'enter';
-  let leaving = false, disposed = false, contentBusy = false, actionBusy = false, hovered = false, stackBusy = false;
+  let leaving = false, disposed = false, contentBusy = false, actionBusy = false, hovered = false, stackBusy = false, dragBusy = false;
   let position = -1, appliedVersion = notice.progress?.settled ? notice.progress.version : -1;
   let currentTone: NotificationType = notice.progress && !notice.progress.settled ? 'loading' : notice.tone;
   if (notice.progress?.settled && notice.progress.owner) notice.progress.owner.resultPresented = true;
@@ -169,7 +183,8 @@ function displayNotification(notice: Notification): ViewHandle | undefined {
   }
   applyTiming();
   const resize = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => {
-    if (stack.items[0] === card) region.style.setProperty('--stack-front-height', `${Math.max(56, node.offsetHeight)}px`);
+    if (stack.items[0] === card) region.style.setProperty('--stack-front-height', `${Math.max(52, node.offsetHeight)}px`);
+    wrapper.classList.toggle('is-scrollable', text.scrollHeight > text.clientHeight + 1);
   }) : undefined;
   resize?.observe(node);
   function dispose() {
@@ -184,8 +199,9 @@ function displayNotification(notice: Notification): ViewHandle | undefined {
     readTimer.dispose(); cancelJobs(); notice.progress?.listeners.delete(applyProgress);
     resize?.disconnect();
     applyTiming();
+    const front = stack.items[0] === card;
     node.dataset.phase = 'exit'; node.classList.add('is-leaving'); wrapper.classList.add('is-exiting');
-    wrapper.classList.remove('is-background', 'is-deep');
+    if (front) wrapper.classList.remove('is-background', 'is-deep');
     const focused = wrapper.contains(document.activeElement);
     wrapper.inert = true;
     stack.remove(card);
@@ -200,7 +216,7 @@ function displayNotification(notice: Notification): ViewHandle | undefined {
       ...(leaving ? ['leaving'] : []), ...(document.hidden ? ['hidden'] : []), ...(!document.hasFocus() ? ['blur'] : []),
       ...(stack.items[0] !== card ? ['background'] : []), ...(hovered || wrapper.matches(':hover') ? ['hover'] : []),
       ...(wrapper.contains(document.activeElement) ? ['focus'] : []), ...(node.dataset.phase === 'enter' ? ['enter'] : []),
-      ...(contentBusy ? ['text'] : []), ...(stackBusy ? ['stack'] : []), ...(actionBusy ? ['action'] : []),
+      ...(contentBusy ? ['text'] : []), ...(stackBusy ? ['stack'] : []), ...(actionBusy ? ['action'] : []), ...(dragBusy ? ['drag'] : []),
     ]);
   }
   function applyProgress() {
@@ -212,6 +228,11 @@ function displayNotification(notice: Notification): ViewHandle | undefined {
     const completed = progress.settled;
     if (completed && progress.owner) progress.owner.resultPresented = true;
     currentTone = completed ? progress.tone ?? 'success' : 'loading'; applyTiming();
+    const natural = Math.ceil(naturalWidth() - textWidth(text, text.textContent ?? '') + textWidth(text, content));
+    const available = (wrapper.parentElement?.clientWidth ?? window.innerWidth) - 32;
+    card.width = clampWidth(natural);
+    node.classList.toggle('is-one-line', natural <= Math.min(card.width, available));
+    if (stack.items.includes(card)) syncStackWidth(stack.items);
     node.dataset.phase = 'text-out'; node.classList.add('is-content-changing');
     phase('text-out', text, 'notification-word-out', timeline().textOutMs, () => {
       if (leaving) return;
@@ -221,7 +242,7 @@ function displayNotification(notice: Notification): ViewHandle | undefined {
       text.setAttribute('role', currentTone === 'error' ? 'alert' : 'status'); node.setAttribute('aria-busy', String(!completed));
       node.dataset.phase = 'text-in';
       phase('text-in', text, 'notification-word-in', timeline().textInMs, () => {
-        node.classList.remove('is-content-arriving'); node.dataset.phase = completed ? 'complete' : 'capsule';
+        node.classList.remove('is-content-arriving', 'is-one-line'); node.dataset.phase = completed ? 'complete' : 'capsule';
         if (completed) readTimer.reset(duration(snapshot, currentTone, notice.options?.manualReason));
         contentBusy = false;
         applyProgress(); resume();
@@ -230,7 +251,38 @@ function displayNotification(notice: Notification): ViewHandle | undefined {
   }
   const cycle = () => { if (stack.items.length < 2) return; const focused = wrapper.contains(document.activeElement); stack.cycle(); if (focused) stack.items[0]?.wrapper.focus({ preventScroll: true }); };
   close.addEventListener('click', event => { event.stopPropagation(); dismiss(); });
-  wrapper.addEventListener('click', event => { if (!(event.target as Element).closest('button,a,input')) cycle(); });
+  let drag: { id: number; y: number; dy: number; active: boolean } | undefined, dragged = false;
+  wrapper.addEventListener('pointerdown', event => {
+    dragged = false;
+    if (leaving || event.button !== 0 || stack.items[0] !== card || (event.target as Element).closest('button,a,input')) return;
+    if (wrapper.classList.contains('is-scrollable') && text.contains(event.target as Node)) return;
+    drag = { id: event.pointerId, y: event.clientY, dy: 0, active: false };
+  });
+  wrapper.addEventListener('pointermove', event => {
+    if (!drag || event.pointerId !== drag.id || leaving) return;
+    const dy = event.clientY - drag.y;
+    if (!drag.active) {
+      if (Math.abs(dy) < 6) return;
+      drag.active = true; dragBusy = true; wrapper.classList.add('is-dragging'); resume();
+      if (typeof getSelection === 'function') getSelection()?.removeAllRanges();
+      try { wrapper.setPointerCapture(event.pointerId); } catch { }
+    }
+    drag.dy = dy < 0 ? dy : Math.min(14, dy / 4);
+    wrapper.style.setProperty('--drag-y', `${drag.dy}px`);
+    wrapper.style.setProperty('--drag-fade', String(Math.min(.5, Math.max(0, -drag.dy) / 140)));
+  });
+  const release = (event: PointerEvent) => {
+    if (!drag || event.pointerId !== drag.id) return;
+    const { active, dy } = drag; drag = undefined;
+    if (!active) return;
+    dragged = true; dragBusy = false;
+    if (event.type === 'pointerup' && dy < -28) { dismiss(); return; }
+    wrapper.classList.remove('is-dragging');
+    wrapper.style.setProperty('--drag-y', '0px'); wrapper.style.setProperty('--drag-fade', '0');
+    resume();
+  };
+  wrapper.addEventListener('pointerup', release); wrapper.addEventListener('pointercancel', release);
+  wrapper.addEventListener('click', event => { if (dragged) { dragged = false; return; } if (!(event.target as Element).closest('button,a,input')) cycle(); });
   wrapper.addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); dismiss(); } else if (event.target === wrapper && ['Enter', ' '].includes(event.key)) { event.preventDefault(); cycle(); } });
   wrapper.addEventListener('mouseenter', () => { hovered = true; pause(); });
   wrapper.addEventListener('mouseleave', () => { hovered = false; resume(); });

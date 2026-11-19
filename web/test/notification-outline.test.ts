@@ -12,26 +12,29 @@ test('所有通知走同一完整CSS边框，不再测量/裁剪水滴的SVG描�
   assert.match(source,/message, tone: 'info', progress, options/);
   assert.match(source,/text.textContent = content/);
 });
-test('通知是磨砂白胶囊：浅粉细边、柔和阴影、胶囊圆角，进出场为胶囊伸缩并保留减少动画',()=>{
+test('通知是磨砂白胶囊：与灵动岛同样的细线边框、柔和阴影，单行为胶囊、多行为大圆角，进出场为上浮缩放淡入并保留减少动画',()=>{
   const css=read('styles/notifications.css');
   const root=postcss.parse(css);
   const rule=root.nodes.find(node=>node.type==='rule'&&node.selector==='.notification-capsule');
   assert.ok(rule&&rule.type==='rule');
   const decls=Object.fromEntries((rule as postcss.Rule).nodes.filter((n):n is postcss.Declaration=>n.type==='decl').map(n=>[n.prop,n.value]));
-  assert.equal(decls.border,'1px solid var(--pink-300)');
-  assert.equal(decls['border-radius'],'var(--r-pill)');
+  assert.equal(decls.border,'1px solid var(--line)');
+  assert.equal(decls['border-radius'],'var(--r-xl)');
+  assert.equal(decls['min-height'],'52px');
   assert.equal(decls.background,'var(--glass)');
   assert.equal(decls['box-shadow'],'var(--shadow-2)');
-  assert.match(decls.animation??'',/notification-drop-in .*var\(--spring-soft\)/);
+  assert.match(decls.animation??'',/notification-drop-in .*var\(--spring-soft\) both, notification-fade-in .*var\(--ease\) both/);
   assert.doesNotMatch(css,/dash-outline|line-blue|border-radius: 65%/);
-  assert.match(css,/@keyframes notification-drop-in \{[\s\S]*?width: 52px[\s\S]*?width: 100%/);
+  assert.match(css,/@keyframes notification-drop-in \{ from \{ translate: 0 -22px; scale: \.9; \}/);
+  assert.doesNotMatch(css,/width: 52px/);
+  assert.match(css,/@keyframes notification-fade-in \{ from \{ opacity: 0; filter: blur\(6px\); \}/);
   assert.match(css,/notification-capsule\.is-leaving/);
   assert.match(css,/is-background \.notification-capsule/);
   assert.match(css,/prefers-reduced-motion: ?reduce/);
 });
 test('堆叠高度不使用缩放中的视觉尺寸，保留安全文本/焦点/取消逻辑',()=>{
   const source=read('notifications.ts');
-  assert.match(source,/Math.max\(56, node.offsetHeight\)/);
+  assert.match(source,/Math.max\(52, node.offsetHeight\)/);
   assert.doesNotMatch(source,/node.getBoundingClientRect\(\)/);
   assert.match(source,/body.inert = index > 0/);
   assert.match(source,/wrapper.inert = true/);

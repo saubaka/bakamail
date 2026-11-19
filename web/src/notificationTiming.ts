@@ -3,7 +3,7 @@ import type { NotificationType, UiConfig } from '../../shared/notificationMotion
 export function notificationTimeline(config: Pick<UiConfig, 'notificationMotion'>, type: NotificationType, reduced = false) {
   const timing = config.notificationMotion.types[type];
   const enterMs = reduced ? 0 : timing.enterMs, exitMs = reduced ? 0 : timing.exitMs;
-  const copyDelayMs = Math.floor(enterMs * .8);
+  const copyDelayMs = Math.floor(enterMs * .15);
   return { enterMs, exitMs, textOutMs: reduced ? 0 : timing.textOutMs, textInMs: reduced ? 0 : timing.textInMs,
     stackMs: reduced ? 0 : config.notificationMotion.stackMs, copyDelayMs,
     copyInMs: enterMs - copyDelayMs, copyOutMs: Math.round(exitMs * .18) };

@@ -14,7 +14,7 @@ test('通知所有动画与清理使用配置快照，不保留独立固定时�
   for (const variable of ['notice-enter', 'notice-exit', 'notice-text-out', 'notice-text-in', 'notice-stack']) assert.ok(css.includes(`var(--${variable}`));
 });
 
-test('五类独立时间表：0/默认/最长边界，初次文字和退场文字从各自总时长派生', () => {
+test('五类独立时间表：0/默认/最长边界，初次文字随胶囊一起淡入、退场文字从各自总时长派生', () => {
   const config = defaultUiConfig();
   for (const [index, type] of ['success', 'info', 'warning', 'error', 'loading'].entries()) {
     const key = type as keyof typeof config.notificationMotion.types;
@@ -27,7 +27,7 @@ test('五类独立时间表：0/默认/最长边界，初次文字和退场文�
     assert.ok(Object.values(notificationTimeline(config, key, true)).every(ms => ms === 0));
   }
   config.notificationMotion.types.loading = { enterMs: 3000, exitMs: 3000, textOutMs: 1000, textInMs: 1000 };
-  assert.equal(notificationTimeline(config, 'loading').copyDelayMs, 2400);
+  assert.equal(notificationTimeline(config, 'loading').copyDelayMs, 450);
 });
 
 test('动画完成事件按目标/动画名过滤、取消幂等、最长兜底与0ms清理', async ctx => {

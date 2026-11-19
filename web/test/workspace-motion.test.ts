@@ -109,13 +109,13 @@ test("邮件子页面使用持久工作区，桌面侧栏与移动胶囊共用�
   assert.match(workspace, /routeAnnouncement/);
   assert.doesNotMatch(workspace, /mode="out-in"/);
 });
-test("通知仅安全插入文本，铺满全屏的定位层，胶囊从顶部伸缩进出", () => {
+test("通知仅安全插入文本，铺满全屏的定位层，胶囊从顶部上浮淡入、上浮淡出", () => {
   const source = readFileSync(new URL("../src/notifications.ts", import.meta.url), "utf8");
   assert.match(source, /text.textContent = notice.message/);
   assert.doesNotMatch(source, /innerHTML/);
   const css = readFileSync(new URL("../src/styles/notifications.css", import.meta.url), "utf8");
   assert.match(css, /#toast-region \{ position: fixed; z-index: 1000; inset: 0;/);
   assert.match(css, /@keyframes notification-drop-in/);
-  assert.match(css, /@keyframes notification-drop-out \{[\s\S]*?translateY\(-20px\) scale\(\.9\)/);
+  assert.match(css, /@keyframes notification-drop-out \{[\s\S]*?to \{ opacity: 0; translate: 0 -14px; scale: \.94; filter: blur\(4px\); \}/);
   assert.match(css, /prefers-reduced-motion/);
 });

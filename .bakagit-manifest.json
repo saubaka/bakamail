@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "77598e68b72f2254bd0ab75f29920b35e221e0575dcea9bd7de44b644995c208",
+      "sha256": "cc38d77a327083436496009f086c4afd2bb303062a800286c1bc6655df63c467",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -88,12 +88,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "0640172050e903bee26631a7852ace7095a87b835e1a8a07b10a313bf9d6704b",
+      "sha256": "a746241dddc210337feb734670c42b0541614bcd739916ec6d54a269018bc2a8",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "44448b0ce0246c61f20278019ba7b5f53b3a0f7bdb85e0f1346c25213e26313d",
+      "sha256": "3d9b61b3092ace30f51708b2c577501a1821b4ca460ac1345e91eb9b47ea3934",
       "executable": false
     },
     "README.en.md": {
@@ -183,7 +183,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "805405c524fb5512ca43960ae84d17eee33a67475901175a44c59ab9ac1a98c0",
+      "sha256": "8283324f095d383909c977ecd6cdb2c5dd35bb6f03f765199f066ecb298290b6",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -653,7 +653,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "6b0e10d623291cb0fc7150f42662a54f9268c8c3c5a1672cbaf3a2a7a56d67a2",
+      "sha256": "87f4f788a1df206631987d469e71cccfa511a46b578258065e561cc4251ff289",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -1083,12 +1083,12 @@
     },
     "web/src/notifications.ts": {
       "source": "web/src/notifications.ts",
-      "sha256": "df3cb9de50810aed7ee2d106a724f4d6fb3ddbc1425c61eef6cb7c52bd372f30",
+      "sha256": "da0e15c8c0b019e97766024bde1c847dfb1ac109a8bb5e8889e3bbb35a26bb0b",
       "executable": false
     },
     "web/src/notificationTiming.ts": {
       "source": "web/src/notificationTiming.ts",
-      "sha256": "f4deb1012cd9bc89fbcab8665bab34e5634d16426bbbb5b14f29411b43cfaaa6",
+      "sha256": "86485ce2f275f7f3f3ab02ad201fd6aa1764e38626389530cdafde190beeed4d",
       "executable": false
     },
     "web/src/pressFeedback.ts": {
@@ -1208,7 +1208,7 @@
     },
     "web/src/styles/notifications.css": {
       "source": "web/src/styles/notifications.css",
-      "sha256": "1230ab50f6abe04c7f42263907f1648eee2adc195ad5f09b738d2c277af22e68",
+      "sha256": "cef0c83abe5cdfe52e0263989b0054f8b8489edeeca4d6e628219570eb9ac09e",
       "executable": false
     },
     "web/src/styles/reader.css": {
@@ -1641,6 +1641,11 @@
       "sha256": "743d85e1a95fc2058885084933ab4db69e246bac46edece50ee5f805325a2580",
       "executable": false
     },
+    "web/test/notification-capsule-polish.test.ts": {
+      "source": "web/test/notification-capsule-polish.test.ts",
+      "sha256": "a6be49e9ca9c015b46656f08a85971bdc79e938b9ca9375da2b7ee74e3dbaa05",
+      "executable": false
+    },
     "web/test/notification-display-client-phase2.test.ts": {
       "source": "web/test/notification-display-client-phase2.test.ts",
       "sha256": "2f5c673aaf89cfcaacf31ecf146ddf29645534443c40353019f8a1ba1ab6322e",
@@ -1688,12 +1693,12 @@
     },
     "web/test/notification-motion-phase5.test.ts": {
       "source": "web/test/notification-motion-phase5.test.ts",
-      "sha256": "f5db9bedcab1643ecb8cccc0386f4336f3fac71eecbae10a5181557ec2933132",
+      "sha256": "732893c5f03484f72332409858fcdabbbbd567f791bb348dc74b21269bdd4fed",
       "executable": false
     },
     "web/test/notification-outline.test.ts": {
       "source": "web/test/notification-outline.test.ts",
-      "sha256": "51eca65f71063c5e48813d7e7ff351b07a47c10b2fdadf450229d10e4101e7b9",
+      "sha256": "257745450fd72f0ee863bfdc5f7799f57c25e8cc11d23d100f3c927914b6b7a7",
       "executable": false
     },
     "web/test/preferences-store.test.ts": {
@@ -1803,7 +1808,7 @@
     },
     "web/test/workspace-motion.test.ts": {
       "source": "web/test/workspace-motion.test.ts",
-      "sha256": "3e5e11520649127627ad0e59c0ec31b268bcb676bb933be74bacc436b7a18cb9",
+      "sha256": "3f85f015cf68838b3e1b7521acd7bf5da83b177d81e25fd63f8ab60335286217",
       "executable": false
     },
     "web/tsconfig.json": {
