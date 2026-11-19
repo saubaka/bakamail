@@ -22,19 +22,7 @@
           </div>
           <p class="intro-entry-note intro-stagger" style="--i: 4">{{ signedIn ? '你已登录' : '需要邀请码才能注册，忘记密码可以提交重置申请' }}</p>
         </div>
-        <div v-intro-reveal class="intro-window" aria-label="邮箱界面示例，不读取真实邮件">
-          <div class="intro-window-bar"><span class="intro-window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>示例邮件</span><span class="intro-demo-tag">界面示例</span></div>
-          <div class="intro-window-body">
-            <div class="intro-demo-tabs" role="group" aria-label="切换示例">
-              <button class="intro-demo-tab" type="button" :aria-pressed="demo === 'inbox'" @click="demo = 'inbox'">收件箱<span>1</span></button>
-              <button class="intro-demo-tab" type="button" :aria-pressed="demo === 'draft'" @click="demo = 'draft'">草稿箱</button>
-            </div>
-            <div class="intro-demo-copy" aria-live="polite">
-              <span>{{ demo === 'inbox' ? `欢迎使用 ${siteInfo.siteName}` : '还没写完的邮件' }}</span>
-              <p>{{ demo === 'inbox' ? '喵？' : '写到一半可以先存成草稿，下次打开接着写。' }}</p>
-            </div>
-          </div>
-        </div>
+        <div v-intro-reveal class="intro-window" role="group" aria-label="邮箱界面示例，不读取真实邮件"><IntroMailDemo /></div>
       </section>
 
       <section id="about" v-intro-reveal class="intro-about intro-reveal--split" aria-labelledby="about-title">
@@ -57,9 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 import BrandMark from "../components/BrandMark.vue";
+import IntroMailDemo from "../components/IntroMailDemo.vue";
 import { siteInfo } from "../siteInfo";
 import { INTRO_FAQ, INTRO_FEATURES, SEO_REPOSITORY_URL } from "../../../shared/seo";
 import { useSessionStore } from "../stores/session";
@@ -71,7 +60,6 @@ const route = useRoute();
 const session = useSessionStore();
 const signedIn = computed(() => session.ready && Boolean(session.mailbox));
 const entry = computed(() => signedIn.value ? safeMailDestination(route.query.redirect) : { name: "login", query: { redirect: safeMailDestination(route.query.redirect) } });
-const demo = ref("inbox");
 const year = new Date().getFullYear();
 const features = INTRO_FEATURES;
 const faq = INTRO_FAQ;

@@ -23,7 +23,7 @@
     },
     "CHANGELOG.md": {
       "source": "CHANGELOG.md",
-      "sha256": "cc38d77a327083436496009f086c4afd2bb303062a800286c1bc6655df63c467",
+      "sha256": "bfb7d3358f79e572d7c7e406fb803287498058c7d48e6bcbad3d3e58db0f82ed",
       "executable": false
     },
     "deploy/bakamail.env.example": {
@@ -88,12 +88,12 @@
     },
     "package-lock.json": {
       "source": "package-lock.json",
-      "sha256": "a746241dddc210337feb734670c42b0541614bcd739916ec6d54a269018bc2a8",
+      "sha256": "6d17ed5afc9c8274353acb0d8ceee8ec9195b770a5bc1858350446355d40f1f7",
       "executable": false
     },
     "package.json": {
       "source": "package.json",
-      "sha256": "3d9b61b3092ace30f51708b2c577501a1821b4ca460ac1345e91eb9b47ea3934",
+      "sha256": "1b4b0e450e0e01fe4f8671e432027278b42dbbafb86d4f0bead14880797ce85c",
       "executable": false
     },
     "README.en.md": {
@@ -183,7 +183,7 @@
     },
     "server/package.json": {
       "source": "server/package.json",
-      "sha256": "8283324f095d383909c977ecd6cdb2c5dd35bb6f03f765199f066ecb298290b6",
+      "sha256": "dcf0f62bd025e446ed8a20d3eaed25496dcc7a69d6b2cd90838f4719aac611ac",
       "executable": false
     },
     "server/src/admin/accountCleanup.ts": {
@@ -653,7 +653,7 @@
     },
     "web/package.json": {
       "source": "web/package.json",
-      "sha256": "87f4f788a1df206631987d469e71cccfa511a46b578258065e561cc4251ff289",
+      "sha256": "5649a591e07e9df285cb25f202bc89cd5e4ee93d762a828fe50fecf93024e542",
       "executable": false
     },
     "web/public/apple-touch-icon.png": {
@@ -916,6 +916,11 @@
       "sha256": "163a01168626dd6390f11e3ba0fa5c8046aeb3eb537c91d24322b46c65ed4b91",
       "executable": false
     },
+    "web/src/components/IntroMailDemo.vue": {
+      "source": "web/src/components/IntroMailDemo.vue",
+      "sha256": "e1227eac9b3f498e1e2e20185d4f32ff065a2bba7c178dd108a59fb3fcb94683",
+      "executable": false
+    },
     "web/src/components/mail/ComposeDialog.vue": {
       "source": "web/src/components/mail/ComposeDialog.vue",
       "sha256": "c095a479c6a5fe4d86c58dca9a8a1d4fc7c8e0e148727223a39b0af7dc51e2ae",
@@ -989,6 +994,11 @@
     "web/src/intro/faq.ts": {
       "source": "web/src/intro/faq.ts",
       "sha256": "6723845a2f5b4dcf54ee0af7303e1a8647f6ff5da41de096dde275d276a4436b",
+      "executable": false
+    },
+    "web/src/intro/mailDemo.ts": {
+      "source": "web/src/intro/mailDemo.ts",
+      "sha256": "6e44e17b37c6f6281e00e8c3bad76f62926c3f7ca4c116b17781283bb787bb9c",
       "executable": false
     },
     "web/src/intro/reveal.ts": {
@@ -1188,7 +1198,7 @@
     },
     "web/src/styles/intro.css": {
       "source": "web/src/styles/intro.css",
-      "sha256": "da8199d7d417748ca25f76f2bf0b90146b232040de10903fc4a9d01db999a24b",
+      "sha256": "5c282824f86584955d9cbb64fcc899a27e4648dfac05b1db2b08ce84d4c7d5ff",
       "executable": false
     },
     "web/src/styles/login.css": {
@@ -1323,7 +1333,7 @@
     },
     "web/src/views/IntroView.vue": {
       "source": "web/src/views/IntroView.vue",
-      "sha256": "a60b6dbace806385aaaa79e44c3646a784bb39d4a8b52e4f60ef4c9a682680e2",
+      "sha256": "8d320a126f971337828973ba06fe1913fb7a493d206782ecf6eb1bf53980d4b3",
       "executable": false
     },
     "web/src/views/LoginView.vue": {
@@ -1574,6 +1584,11 @@
     "web/test/intro-footer.test.ts": {
       "source": "web/test/intro-footer.test.ts",
       "sha256": "9b9c7495d631941e14a718110e5c3a996a7442269a9103c1011687abe5e42b8e",
+      "executable": false
+    },
+    "web/test/intro-mail-demo.test.ts": {
+      "source": "web/test/intro-mail-demo.test.ts",
+      "sha256": "430116bc9e2daa6bb972f7bf5368dc48bcc28586799dbb64fc2d61376bc00e65",
       "executable": false
     },
     "web/test/intro-reveal.test.ts": {
