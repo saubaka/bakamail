@@ -36,7 +36,9 @@ test("初始：Microsoft、Google、OpenAI 三封英文验证码邮件，第一�
   assert.equal(spacedCode("739154"), "739 154");
   for (const mail of DEMO_MAILS) { assert.match(mail.mark.viewBox, /^0 0 \d+ \d+$/); assert.match(mail.mark.d, /^M[\d.\s]/); assert.doesNotMatch(mail.mark.d, /#|fill/); }
   assert.equal(demo.state.typed, [...DRAFT_DEMO.body].length);
-  assert.match(DRAFT_DEMO.body, /写到一半可以先存成草稿，下次打开接着写。/);
+  assert.match(DRAFT_DEMO.to, /@example\.com$/, "收件人是通用示例地址，不是人名");
+  for (const value of Object.values(DRAFT_DEMO)) assert.match(value, /^[\x20-\x7e\n]+$/, "草稿模板为英文");
+  assert.doesNotMatch(DRAFT_DEMO.body + DRAFT_DEMO.subject + DRAFT_DEMO.attachment, /小树|周末|照片|Tree|weekend|photo/i, "不涉及具体的人和事");
 });
 
 test("自动播放：最旧的发件人发来新验证码→打开→切到草稿逐字输入→保存→回到收件箱，三家轮流", () => {

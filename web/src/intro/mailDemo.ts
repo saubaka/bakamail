@@ -9,9 +9,9 @@ export type DemoScheduler = { set(callback: () => void, ms: number): unknown; cl
 export type DemoPause = "hover" | "focus" | "hidden" | "offscreen" | "manual";
 
 export const DEMO_VISIBLE_ROWS = 3;
-export const DRAFT_DEMO = { to: "小树", subject: "周末计划", body: "小树：\n写到一半可以先存成草稿，下次打开接着写。", attachment: "照片.zip", size: "2.4 MB" } as const;
+export const DRAFT_DEMO = { to: "hello@example.com", subject: "Untitled draft", body: "Hi,\nThis draft saves itself as you type, so you can pick up where you left off.", attachment: "document.pdf", size: "1.2 MB" } as const;
 export const TYPE_START_MS = 520;
-export const TYPE_STEP_MS = 70;
+export const TYPE_STEP_MS = 46;
 export const TYPE_PAUSE_MS = 220;
 export const MANUAL_HOLD_MS = 9000;
 
@@ -37,7 +37,7 @@ export const spacedCode = (code: string) => code.replace(/(\d{3})(?=\d)/, "$1 ")
 
 export function typingDuration(text: string): number {
   let total = TYPE_START_MS;
-  for (const char of text) total += TYPE_STEP_MS + (/[，。！？：\n]/.test(char) ? TYPE_PAUSE_MS : 0);
+  for (const char of text) total += TYPE_STEP_MS + (/[，。！？：,.!?\n]/.test(char) ? TYPE_PAUSE_MS : 0);
   return total;
 }
 
@@ -95,7 +95,7 @@ export function createMailDemo(options: { scheduler?: DemoScheduler } = {}) {
     const text = [...DRAFT_DEMO.body];
     if (state.typed >= text.length) { later("type", 480, () => { state.saved = true; }); return; }
     const char = text[state.typed]!;
-    later("type", TYPE_STEP_MS + (/[，。！？：\n]/.test(char) ? TYPE_PAUSE_MS : 0), () => { state.typed += 1; type(); });
+    later("type", TYPE_STEP_MS + (/[，。！？：,.!?\n]/.test(char) ? TYPE_PAUSE_MS : 0), () => { state.typed += 1; type(); });
   }
   function showTab(tab: DemoTab) {
     const changed = state.tab !== tab;

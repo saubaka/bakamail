@@ -3,16 +3,20 @@
 .intro-main, .intro-main :is(section, article, figure, details, summary), .intro-main section > * { min-width: 0; }
 .intro-page a { text-decoration: none; }
 .intro-header, .intro-main, .intro-footer { width: min(var(--intro-width), calc(100% - 64px)); margin-inline: auto; }
-.intro-header { display: flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 92px; }
+.intro-header { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 92px; }
+.intro-header::before, .intro-header::after { content: ""; position: absolute; z-index: -1; top: 0; left: 50%; width: 100vw; translate: -50% 0; pointer-events: none; }
+.intro-header::before { height: calc(100% + 40px); background: linear-gradient(to bottom, color-mix(in srgb, var(--bg-top) 94%, transparent) 0%, color-mix(in srgb, var(--bg-top) 80%, transparent) 50%, color-mix(in srgb, var(--bg-top) 30%, transparent) 78%, transparent 100%); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); -webkit-mask-image: linear-gradient(to bottom, var(--ink) 62%, transparent); mask-image: linear-gradient(to bottom, var(--ink) 62%, transparent); }
+.intro-header::after { height: calc(100% + 8px); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); -webkit-mask-image: linear-gradient(to bottom, var(--ink) 30%, transparent); mask-image: linear-gradient(to bottom, var(--ink) 30%, transparent); }
 .intro-brand { flex-shrink: 0; }
 .intro-brand .site-brand { gap: 12px; font-size: 18px; }
 .intro-brand .site-brand__logo { --logo-size: 38px; }
 .intro-brand .site-brand > span:last-child { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
 .intro-brand small { font-size: 11.5px; }
 .intro-main:focus { outline: none; }
-.intro-nav { display: flex; gap: 4px; padding: 5px; border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--glass); box-shadow: var(--shadow-1); }
-.intro-nav a { display: inline-flex; align-items: center; height: 36px; padding: 0 16px; border-radius: 18px; color: var(--ink-2); font-size: 14px; font-weight: 600; transition: color var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease); }
-.intro-nav a:hover { background: var(--blue-100); color: var(--ink); }
+.intro-nav { display: flex; align-items: center; gap: 26px; }
+.intro-nav a { display: inline-flex; align-items: center; min-height: 36px; color: var(--ink-2); font-size: 14px; font-weight: 600; white-space: nowrap; transition: color var(--t-fast) var(--ease); }
+.intro-nav a:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--blue-300); text-underline-offset: 5px; }
+.intro-nav a:focus-visible { border-radius: var(--r-xs); outline: 2px solid var(--blue-400); outline-offset: 4px; }
 .intro-text-link:hover, .intro-footer a:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--blue-300); text-underline-offset: 3px; }
 .intro-page .intro-button { display: inline-flex; align-items: center; justify-content: center; gap: 14px; max-width: 100%; min-height: 48px; padding: 0 24px; border: 0; border-radius: var(--r-pill); background: var(--blue-300); color: var(--ink); box-shadow: var(--shadow-btn); font-size: 15px; font-weight: 650; transition: background-color var(--t-fast) var(--ease), transform .45s var(--spring), box-shadow .45s var(--ease); }
 .intro-page .intro-button > span { color: var(--surface); transition: transform .5s var(--spring); }
@@ -90,9 +94,10 @@
 .intro-demo-compose { grid-template-rows: auto auto 1fr auto; gap: 10px; }
 .intro-demo-field { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--surface-2); color: var(--ink); font-size: 13px; }
 .intro-demo-label { flex: none; width: 3.2em; color: var(--ink-3); font-size: 12px; }
-.intro-demo-chip { padding: 2px 10px; border-radius: var(--r-pill); background: var(--pink-100); font-size: 12px; font-weight: 600; }
+.intro-demo-chip { min-width: 0; overflow: hidden; padding: 2px 10px; border-radius: var(--r-pill); background: var(--pink-100); font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.intro-demo-field-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .intro-demo-draft { display: grid; grid-template-rows: 1fr auto; gap: 10px; min-height: 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--surface); }
-.intro-page .intro-demo-draft-text { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.8; white-space: pre-line; }
+.intro-page .intro-demo-draft-text { min-height: 0; margin: 0; overflow: hidden; color: var(--ink-2); font-size: 13px; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; }
 .intro-demo-attach { display: inline-flex; align-items: center; justify-self: start; gap: 8px; max-width: 100%; min-height: 30px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--surface-2); font-size: 12px; opacity: 0; transform: translate3d(0, 6px, 0) scale(.96); transition: opacity .4s var(--ease), transform .6s var(--spring-soft); }
 .intro-demo-attach::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 2px; background: var(--pink-300); }
 .intro-demo-attach-name { min-width: 0; overflow: hidden; color: var(--ink); font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
@@ -118,14 +123,14 @@
 .intro-kicker { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 14px; color: var(--ink-2); font-size: 14px; font-weight: 600; letter-spacing: .06em; }
 .intro-kicker::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--blue-500); }
 .intro-main h2 { margin: 0 0 22px; font-size: clamp(26px, 3vw, 34px); font-weight: 650; line-height: 1.35; letter-spacing: -.015em; }
-.intro-about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 62px; padding: 70px 0 78px; scroll-margin-top: 30px; }
+.intro-about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 62px; padding: 70px 0 78px; scroll-margin-top: 72px; }
 .intro-body-copy { max-width: 590px; margin-bottom: 36px; color: var(--ink-2); font-size: 15px; line-height: 1.9; }
 .intro-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .intro-features article { padding: 18px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--surface-2); transition: translate .45s var(--ease), box-shadow .45s var(--ease), background-color .45s var(--ease); }
 .intro-features article:hover { translate: 0 -3px; background: var(--surface); box-shadow: var(--shadow-1); }
 .intro-features h3 { margin-bottom: 8px; font-size: 15px; font-weight: 650; }
 .intro-features p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.8; }
-.intro-faq { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 62px; padding: 56px 0 66px; }
+.intro-faq { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 62px; padding: 56px 0 66px; scroll-margin-top: 84px; }
 .intro-faq-items { display: grid; align-content: start; gap: 12px; width: 100%; min-width: 0; }
 .intro-page .intro-faq-card { width: 100%; max-width: 100%; min-width: 0; margin: 0; overflow: hidden; border: 1px solid var(--card-line); border-radius: var(--r-l); background: var(--surface); box-shadow: var(--shadow-1); transition: box-shadow .5s var(--ease); }
 .intro-page .intro-faq-card:hover { box-shadow: var(--shadow-2); }
@@ -174,7 +179,9 @@
 @media (max-width: 620px) {
   .intro-header, .intro-main, .intro-footer { width: calc(100% - 32px); }
   .intro-header { min-height: 76px; gap: 12px; }
-  .intro-nav { display: none; }
+  .intro-nav { gap: 18px; }
+  .intro-nav a { min-height: 32px; font-size: 13.5px; }
+  .intro-brand .site-brand__logo { --logo-size: 32px; }
   .intro-brand .site-brand { gap: 8px; font-size: 17px; }
   .intro-hero { grid-template-columns: 1fr; gap: 50px; padding: 36px 0 60px; }
   .intro-project-name { margin-bottom: 18px; }

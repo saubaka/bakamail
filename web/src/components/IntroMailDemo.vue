@@ -43,11 +43,11 @@
           </div>
         </section>
         <section class="intro-demo-panel intro-demo-compose" :class="{ 'is-active': state.tab === 'draft', 'is-saved': state.saved }" :inert="state.tab !== 'draft'" aria-label="草稿箱示例">
-          <div class="intro-demo-field"><span class="intro-demo-label">收件人</span><span class="intro-demo-chip">{{ draft.to }}</span></div>
-          <div class="intro-demo-field"><span class="intro-demo-label">主题</span><span>{{ draft.subject }}</span></div>
+          <div class="intro-demo-field"><span class="intro-demo-label">收件人</span><span class="intro-demo-chip" lang="en">{{ draft.to }}</span></div>
+          <div class="intro-demo-field"><span class="intro-demo-label">主题</span><span class="intro-demo-field-value" lang="en">{{ draft.subject }}</span></div>
           <div class="intro-demo-draft">
-            <p class="intro-demo-draft-text"><span class="sr-only">{{ draft.body }}</span><span aria-hidden="true">{{ typedText }}<span class="intro-demo-caret"></span></span></p>
-            <span class="intro-demo-attach"><span class="intro-demo-attach-name">{{ draft.attachment }}</span><span class="intro-demo-attach-size">{{ draft.size }}</span></span>
+            <p class="intro-demo-draft-text" lang="en"><span class="sr-only">{{ draft.body }}</span><span aria-hidden="true">{{ typedText }}<span class="intro-demo-caret"></span></span></p>
+            <span class="intro-demo-attach"><span class="intro-demo-attach-name" lang="en">{{ draft.attachment }}</span><span class="intro-demo-attach-size">{{ draft.size }}</span></span>
           </div>
           <div class="intro-demo-foot">
             <span class="intro-demo-status"><span class="intro-demo-status-dot" aria-hidden="true"></span>{{ state.saved ? '草稿已保存' : '正在输入…' }}</span>
