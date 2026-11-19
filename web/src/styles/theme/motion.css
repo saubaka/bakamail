@@ -1,0 +1,18 @@
+.baka-route-enter-active { animation: route-content-enter var(--t-enter) var(--ease) both; }
+.baka-route-leave-active { animation: route-content-leave .22s var(--ease) both; pointer-events: none; }
+.motion-enter-target[data-motion-state="settled"] { opacity: 1; transform: none; filter: none; }
+@keyframes route-content-enter { from { opacity: 0; transform: translate3d(0, 20px, 0) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes route-content-leave { to { opacity: 0; transform: translate3d(0, -6px, 0) scale(.97); } }
+html[data-motion="reduce"] :is(.baka-route-enter-active, .baka-route-leave-active),
+html[data-performance="low"] :is(.baka-route-enter-active, .baka-route-leave-active) { animation: none; transition: none; }
+html[data-motion="reduce"], html[data-motion="reduce"] *, html[data-motion="reduce"] *::before, html[data-motion="reduce"] *::after,
+html[data-performance="low"], html[data-performance="low"] *, html[data-performance="low"] *::before, html[data-performance="low"] *::after {
+  scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
+html[data-performance="low"] .app-orbs, html[data-motion="reduce"] .app-orbs i { animation: none !important; }
+html[data-performance="low"] .app-orbs { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  html, *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  .baka-route-enter-active, .baka-route-leave-active, .app-orbs i { animation: none; transition: none; }
+}

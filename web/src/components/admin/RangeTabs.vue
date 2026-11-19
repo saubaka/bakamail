@@ -39,12 +39,12 @@ function onKeydown(event: KeyboardEvent): void {
 </script>
 
 <style scoped>
-.range-tabs { position: relative; display: inline-grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); padding: 3px; border: 1px solid var(--line-blue); border-radius: 14px; background: var(--surface-soft, #fbfcfe); isolation: isolate; }
-.range-tabs__indicator { position: absolute; z-index: 0; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / var(--n)); border: 1px solid var(--line-blue-strong); border-radius: 11px; background: var(--cloud-blue, #e5effb); transform: translate3d(calc(var(--i) * 100%), 0, 0); transition: transform 360ms var(--spring, cubic-bezier(.2, 1.25, .35, 1)); }
-.range-tabs__option { position: relative; z-index: 1; min-width: 64px; min-height: 34px; padding: 0 14px; border: 0; border-radius: 11px; background: transparent; color: var(--text-soft); font: inherit; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: color 200ms var(--ease, ease); }
-.range-tabs__option:hover:not(:disabled) { color: var(--text); }
-.range-tabs__option.is-active { color: var(--graphite-blue, var(--text)); font-weight: 600; }
-.range-tabs__option:focus-visible { outline: 2px solid var(--line-blue-strong); outline-offset: 1px; }
-.range-tabs__option:disabled { cursor: default; opacity: .6; }
+.range-tabs { position: relative; isolation: isolate; display: inline-grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); padding: 3px; border-radius: var(--r-pill); background: var(--chip); }
+.range-tabs__indicator { position: absolute; z-index: 0; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / var(--n)); border-radius: var(--r-pill); background: var(--surface); box-shadow: var(--shadow-press); transform: translate3d(calc(var(--i) * 100%), 0, 0); transition: transform var(--t-soft) var(--spring-soft); }
+.range-tabs__option { position: relative; z-index: 1; min-width: 64px; min-height: 32px; padding: 0 14px; border: 0; border-radius: var(--r-pill); background: transparent; color: var(--ink-3); font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: color var(--t-fast) var(--ease); }
+.range-tabs__option:hover:not(:disabled) { color: var(--ink); }
+.range-tabs__option.is-active { color: var(--ink); }
+.range-tabs__option:focus-visible { outline: 2px solid var(--blue-400); outline-offset: 1px; }
+.range-tabs__option:disabled { opacity: .6; cursor: default; }
 @media (prefers-reduced-motion: reduce) { .range-tabs__indicator, .range-tabs__option { transition: none; } }
 </style>

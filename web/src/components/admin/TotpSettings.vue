@@ -181,13 +181,13 @@ onBeforeUnmount(() => { active = false; password.value = ""; code.value = ""; re
 </script>
 
 <style scoped>
-.totp-steps { margin: 0 0 4px; padding-left: 20px; line-height: 1.9; color: var(--text-soft); font-size: 13px; }
-.totp-steps code, .totp-note code { padding: 1px 6px; border-radius: var(--radius-sm); background: var(--surface-soft); }
-.totp-secret { display: block; padding: 12px 14px; border: 1px solid var(--line-blue); border-radius: var(--radius-sm); background: var(--surface-soft); font-size: 15px; letter-spacing: .08em; overflow-wrap: anywhere; user-select: all; }
-.totp-note { margin: 0 0 14px; color: var(--text-soft); font-size: 13px; line-height: 1.8; }
-.totp-warn { display: block; margin-top: 4px; color: var(--state-warning-700, inherit); }
-.totp-recovery { display: grid; gap: 10px; margin: 14px 0; padding: 18px; border: 1px solid var(--line-blue); border-radius: var(--radius-card); background: var(--surface-soft); }
+.totp-steps { margin: 0 0 4px; padding-left: 20px; color: var(--ink-2); font-size: 13px; line-height: 1.9; }
+.totp-steps code, .totp-note code { padding: 2px 7px; border-radius: var(--r-xs); background: var(--surface-2); color: var(--ink); }
+.totp-secret { display: block; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--surface-2); color: var(--ink); font-family: var(--font-mono); font-size: 15px; letter-spacing: .08em; overflow-wrap: anywhere; user-select: all; }
+.totp-note { margin: 0 0 14px; color: var(--ink-2); font-size: 13px; line-height: 1.8; }
+.totp-warn { display: block; margin-top: 4px; color: var(--bad-ink); }
+.totp-recovery { display: grid; gap: 10px; margin: 14px 0; padding: 18px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--surface-2); }
 .totp-codes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; margin: 0; padding: 0; list-style: none; }
-.totp-codes code { font-size: 15px; letter-spacing: .06em; }
+.totp-codes code { color: var(--ink); font-size: 15px; letter-spacing: .06em; }
 @media (max-width: 520px) { .totp-codes { grid-template-columns: minmax(0, 1fr); } }
 </style>

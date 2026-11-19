@@ -175,18 +175,20 @@ test("外壳：菜单跟随目标页立即高亮，右侧加载动画只覆盖�
   assert.match(source("admin/useRailBadges.ts"), /\{ quiet: true \}/);
 });
 
-test("加载动画与入场样式：线条图形、淡浅蓝、只用令牌、减少动画时关闭；样式里不再有整页入场规则和顶部粗线", () => {
+test("加载动画与入场样式：浅蓝圆环与三个跳动圆点、不带插画、只用令牌、减少动画时关闭；样式里不再有整页入场规则和顶部粗线", () => {
   const css = source("styles/admin.css");
   assert.doesNotMatch(css, /admin-progress|@keyframes admin-rise|admin-panel-enter/, "整页入场和顶部加载线的规则都已移除");
   assert.match(css, /\.admin-panel-leave-active \{ pointer-events: none/);
   const component = source("components/admin/AdminLoader.vue");
   const style = component.slice(component.indexOf("<style scoped>"));
   assert.doesNotMatch(style, /gradient/i);
-  assert.doesNotMatch(style.replace("var(--blue-300, #a8d0f4)", ""), /#[\da-f]{3,8}\b/i, "颜色只用主题令牌（白色半透明的磨砂底除外）");
-  assert.match(style, /stroke: var\(--line-blue-strong\)/);
+  assert.doesNotMatch(style, /#[\da-f]{3,8}\b|rgba?\(/i, "颜色只用主题令牌");
+  assert.match(style, /\.admin-loader__orbit \{ stroke: var\(--blue-500\)/);
+  assert.match(style, /\.admin-loader__card \{[^}]*background: var\(--glass\)/);
   assert.match(style, /@keyframes loader-orbit/);
-  assert.match(style, /@keyframes loader-draw/);
-  assert.match(style, /left: var\(--rail-w, 0px\)/, "在右侧内容区正中，不是整个窗口的中间");
+  assert.match(style, /@keyframes loader-dot/);
+  assert.doesNotMatch(component, /admin-loader__pane|loader-draw/);
+  assert.match(style, /inset: 0 0 0 var\(--rail-w, 0px\)/, "在右侧内容区正中，不是整个窗口的中间");
   assert.match(style, /pointer-events: none/);
   assert.match(style, /@media \(prefers-reduced-motion: reduce\)[\s\S]*animation: none/);
   assert.match(component, /aria-hidden="true"/);

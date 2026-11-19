@@ -149,9 +149,9 @@ async function repair(row: Row): Promise<void> {
   if (!row.hasCredential) {
     password = (await promptDialog({
       title: "补建登录凭据",
-      message: `${row.mailbox} 已有邮箱数据但缺少登录凭据。设置新密码后即可恢复登录。`,
+      message: `${row.mailbox} 已有邮箱数据但缺少登录凭据。设置新密码后即可恢复登录。密码至少 10 位，不能是纯数字或纯字母。`,
       fieldLabel: "新密码",
-      placeholder: "至少 10 位，不能是纯数字或纯字母",
+      placeholder: "至少 10 位",
       inputType: "password",
       validate: passwordProblem,
       confirmLabel: "补建凭据",
@@ -184,9 +184,9 @@ async function repair(row: Row): Promise<void> {
 async function resetPassword(mailbox: string): Promise<void> {
   const password = await promptDialog({
     title: "重置邮箱密码",
-    message: `为 ${mailbox} 设置新密码。成功后，该邮箱的全部网页登录会话会被强制下线。`,
+    message: `为 ${mailbox} 设置新密码，至少 10 位，不能是纯数字或纯字母。成功后，该邮箱的全部网页登录会话会被强制下线。`,
     fieldLabel: "新密码",
-    placeholder: "至少 10 位，不能是纯数字或纯字母",
+    placeholder: "至少 10 位",
     inputType: "password",
     validate: passwordProblem,
     confirmLabel: "重置并下线",

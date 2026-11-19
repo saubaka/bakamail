@@ -1,4 +1,5 @@
 <template>
+  <div class="app-orbs" aria-hidden="true"><i></i><i></i><i></i></div>
   <ErrorPage v-if="fatalError.active" retryable retry-label="重新加载" :show-home="false" @retry="reload" />
   <router-view v-else v-slot="{ Component, route }">
     <transition name="baka-route" mode="out-in" @after-enter="focusMain">

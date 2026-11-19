@@ -6,7 +6,7 @@
     </div>
     <div class="mail-pane__body">
       <div ref="tree" class="folder-tree">
-        <span ref="highlight" class="folder-highlight" :class="{ 'is-ready': outline.box.value.ready }" aria-hidden="true" :style="outline.style.value"><LineOutline /></span>
+        <span ref="highlight" class="folder-highlight" :class="{ 'is-ready': outline.box.value.ready }" aria-hidden="true" :style="outline.style.value"></span>
         <button
           v-for="folder in folders"
           :key="folder.path"
@@ -39,7 +39,6 @@
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { folderLabel, type Folder } from "../../mail/types";
 import { useMovingOutline } from "../../mail/useMovingOutline";
-import LineOutline from "../LineOutline.vue";
 
 const props = defineProps<{
   folders: Folder[];

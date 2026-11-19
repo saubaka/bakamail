@@ -36,7 +36,7 @@ export function sanitizeReaderHtml(source: string, allowRemote: boolean): { html
       placeholder.className = 'baka-blocked-image';
       placeholder.setAttribute('role', 'img');
       placeholder.setAttribute('aria-label', '远程图片已隐藏');
-      placeholder.setAttribute('style', 'display:block;box-sizing:border-box;max-width:100%;padding:16px;margin:8px 0;border:1px solid #d9e8f6;border-radius:10px;color:#6c7d91;background:#f7f9fc;font-size:12px;');
+      placeholder.setAttribute('style', 'display:block;box-sizing:border-box;max-width:100%;padding:16px;margin:8px 0;border:1px solid #ece8ea;border-radius:14px;color:#8a8387;background:#faf8f9;font-size:12px;');
       placeholder.textContent = image.getAttribute('alt') || '远程图片已隐藏';
       image.replaceWith(placeholder);
       blocked++;
@@ -56,10 +56,11 @@ export function readerFrameDocument(html: string, allowRemote: boolean, scrollTo
   const bridge = scrollToken ? `<script nonce="${scriptNonce}">(()=>{let pending=false;const report=()=>{pending=false;parent.postMessage({type:'bakamail-reader-scroll',token:'${scrollToken}',position:{top:Math.max(0,scrollY),height:innerHeight,total:Math.max(innerHeight,document.documentElement.scrollHeight)}},'*')};addEventListener('scroll',()=>{if(!pending){pending=true;requestAnimationFrame(report)}},{passive:true});addEventListener('load',report)})();</script>` : '';
   const reduced = typeof document !== 'undefined' && (document.documentElement.dataset.motion === 'reduce' || document.documentElement.dataset.performance === 'low');
   return `<!doctype html><html${reduced ? ' data-motion="reduce"' : ''}><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><base target="_blank"><style>
-    body { margin:0; padding:8px 4px 24px; color:#354052; font:14px/1.8 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; overflow-wrap:anywhere; }
-    img { max-width:100%; height:auto; } body > :not(style) { animation:baka-reader-content 240ms ease-out both; }
-    body > :nth-child(2) { animation-delay:25ms; } body > :nth-child(3) { animation-delay:50ms; }
-    @keyframes baka-reader-content { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
+    body { margin:0; padding:8px 4px 24px; color:#5a5458; font:14px/1.8 system-ui,-apple-system,"SF Pro Text","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; overflow-wrap:anywhere; }
+    a { color:#5a5458; text-decoration-color:#a8d2f3; text-underline-offset:3px; } ::selection { background:#d9ecfa; }
+    img { max-width:100%; height:auto; } body > :not(style) { animation:baka-reader-content .6s cubic-bezier(.22,1,.36,1) both; }
+    body > :nth-child(2) { animation-delay:40ms; } body > :nth-child(3) { animation-delay:80ms; }
+    @keyframes baka-reader-content { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
     @media(prefers-reduced-motion:reduce) { body > * { animation:none!important; } } html[data-motion="reduce"] body > * { animation:none!important; }
   </style></head><body>${html}${bridge}</body></html>`;
 }

@@ -38,7 +38,7 @@ test('隔离正文只注入带随机nonce的自有滚动脚本，消息不包含
   const reader=source('components/mail/MessageReaderPane.vue');assert.match(reader,/validScrollPosition\(data.position\)/);assert.match(reader,/window.removeEventListener\('message', receiveScroll\)/);
 });
 test('弹窗具有留白/内部滚动，读取提示与重试在胶囊内，未选择正文不显示残留错误',()=>{
-  const css=source('styles/dialogs.css');assert.match(css,/compose-form[^}]*overflow-y:auto/);assert.match(css,/padding:20px 24px 24px/);assert.match(css,/dialog.baka-confirm-dialog\[open\] \{ display:block/);
+  const css=source('styles/dialogs.css');assert.match(css,/compose-form \{[^}]*overflow-y: auto/);assert.match(css,/padding: 20px 24px 24px/);assert.match(css,/dialog.baka-confirm-dialog\[open\] \{ display: block/);
   const mail=source('views/MailView.vue');assert.doesNotMatch(mail,/class="mail-page-error/);assert.match(mail,/beginProgressNotice\('正在读取邮件…', \{ signal: noticeScope.signal \}\)/);assert.match(mail,/label: '重新同步'/);
   const workspace=source('components/MailWorkspace.vue');assert.match(workspace,/请先从列表选择一封邮件/);assert.match(workspace,/workspace-copyright/);assert.match(workspace,/:inert="dockHidden && !menuOpen"/);
 });

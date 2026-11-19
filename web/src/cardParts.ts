@@ -1,15 +1,16 @@
+import { withScrollHold } from "./enterMotion.ts";
 export const PARTS_START_MS = 110;
 export const PARTS_STEP_MS = 70;
 export const PARTS_MAX_STEPS = 8;
 export const PARTS_MAX_COUNT = 24;
-export const PART_DURATION_MS = 420;
+export const PART_DURATION_MS = 560;
 
 const UNIT_TAGS = new Set([
   "H1", "H2", "H3", "H4", "H5", "H6", "P", "SMALL", "STRONG", "EM", "LABEL", "BUTTON", "A", "UL", "OL", "DL", "TABLE", "PRE",
   "SVG", "IMG", "INPUT", "SELECT", "TEXTAREA", "CANVAS", "FIGURE", "BLOCKQUOTE", "CODE", "TIME",
 ]);
 const UNIT_CLASS = /(^|[\s_-])(icon|logo|avatar|badge|pill|chip|status|tag|button|table-scroll|toggle|switch|seo-preview|hv-chart|range-tabs|field|check-row|permission-list|log-block|eyebrow)([\s_-]|$)/;
-const SKIP_CLASS = /(^|\s)(motion-outline|motion-line-target|admin-panel|managed-page-card|baka-overview-stat|login-card|auth-card)(\s|$)/;
+const SKIP_CLASS = /(^|\s)(motion-enter-target|admin-panel|managed-page-card|baka-overview-stat|login-card|auth-card)(\s|$)/;
 
 export type PartNode = {
   tagName: string;
@@ -70,9 +71,9 @@ export function playCardParts(card: HTMLElement, baseDelay = 0): number {
     part.dataset.entered = "1";
     const scale = /(^|[\s_-])(icon|logo|avatar)([\s_-]|$)/.test(classText(part));
     const from: Keyframe = scale ? { opacity: 0, transform: "translate3d(0, 6px, 0) scale(.72)" } : { opacity: 0, transform: "translate3d(0, 8px, 0)" };
-    part.animate([from, { opacity: 1, transform: "none" }], {
-      duration: PART_DURATION_MS, delay: baseDelay + partOffset(index), easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards",
-    });
+    withScrollHold(part, () => part.animate([from, { opacity: 1, transform: "none" }], {
+      duration: PART_DURATION_MS, delay: baseDelay + partOffset(index), easing: "cubic-bezier(.22,1,.36,1)", fill: "backwards",
+    }));
   });
   return parts.length;
 }

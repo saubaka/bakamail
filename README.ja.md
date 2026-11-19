@@ -228,7 +228,7 @@ docker compose --env-file deploy/bakamail.env -f deploy/docker-compose.yml up -d
 npm run typecheck   # サーバーとフロントエンドの型チェック
 npm test            # すべてのテスト
 npm run build       # フロントエンドの本番ビルド
-BAKAMAIL_PINNED_VENDOR=1 npm run check   # スタイル規約とプロトコル漏えいのチェック
+npm run check       # スタイル規約とプロトコル漏えいのチェック
 ```
 
 テストは一時データベースと模擬の Maddy コマンドを使い、実際のメールサーバーには接続しません。テストで HTTP リクエストを発行する場合は `server/test/support/loopback-request.ts` を使い、supertest を直接インポートしないでください。
@@ -236,7 +236,7 @@ BAKAMAIL_PINNED_VENDOR=1 npm run check   # スタイル規約とプロトコル�
 変更するときに守る取り決め：
 
 - ブラウザーはこのサイトの `/api/*` だけにリクエストします。フロントエンドの成果物にメールサーバーのホスト名やポートを含めてはいけません。
-- `web/src/styles/vendor/` のスタイルスナップショットは直接編集せず、新しいスタイルは追加のスタイルファイルに書きます。
+- 色、角丸、影、動きは `web/src/styles/theme/tokens.css` のトークンだけを使い、ほかのスタイルファイルやコンポーネントのスタイルに色を直接書きません。
 - メールの HTML はすべて信頼できないものとして扱い、サンドボックスを緩めないでください。
 - 破壊的な操作には確認ダイアログを残します。
 

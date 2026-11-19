@@ -6,18 +6,22 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from "vue";
+import { layoutHeight, nextFrameWriter } from "../smoothHeight.ts";
 
 const outer = ref<HTMLElement | null>(null);
 const inner = ref<HTMLElement | null>(null);
 const height = ref<number | null>(null);
 let observer: ResizeObserver | null = null;
+let cancelWrite: () => void = () => {};
 
 onMounted(() => {
   const node = inner.value;
   if (!node || typeof ResizeObserver === "undefined") return;
-  height.value = node.getBoundingClientRect().height;
-  observer = new ResizeObserver(() => { height.value = node.getBoundingClientRect().height; });
+  height.value = layoutHeight(node);
+  const writer = nextFrameWriter((value) => { height.value = value; });
+  cancelWrite = writer.cancel;
+  observer = new ResizeObserver(([entry]) => writer.push(layoutHeight(node, entry)));
   observer.observe(node);
 });
-onBeforeUnmount(() => observer?.disconnect());
+onBeforeUnmount(() => { observer?.disconnect(); cancelWrite(); });
 </script>

@@ -44,14 +44,14 @@ let inviteRows: InviteSummary[] = Array.from({length:6}, (_, i) => ({
 
 const controls = document.createElement("details");
 controls.setAttribute("aria-label", "隔离验收控制");
-controls.style.cssText = "position:fixed;right:12px;bottom:12px;z-index:2000;max-width:310px;padding:8px;border:1px solid #d8e8f7;border-radius:12px;background:white;font:12px system-ui;";
+controls.style.cssText = "position:fixed;right:12px;bottom:12px;z-index:2000;max-width:310px;padding:8px;border:1px solid #ece8ea;border-radius:12px;background:white;font:12px system-ui;";
 const summary = document.createElement('summary'); summary.textContent = '隔离验收工具'; summary.style.cursor = 'pointer'; controls.append(summary);
 const state = document.createElement("span");
-state.style.cssText = "width:100%;color:#354052";
+state.style.cssText = "width:100%;color:#5a5458";
 function sync() { state.textContent = `隔离模拟 · 管理员${authenticated ? "已登录" : "未登录"} · 配置版本 ${appearance.revision} / 保存 ${appearanceWrites} / 公开读取 ${publicReads} · 登录 ${loginCalls} · 邮箱 ${mailLoginCalls} · 挑战 ${challengeCalls}`; }
 function control(label: string, action: () => void) {
   const button = document.createElement("button"); button.type = "button"; button.textContent = label;
-  button.style.cssText = "border:1px solid #d8e8f7;border-radius:8px;padding:5px;margin:3px;background:white;cursor:pointer";
+  button.style.cssText = "border:1px solid #ece8ea;border-radius:8px;padding:5px;margin:3px;background:white;cursor:pointer";
   button.onclick = () => { action(); sync(); }; controls.append(button);
 }
 controls.append(state);
@@ -95,7 +95,7 @@ window.fetch = async (input, options) => {
       rejectChallenge = false;
       return Response.json({ ok: false, code: "challenge_rate_limited", error: "请求过于频繁", data: { retryAfterSeconds: 10 } }, { status: 429, headers: { "Retry-After": "10" } });
     }
-    return ok({ nonce: `fixture-display-${challengeCalls}`, image: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="176" height="56"><rect width="176" height="56" fill="#f7f9fc"/><text x="88" y="33" text-anchor="middle" fill="#354052" font-size="14">隔离挑战展示</text></svg>')}`,
+    return ok({ nonce: `fixture-display-${challengeCalls}`, image: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="176" height="56"><rect width="176" height="56" fill="#f8f6f7"/><text x="88" y="33" text-anchor="middle" fill="#5a5458" font-size="14">隔离挑战展示</text></svg>')}`,
       expiresIn: 600, domain: "example.test", formToken: "fixture-form-display", minFormSeconds: 2 });
   }
   if (path === "/api/auth/login" && options?.method === "POST") {

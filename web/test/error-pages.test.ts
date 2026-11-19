@@ -161,10 +161,9 @@ test("前端页面：404 和暂时无法连接都用统一的错误页组件；�
   assert.match(unavailable, /void router\.replace\(destination\.value\)/);
   assert.doesNotMatch(unavailable, /location\.(assign|reload|replace)/);
   const page = source("components/ErrorPage.vue");
-  assert.match(page, /import \{ ERROR_LOGO_SVG, LOAD_FAILURE_COPY, errorCopy, isServerError \} from "\.\.\/\.\.\/\.\.\/shared\/errorPage"/);
+  assert.match(page, /import \{ LOAD_FAILURE_COPY, errorCopy, isServerError \} from "\.\.\/\.\.\/\.\.\/shared\/errorPage"/);
   assert.match(page, /<p>© \{\{ year \}\} saubaka\. BakaMail\.<\/p>/);
-  assert.match(page, /class="ep-logo" v-html="logo"/, "只有写死的标志常量使用 v-html");
-  assert.equal([...page.matchAll(/v-html/g)].length, 1);
+  assert.doesNotMatch(page, /ep-logo|v-html|<svg|<img/, "错误卡片不放图片标志，也不用 v-html");
 });
 
 test("全局错误边界：只有渲染阶段出错才换成错误页；路由文件加载失败才提示；成功切换页面自动恢复；只有用户点按钮才整页重载", () => {

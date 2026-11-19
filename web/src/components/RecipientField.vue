@@ -21,7 +21,6 @@
       @keydown.esc="open = false"
     />
     <div v-show="showSuggestions" :id="`${id}-suggestions`" class="recipient-suggestions" role="listbox" :aria-label="`${label}联系人建议`">
-      <LineOutline />
       <div
         v-for="(contact, index) in suggestions"
         :id="`${id}-option-${index}`"
@@ -41,7 +40,6 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import LineOutline from './LineOutline.vue';
 import { completeRecipientToken } from "../mail/recipients";
 
 const props = withDefaults(defineProps<{

@@ -228,7 +228,7 @@ docker compose --env-file deploy/bakamail.env -f deploy/docker-compose.yml up -d
 npm run typecheck   # 服务端和前端的类型检查
 npm test            # 全部测试
 npm run build       # 前端生产构建
-BAKAMAIL_PINNED_VENDOR=1 npm run check   # 样式约定和协议泄漏检查
+npm run check       # 样式约定和协议泄漏检查
 ```
 
 测试使用临时数据库和模拟的 Maddy 命令，不会连接真实邮局。需要在测试里发起 HTTP 请求时，请使用 `server/test/support/loopback-request.ts`，不要直接引入 supertest。
@@ -236,7 +236,7 @@ BAKAMAIL_PINNED_VENDOR=1 npm run check   # 样式约定和协议泄漏检查
 几条改动时需要遵守的约定：
 
 - 浏览器只请求本站的 `/api/*`，前端产物里不能出现邮局的主机名或端口。
-- `web/src/styles/vendor/` 下的样式快照不要直接修改，新样式写在增量样式文件里。
+- 颜色、圆角、阴影和动效只用 `web/src/styles/theme/tokens.css` 里的令牌，其他样式文件和组件样式里不写死颜色。
 - 邮件 HTML 一律视为不可信，不要放宽沙箱。
 - 破坏性操作保留确认对话框。
 

@@ -1,6 +1,6 @@
 {
   "name": "bakamail",
-  "version": "0.9.22",
+  "version": "0.10.1",
   "license": "MIT",
   "private": true,
   "type": "module",
@@ -18,8 +18,7 @@
     "build": "npm run build --workspace web",
     "typecheck": "npm run typecheck --workspace server && npm run typecheck --workspace web",
     "start": "node server/src/index.ts",
-    "check:styles": "node scripts/verify-style-contract.mjs && node scripts/audit-project1-prototype.mjs",
-    "audit:prototype": "node scripts/audit-project1-prototype.mjs --strict",
+    "check:styles": "node scripts/verify-style-contract.mjs",
     "check:css": "npm run check:styles",
     "check:leak": "sh scripts/verify-no-protocol-leak.sh",
     "check": "npm run check:styles && npm run check:leak",

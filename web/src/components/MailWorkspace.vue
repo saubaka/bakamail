@@ -36,14 +36,13 @@
         aria-label="邮箱菜单"
         @animationend="finishClose"
       >
-        <LineOutline v-if="!isDesktop" />
         <header v-if="!isDesktop" class="dock-menu-heading"><span>邮箱菜单</span><button ref="closeButton" class="dock-close" type="button" aria-label="关闭悬浮菜单" @click="closeMenu()">×</button></header>
         <div class="dock-menu-scroll">
           <button v-press-feedback class="dock-compose" type="button" :disabled="navigationBusy" :title="collapsedTitle('写邮件')" @click="compose">
             <span class="dock-compose-icon" aria-hidden="true">＋</span><span class="desktop-sidebar-label">写邮件</span>
           </button>
           <nav ref="navigationList" class="dock-navigation" aria-label="邮箱功能">
-            <span ref="highlightElement" class="dock-navigation-highlight" :class="{ 'is-ready': navigationHighlight.ready }" aria-hidden="true" :style="navigationHighlightStyle"><LineOutline /></span>
+            <span ref="highlightElement" class="dock-navigation-highlight" :class="{ 'is-ready': navigationHighlight.ready }" aria-hidden="true" :style="navigationHighlightStyle"></span>
             <button v-for="item in mailNavigation" :key="item.path" class="dock-navigation-item" :class="{ 'is-active': highlightPath === item.path }" :data-path="item.path" type="button" :aria-current="route.path === item.path ? 'page' : undefined" :disabled="!isDesktop && navigationBusy" :title="collapsedTitle(item.label)" @click="navigate(item.path)">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path :d="item.icon" /></svg><span class="desktop-sidebar-label">{{ item.label }}</span>
             </button>
@@ -93,7 +92,7 @@
     <span class="workspace-route-status" role="status" aria-live="polite" aria-atomic="true">{{ routeAnnouncement }}</span>
     <button v-if="!isDesktop && dockHidden && !menuOpen" class="dock-reveal" type="button" aria-label="显示邮箱导航" @click="revealDock"><span aria-hidden="true"></span></button>
     <nav v-if="!isDesktop" ref="dockElement" class="mail-bottom-dock" :class="{ 'is-scroll-hidden': dockHidden && !menuOpen }" :inert="dockHidden && !menuOpen" :aria-hidden="dockHidden && !menuOpen" aria-label="邮箱底部导航" @focusin="revealDock">
-      <span ref="pillElement" class="dock-active-pill" :class="{ 'is-ready': dockPill.box.value.ready }" aria-hidden="true" :style="dockPill.style.value"><LineOutline /></span>
+      <span ref="pillElement" class="dock-active-pill" :class="{ 'is-ready': dockPill.box.value.ready }" aria-hidden="true" :style="dockPill.style.value"></span>
       <button ref="menuTrigger" class="dock-item" data-dock-index="0" type="button" aria-controls="mail-navigation-panel" :aria-expanded="menuOpen" @click="menuOpen ? closeMenu() : openMenu()">菜单</button>
       <button class="dock-item" data-dock-index="1" :class="{ 'is-current': dockIndex === 1 }" type="button" :disabled="navigationBusy" @click="showList">列表</button>
       <button class="dock-item" data-dock-index="2" :class="{ 'is-current': dockIndex === 2 }" type="button" :disabled="navigationBusy" @click="showReader">正文</button>
@@ -119,7 +118,6 @@ import {
   type DesktopSidebarPreference,
 } from "../mail/navigationLayout";
 import { createDockScrollIntent, type ScrollPosition } from '../mail/scrollIntent';
-import LineOutline from './LineOutline.vue';
 import AdminLoader from './admin/AdminLoader.vue';
 import { navigationState } from '../admin/navigationState';
 import { useMovingOutline } from '../mail/useMovingOutline';

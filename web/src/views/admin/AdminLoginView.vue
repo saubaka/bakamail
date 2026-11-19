@@ -3,9 +3,6 @@
     <main id="main-content" class="login-main" tabindex="-1">
       <section v-motion="{ kind: 'feature', reversible: false }" class="login-card card" aria-labelledby="admin-login-title">
         <header class="login-heading">
-          <span class="login-logo" aria-hidden="true">
-            <svg viewBox="0 0 40 40" fill="none"><rect x="5" y="9" width="30" height="23" rx="5" /><path d="m7 12 10 8a5 5 0 0 0 6 0l10-8M7 29l8-8m18 8-8-8" /></svg>
-          </span>
           <span class="login-product-name">{{ siteInfo.siteName }}</span>
           <h1 id="admin-login-title">登录后台</h1>
           <p>{{ step === "totp" ? "密码已通过，请再输入验证器应用里的 6 位数字。" : "请使用管理员账号登录。" }}</p>
@@ -176,10 +173,5 @@ onBeforeUnmount(() => window.clearInterval(timer));
 </script>
 
 <style scoped>
-.hint-line {
-  margin: 14px 0 0;
-  text-align: center;
-  color: var(--text-soft);
-  font-size: 12px;
-}
+.hint-line { margin: 14px 0 0; color: var(--ink-3); font-size: 12.5px; text-align: center; }
 </style>

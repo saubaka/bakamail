@@ -41,43 +41,45 @@ test("点击菜单当下就记目标：高亮和文字立即响应，aria-curren
 
 test("左侧菜单栏与右侧两个大容器同高同位：上下各留与邮件外壳相同的间距", () => {
   const css = source("styles/workspace.css");
-  assert.match(css, /\.mail-workspace \{ --rail-w: var\(--workspace-sidebar-width\); \}/);
-  assert.match(css, /\.dock-menu\.is-desktop-sidebar \{[^}]*margin:14px 0 12px; height:calc\(100% - 26px\);/);
-  assert.match(css, /\.workspace-content \.mail-shell \{[^}]*padding: 14px 24px 12px;/);
+  assert.match(css, /\.mail-workspace \{ --workspace-sidebar-width: 0px; --rail-w: var\(--workspace-sidebar-width\);/);
+  assert.match(css, /\.dock-menu\.is-desktop-sidebar \{[^}]*height: calc\(100% - 26px\);[^}]*margin: 12px 0 14px 12px;/);
+  assert.match(css, /\.workspace-content \.mail-shell \{[^}]*padding: 12px 22px 12px;/);
 });
 
-test("会移动的选中线条始终是同一圈实线：只平移，不重画，没有虚线和碎片动画；图标落定弹一下", () => {
-  const accent = source("styles/dashed-accent.css");
-  assert.match(accent, /\.dock-navigation-highlight \.dash-outline__piece, \.folder-highlight \.dash-outline__piece, \.dock-active-pill \.dash-outline__piece \{ animation:none; \}/);
-  assert.doesNotMatch(accent, /dock-line-flow/);
+test("选中滑块是浅蓝实心胶囊：只平移伸缩，不画线；图标落定弹一下，减少动画时关闭", () => {
   const css = source("styles/workspace.css");
-  assert.match(css, /\.dock-navigation-item\.is-active svg \{ animation: dock-icon-settle 520ms/);
-  assert.match(css, /prefers-reduced-motion: reduce\) \{\s*\.dock-navigation-item\.is-active svg \{ animation: none; \}/);
-  assert.match(css, /\.dock-navigation-item\.is-active:hover \{ outline: none; box-shadow: none; transform: none; \}/);
+  for (const selector of ["dock-active-pill", "dock-navigation-highlight"]) {
+    assert.match(css, new RegExp(`\\.${selector} \\{[^}]*border-radius: 20px; background: var\\(--blue-100\\)`), selector);
+  }
+  assert.match(source("styles/mail.css"), /\.folder-highlight \{[^}]*border-radius: 18px; background: var\(--blue-100\)/);
+  assert.doesNotMatch(css, /dash-outline|line-outline|stroke-dash/);
+  assert.match(css, /\.dock-navigation-item\.is-active svg \{ color: var\(--blue-500\); animation: dock-icon-settle \.6s var\(--spring\) both; \}/);
+  assert.match(css, /prefers-reduced-motion: reduce\) \{\s*\.mail-workspace \*, \.mail-workspace \*::before \{ transition: none !important; animation: none !important; \}/);
 });
 
-test("桌面左侧菜单、文件夹列表、手机底部胶囊、手机展开菜单共用同一套滑动线条", () => {
+test("桌面左侧菜单、文件夹列表、手机底部胶囊、手机展开菜单共用同一套滑动胶囊", () => {
   const workspace = source("components/MailWorkspace.vue");
   const folders = source("components/mail/FolderRail.vue");
   const mover = source("mail/useMovingOutline.ts");
   assert.match(workspace, /const dockPill = useMovingOutline\(\{\s*container: dockElement,\s*highlight: pillElement,\s*targetSelector: \(\) => `\.dock-item\[data-dock-index="\$\{dockIndex\.value\}"\]`/);
   assert.match(workspace, /watch\(dockIndex, \(\) => \{ void nextTick\(\(\) => dockPill\.measure\(true\)\); \}\)/);
   assert.match(workspace, /<span ref="pillElement" class="dock-active-pill"/);
+  assert.doesNotMatch(workspace + folders, /LineOutline/);
   assert.match(folders, /<span ref="highlight" class="folder-highlight"/);
   assert.match(folders, /useMovingOutline\(\{\s*container: tree,\s*highlight,\s*targetSelector: \(\) => `\.folder-item\[data-path="\$\{quote\(props\.currentFolder\)\}"\]`/);
   assert.match(folders, /watch\(\(\) => props\.currentFolder, \(\) => \{ void nextTick\(\(\) => outline\.measure\(true\)\); \}\)/);
-  const css = source("styles/workspace.css");
-  assert.match(css, /\.folder-tree \.folder-item\.is-current, \.folder-tree \.folder-item\.is-current:hover \{ background: transparent !important; border-color: transparent !important; outline: none !important;/);
-  assert.match(css, /\.dock-active-pill \{ position: absolute; left: 0; top: 0; width: 0; height: 0;[^}]*transition: opacity 160ms ease;/);
+  assert.match(source("styles/mail.css"), /\.folder-item\.is-current \{ color: var\(--ink\); font-weight: 600; \}/);
   assert.match(mover, /animateRequested = animateRequested \|\| animate === true;/);
   assert.match(mover, /scaleX = container\.offsetWidth \? containerRect\.width \/ container\.offsetWidth : 1/);
+  assert.match(mover, /easing: highlightEasing\(\)/);
+  assert.match(source("mail/highlightMotion.ts"), /HIGHLIGHT_MS = 700/);
 });
 
 test("校验提示出现不再拉高、移动另一侧文本框；提示平滑展开与收起", () => {
   const css = source("styles/theme-controls.css");
   assert.match(css, /#app \.field \{ align-content: start; \}/);
-  assert.match(css, /\.themed-field-error \{ overflow: hidden; animation: themed-error-in 240ms/);
-  assert.match(css, /\.themed-field-error\.is-leaving \{ animation: themed-error-out 200ms/);
+  assert.match(css, /\.themed-field-error \{[^}]*overflow: hidden;[^}]*animation: themed-error-in \.3s/);
+  assert.match(css, /\.themed-field-error\.is-leaving \{ animation: themed-error-out \.2s/);
   const code = source("themeControls.ts");
   assert.match(code, /error\.node\.classList\.add\("is-leaving"\); setTimeout\(\(\) => error\.node\.remove\(\), 220\)/);
 });

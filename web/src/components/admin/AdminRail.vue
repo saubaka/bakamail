@@ -10,7 +10,6 @@
   >
     <div class="admin-rail__head">
       <router-link class="admin-rail__brand" :to="{ name: 'admin-overview' }" :title="`${siteInfo.siteName} 后台`" :aria-label="`${siteInfo.siteName} 后台首页`" @click="emit('navigate')">
-        <span class="brand-mark"><span class="window-symbol" aria-hidden="true"><i></i><i></i></span></span>
         <span class="admin-rail__text">{{ siteInfo.siteName }}</span>
       </router-link>
       <button

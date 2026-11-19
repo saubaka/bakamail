@@ -56,7 +56,6 @@
         <p v-if="loading" class="sr-only" role="status" aria-live="polite">正在恢复管理员会话…</p>
         <section v-else-if="permissionDenied" class="managed-page-card admin-access-denied" role="alert">
           <div>
-            <span class="soft-icon" aria-hidden="true">!</span>
             <h2>当前角色没有此页面权限</h2>
             <p>导航已按权限隐藏不可用功能；如果角色刚刚发生变化，请重新登录后台。</p>
             <router-link class="button button--primary" :to="firstRoute">返回可用页面</router-link>

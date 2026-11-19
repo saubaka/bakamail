@@ -18,12 +18,12 @@ test("右侧面板根据菜单顺序确定前后方向，未知路径保持中�
 });
 test("右侧面板仅使用合成友好的过渡，并为减少动画保留静态完成态", () => {
   const css = readFileSync(new URL("../src/styles/workspace.css", import.meta.url), "utf8");
-  assert.match(css, /\.workspace-route-panel \{[^}]*grid-area:1\/1[^}]*overflow:auto/);
+  assert.match(css, /\.workspace-route-panel \{[^}]*grid-area: 1 \/ 1;[^}]*overflow: auto;/);
   assert.match(css, /\.mail-panel-enter-active \{[^}]*opacity[^}]*transform[^}]*filter/);
-  assert.match(css, /\.mail-panel-leave-active \{[^}]*pointer-events:none[^}]*opacity[^}]*transform[^}]*filter/);
-  assert.match(css, /data-panel-direction="forward"[^}]*translate3d\(18px,0,0\)/);
-  assert.match(css, /data-panel-direction="backward"[^}]*translate3d\(-18px,0,0\)/);
-  assert.match(css, /prefers-reduced-motion: reduce[\s\S]*\.mail-panel-enter-from,\.mail-panel-leave-to \{ opacity:1; filter:none; transform:none!important; \}/);
+  assert.match(css, /\.mail-panel-leave-active \{[^}]*pointer-events: none;[^}]*opacity[^}]*transform[^}]*filter/);
+  assert.match(css, /data-panel-direction="forward"[^}]*translate3d\(20px, 0, 0\) scale\(\.99\)/);
+  assert.match(css, /data-panel-direction="backward"[^}]*translate3d\(-20px, 0, 0\) scale\(\.99\)/);
+  assert.match(css, /prefers-reduced-motion: reduce[\s\S]*\.mail-panel-enter-from, \.mail-panel-leave-to \{ opacity: 1; filter: none; transform: none !important; \}/);
   assert.doesNotMatch(css.match(/\.mail-panel-enter-active \{[^}]*\}/)?.[0] ?? "", /(?:width|height|left|top):/);
 });
 test("登录点击动画有按下及回弹，减少动态和低性能偏好不会播放", () => {
@@ -109,13 +109,13 @@ test("邮件子页面使用持久工作区，桌面侧栏与移动胶囊共用�
   assert.match(workspace, /routeAnnouncement/);
   assert.doesNotMatch(workspace, /mode="out-in"/);
 });
-test("通知仅安全插入文本，替换右下角定位，具有完整向下进出关键帧", () => {
+test("通知仅安全插入文本，铺满全屏的定位层，胶囊从顶部伸缩进出", () => {
   const source = readFileSync(new URL("../src/notifications.ts", import.meta.url), "utf8");
   assert.match(source, /text.textContent = notice.message/);
   assert.doesNotMatch(source, /innerHTML/);
   const css = readFileSync(new URL("../src/styles/notifications.css", import.meta.url), "utf8");
-  assert.match(css, /#toast-region \{ position: fixed; inset: 0/);
-  assert.match(css, /notification-drop-in/);
-  assert.match(css, /calc\(100svh \+ 40px\)/);
+  assert.match(css, /#toast-region \{ position: fixed; z-index: 1000; inset: 0;/);
+  assert.match(css, /@keyframes notification-drop-in/);
+  assert.match(css, /@keyframes notification-drop-out \{[\s\S]*?translateY\(-20px\) scale\(\.9\)/);
   assert.match(css, /prefers-reduced-motion/);
 });

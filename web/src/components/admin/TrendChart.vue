@@ -20,7 +20,7 @@
           <text v-for="tick in xTicks" :key="tick.index" :x="tick.x" :y="height - 6" :text-anchor="tick.anchor">{{ tick.label }}</text>
         </g>
         <path v-if="areaPath" class="trend__area" :d="areaPath" :style="{ '--c': series[0]?.color }" :class="{ 'is-off': hidden.has(series[0]?.key ?? '') }" />
-        <path v-for="item in series" :key="item.key" class="trend__line" :class="{ 'is-off': hidden.has(item.key) }" :d="paths[item.key]" pathLength="1" :style="{ '--c': item.color }" />
+        <path v-for="item in [...series].reverse()" :key="item.key" class="trend__line" :class="{ 'is-off': hidden.has(item.key) }" :d="paths[item.key]" pathLength="1" :style="{ '--c': item.color }" />
         <g v-if="active !== null && points.length" class="trend__focus">
           <line :x1="points[active]?.x" :x2="points[active]?.x" :y1="plot.top" :y2="plot.bottom" />
           <circle v-for="item in visibleSeries" :key="item.key" :cx="points[active]?.x" :cy="yOf(shown[item.key]?.[active] ?? 0)" r="4.5" :style="{ '--c': item.color }" />
@@ -162,41 +162,42 @@ onBeforeUnmount(() => { resizeObserver?.disconnect(); window.cancelAnimationFram
 </script>
 
 <style scoped>
-.trend { --c-grid: var(--line-blue); margin: 0; min-width: 0; }
-.trend__legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; padding: 0; list-style: none; }
-.trend__chip { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 12px; border: 1px solid var(--line-blue); border-radius: 12px; background: var(--surface); color: var(--text); font: inherit; font-size: 13px; cursor: pointer; transition: opacity 220ms var(--ease, ease), border-color 200ms var(--ease, ease), background 200ms var(--ease, ease); }
-.trend__chip i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); transition: transform 240ms var(--spring, ease); }
-.trend__chip b { margin-left: 2px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.trend__chip:hover { border-color: var(--line-blue-strong); background: var(--surface-soft, #fbfcfe); }
+.trend { --c-grid: var(--line); min-width: 0; margin: 0; }
+.trend__legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 12px; padding: 0; list-style: none; }
+.trend__chip { display: inline-flex; align-items: center; gap: 7px; min-height: 30px; padding: 0 12px; border: 0; border-radius: var(--r-pill); background: var(--surface-2); color: var(--ink-2); font: inherit; font-size: 12.5px; cursor: pointer; transition: opacity var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease); }
+.trend__chip i { width: 8px; height: 8px; border-radius: 3px; background: var(--c); transition: transform .5s var(--spring); }
+.trend__chip b { margin-left: 2px; color: var(--ink); font-weight: 650; font-variant-numeric: tabular-nums; }
+.trend__chip:hover { background: var(--chip); }
 .trend__chip.is-off { opacity: .5; }
 .trend__chip.is-off i { transform: scale(.6); }
-.trend__chip:focus-visible, .trend__stage:focus-visible { outline: 2px solid var(--line-blue-strong); outline-offset: 2px; }
-.trend__stage { position: relative; min-width: 0; border-radius: 16px; }
+.trend__chip:focus-visible, .trend__stage:focus-visible { outline: 2px solid var(--blue-400); outline-offset: 2px; }
+.trend__stage { position: relative; min-width: 0; border-radius: var(--r-m); }
 .trend__svg { display: block; overflow: visible; }
 .trend__grid line { stroke: var(--c-grid); stroke-width: 1; shape-rendering: crispEdges; }
-.trend__grid text, .trend__xaxis text { fill: var(--text-soft); font-size: 11px; font-variant-numeric: tabular-nums; }
-.trend__line { fill: none; stroke: var(--c); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: opacity 260ms var(--ease, ease); }
+.trend__grid text, .trend__xaxis text { fill: var(--ink-3); font-size: 11px; font-variant-numeric: tabular-nums; }
+.trend__line { fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; transition: opacity var(--t-std) var(--ease); }
 .trend__line.is-off { opacity: 0; }
-.trend__area { fill: var(--c); opacity: .1; stroke: none; transition: opacity 260ms var(--ease, ease); }
+.trend__area { fill: var(--c); stroke: none; opacity: .12; transition: opacity var(--t-std) var(--ease); }
 .trend__area.is-off { opacity: 0; }
-.is-drawing .trend__line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: trend-draw 1100ms cubic-bezier(.4, .1, .2, 1) forwards; }
-.is-drawing .trend__line:nth-of-type(2) { animation-delay: 120ms; }
-.is-drawing .trend__line:nth-of-type(3) { animation-delay: 240ms; }
-.is-drawing .trend__area { animation: trend-fade 900ms ease 500ms backwards; }
+.is-drawing .trend__line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: trend-draw 1.8s var(--ease) .2s forwards; }
+.is-drawing .trend__line:nth-last-of-type(2) { animation-delay: .32s; }
+.is-drawing .trend__line:nth-last-of-type(3) { animation-delay: .44s; }
+.is-drawing .trend__area { animation: trend-fade .9s var(--ease) .5s backwards; }
+.trend__hit { fill: transparent; cursor: crosshair; }
+.trend__focus line { stroke: var(--line-2); stroke-width: 1; stroke-dasharray: 3 4; }
+.trend__focus circle { fill: var(--c); stroke: var(--surface); stroke-width: 2; }
+.trend__tip { position: absolute; z-index: 3; top: 6px; display: grid; gap: 4px; min-width: 150px; max-width: 220px; padding: 8px 11px; border: 1px solid var(--line-2); border-radius: 12px; background: var(--glass); box-shadow: var(--shadow-2); color: var(--ink); font-size: 12px; line-height: 1.35; pointer-events: none; transform: translateX(-50%); animation: trend-tip .3s var(--spring); }
+.trend__tip strong { font-size: 13px; font-weight: 650; }
+.trend__tip span { display: flex; align-items: center; gap: 7px; color: var(--ink-2); }
+.trend__tip span i { width: 8px; height: 8px; border-radius: 3px; background: var(--c); }
+.trend__tip span b { margin-left: auto; color: var(--ink); font-weight: 650; font-variant-numeric: tabular-nums; }
+.trend__empty { position: absolute; top: 50%; left: 50%; margin: 0; padding: 6px 14px; border-radius: var(--r-pill); background: var(--glass-hi); color: var(--ink-3); font-size: 12.5px; opacity: 0; transform: translate(-50%, -50%); transition: opacity var(--t-std) var(--ease); pointer-events: none; }
+.is-empty .trend__empty { opacity: 1; }
+.is-empty .trend__line, .is-empty .trend__area { opacity: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @keyframes trend-draw { to { stroke-dashoffset: 0; } }
 @keyframes trend-fade { from { opacity: 0; } }
-.trend__hit { fill: transparent; cursor: crosshair; }
-.trend__focus line { stroke: var(--line-blue-strong); stroke-width: 1; stroke-dasharray: 3 4; }
-.trend__focus circle { fill: var(--surface); stroke: var(--c); stroke-width: 2.2; }
-.trend__tip { position: absolute; top: 6px; z-index: 3; display: grid; gap: 4px; min-width: 150px; max-width: 220px; padding: 10px 12px; border: 1px solid var(--line-blue); border-radius: 12px; background: rgba(255, 255, 255, .94); box-shadow: 0 8px 24px rgba(91, 130, 169, .14); font-size: 12px; pointer-events: none; transform: translateX(-50%); animation: trend-tip 160ms var(--ease, ease); }
-.trend__tip strong { font-size: 12px; font-weight: 600; }
-.trend__tip span { display: flex; align-items: center; gap: 7px; color: var(--text-soft); }
-.trend__tip span i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
-.trend__tip span b { margin-left: auto; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
-@keyframes trend-tip { from { opacity: 0; transform: translateX(-50%) translateY(4px); } }
-.trend__empty { position: absolute; left: 50%; top: 50%; margin: 0; padding: 6px 14px; border: 1px solid var(--line-blue); border-radius: 999px; background: rgba(255, 255, 255, .9); color: var(--text-soft); font-size: 12px; opacity: 0; transform: translate(-50%, -50%); transition: opacity 360ms var(--ease, ease); pointer-events: none; }
-.is-empty .trend__empty { opacity: 1; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@keyframes trend-tip { from { opacity: 0; transform: translateX(-50%) translateY(6px) scale(.96); } }
 @media (prefers-reduced-motion: reduce) {
   .is-drawing .trend__line, .is-drawing .trend__area, .trend__tip { animation: none; }
   .is-drawing .trend__line { stroke-dasharray: none; stroke-dashoffset: 0; }

@@ -2,7 +2,7 @@ export const SEO_DEFAULT_SITE_NAME = "Baka Mail";
 export const SEO_DEFAULT_TAGLINE = "自建邮局的网页端";
 export const SEO_DEFAULT_OG_IMAGE = "/og-image.png";
 export const SEO_DEFAULT_OG_SIZE = { width: 1200, height: 630 } as const;
-export const SEO_DEFAULT_THEME_COLOR = "#F7F9FC";
+export const SEO_DEFAULT_THEME_COLOR = "#F8F6F7";
 export const SEO_REPOSITORY_URL = "https://github.com/saubaka/bakamail";
 
 export const SEO_LIMITS = {
@@ -197,7 +197,7 @@ export function parseSeoConfig(input: unknown): SeoParse {
   const card = raw.twitterCard ?? base.twitterCard;
   if (card !== "summary" && card !== "summary_large_image") return { ok: false, message: "分享卡片类型只能是 summary 或 summary_large_image" };
   const theme = raw.themeColor ?? base.themeColor;
-  if (typeof theme !== "string" || !/^#[0-9a-fA-F]{6}$/.test(theme.trim())) return { ok: false, message: "主题色请填写 #RRGGBB 格式，例如 #F7F9FC" };
+  if (typeof theme !== "string" || !/^#[0-9a-fA-F]{6}$/.test(theme.trim())) return { ok: false, message: "主题色请填写 #RRGGBB 格式，例如 #F8F6F7" };
 
   const verification = { ...base.verification };
   const rawVerification = raw.verification ?? {};

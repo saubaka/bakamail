@@ -1,5 +1,5 @@
 import { computed, ref, type Ref } from "vue";
-import { HIGHLIGHT_EASING, HIGHLIGHT_MS, planHighlightMove } from "./highlightMotion.ts";
+import { HIGHLIGHT_MS, highlightEasing, planHighlightMove } from "./highlightMotion.ts";
 
 export type OutlineBox = { x: number; y: number; width: number; height: number; ready: boolean };
 
@@ -53,7 +53,7 @@ export function useMovingOutline(options: {
         };
         for (const running of element.getAnimations()) running.cancel();
         const plan = planHighlightMove(from, next);
-        if (plan) element.animate(plan, { duration: HIGHLIGHT_MS, easing: HIGHLIGHT_EASING });
+        if (plan) element.animate(plan, { duration: HIGHLIGHT_MS, easing: highlightEasing() });
       }
       box.value = next;
     });

@@ -78,9 +78,9 @@
         <div class="seo-fields">
           <label class="field is-wide">
             <span class="field__label">首页标题</span>
-            <input id="seo-title" v-model="form.homeTitle" maxlength="80" autocomplete="off" :placeholder="autoTitle" :disabled="saving" aria-describedby="seo-title-count" />
+            <input id="seo-title" v-model="form.homeTitle" maxlength="80" autocomplete="off" placeholder="留空自动生成" :disabled="saving" aria-describedby="seo-title-count" />
             <small id="seo-title-count" class="seo-count" :class="tone('title-length')">
-              {{ form.homeTitle ? "" : "自动生成 · " }}约 {{ approxChars(eff.title) }} 字（建议 8–30 字）
+              {{ form.homeTitle ? "" : `自动生成：${autoTitle} · ` }}约 {{ approxChars(eff.title) }} 字（建议 8–30 字）
               <button v-if="form.homeTitle" class="seo-link" type="button" @click="form.homeTitle = ''">恢复自动</button>
             </small>
           </label>
@@ -113,7 +113,7 @@
         <div class="seo-fields">
           <label class="field is-wide">
             <span class="field__label">规范网址</span>
-            <input id="seo-origin" v-model="form.canonicalOrigin" inputmode="url" autocapitalize="none" spellcheck="false" autocomplete="off" :placeholder="state.envOrigin || 'https://mail.example.com'" :disabled="saving" aria-describedby="seo-origin-help" />
+            <input id="seo-origin" v-model="form.canonicalOrigin" inputmode="url" autocapitalize="none" spellcheck="false" autocomplete="off" placeholder="https://…" :disabled="saving" aria-describedby="seo-origin-help" />
             <small id="seo-origin-help" class="seo-count" :class="tone('canonical')">
               {{ form.canonicalOrigin ? "使用这里填写的地址" : state.envOrigin ? `留空使用服务器配置的 ${state.envOrigin}` : "留空且服务器没有配置公开地址时，canonical、分享图片和站点地图都无法生成" }}
             </small>
@@ -162,8 +162,8 @@
         <div class="seo-fields">
           <label class="field is-wide">
             <span class="field__label">分享图片</span>
-            <input id="seo-og-image" v-model="form.ogImage" inputmode="url" autocapitalize="none" spellcheck="false" autocomplete="off" placeholder="留空使用内置图片，或填 https://… 地址" :disabled="saving" aria-describedby="seo-og-image-help" />
-            <small id="seo-og-image-help" class="seo-count" :class="tone('og-image')">建议 1200×630，png、jpg 或 webp，小于 1MB。</small>
+            <input id="seo-og-image" v-model="form.ogImage" inputmode="url" autocapitalize="none" spellcheck="false" autocomplete="off" placeholder="留空使用内置图片" :disabled="saving" aria-describedby="seo-og-image-help" />
+            <small id="seo-og-image-help" class="seo-count" :class="tone('og-image')">可填 https:// 图片地址，建议 1200×630，png、jpg 或 webp，小于 1MB。</small>
           </label>
           <label class="field">
             <span class="field__label">卡片样式</span>
@@ -176,7 +176,7 @@
             <span class="field__label">主题色</span>
             <span class="seo-color">
               <i class="seo-color__swatch" :style="{ background: swatch }" aria-hidden="true"></i>
-              <input id="seo-theme-color" v-model="form.themeColor" maxlength="7" autocomplete="off" spellcheck="false" placeholder="#F7F9FC" :disabled="saving" />
+              <input id="seo-theme-color" v-model="form.themeColor" maxlength="7" autocomplete="off" spellcheck="false" placeholder="#F8F6F7" :disabled="saving" />
             </span>
           </label>
         </div>
@@ -388,86 +388,84 @@ onBeforeUnmount(() => { window.removeEventListener("beforeunload", beforeUnload)
 </script>
 
 <style scoped>
-.seo h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.seo h3 { margin: 0; font-size: 14px; font-weight: 650; }
 .seo-score { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px 22px; margin-top: 4px; }
-.seo-score__number { font-size: 44px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
-.seo-score__number small { margin-left: 4px; font-size: 14px; font-weight: 500; color: var(--text-soft); }
-.seo-score__meter { height: 10px; overflow: hidden; border: 1px solid var(--line-blue); border-radius: 999px; background: #eef3f8; }
-.seo-score__meter i { display: block; height: 100%; border-radius: 999px; background: #a8d0f4; transition: width 240ms var(--ease, ease); }
-.seo-score__meter i.badge--mint { background: #7fcaa6; }
-.seo-score__meter i.badge--yellow { background: #f0d9a0; }
-.seo-score__meter i.badge--danger { background: var(--danger-300); }
-.seo-score__counts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; color: var(--text-soft); font-size: 13px; }
-.seo-score__counts .is-warn { color: #8a6a24; }
-.seo-score__counts .is-bad { color: var(--danger-700); }
-.seo-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 28px; margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line-blue); }
+.seo-score__number { color: var(--ink); font-size: 52px; font-weight: 650; line-height: 1.05; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+.seo-score__number small { margin-left: 4px; color: var(--ink-3); font-size: 14px; font-weight: 500; letter-spacing: 0; }
+.seo-score__meter { height: 8px; overflow: hidden; border-radius: var(--r-pill); background: var(--blue-100); }
+.seo-score__meter i { display: block; height: 100%; border-radius: var(--r-pill); background: var(--blue-400); transition: width 1s var(--ease), background .5s var(--ease); }
+.seo-score__meter i.badge--mint { background: var(--blue-400); }
+.seo-score__meter i.badge--yellow { background: var(--pink-300); }
+.seo-score__meter i.badge--danger { background: var(--pink-500); }
+.seo-score__counts { display: flex; flex-wrap: wrap; grid-column: 1 / -1; gap: 6px 18px; margin: 0; color: var(--ink-2); font-size: 13px; }
+.seo-score__counts .is-warn { color: var(--ink); }
+.seo-score__counts .is-bad { color: var(--bad-ink); }
+.seo-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 28px; margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
 .seo-group { min-width: 0; }
 .seo-group ul { margin: 10px 0 0; padding: 0; list-style: none; }
-.seo-check { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-top: 1px solid var(--line-blue); }
-.seo-check:first-child { border-top: 0; }
+.seo-check { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; padding: 10px 8px; border-radius: var(--r-m); transition: background-color .35s var(--ease); }
+.seo-check + .seo-check { box-shadow: 0 -1px 0 var(--line); }
+.seo-check:hover { background: var(--surface-2); }
 .seo-check > div { min-width: 0; }
-.seo-check p { margin: 4px 0 0; color: var(--text-soft); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
-.seo-check__label { display: inline; margin: 0; padding: 0; border: 0; background: none; color: var(--text); font: inherit; font-size: 14px; font-weight: 600; text-align: left; }
-button.seo-check__label { cursor: pointer; text-decoration: underline; text-decoration-color: var(--line-blue-strong, #bed8ef); text-underline-offset: 3px; }
-button.seo-check__label:focus-visible { outline: 3px solid rgba(143, 198, 232, .4); outline-offset: 2px; border-radius: 4px; }
-.seo-check__state { margin-left: 8px; color: var(--text-soft); font-size: 12px; white-space: nowrap; }
-.seo-check__mark { position: relative; width: 18px; height: 18px; margin-top: 2px; border-radius: 50%; background: #e9eff4; }
-.seo-check__mark::after { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; line-height: 1; }
-.seo-check.is-pass .seo-check__mark { background: #5fb98f; }
-.seo-check.is-pass .seo-check__mark::after { content: "✓"; }
-.seo-check.is-warn .seo-check__mark { background: #d9a93f; }
-.seo-check.is-warn .seo-check__mark::after { content: "!"; }
-.seo-check.is-fail .seo-check__mark { background: var(--danger-200); }
-.seo-check.is-fail .seo-check__mark::after { color: var(--danger-700); }
-.seo-check.is-fail .seo-check__mark::after { content: "×"; font-size: 13px; }
-.seo-check.is-info .seo-check__mark { background: #9bb7d3; }
-.seo-check.is-info .seo-check__mark::after { content: "i"; }
-.seo-check.is-warn .seo-check__state { color: #8a6a24; }
-.seo-check.is-fail .seo-check__state { color: var(--danger-700); }
-.seo-check.is-pass .seo-check__state { color: #2c7a5a; }
-
-.seo-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
-.seo-fields .field { min-width: 0; align-content: start; }
+.seo-check p { margin: 4px 0 0; color: var(--ink-2); font-size: 12.5px; line-height: 1.7; overflow-wrap: anywhere; }
+.seo-check__label { display: inline; margin: 0; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; text-align: left; }
+button.seo-check__label { cursor: pointer; text-decoration: underline; text-decoration-color: var(--blue-300); text-underline-offset: 3px; }
+button.seo-check__label:focus-visible { border-radius: var(--r-xs); outline: 2px solid var(--blue-400); outline-offset: 2px; }
+.seo-check__state { margin-left: 8px; color: var(--ink-3); font-size: 12px; white-space: nowrap; }
+.seo-check__mark { position: relative; width: 20px; height: 20px; margin-top: 1px; border-radius: 7px; background: var(--chip); }
+.seo-check__mark::after { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-3); font-size: 11px; font-weight: 700; line-height: 1; }
+.seo-check.is-pass .seo-check__mark { background: var(--good-bg); }
+.seo-check.is-pass .seo-check__mark::after { content: "✓"; color: var(--good); }
+.seo-check.is-warn .seo-check__mark { background: var(--warn-bg); }
+.seo-check.is-warn .seo-check__mark::after { content: "!"; color: var(--warn); }
+.seo-check.is-fail .seo-check__mark { background: var(--bad-bg); }
+.seo-check.is-fail .seo-check__mark::after { content: "×"; color: var(--bad); font-size: 13px; }
+.seo-check.is-info .seo-check__mark { background: var(--muted-bg); }
+.seo-check.is-info .seo-check__mark::after { content: "i"; color: var(--ink-3); }
+.seo-check.is-warn .seo-check__state { color: var(--ink-2); }
+.seo-check.is-fail .seo-check__state { color: var(--bad-ink); }
+.seo-check.is-pass .seo-check__state { color: var(--ink-2); }
+.seo-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 16px; }
+.seo-fields .field { align-content: start; min-width: 0; }
 .seo-fields .is-wide { grid-column: 1 / -1; }
-.seo-count { display: block; margin-top: 6px; color: var(--text-soft); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
-.seo-count.is-good { color: #2c7a5a; }
-.seo-count.is-warn { color: #8a6a24; }
-.seo-count.is-bad { color: var(--danger-700); }
-.seo-link { margin-left: 8px; padding: 0; border: 0; background: none; color: var(--action-blue-ink, #3d5f9c); font: inherit; font-size: 12px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
-.seo-link:focus-visible { outline: 3px solid rgba(143, 198, 232, .4); outline-offset: 2px; border-radius: 4px; }
+.seo-count { display: block; margin-top: 6px; color: var(--ink-3); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.seo-count.is-good { color: var(--ink-2); }
+.seo-count.is-warn { color: var(--ink); }
+.seo-count.is-bad { color: var(--bad-ink); }
+.seo-link { margin-left: 8px; padding: 0; border: 0; background: none; color: var(--ink-2); font: inherit; font-size: 12.5px; font-weight: 600; text-decoration: underline; text-decoration-color: var(--blue-300); text-underline-offset: 3px; cursor: pointer; }
+.seo-link:hover { color: var(--ink); }
+.seo-link:focus-visible { border-radius: var(--r-xs); outline: 2px solid var(--blue-400); outline-offset: 2px; }
 .seo-preview-block { margin-top: 20px; }
-.seo .hint-line { margin: 14px 0 0; color: var(--text-soft); font-size: 12px; line-height: 1.7; }
-
+.seo .hint-line { margin: 14px 0 0; }
 .seo-switches { margin: 20px 0 0; padding: 0; list-style: none; }
-.seo-switches li { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 10px 0; border-top: 1px solid var(--line-blue); }
+.seo-switches li { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 58px; padding: 10px 8px; border-radius: var(--r-m); transition: background-color .35s var(--ease); }
+.seo-switches li + li { box-shadow: 0 -1px 0 var(--line); }
+.seo-switches li:hover { background: var(--surface-2); }
 .seo-switches li > div { display: grid; gap: 2px; min-width: 0; }
-.seo-switches strong { font-size: 14px; font-weight: 600; }
-.seo-switches small { color: var(--text-soft); font-size: 12px; line-height: 1.6; }
+.seo-switches strong { color: var(--ink); font-size: 14px; font-weight: 600; }
+.seo-switches small { color: var(--ink-3); font-size: 12.5px; line-height: 1.6; }
 .seo-files { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 18px; }
 .seo-files > div { min-width: 0; }
 .seo-files__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-.seo-code { margin: 0; padding: 12px 14px; max-height: 190px; overflow: auto; border: 1px solid var(--line-blue); border-radius: 14px; background: #f6f9fc; color: var(--text); font: 12px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre; tab-size: 2; }
+.seo-code { max-height: 190px; margin: 0; padding: 12px 14px; overflow: auto; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--surface-2); color: var(--ink); font: 12px/1.7 var(--font-mono); white-space: pre; tab-size: 2; }
 .seo-code--tall { max-height: 320px; margin-top: 12px; }
-.seo-code:focus-visible { outline: 3px solid rgba(143, 198, 232, .4); outline-offset: 2px; }
-.seo-details summary { cursor: pointer; color: var(--text-soft); font-size: 13px; }
-
+.seo-code:focus-visible { outline: 2px solid var(--blue-400); outline-offset: 2px; }
+.seo-details summary { color: var(--ink-2); font-size: 13px; font-weight: 600; cursor: pointer; }
 .seo-color { display: flex; align-items: center; gap: 10px; }
-.seo-color input { min-width: 0; flex: 1 1 auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-.seo-color__swatch { flex: 0 0 auto; width: 32px; height: 32px; border: 1px solid var(--line-blue); border-radius: 10px; }
-
-.seo-savebar { position: sticky; bottom: 14px; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; padding: 12px 16px; border: 1px solid var(--line-blue); border-radius: 18px; background: var(--surface, #fff); box-shadow: 0 8px 28px rgba(72, 105, 131, .12); }
-.seo-savebar__state { flex: 1 1 220px; min-width: 0; margin: 0; color: var(--text-soft); font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
-.seo-savebar__state.is-bad { color: var(--danger-700); }
+.seo-color input { flex: 1 1 auto; min-width: 0; font-family: var(--font-mono) !important; }
+.seo-color__swatch { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 12px; box-shadow: inset 0 0 0 1px var(--line-2); }
+.seo-savebar { position: sticky; z-index: 5; bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; padding: 10px 10px 10px 18px; border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--glass); box-shadow: var(--shadow-2); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3); }
+.seo-savebar__state { flex: 1 1 220px; min-width: 0; margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.seo-savebar__state.is-bad { color: var(--bad-ink); }
 .seo-savebar__actions { display: flex; flex-wrap: wrap; gap: 10px; }
-
 @media (max-width: 900px) { .seo-groups, .seo-files { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 700px) {
   .seo-fields { grid-template-columns: minmax(0, 1fr); }
   .seo-score { grid-template-columns: minmax(0, 1fr); }
-  .seo-score__number { font-size: 38px; }
-  .seo-savebar { bottom: 10px; padding: 12px; }
+  .seo-score__number { font-size: 44px; }
+  .seo-savebar { bottom: 10px; padding: 12px; border-radius: var(--r-l); }
   .seo-savebar__actions { width: 100%; }
   .seo-savebar__actions .button { flex: 1 1 auto; }
 }
-@media (prefers-reduced-motion: reduce) { .seo-score__meter i { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .seo-score__meter i, .seo-check, .seo-switches li { transition: none; } }
 </style>

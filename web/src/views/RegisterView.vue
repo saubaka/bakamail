@@ -2,9 +2,6 @@
   <main id="main-content" class="auth-shell">
     <section v-motion="{ kind: 'feature', reversible: false }" class="auth-card card" aria-labelledby="register-title">
       <header class="login-heading">
-        <span class="login-logo" aria-hidden="true">
-          <svg viewBox="0 0 40 40" fill="none"><rect x="5" y="9" width="30" height="23" rx="5" /><path d="m7 12 10 8a5 5 0 0 0 6 0l10-8M7 29l8-8m18 8-8-8" /></svg>
-        </span>
         <span class="login-product-name">{{ siteInfo.siteName }}</span>
         <h1 id="register-title">用邀请码开通邮箱</h1>
         <p>填写邀请码和账号信息，提交后开通你的邮箱。</p>
@@ -145,33 +142,10 @@ onBeforeUnmount(() => window.clearInterval(timer));
 </script>
 
 <style scoped>
-.field-inline {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.field-inline input {
-  flex: 1;
-}
-
-.field-suffix {
-  color: var(--text-soft);
-  font-size: 13px;
-}
-
-.honeypot {
-  position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-.hint-line {
-  margin: 14px 0 0;
-  text-align: center;
-  color: var(--text-soft);
-  font-size: 12px;
-}
+.field-inline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.field-inline input { flex: 1 1 200px; min-width: 0; }
+.field-suffix { color: var(--ink-2); font-size: 13px; }
+.hint-line { margin: 14px 0 0; color: var(--ink-3); font-size: 12.5px; text-align: center; }
+.hint-line a { text-decoration: none; }
+.hint-line a:hover { text-decoration: underline; text-decoration-color: var(--blue-300); text-underline-offset: 4px; }
 </style>

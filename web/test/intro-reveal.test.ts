@@ -64,5 +64,5 @@ test("介绍页控件不再触发 vendor 无类名控件样式，FAQ 用可收�
   const styles = readFileSync(new URL("../src/styles/intro.css", import.meta.url), "utf8");
   assert.match(styles, /\.intro-faq \{[^}]*minmax\(0, 1fr\) minmax\(0, 1\.6fr\)/);
   assert.match(styles, /\.intro-faq-question \{[^}]*min-width: 0;[^}]*overflow-wrap: anywhere/);
-  assert.match(styles, /\.intro-page \.intro-button \{[^}]*background: var\(--surface\);[^}]*background-image: none/);
+  assert.match(styles, /\.intro-page \.intro-button \{[^}]*border-radius: var\(--r-pill\); background: var\(--blue-300\);[^}]*box-shadow: var\(--shadow-btn\)/);
 });

@@ -17,9 +17,9 @@ test("搜索与菜单统一系统文件夹中文名称，自建文件夹与结�
   assert.match(search, /folderLabel\(folder\)/); assert.match(search, /folderPathLabel\(resultFolder.value, folders.value\)/);
   assert.match(search, /folder: resultFolder.value, uid: String\(uid\)/);
 });
-test("菜单以圆点缩放展开，仅动画 transform/opacity，360ms 入场、240ms退场及260ms保护计时一致", () => {
+test("菜单像灵动岛一样弹出，仅动画 transform/opacity，弹性入场、240ms 退场及 260ms 保护计时一致", () => {
   const css = source("src/styles/workspace.css");
-  assert.match(css, /dock-menu-in 360ms/); assert.match(css, /dock-menu-out 240ms/);
+  assert.match(css, /animation: dock-menu-in \.62s var\(--spring-soft\) both/); assert.match(css, /animation: dock-menu-out \.24s var\(--ease-in\) both/);
   for (const name of ["dock-menu-in", "dock-menu-out"]) {
     const line = css.split("\n").find(value => value.startsWith(`@keyframes ${name}`))!;
     assert.doesNotMatch(line, /border-radius|filter|width|height|background/);
@@ -42,13 +42,14 @@ test("空条件使用统一水滴通知，日期提示位于搜索按钮之前�
   assert.match(search, /if \(await searchStore.run\(input\)\)/); assert.match(search, /resultsRevision.value\+\+/);
 });
 test("结果高度观察更新且卸载清理，减少动画由 CSS 降级", () => {
-  const previous = globalThis.ResizeObserver; let callback = () => {}; let disconnected = 0; let height = 90;
-  const inner = { getBoundingClientRect: () => ({ height }) };
+  const previous = globalThis.ResizeObserver; let callback: (entries: unknown[]) => void = () => {}; let disconnected = 0; let height = 90;
+  const inner = { get offsetHeight() { return height; }, getBoundingClientRect: () => ({ height: height * 0.98 }) };
   const element = { firstElementChild: inner, style: { height: "" } };
-  globalThis.ResizeObserver = class { constructor(fn: () => void) { callback = fn; } observe(target: unknown) { assert.equal(target, inner); } disconnect() { disconnected++; } } as unknown as typeof ResizeObserver;
+  globalThis.ResizeObserver = class { constructor(fn: (entries: unknown[]) => void) { callback = fn; } observe(target: unknown) { assert.equal(target, inner); } disconnect() { disconnected++; } } as unknown as typeof ResizeObserver;
   try {
     (smoothHeightDirective.mounted as Function)(element); assert.equal(element.style.height, "90px");
-    height = 240; callback(); assert.equal(element.style.height, "240px");
+    height = 240; callback([]); assert.equal(element.style.height, "240px");
+    callback([{ borderBoxSize: [{ blockSize: 251.5 }] }]); assert.equal(element.style.height, "251.5px");
     (smoothHeightDirective.beforeUnmount as Function)(element); assert.equal(disconnected, 1);
   } finally { globalThis.ResizeObserver = previous; }
   assert.match(source("src/styles/search-motion.css"), /prefers-reduced-motion/);

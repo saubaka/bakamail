@@ -36,8 +36,8 @@ test('媒体授权等待提示出场，严格拦截无授权入口，切换邮�
 });
 test('正文伸展、短时分组入场、折叠可访问性与减少动画规则齐全',()=>{
   const css=source('styles/reader.css'), component=source('components/mail/MessageReaderPane.vue');
-  assert.match(css,/mail-body__frame[^}]*flex:1 0 220px/);assert.match(css,/padding:18px 24px 24px/);
-  assert.match(css,/reader-arrive 240ms/);assert.match(css,/reader-media-arrive 280ms/);assert.match(css,/prefers-reduced-motion/);
+  assert.match(css,/mail-body__frame \{[^}]*flex: 1 0 220px/);assert.match(css,/padding: 18px 24px 24px/);
+  assert.match(css,/reader-arrive \.6s var\(--ease\)/);assert.match(css,/reader-media-arrive \.5s var\(--ease\)/);assert.match(css,/prefers-reduced-motion/);
   assert.match(component,/:inert="!showSecurity"/);assert.match(component,/:aria-expanded="showSecurity"/);
   assert.doesNotMatch(component,/class="mail-badges"/);
   assert.match(readerFrameDocument('',false),/prefers-reduced-motion/);

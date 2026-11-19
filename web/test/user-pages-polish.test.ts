@@ -9,33 +9,36 @@ const rule = (css: string, selector: string) => {
   return css.match(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`))?.[1] ?? "";
 };
 
-test("左侧菜单栏四周有线：上下两条横线通过右侧圆角与竖线连成一体", () => {
+test("左侧菜单栏是一张独立的圆角卡片：四周细线、大圆角、柔和阴影，与右侧容器同一套卡片样式", () => {
   const css = source("styles/workspace.css");
   const sidebar = rule(css, ".dock-menu.is-desktop-sidebar");
-  assert.match(sidebar, /border:1px solid var\(--line-blue\); border-left:0; border-radius:0 24px 24px 0/);
-  assert.doesNotMatch(sidebar, /border-right:1px solid var\(--line-blue\); border-radius:0;/);
+  assert.match(sidebar, /border: 1px solid var\(--card-line\); border-radius: var\(--r-xl\); background: var\(--surface\); box-shadow: var\(--shadow-1\)/);
+  assert.match(rule(source("styles/mail.css"), ".mail-pane"), /border: 1px solid var\(--card-line\); border-radius: var\(--r-xl\); background: var\(--surface\); box-shadow: var\(--shadow-1\)/);
 });
 
 test("工具页卡片高度由内容决定，不再被基座的 264px 最小高度撑高；编辑联系人的卡片与列表等宽", () => {
   const css = source("styles/mail-pages.css");
-  assert.match(css, /\.mail-utility-shell \.managed-page-card \{[^}]*min-height: 0; height: auto;/);
-  assert.match(css, /\.mail-utility-shell \.managed-page-card:hover \{ transform: none; \}/);
+  assert.match(css, /\.mail-utility-shell \.managed-page-card \{ min-height: 0; height: auto; \}/);
+  assert.doesNotMatch(css, /min-height: 264px/);
   assert.match(css, /\.contact-editor-panel \{ max-width: none; \}/);
 });
 
 test("搜索表单：关键词独占一行，其余四项整齐排成一行，窄屏依次变成两列和一列", () => {
   const css = source("styles/mail-pages.css");
-  const tail = css.slice(css.indexOf(".mail-utility-shell .managed-page-card {"));
-  assert.match(tail, /\.mail-search-form \{ grid-template-columns: repeat\(4, minmax\(0, 1fr\)\); \}/);
-  assert.match(tail, /\.mail-search-query \{ grid-column: 1 \/ -1; \}/);
-  assert.match(tail, /@media \(max-width: 980px\) \{\s*\.mail-search-form \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); \}/);
-  assert.match(tail, /@media \(max-width: 560px\) \{\s*\.mail-search-form \{ grid-template-columns: 1fr; \}/);
+  assert.match(css, /\.mail-search-form \{ display: grid; grid-template-columns: repeat\(4, minmax\(0, 1fr\)\);/);
+  assert.match(css, /\.mail-search-query \{ grid-column: 1 \/ -1; \}/);
+  assert.match(css, /@media \(max-width: 980px\) \{\s*\.mail-search-form \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); \}/);
+  const narrow = css.slice(css.indexOf("@media (max-width: 560px) {"));
+  assert.match(narrow, /^@media \(max-width: 560px\) \{[\s\S]*?\.mail-search-form, \.settings-grid, \.detail-grid \{ grid-template-columns: 1fr; \}/);
 });
 
 test("选择框、日期框与输入框同高同圆角同字号，聚焦样式一致；手机上输入框字号 16px 避免 iOS 自动放大", () => {
   const css = source("styles/theme-controls.css");
-  assert.match(css, /#app \.field \.themed-control \{ min-height: 48px; padding: 11px 13px; border-radius: 13px; font-size: 13px; \}/);
-  assert.match(css, /#app \.themed-control:focus-visible \{ border-color: var\(--line-blue-strong\); outline: 1px solid var\(--focus-line\); outline-offset: 3px; \}/);
+  assert.match(css, /\.themed-control \{[^}]*min-height: 44px; padding: 0 14px; border: 1\.5px solid var\(--line\); border-radius: var\(--r-m\);[^}]*font-size: 14px;/);
+  const fields = source("styles/theme/primitives.css");
+  assert.match(fields, /min-height: 44px; padding: 10px 14px; border: 1\.5px solid var\(--line\); border-radius: var\(--r-m\);[^}]*font-size: 14px;/);
+  assert.match(css, /\.themed-control:focus-visible \{ border-color: var\(--blue-400\); outline: none; box-shadow: var\(--ring\); \}/);
+  assert.match(fields, /:focus, \.form-stack textarea:focus \{ border-color: var\(--blue-400\); background: var\(--surface\); box-shadow: var\(--ring\); \}/);
   assert.match(css, /@media \(max-width: 900px\) \{[^}]*textarea, select\),\s*#app \.field \.themed-control \{ font-size: 16px; \}/);
 });
 
@@ -70,9 +73,10 @@ test("写信和打开草稿的意图只用一次：从地址里去掉，关闭�
   assert.match(view, /router\.replace\(\{ name: route\.name \?\? "mail", query: rest \}\)/);
 });
 
-test("邮件阅读区有入场动画，且与列表一样不显示外轮廓", () => {
+test("邮件阅读区有入场动画，入场只做淡入上浮，不画线", () => {
   assert.match(source("components/mail/MessageReaderPane.vue"), /<section v-motion="\{ kind: 'compact', delay: 160 \}" class="mail-pane mail-pane--reader"/);
-  assert.match(source("styles/workspace.css"), /\.mail-pane--reader > \.motion-outline \{ display: none; \}/);
+  assert.doesNotMatch(source("motion.ts"), /createElementNS|motion-outline|strokeDashoffset/);
+  assert.match(source("enterMotion.ts"), /translate3d\(0, \$\{distance\}px, 0\)/);
 });
 
 test("离开的卡片先固定在原位置再淡出，其余卡片才能平滑补位", () => {
@@ -85,7 +89,7 @@ test("离开的卡片先固定在原位置再淡出，其余卡片才能平滑�
 test("滚动入场指令已注册，减少动画时所有新增过渡关闭", () => {
   assert.match(source("main.ts"), /\.directive\("scroll-reveal", scrollRevealDirective\)/);
   const css = source("styles/mail-pages.css");
-  assert.match(css, /prefers-reduced-motion: reduce\) \{\s*\.smooth-block, \[data-scroll-reveal\]/);
+  assert.match(css, /prefers-reduced-motion: reduce\) \{[^@]*\.smooth-block, \[data-scroll-reveal\]/);
   assert.match(css, /data-motion="reduce"\], \[data-performance="low"\]\) :is\(\.smooth-block, \[data-scroll-reveal\]/);
 });
 
@@ -94,14 +98,12 @@ test("桌面端：搜索、草稿、联系人、设置整页是一个大容器�
     assert.match(source(view), /<div v-motion="\{ kind: 'feature' \}" class="mail-utility-page">\s*<main id="main-content" class="page-shell mail-utility-shell"/);
   }
   const css = source("styles/workspace.css");
-  const tail = css.slice(css.indexOf(".mail-utility-page > .motion-outline { display: none; }"));
-  assert.match(tail, /\.workspace-route-panel:has\(> \.mail-utility-page\) \{[^}]*padding: 14px 24px 12px; overflow: hidden;/);
-  assert.match(tail, /\.mail-utility-page \{ position: relative; width: 100%; max-width: 1552px; height: 100%;/);
-  assert.match(css, /\.workspace-content \.mail-shell \{[^}]*padding: 14px 24px 12px;/);
-  assert.match(css, /\.dock-menu\.is-desktop-sidebar \{[^}]*margin:14px 0 12px; height:calc\(100% - 26px\);/);
-  assert.match(tail, /\.mail-utility-shell \.motion-outline \{ display: none; \}/);
+  const tail = css.slice(css.indexOf("@media (min-width: 901px) {"));
+  assert.match(tail, /\.workspace-route-panel:has\(> \.mail-utility-page\) \{[^}]*padding: 12px 22px 12px; overflow: hidden;/);
+  assert.match(tail, /\.mail-utility-page \{ position: relative; width: 100%; max-width: 1552px; height: 100%;[^}]*border-radius: var\(--r-xl\)/);
+  assert.match(css, /\.workspace-content \.mail-shell \{[^}]*padding: 12px 22px 12px;/);
+  assert.match(css, /\.dock-menu\.is-desktop-sidebar \{[^}]*height: calc\(100% - 26px\);[^}]*margin: 12px 0 14px 12px;/);
   assert.match(tail, /overflow-y: auto;/);
-  assert.match(tail, /\.admin-panel \+ \.admin-panel,[\s\S]*box-shadow: inset 0 1px 0 var\(--line-blue\) !important;/);
+  assert.match(tail, /\.admin-panel \+ \.admin-panel,[\s\S]*box-shadow: inset 0 1px 0 var\(--line\);/);
   assert.match(tail, /\.search-result-content \.mail-result-list \{ max-height: none; overflow: visible; \}/);
-  assert.match(css, /\.mail-utility-page > \.motion-outline \{ display: none; \}\n@media \(min-width: 901px\)/);
 });

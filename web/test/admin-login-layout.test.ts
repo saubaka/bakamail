@@ -6,14 +6,12 @@ const source = (path: string) => readFileSync(new URL(`../src/${path}`, import.m
 const admin = source("views/admin/AdminLoginView.vue");
 const ordinary = source("views/LoginView.vue");
 
-test("管理员登录复用普通登录的卡片、排版、信封图标与独立页脚", () => {
+test("管理员登录复用普通登录的卡片、排版与独立页脚，两者都不放图片标志", () => {
   for (const name of ["login-page", "login-main", "login-card card", "login-heading", "login-product-name", "form-grid auth-form login-form", "login-secondary-nav", "login-footer"]) {
     assert.ok(admin.includes(`class="${name}"`), name);
     assert.ok(ordinary.includes(`class="${name}"`), name);
   }
-  const logo = (text: string) => text.match(/<span class="login-logo"[\s\S]*?<\/span>/)?.[0];
-  assert.ok(logo(ordinary));
-  assert.equal(logo(admin), logo(ordinary));
+  for (const text of [admin, ordinary]) assert.doesNotMatch(text, /login-logo|<svg|<img/);
   assert.match(admin, /<\/main>\s*<footer class="login-footer">/);
   assert.match(admin, /© \{\{ year \}\} saubaka · BakaMail/);
   assert.doesNotMatch(admin, /BrandMark|auth-shell|auth-card|eyebrow|⚙|>ADMIN</);

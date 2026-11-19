@@ -59,14 +59,13 @@ test('卸载后旧观察不能改变新状态或重新隐藏行', () => {
 });
 
 test('选中样式保留 opacity/transform 过渡，减少动画的终态覆盖离场属性', () => {
-  const accent = readFileSync(new URL('../src/styles/dashed-accent.css',import.meta.url),'utf8');
-  assert.match(accent, /\.mail-list \.mail-row\.is-current[^}]+transition:opacity[^}]+transform[^}]+filter/);
   const css = readFileSync(new URL('../src/styles/workspace.css',import.meta.url),'utf8');
-  assert.match(css,/\.mail-list \.mail-row \{ opacity: 1/);
-  assert.match(css,/\.mail-list \.mail-row__line[^}]+min-width:0/);
-  assert.match(css,/\.mail-list \.mail-row__subject[^}]+min-width:0; flex:1/);
+  assert.match(css,/\.mail-list \.mail-row \{[^}]*opacity: 1; transform: none; filter: none; transition: opacity 260ms[^}]*transform[^}]*filter/);
+  assert.match(readFileSync(new URL('../src/styles/mail.css',import.meta.url),'utf8'),/\.mail-row\.is-current, \.mail-list \.mail-row\.is-current \{ border-color: var\(--blue-200\); background: var\(--blue-50\)/);
+  assert.match(css,/\.mail-list \.mail-row__line[^}]+min-width: 0/);
+  assert.match(css,/\.mail-list \.mail-row__subject \{ flex: 1; min-width: 0; \}/);
   assert.match(css,/\[data-row-reveal="outside"\]:not\(:focus-within\)/);
-  assert.match(css,/@media[^}]*prefers-reduced-motion[\s\S]*\[data-row-reveal="outside"\]:not\(:focus-within\)[^}]+animation:none/);
+  assert.match(css,/@media[^}]*prefers-reduced-motion[\s\S]*\[data-row-reveal="outside"\]:not\(:focus-within\)[^}]+animation: none/);
 });
 
 test('阈值边缘仍在列表内的卡片不因不足15%而消失', () => {

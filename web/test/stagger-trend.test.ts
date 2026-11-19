@@ -78,9 +78,8 @@ test("卡片内容单元：统计卡片按图标、标题、数值、说明的�
   assert.deepEqual(names(collectCardParts(stat)), ["SPAN.baka-overview-stat__icon", "SMALL", "STRONG", "SPAN.baka-overview-stat__hint"]);
 });
 
-test("卡片内容单元：跳过外轮廓和嵌套卡片、隐藏元素与对话框，表单项、按钮、表格各算一个，数量有上限", () => {
+test("卡片内容单元：跳过嵌套卡片、隐藏元素与对话框，表单项、按钮、表格各算一个，数量有上限", () => {
   const card = el("SECTION", "admin-panel", [
-    el("SVG", "motion-outline"),
     el("HEADER", "", [el("H2", "", [], "标题"), el("P", "", [], "说明")]),
     el("FORM", "form-grid", [el("LABEL", "", [el("INPUT")], "名称"), el("LABEL", "", [el("INPUT")], "地址"), el("DIV", "actions", [el("BUTTON", "button", [], "保存")])]),
     el("DIV", "table-scroll", [el("TABLE", "", [el("TR")])]),

@@ -74,7 +74,7 @@
         <div class="baka-overview__quick-actions">
           <router-link v-for="action in quickActions" :key="action.to.name" :to="action.to">
             <AdminIcon :name="action.icon" :size="18" />
-            {{ action.label }}
+            <span class="baka-overview__label">{{ action.label }}</span>
             <span class="baka-overview__arrow" aria-hidden="true"><AdminIcon name="chevron" :size="16" /></span>
           </router-link>
         </div>

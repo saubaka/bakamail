@@ -16,7 +16,7 @@ This directory contains source, tests, dependency declarations/lockfile and plac
 - After EVERY change in that parent project, synchronize and check before handoff; this is an agent workflow requirement, not a background watcher.
 - For a standalone clone, work in that checkout normally. Install with `npm ci`; verify using `npm run typecheck`, `npm test`, `npm run build`, `npm run check`. The original-parent mirror commands are not required for standalone development.
 - Browser requests must use same-origin `/api/*`; only the BFF communicates with Maddy. Preserve authentication, permission checks, CSRF, CAPTCHA and anti-abuse protections.
-- Preserve the immutable `web/src/styles/vendor` CSS snapshots and their hashes. Use incremental theme CSS for changes; keep pale-blue solid outlines, no solid blue selection blocks, reduced-motion and keyboard/focus semantics.
+- Colours, radii, shadows and motion come only from `web/src/styles/theme/tokens.css`; other stylesheets and component styles must not hard-code colours. Keep reduced-motion and keyboard/focus semantics. `npm run check:styles` enforces this.
 - Mail HTML is untrusted. Never loosen the opaque sandbox to allow same-origin or arbitrary scripts/media. Keep confirmation dialogs for destructive actions.
 - Do not force whole-page reloads, discard drafts or clear real-user caches. The Vite configuration retains old hashed assets for open tabs.
 - Use isolated fixtures/temporary databases for tests, not real accounts or mailboxes. Do not deploy, commit, push or mutate remote resources unless explicitly requested. GitHub login/verification remains a human step.

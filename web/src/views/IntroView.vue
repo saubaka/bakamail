@@ -29,17 +29,11 @@
               <button class="intro-demo-tab" type="button" :aria-pressed="demo === 'inbox'" @click="demo = 'inbox'">收件箱<span>1</span></button>
               <button class="intro-demo-tab" type="button" :aria-pressed="demo === 'draft'" @click="demo = 'draft'">草稿箱</button>
             </div>
-            <div class="intro-letter-scene" :class="{ 'is-open': opened }">
-              <svg class="intro-postal-path" viewBox="0 0 380 220" aria-hidden="true"><path d="M20 155C75 210 75 40 153 70S312 182 353 46" /><circle cx="353" cy="46" r="5" /></svg>
-              <div class="intro-envelope" aria-hidden="true"><div class="intro-envelope-paper"><span>你好，</span><i></i><i></i><b>欢迎使用 {{ siteInfo.siteName }}。</b></div><div class="intro-envelope-pocket"></div><div class="intro-envelope-seal">{{ siteInitial }}</div></div>
-            </div>
             <div class="intro-demo-copy" aria-live="polite">
               <span>{{ demo === 'inbox' ? `欢迎使用 ${siteInfo.siteName}` : '还没写完的邮件' }}</span>
               <p>{{ demo === 'inbox' ? '喵？' : '写到一半可以先存成草稿，下次打开接着写。' }}</p>
             </div>
-            <button class="intro-open-letter" type="button" :aria-pressed="opened" @click="opened = !opened">{{ opened ? '收起邮件' : '展开邮件' }}<span aria-hidden="true">{{ opened ? '−' : '+' }}</span></button>
           </div>
-          <span class="intro-postmark" aria-hidden="true">BAKA<br />POST</span>
         </div>
       </section>
 
@@ -47,7 +41,7 @@
         <div class="intro-section-heading intro-stagger" style="--i: 0"><p class="intro-kicker">功能介绍</p><h2 id="about-title">一个简单直接的<br />网页邮箱。</h2></div>
         <div class="intro-about-detail"><p class="intro-body-copy intro-stagger" style="--i: 1">{{ siteInfo.siteName }}对接你自己部署的 Maddy 邮件服务。浏览器只和本站通信，不会直接连接邮件服务器。</p>
           <div class="intro-features">
-            <article v-for="(feature, index) in features" :key="feature.title" class="intro-stagger" :style="{ '--i': index + 2 }"><svg viewBox="0 0 32 32" aria-hidden="true"><template v-if="index === 0"><rect x="4" y="7" width="24" height="18" rx="4" /><path d="m5 9 11 9L27 9" /></template><template v-else-if="index === 1"><path d="M16 3 27 8v8c0 7-11 13-11 13S5 23 5 16V8Z" /><path d="m11 16 4 4 7-8" /></template><template v-else><rect x="2" y="5" width="21" height="17" rx="3" /><rect x="20" y="13" width="10" height="16" rx="2" /><path d="M8 27h9M12 22v5" /></template></svg><h3>{{ feature.title }}</h3><p>{{ feature.text }}</p></article>
+            <article v-for="(feature, index) in features" :key="feature.title" class="intro-stagger" :style="{ '--i': index + 2 }"><h3>{{ feature.title }}</h3><p>{{ feature.text }}</p></article>
           </div>
         </div>
       </section>
@@ -56,7 +50,7 @@
         <details v-for="(item, index) in faq" :key="item.question" class="intro-faq-card intro-stagger" :style="{ '--i': index + 1 }"><summary class="intro-faq-trigger" @click.prevent="toggleFaq(($event.currentTarget as HTMLElement).parentElement as HTMLDetailsElement)"><span class="intro-faq-question">{{ item.question }}</span><span class="intro-faq-plus" aria-hidden="true">+</span></summary><div class="intro-faq-answer"><p>{{ item.answer }}<router-link v-if="'link' in item" :to="item.link.to">{{ item.link.label }}</router-link></p></div></details>
       </div></section>
 
-      <section v-intro-reveal class="intro-closing intro-reveal--split" aria-labelledby="closing-title"><span class="intro-stagger" style="--i: 0" aria-hidden="true">✉</span><h2 id="closing-title" class="intro-stagger" style="--i: 1">已经有账号了？<br />直接登录。</h2><router-link class="intro-button intro-stagger" style="--i: 2" :to="entry">{{ signedIn ? '进入邮箱' : '登录邮箱' }}<span aria-hidden="true">↗</span></router-link></section>
+      <section v-intro-reveal class="intro-closing intro-reveal--split" aria-labelledby="closing-title"><h2 id="closing-title" class="intro-stagger" style="--i: 0">已经有账号了？<br />直接登录。</h2><router-link class="intro-button intro-stagger" style="--i: 1" :to="entry">{{ signedIn ? '进入邮箱' : '登录邮箱' }}<span aria-hidden="true">↗</span></router-link></section>
     </main>
     <footer class="intro-footer"><div class="intro-footer-links"><router-link to="/">项目介绍</router-link><a :href="repositoryUrl" target="_blank" rel="noopener noreferrer">Github</a><router-link to="/password-reset">重置密码</router-link></div><p>© {{ year }} saubaka. BakaMail.</p></footer>
   </div>
@@ -78,10 +72,8 @@ const session = useSessionStore();
 const signedIn = computed(() => session.ready && Boolean(session.mailbox));
 const entry = computed(() => signedIn.value ? safeMailDestination(route.query.redirect) : { name: "login", query: { redirect: safeMailDestination(route.query.redirect) } });
 const demo = ref("inbox");
-const opened = ref(false);
 const year = new Date().getFullYear();
 const features = INTRO_FEATURES;
 const faq = INTRO_FAQ;
 const repositoryUrl = SEO_REPOSITORY_URL;
-const siteInitial = computed(() => [...siteInfo.siteName][0]?.toUpperCase() ?? "B");
 </script>

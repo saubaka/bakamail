@@ -207,41 +207,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.log-block {
-  max-height: 320px;
-  overflow: auto;
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-soft);
-  font-size: 12px;
-}
-
-.admin-log-filters {
-  display: grid;
-  grid-template-columns: 130px minmax(220px, 1fr) auto;
-  gap: 12px;
-  align-items: end;
-  margin-bottom: 14px;
-}
-
-@media (max-width: 720px) {
-  .admin-log-filters {
-    grid-template-columns: 1fr;
-  }
-}
-
-.badge--ok {
-  background: var(--state-success-100);
-  color: var(--state-success-700);
-}
-
-.badge--warn {
-  background: var(--state-warning-100);
-  color: var(--state-warning-700);
-}
-
-.badge--fail {
-  background: var(--danger-100);
-  color: var(--danger-700);
-}
+.log-block { max-height: 320px; overflow: auto; }
+.admin-log-filters { display: grid; grid-template-columns: 130px minmax(220px, 1fr) auto; align-items: end; gap: 12px; margin-bottom: 14px; }
+@media (max-width: 720px) { .admin-log-filters { grid-template-columns: 1fr; } }
+.badge--ok { background: var(--good-bg); color: var(--ink-2); }
+.badge--warn { background: var(--warn-bg); color: var(--ink-2); }
+.badge--fail { background: var(--bad-bg); color: var(--bad-ink); }
 </style>

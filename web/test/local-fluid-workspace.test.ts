@@ -117,7 +117,7 @@ test("所有下拉框和日期输入都接入自建控件，附件入口与 chec
   const source = walk(root).join("\n");
   for (const tag of source.match(/<select\b[^>]*>|<input\b[^>]*type="(?:date|number)"[^>]*>/g) ?? []) assert.match(tag, /v-theme-control/);
   assert.match(source, /compose-file-input/);
-  const css = readFileSync(new URL("../src/styles/theme-controls.css", import.meta.url), "utf8"); assert.match(css, /appearance: none !important/);
+  const css = readFileSync(new URL("../src/styles/theme/primitives.css", import.meta.url), "utf8"); assert.match(css, /input\[type="checkbox"\], input\[type="radio"\] \{ appearance: none; -webkit-appearance: none;/); assert.match(css, /input\[type="checkbox"\]:checked, input\[type="radio"\]:checked \{ border-color: var\(--blue-500\); background: var\(--blue-500\); \}/);
 });
 test("邮件行共享列表观察器，滚入/滚出/重入均可逆，卸载后不接收迟到观察", () => {
   const previousObserver = globalThis.IntersectionObserver; const previousDocument = globalThis.document;
@@ -139,7 +139,7 @@ test("邮件行共享列表观察器，滚入/滚出/重入均可逆，卸载后
 });
 test("移动底部菜单等待退场再 SPA 跳转；列表有内部滚动和逐项补入，旧数量线隐藏", () => {
   const css = readFileSync(new URL("../src/styles/workspace.css", import.meta.url), "utf8");
-  assert.match(css, /dock-menu-out/); assert.match(css, /overflow-y: auto/); assert.match(css, /mail-count-line \{ display:none/);
+  assert.match(css, /dock-menu-out/); assert.match(css, /overflow-y: auto/); assert.match(css, /mail-count-line \{ display: none; \}/);
   const rows = readFileSync(new URL("../src/components/mail/MessageListPane.vue", import.meta.url), "utf8");
   assert.match(rows, /v-row-reveal/); assert.match(rows, /setTimeout\(fillNext, 26\)/); assert.doesNotMatch(rows, /加载更多<\/button>/);
   const rail = readFileSync(new URL("../src/components/mail/FolderRail.vue", import.meta.url), "utf8"); assert.match(rail, /:disabled="navigationBusy"/);

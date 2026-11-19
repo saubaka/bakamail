@@ -276,56 +276,32 @@ onBeforeUnmount(() => { active = false; });
 </script>
 
 <style scoped>
-.invite-reveal-card {
-  display: grid;
-  gap: 10px;
-  min-width: 0;
-  margin: 18px 0;
-  padding: 18px;
-  border: 1px solid var(--silver-mist);
-  border-radius: var(--radius-card);
-  background: var(--surface-soft);
+.invite-reveal-card { display: grid; gap: 10px; min-width: 0; margin: 18px 0; padding: 18px; border: 1px solid var(--blue-200); border-radius: var(--r-l); background: var(--blue-50); }
+.invite-reveal-card > .button { justify-self: start; }
+.invite-code { display: block; min-width: 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--surface); color: var(--ink); font-family: var(--font-mono); font-size: 15px; overflow-wrap: anywhere; }
+.invite-create-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 18px 22px; padding: 20px 0; border-block: 1px solid var(--line); }
+.invite-limit-field { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 12px; min-width: 0; }
+.invite-create-grid .field { gap: 8px; margin: 0; }
+.invite-create-action { display: flex; flex-wrap: wrap; align-self: end; align-items: center; gap: 12px; }
+.invite-create-action small, .invite-field-note { color: var(--ink-3); font-size: 12.5px; line-height: 1.7; }
+.invite-field-note { margin: 24px 0 0; }
+.invite-overview { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 12px 0 16px; color: var(--ink-2); font-size: 12.5px; }
+.invite-status { display: inline-flex; padding: 3px 10px; border-radius: var(--r-pill); background: var(--muted-bg); color: var(--ink-2); font-size: 12px; font-weight: 600; }
+.invite-table-scroll { max-width: 100%; }
+.invite-table td { line-height: 1.7; white-space: nowrap; vertical-align: middle; }
+.invite-table td[data-label="前缀"], .invite-table td[data-label="绑定"], .invite-table td[data-label="最近使用／占用"] { min-width: 140px; max-width: 240px; white-space: normal; overflow-wrap: anywhere; }
+.invite-table .invite-status, .invite-table code { white-space: nowrap; }
+.invite-usage strong { font-weight: 650; white-space: nowrap; }
+.invite-usage small, .invite-cell-note { display: block; margin-top: 3px; color: var(--ink-3); font-size: 11.5px; line-height: 1.7; }
+@media (max-width: 1100px) { .invite-create-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 680px) {
+  .invite-table, .invite-table tbody { display: block; width: 100%; }
+  .invite-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .invite-table tr { display: grid; grid-template-columns: minmax(0, 1fr); margin-bottom: 10px; padding: 8px 14px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--surface-2); }
+  .invite-table td { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 6px 10px; min-width: 0; max-width: none; padding: 7px 2px; border: 0; }
+  .invite-table td::before { content: attr(data-label); align-self: center; color: var(--ink-3); font-size: 12px; }
+  .invite-table td > small { grid-column: 2; margin: 0; }
+  .invite-table td > .button, .invite-table td > .invite-status, .invite-table td > code { justify-self: start; }
 }
-
-.invite-reveal-card > .button {
-  justify-self: start;
-}
-
-.invite-code {
-  display: block;
-  min-width: 0;
-  padding: 12px 14px;
-  border: 1px solid var(--silver-mist);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  font-size: 15px;
-  overflow-wrap: anywhere;
-}
-.invite-create-grid { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; gap:18px 22px; padding:20px 0; border-block:1px solid var(--line-blue); }
-.invite-limit-field { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; min-width:0; align-items:start; }
-.invite-create-grid .field { margin:0; gap:8px; }
-.invite-create-action { align-self:end; display:flex; align-items:center; flex-wrap:wrap; gap:12px; }
-.invite-create-action small,.invite-field-note { color:var(--text-soft); font-size:12px; line-height:1.7; }
-.invite-field-note { margin:24px 0 0; }
-.invite-overview { display:flex; flex-wrap:wrap; gap:8px 20px; margin:12px 0 16px; color:var(--text-soft); font-size:12px; }
-.invite-status { display:inline-flex; padding:5px 9px; border:1px solid var(--line-blue); border-radius:var(--radius-pill); background:transparent; }
-.invite-table-scroll { max-width:100%; }
-.invite-table td { vertical-align:middle; white-space:nowrap; line-height:1.7; }
-.invite-table td[data-label="前缀"], .invite-table td[data-label="绑定"], .invite-table td[data-label="最近使用／占用"] { min-width:140px; max-width:240px; white-space:normal; overflow-wrap:anywhere; }
-.invite-table .invite-status { white-space:nowrap; }
-.invite-table code { white-space:nowrap; }
-.invite-usage strong { font-weight:600; white-space:nowrap; }
-.invite-usage small,.invite-cell-note { display:block; color:var(--text-soft); font-size:11px; line-height:1.7; margin-top:3px; }
-@media(max-width:1100px) { .invite-create-grid { grid-template-columns:minmax(0,1fr); } }
-@media(max-width:680px) {
-  .invite-table,.invite-table tbody { display:block; width:100%; }
-  .invite-table thead { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
-  .invite-table tr { display:grid; grid-template-columns:minmax(0,1fr); padding:14px 0; border-top:1px solid var(--line-blue); }
-  .invite-table td { display:grid; grid-template-columns:88px minmax(0,1fr); gap:6px 10px; max-width:none; min-width:0; padding:7px 2px; border:0; }
-  .invite-table td::before { content:attr(data-label); color:var(--text-soft); font-size:11px; align-self:center; }
-  .invite-table td > small { grid-column:2; margin:0; }
-  .invite-table td > .button,.invite-table td > .invite-status { justify-self:start; }
-  .invite-table td > code { justify-self:start; }
-}
-@media(max-width:380px) { .invite-limit-field { grid-template-columns:minmax(0,1fr); }.invite-field-note { margin:0; } }
+@media (max-width: 380px) { .invite-limit-field { grid-template-columns: minmax(0, 1fr); } .invite-field-note { margin: 0; } }
 </style>

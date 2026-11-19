@@ -188,7 +188,7 @@ test("首页头部标签：标题以外的描述、关键词、规范网址、�
   const head = renderHomeHead(resolveSeo(config({ siteName: "某某邮箱" }), ORIGIN));
   for (const expected of [
     '<meta name="description" content="某某邮箱是给自建', '<meta name="keywords" content="某某邮箱,网页邮箱', '<meta name="robots" content="index, follow, max-image-preview:large',
-    `<link rel="canonical" href="${ORIGIN}/" />`, '<meta name="theme-color" content="#F7F9FC" />', '<meta property="og:type" content="website" />',
+    `<link rel="canonical" href="${ORIGIN}/" />`, '<meta name="theme-color" content="#F8F6F7" />', '<meta property="og:type" content="website" />',
     '<meta property="og:site_name" content="某某邮箱" />', `<meta property="og:url" content="${ORIGIN}/" />`, `<meta property="og:image" content="${ORIGIN}/og-image.png" />`,
     '<meta property="og:image:width" content="1200" />', '<meta property="og:image:height" content="630" />', '<meta property="og:locale" content="zh_CN" />',
     '<meta name="twitter:card" content="summary_large_image" />', `<meta name="twitter:image" content="${ORIGIN}/og-image.png" />`,

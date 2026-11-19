@@ -136,8 +136,9 @@ test("侧栏样式：纯色、只用项目令牌、减少动画时关闭过渡�
   assert.doesNotMatch(block, /gradient/i);
   assert.doesNotMatch(block, /#[\da-f]{3,8}\b|rgba?\(/i);
   assert.match(block, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(block, /html\[data-motion="reduce"\] \.admin-rail__indicator\.is-ready/);
-  assert.match(block, /\.admin-rail__indicator\.is-ready \{ transition: transform/);
+  assert.match(block, /html\[data-motion="reduce"\] :is\(\.admin-rail__indicator\.is-ready/);
+  assert.match(block, /\.admin-rail__indicator\.is-ready \{ transition: transform var\(--t-soft\) var\(--spring-soft\)/);
+  assert.match(block, /\.admin-rail__indicator \{[^}]*border-radius: 20px; background: var\(--blue-100\)/, "选中滑块是浅蓝实心胶囊，不画线");
   assert.match(block, /body\.admin-rail-open \{ overflow: hidden; \}/);
   assert.match(block, /@media \(max-width: 900px\)/);
   assert.match(block, /background: var\(--surface\);/);

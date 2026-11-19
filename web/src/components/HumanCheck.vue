@@ -157,71 +157,16 @@ onBeforeUnmount(() => { active = false; controller?.abort(); window.clearInterva
 </script>
 
 <style scoped>
-.human-check {
-  grid-template-columns: clamp(72px, calc(100% - 148px), 112px) 44px minmax(0, 1fr);
-  align-items: start;
-  gap: 7px 8px;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-}
-
+.human-check { display: grid; grid-template-columns: clamp(72px, calc(100% - 148px), 112px) 44px minmax(0, 1fr); align-items: start; gap: 7px 8px; min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
 .human-check__field { display: contents; }
 .human-check__field > .field__label { grid-column: 1 / -1; grid-row: 1; }
-
-.human-check__image {
-  grid-column: 1;
-  grid-row: 2;
-  display: grid;
-  place-items: center;
-  height: 48px;
-  min-height: 48px;
-  box-sizing: border-box;
-}
-.human-check__image img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.human-check__image .mail-empty {
-  max-width: 100%;
-  padding: 3px;
-  font-size: 11px;
-  line-height: 1.3;
-  overflow-wrap: anywhere;
-}
-
-.human-check__refresh {
-  grid-column: 2;
-  grid-row: 2;
-  align-self: stretch;
-  width: 44px;
-  height: 48px;
-  margin: 0;
-  padding: 0;
-  border-radius: 13px;
-}
+.human-check__image { display: grid; place-items: center; grid-column: 1; grid-row: 2; box-sizing: border-box; height: 46px; min-height: 46px; overflow: hidden; border: 1.5px solid var(--line); border-radius: var(--r-m); background: var(--surface); }
+.human-check__image img { width: 100%; height: 100%; object-fit: contain; }
+.human-check__image .mail-empty { max-width: 100%; padding: 3px; font-size: 11px; line-height: 1.3; overflow-wrap: anywhere; }
+.human-check__refresh { align-self: stretch; grid-column: 2; grid-row: 2; width: 44px; height: 46px; margin: 0; padding: 0; border-radius: var(--r-m); }
 .human-check__refresh:hover,
 .human-check__refresh:active,
 .human-check__refresh:disabled { transform: none !important; }
-.human-check__field input {
-  grid-column: 3;
-  grid-row: 2;
-  width: 100%;
-  min-width: 0;
-  height: 48px;
-  min-height: 48px;
-  padding: 10px 8px;
-  box-sizing: border-box;
-  font-size: 16px;
-  letter-spacing: .12em;
-}
-.human-check__status {
-  grid-column: 1 / -1;
-  grid-row: 3;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
+.human-check__field input { grid-column: 3; grid-row: 2; box-sizing: border-box; width: 100%; min-width: 0; height: 46px; min-height: 46px; padding: 10px 8px !important; font-size: 16px !important; letter-spacing: .12em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+.human-check__status { grid-column: 1 / -1; grid-row: 3; min-width: 0; color: var(--ink-3); font-size: 12px; overflow-wrap: anywhere; }
 </style>

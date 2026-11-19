@@ -78,8 +78,8 @@ test("减少动画时入场不排队；首页样式让每一项自己淡入，�
   f.fire(f.items.map((item) => f.entry(item, true)));
   assert.ok(f.items.every((item) => f.vars.get(`${item.id}--d`) === "0ms"));
   const css = source("styles/intro.css");
-  assert.match(css, /\.intro-stagger\.is-seen \{ opacity: 1; transform: none;[^}]*transition-delay: var\(--d, 0ms\)/);
-  assert.match(css, /\.intro-faq-card\.intro-stagger \{ transform: translate3d\(0, 40px, 0\) scale\(\.96\)/);
+  assert.match(css, /\.intro-stagger\.is-seen \{ opacity: 1; filter: none; transform: none;[^}]*transition-delay: var\(--d, 0ms\)/);
+  assert.match(css, /\.intro-faq-card\.intro-stagger \{ transform: translate3d\(0, 28px, 0\) scale\(\.96\)/);
   assert.doesNotMatch(css, /is-in-view \.intro-stagger/);
   assert.match(css, /data-motion=reduce\], \[data-performance=low\]\) \.intro-reveal--split \.intro-stagger \{ opacity: 1 !important/);
 });

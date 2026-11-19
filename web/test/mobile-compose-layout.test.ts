@@ -24,10 +24,10 @@ test('写信入口在手机和桌面共用横向居中对齐，不再让加号�
 
 test('写信弹窗明确高度及可收缩表单行，不依赖不定高度下的零基准flex', () => {
   const dialog = declarations('dialogs.css', 'dialog.modal.compose-dialog');
-  assert.deepEqual(dialog.height, ['min(780px,calc(100vh - 32px))', 'min(780px,calc(100dvh - 32px))']);
+  assert.deepEqual(dialog.height, ['min(780px, calc(100vh - 32px))', 'min(780px, calc(100dvh - 32px))']);
   const open = declarations('dialogs.css', 'dialog.compose-dialog[open]');
   assert.deepEqual(open.display, ['grid']);
-  assert.deepEqual(open['grid-template-rows'], ['auto minmax(0,1fr)']);
+  assert.deepEqual(open['grid-template-rows'], ['auto minmax(0, 1fr)']);
   const form = declarations('dialogs.css', '.compose-dialog .compose-form');
   assert.equal(form.flex, undefined);
   assert.deepEqual(form['min-height'], ['0']);
@@ -36,7 +36,7 @@ test('写信弹窗明确高度及可收缩表单行，不依赖不定高度下�
 
 test('手机弹窗保留旧视口回退、安全区及16px输入，不用最小高度挤出短屏', () => {
   const dialog = declarations('dialogs.css', 'dialog.modal.compose-dialog', true);
-  assert.deepEqual(dialog.height, ['min(840px,calc(100vh - 24px))', 'min(840px,calc(100dvh - 24px - env(safe-area-inset-bottom,0px)))']);
+  assert.deepEqual(dialog.height, ['min(840px, calc(100vh - 24px))', 'min(840px, calc(100dvh - 24px - env(safe-area-inset-bottom, 0px)))']);
   assert.equal(dialog['min-height'], undefined);
-  assert.deepEqual(declarations('dialogs.css', '.compose-form :is(input,textarea)', true)['font-size'], ['16px']);
+  assert.deepEqual(declarations('dialogs.css', '.compose-form :is(input, textarea)', true)['font-size'], ['16px']);
 });

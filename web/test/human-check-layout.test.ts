@@ -19,10 +19,10 @@ test("四种认证入口共用紧凑验证码组件，不修改上游主题快�
   assert.match(rule(".human-check__field > .field__label"), /grid-row: 1/);
 });
 
-test("验证码、换码按钮、输入框共享第二行的 48px 高度，图片完整等比显示", () => {
+test("验证码、换码按钮、输入框共享第二行的 46px 高度，图片完整等比显示", () => {
   for (const selector of [".human-check__image", ".human-check__refresh", ".human-check__field input"]) {
     assert.match(rule(selector), /grid-row: 2/);
-    assert.match(rule(selector), /(?:^|\s)height: 48px/);
+    assert.match(rule(selector), /(?:^|\s)height: 46px/);
   }
   assert.match(rule(".human-check__refresh"), /width: 44px/);
   assert.match(css, /\.human-check__refresh:hover,[\s\S]*?\.human-check__refresh:disabled\s*\{ transform: none !important; \}/);

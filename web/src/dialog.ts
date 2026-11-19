@@ -1,8 +1,7 @@
 import { reactive } from "vue";
-import { attachSurfaceLines } from './surfaceLines.ts';
 
 const CLOSE_MS = 260;
-const lifecycles = new WeakMap<HTMLDialogElement, { version: number; timer: number | null; lines?: () => void }>();
+const lifecycles = new WeakMap<HTMLDialogElement, { version: number; timer: number | null }>();
 function lifecycle(element: HTMLDialogElement) {
   let state = lifecycles.get(element);
   if (!state) { state = { version: 0, timer: null }; lifecycles.set(element, state); }
@@ -90,7 +89,6 @@ export function openDialog(element: HTMLDialogElement | null | undefined): void 
   state.timer = null;
   element.classList.remove("is-closing");
   if (!element.open) element.showModal();
-  if (typeof document !== 'undefined') state.lines = attachSurfaceLines(element);
   requestAnimationFrame(() => {
     if (state.version === version && element.open) element.classList.add("is-present");
   });
@@ -108,6 +106,5 @@ export function closeDialog(element: HTMLDialogElement | null | undefined): void
     state.timer = null;
     element.classList.remove("is-closing");
     if (element.open) element.close();
-    state.lines?.(); state.lines=undefined;
   }, CLOSE_MS);
 }

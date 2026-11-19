@@ -12,15 +12,19 @@ test('所有通知走同一完整CSS边框，不再测量/裁剪水滴的SVG描�
   assert.match(source,/message, tone: 'info', progress, options/);
   assert.match(source,/text.textContent = content/);
 });
-test('入场/完成/退场/背景同一实线无透明覆盖、无phase SVG门控',()=>{
-  const theme=read('styles/dashed-accent.css'),css=read('styles/notifications.css');
-  const root=postcss.parse(theme);
-  const rules=root.nodes.filter(node=>node.type==='rule'&&node.selector==='.notification-stack-card .notification-capsule');
-  assert.equal(rules.length,1);
-  const rule=rules[0]; assert.equal(rule?.type,'rule');
-  if(rule?.type==='rule') assert.ok(rule.nodes.some(n=>n.type==='decl'&&n.prop==='border'&&n.value==='1px solid var(--line-blue-strong)'));
-  assert.doesNotMatch(theme,/notification-capsule[^{}]*\{[^}]*border-color:transparent|notification-capsule[^{}]*> \.dash-outline/);
-  assert.match(css,/border-radius: 28px/);
+test('通知是磨砂白胶囊：浅粉细边、柔和阴影、胶囊圆角，进出场为胶囊伸缩并保留减少动画',()=>{
+  const css=read('styles/notifications.css');
+  const root=postcss.parse(css);
+  const rule=root.nodes.find(node=>node.type==='rule'&&node.selector==='.notification-capsule');
+  assert.ok(rule&&rule.type==='rule');
+  const decls=Object.fromEntries((rule as postcss.Rule).nodes.filter((n):n is postcss.Declaration=>n.type==='decl').map(n=>[n.prop,n.value]));
+  assert.equal(decls.border,'1px solid var(--pink-300)');
+  assert.equal(decls['border-radius'],'var(--r-pill)');
+  assert.equal(decls.background,'var(--glass)');
+  assert.equal(decls['box-shadow'],'var(--shadow-2)');
+  assert.match(decls.animation??'',/notification-drop-in .*var\(--spring-soft\)/);
+  assert.doesNotMatch(css,/dash-outline|line-blue|border-radius: 65%/);
+  assert.match(css,/@keyframes notification-drop-in \{[\s\S]*?width: 52px[\s\S]*?width: 100%/);
   assert.match(css,/notification-capsule\.is-leaving/);
   assert.match(css,/is-background \.notification-capsule/);
   assert.match(css,/prefers-reduced-motion: ?reduce/);

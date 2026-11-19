@@ -4,7 +4,6 @@ import { existsSync, mkdtempSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
-import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "bakamail-proxy-release-"));
@@ -48,16 +47,14 @@ test("部署包含共享运行模块并保留旧 hashed assets，不打包会话
   }
 });
 
-test("发布只允许保留锁定快照，所有 vendor 哈希仍须精确匹配", () => {
+test("发布前的样式合同：主题令牌与参考面板一致，旧基座快照已退役", () => {
   const root = new URL("../../", import.meta.url);
-  const manifest = JSON.parse(readFileSync(new URL("web/src/styles/vendor/manifest.json",root),"utf8"));
-  for (const entry of manifest.files) {
-    assert.equal(createHash("sha256").update(readFileSync(new URL(entry.target,root))).digest("hex"), entry.sha256);
-  }
+  assert.equal(existsSync(new URL("web/src/styles/vendor", root)), false);
   const output = execFileSync(process.execPath,["scripts/verify-style-contract.mjs"],{
-    cwd:fileURLToPath(root),env:{...process.env,BAKAMAIL_PINNED_VENDOR:"1"},encoding:"utf8",stdio:["ignore","pipe","pipe"],
+    cwd:fileURLToPath(root),encoding:"utf8",stdio:["ignore","pipe","pipe"],
   });
-  assert.match(output,/OK: 已校验 3 份/);
+  assert.match(output,/OK: 主题令牌与参考面板一致/);
+  assert.match(output,/没有写死颜色、旧令牌或旧线条样式/);
 });
 
 test("镜像基础版本固定到已修复 2026-10-21 Node 安全问题的 24.22.1 或更新版本，并带摘要；发布脚本构建时拉取最新基础层", () => {

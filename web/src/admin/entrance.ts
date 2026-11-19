@@ -2,6 +2,7 @@ import type { Directive } from "vue";
 import { stagger } from "../stagger.ts";
 import { playCardParts } from "../cardParts.ts";
 import { loaderGate } from "./loader.ts";
+import { ENTER_EASING, enterFrames, withScrollHold } from "../enterMotion.ts";
 
 export const CARD_SELECTOR = ".admin-panel, .managed-page-card, .baka-overview-stat, .invite-reveal-card, .stat-card";
 
@@ -31,10 +32,10 @@ export type EntranceKind = "card" | "block" | "row";
 export type EntranceSpec = { duration: number; distance: number; opacityOnly: boolean };
 
 export function specFor(kind: EntranceKind, tag: string): EntranceSpec {
-  if (tag === "TR") return { duration: 360, distance: 0, opacityOnly: true };
-  if (kind === "card") return { duration: 520, distance: 14, opacityOnly: false };
-  if (kind === "row") return { duration: 360, distance: 6, opacityOnly: false };
-  return { duration: 420, distance: 8, opacityOnly: false };
+  if (tag === "TR") return { duration: 420, distance: 0, opacityOnly: true };
+  if (kind === "card") return { duration: 900, distance: 20, opacityOnly: false };
+  if (kind === "row") return { duration: 560, distance: 8, opacityOnly: false };
+  return { duration: 720, distance: 12, opacityOnly: false };
 }
 
 export function dropNested<T>(items: T[], contains: (outer: T, inner: T) => boolean): T[] {
@@ -58,9 +59,8 @@ function visible(element: HTMLElement): boolean {
 }
 
 function play(element: HTMLElement, spec: EntranceSpec, delay: number): void {
-  const from: Keyframe = spec.opacityOnly ? { opacity: 0 } : { opacity: 0, transform: `translate3d(0, ${spec.distance}px, 0)` };
-  const to: Keyframe = spec.opacityOnly ? { opacity: 1 } : { opacity: 1, transform: "none" };
-  element.animate([from, to], { duration: spec.duration, delay, easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" });
+  const frames = spec.opacityOnly ? [{ opacity: 0 }, { opacity: 1 }] : enterFrames({ distance: spec.distance, blur: spec.distance >= 20, scale: spec.distance >= 12 });
+  withScrollHold(element, () => element.animate(frames, { duration: spec.duration, delay, easing: ENTER_EASING, fill: "backwards" }));
 }
 
 function scheduleMotionTarget(element: HTMLElement, now: number, delay: number): void {
@@ -69,7 +69,7 @@ function scheduleMotionTarget(element: HTMLElement, now: number, delay: number):
 }
 
 function playStat(element: HTMLElement, delay: number): void {
-  play(element, { duration: 560, distance: 18, opacityOnly: false }, delay);
+  play(element, { duration: 900, distance: 20, opacityOnly: false }, delay);
   playCardParts(element, delay);
 }
 
@@ -104,7 +104,7 @@ export function handleAdded(roots: Element[], now = performance.now()): number {
       floor = delay + 90; after = 0;
       continue;
     }
-    if (element.classList.contains("motion-line-target")) { scheduleMotionTarget(element, now, slot()); continue; }
+    if (element.classList.contains("motion-enter-target")) { scheduleMotionTarget(element, now, slot()); continue; }
     const cardDelay = slot() + gate;
     play(element, specFor(kind, element.tagName), cardDelay);
     if (kind !== "card") continue;

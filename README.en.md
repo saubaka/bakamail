@@ -228,7 +228,7 @@ Do not update with `docker compose down -v`; it deletes the data volumes. An upd
 npm run typecheck   # type-check server and frontend
 npm test            # all tests
 npm run build       # production frontend build
-BAKAMAIL_PINNED_VENDOR=1 npm run check   # style contract and protocol-leak checks
+npm run check       # style contract and protocol-leak checks
 ```
 
 Tests use a temporary database and mocked Maddy commands and never connect to a real mail server. When a test needs to make HTTP requests, use `server/test/support/loopback-request.ts` and do not import supertest directly.
@@ -236,7 +236,7 @@ Tests use a temporary database and mocked Maddy commands and never connect to a 
 Conventions to follow when changing code:
 
 - The browser only requests this site's `/api/*`; the frontend build must not contain the mail server's host name or ports.
-- Do not edit the style snapshots under `web/src/styles/vendor/`; write new styles in the incremental style files.
+- Colours, radii, shadows and motion use only the tokens in `web/src/styles/theme/tokens.css`; other stylesheets and component styles must not hard-code colours.
 - Treat all mail HTML as untrusted and do not loosen the sandbox.
 - Keep the confirmation dialog for destructive operations.
 

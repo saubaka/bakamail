@@ -1,5 +1,8 @@
-export const HIGHLIGHT_MS = 480;
-export const HIGHLIGHT_EASING = "cubic-bezier(.3,.8,.25,1)";
+import { springSoftEasing } from "../enterMotion.ts";
+
+export const HIGHLIGHT_MS = 700;
+export const HIGHLIGHT_EASING = "cubic-bezier(.22,1,.36,1)";
+export function highlightEasing(): string { return springSoftEasing(HIGHLIGHT_EASING); }
 
 export type Box = { x: number; y: number; width: number; height: number };
 

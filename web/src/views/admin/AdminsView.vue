@@ -205,9 +205,9 @@ async function resetPassword(id: number): Promise<void> {
   try {
     const password = await promptDialog({
       title: "重置管理员密码",
-      message: "更新后会吊销该管理员现有的全部后台会话。",
+      message: "密码至少 10 位，不能是纯数字或纯字母。更新后会吊销该管理员现有的全部后台会话。",
       fieldLabel: "新密码",
-      placeholder: "至少 10 位，不能是纯数字或纯字母",
+      placeholder: "至少 10 位",
       inputType: "password",
       validate: passwordProblem,
       confirmLabel: "更新并下线",
@@ -227,109 +227,29 @@ onMounted(load);
 </script>
 
 <style scoped>
-.admin-users-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.admin-user-form-row {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr) auto;
-  align-items: end;
-  gap: 10px;
-  width: 100%;
-}
-
-.admin-user-form-row > * {
-  min-width: 0;
-}
-
-.admin-users-table-scroll {
-  max-width: 100%;
-  overflow-x: auto;
-}
-
-.table {
-  width: 100%;
-  min-width: 620px;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-.table th,
-.table td {
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--border);
-  text-align: left;
-}
-
-.admin-users-cell-label {
-  display: none;
-}
-
-.table__actions {
-  display: flex;
-  gap: 6px;
-}
-
+.admin-users-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.admin-user-form-row { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr) auto; align-items: end; gap: 10px; width: 100%; }
+.admin-user-form-row > * { min-width: 0; }
+.admin-users-table-scroll { max-width: 100%; overflow-x: auto; }
+.table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 13px; }
+.table th, .table td { padding: 12px 10px; border-top: 1px solid var(--line); text-align: left; white-space: nowrap; vertical-align: middle; }
+.table td .button { min-height: 32px; padding: 0 14px; font-size: 12.5px; white-space: nowrap; }
+.table th { border-top: 0; color: var(--ink-3); font-size: 11.5px; font-weight: 500; }
+.table tbody tr { transition: background-color .35s var(--ease); }
+.table tbody tr:hover { background: var(--surface-2); }
+.admin-users-cell-label { display: none; }
+.table__actions { display: flex; gap: 6px; }
 @media (max-width: 700px) {
-  .admin-user-form-row {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .admin-user-form-row > .button {
-    width: 100%;
-  }
-
-  .admin-users-table-scroll {
-    overflow-x: visible;
-  }
-
-  .table {
-    min-width: 0;
-  }
-
-  .table thead {
-    display: none;
-  }
-
-  .table tbody,
-  .table tr,
-  .table td {
-    display: block;
-    width: 100%;
-  }
-
-  .table tr {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px 12px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .table td {
-    min-width: 0;
-    padding: 0;
-    border: 0;
-    overflow-wrap: anywhere;
-  }
-
-  .admin-users-cell-label {
-    display: block;
-    margin-bottom: 3px;
-    color: var(--text-faint);
-    font-size: 12px;
-  }
-
-  .table__actions {
-    grid-column: 1 / -1;
-    flex-wrap: wrap;
-    margin-top: 4px;
-  }
+  .admin-user-form-row { grid-template-columns: minmax(0, 1fr); }
+  .admin-user-form-row > .button { width: 100%; }
+  .admin-users-table-scroll { overflow-x: visible; }
+  .table { min-width: 0; }
+  .table thead { display: none; }
+  .table tbody, .table tr, .table td { display: block; width: 100%; }
+  .table tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; margin-bottom: 10px; padding: 14px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--surface-2); }
+  .table tbody tr:hover { background: var(--surface-2); }
+  .table td { min-width: 0; padding: 0; border: 0; white-space: normal; overflow-wrap: anywhere; }
+  .admin-users-cell-label { display: block; margin-bottom: 3px; color: var(--ink-3); font-size: 12px; }
+  .table__actions { flex-wrap: wrap; grid-column: 1 / -1; margin-top: 4px; }
 }
 </style>

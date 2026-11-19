@@ -76,9 +76,9 @@ onBeforeUnmount(() => { active = false; controller?.abort(); password.value = co
 
 <style scoped>
 .setup-card { width: min(100%, 620px); }
-.setup-card h1 { font-size: clamp(1.65rem, 3.2vw, 2.15rem); line-height: 1.35; margin-block: 16px; }
+.setup-card h1 { margin-block: 14px; font-size: clamp(1.6rem, 3.2vw, 2.05rem); line-height: 1.35; }
 .setup-card .auth-form { gap: 16px; }
 .setup-card small { line-height: 1.7; overflow-wrap: anywhere; }
 .setup-card .hint-line { line-height: 1.75; }
-.auth-copyright { margin-top: 24px; color: var(--text-soft); font-size: 12px; line-height: 1.7; }
+.auth-copyright { margin-top: 24px; color: var(--ink-3); font-size: 12px; line-height: 1.7; }
 </style>

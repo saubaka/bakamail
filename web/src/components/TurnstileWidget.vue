@@ -115,32 +115,35 @@ defineExpose({ reset, retry });
 </script>
 
 <style scoped>
-.ts-box { display: grid; gap: 8px; min-width: 0; animation: ts-arrive 240ms var(--ease, ease) both; }
+.ts-box { display: grid; gap: 8px; min-width: 0; animation: ts-arrive .6s var(--ease) both; }
 .ts-box__stage { position: relative; min-height: 65px; }
-.ts-box__mount { width: 100%; min-height: 65px; transition: opacity 200ms var(--ease, ease); }
+.ts-box__mount { width: 100%; min-height: 65px; transition: opacity var(--t-fast) var(--ease); }
 .ts-box__mount.is-hidden { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
-.ts-box__skeleton { position: absolute; inset: 0; border: 1px solid var(--line-blue, #dfe9f1); border-radius: 6px; background: #eef3f7; animation: ts-pulse 1.2s ease-in-out infinite; }
-.ts-box__failure { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-height: 65px; padding: 8px 0; color: var(--text-soft); font-size: 13px; line-height: 1.6; }
+.ts-box__skeleton { position: absolute; inset: 0; border-radius: var(--r-m); background: var(--chip); animation: ts-pulse 1.2s ease-in-out infinite; }
+.ts-box__failure { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; min-height: 65px; padding: 8px 0; color: var(--ink-2); font-size: 13px; line-height: 1.6; }
 .ts-box__failure > span:nth-child(2) { flex: 1 1 140px; min-width: 0; overflow-wrap: anywhere; }
-.ts-box__status { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--text-soft); font-size: 12px; line-height: 1.6; transition: color 200ms var(--ease, ease); }
-.ts-box.is-verified .ts-box__status { color: #2c7a5a; }
-.ts-box.is-error .ts-box__status { color: var(--danger-700); }
+.ts-box__status { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--ink-2); font-size: 12.5px; line-height: 1.6; transition: color var(--t-fast) var(--ease); }
+.ts-box.is-verified .ts-box__status { color: var(--ink); }
+.ts-box.is-verified .ts-box__mark { color: var(--blue-500); }
+.ts-box.is-error .ts-box__status { color: var(--bad-ink); }
 .ts-box__mark { display: inline-grid; place-items: center; flex: 0 0 16px; width: 16px; height: 16px; }
-.ts-box__mark--warn { border-radius: 50%; background: var(--danger-100); color: var(--danger-700); font-size: 11px; font-weight: 700; }
+.ts-box__mark--warn { border-radius: 50%; background: var(--bad-bg); color: var(--bad-ink); font-size: 11px; font-weight: 700; }
 .ts-box__mark svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.ts-box__mark svg path { stroke-dasharray: 16; stroke-dashoffset: 16; animation: ts-check 300ms 60ms var(--ease, ease) forwards; }
-.ts-box__dot { width: 7px; height: 7px; border-radius: 50%; background: #9bc9e5; }
-.ts-box.is-expired .ts-box__dot { background: #e0b96a; }
-.ts-box__spinner { width: 13px; height: 13px; border: 2px solid #d5e5f0; border-top-color: #7fb7d8; border-radius: 50%; animation: ts-spin 800ms linear infinite; }
-@keyframes ts-arrive { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.ts-box__mark svg path { stroke-dasharray: 16; stroke-dashoffset: 16; animation: ts-check .5s 60ms var(--ease) forwards; }
+.ts-box__dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--blue-500); }
+.ts-box__dot::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; background: var(--blue-400); opacity: .4; animation: ts-dot-pulse 2.4s var(--ease) infinite; }
+.ts-box.is-expired .ts-box__dot, .ts-box.is-expired .ts-box__dot::after { background: var(--warn); }
+.ts-box__spinner { width: 13px; height: 13px; border: 2px solid var(--blue-200); border-top-color: var(--blue-500); border-radius: 50%; animation: ts-spin .8s linear infinite; }
+@keyframes ts-arrive { from { opacity: 0; transform: translateY(8px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
 @keyframes ts-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+@keyframes ts-dot-pulse { 0% { opacity: .5; transform: scale(.6); } 80%, 100% { opacity: 0; transform: scale(1.6); } }
 @keyframes ts-spin { to { transform: rotate(360deg); } }
 @keyframes ts-check { to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  .ts-box, .ts-box__skeleton, .ts-box__spinner, .ts-box__mark svg path { animation: none; }
+  .ts-box, .ts-box__skeleton, .ts-box__spinner, .ts-box__mark svg path, .ts-box__dot::after { animation: none; }
   .ts-box__mark svg path { stroke-dashoffset: 0; }
   .ts-box__mount, .ts-box__status { transition: none; }
 }
-:global(html[data-motion="reduce"]) .ts-box, :global(html[data-motion="reduce"]) .ts-box__skeleton, :global(html[data-motion="reduce"]) .ts-box__spinner, :global(html[data-motion="reduce"]) .ts-box__mark svg path { animation: none; }
+:global(html[data-motion="reduce"]) .ts-box, :global(html[data-motion="reduce"]) .ts-box__skeleton, :global(html[data-motion="reduce"]) .ts-box__spinner, :global(html[data-motion="reduce"]) .ts-box__mark svg path, :global(html[data-motion="reduce"]) .ts-box__dot::after { animation: none; }
 :global(html[data-motion="reduce"]) .ts-box__mark svg path { stroke-dashoffset: 0; }
 </style>

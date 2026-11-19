@@ -50,10 +50,10 @@ const SCALE = 6;
 
 type Rgba = [number, number, number];
 
-const INK: Rgba = [53, 64, 82];
-const PAPER: Rgba = [247, 249, 252];
-const ACCENT: Rgba = [168, 208, 244];
-const FAINT: Rgba = [207, 216, 228];
+const INK: Rgba = [90, 84, 88];
+const PAPER: Rgba = [255, 255, 255];
+const ACCENT: Rgba = [168, 210, 243];
+const FAINT: Rgba = [246, 195, 212];
 
 function setPixel(image: InstanceType<typeof PNG>, x: number, y: number, color: Rgba): void {
   if (x < 0 || y < 0 || x >= image.width || y >= image.height) return;

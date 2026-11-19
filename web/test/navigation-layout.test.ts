@@ -76,9 +76,9 @@ test("桌面只渲染左侧菜单，移动端只渲染底部胶囊并共用唯�
   assert.match(workspace, /await router\.push\(path\)/);
   assert.doesNotMatch(workspace, /location\.(?:assign|reload|replace)/);
   assert.match(workspace, /:aria-busy="navigationBusy"/);
-  assert.match(css, /--workspace-sidebar-width:72px/);
-  assert.match(css, /--workspace-sidebar-width:244px/);
-  assert.match(css, /grid-template-columns:var\(--workspace-sidebar-width\) minmax\(0,1fr\)/);
+  assert.match(css, /--workspace-sidebar-width: 76px/);
+  assert.match(css, /--workspace-sidebar-width: 248px/);
+  assert.match(css, /grid-template-columns: var\(--workspace-sidebar-width\) minmax\(0, 1fr\)/);
 });
 
 test("桌面菜单开关具备状态、控制关系和键盘焦点，收起后图标保留文字提示", () => {
@@ -112,9 +112,9 @@ test("桌面选中轮廓按真实按钮几何移动，并在侧栏变形和窗�
   assert.match(workspace, /new ResizeObserver\(\(\) => measureNavigationHighlight\(\)\)/);
   assert.match(workspace, /watch\(desktopSidebarExpanded,[\s\S]*scheduleNavigationHighlight\(\)/);
   assert.doesNotMatch(workspace, /selectedIndex \* 44/);
-  assert.match(css, /\.dock-navigation-highlight \{[^}]*will-change:transform,height[^}]*transition:opacity 160ms/);
-  assert.doesNotMatch(css.match(/\.dock-navigation-highlight \{[^}]*\}/)?.[0] ?? "", /transition:[^;}]*width/);
-  assert.match(css, /\.dock-navigation-highlight\.is-ready \{ opacity:1; \}/);
+  assert.match(css, /\.dock-navigation-highlight \{[^}]*will-change: transform, width, height;[^}]*transition: opacity var\(--t-fast\)/);
+  assert.doesNotMatch(css.match(/\.dock-navigation-highlight \{[^}]*\}/)?.[0] ?? "", /transition: [^;}]*width/);
+  assert.match(css, /\.dock-navigation-highlight\.is-ready \{ opacity: 1; \}/);
 });
 
 test("折叠入口与文件夹内容使用可逆过渡，隐藏内容不会进入键盘顺序", () => {
@@ -122,9 +122,9 @@ test("折叠入口与文件夹内容使用可逆过渡，隐藏内容不会进�
   const css = readFileSync(new URL("../src/styles/workspace.css", import.meta.url), "utf8");
   assert.match(workspace, /:tabindex="desktopSidebarExpanded \? -1 : undefined"/);
   assert.match(workspace, /:inert="isDesktop && !desktopSidebarExpanded \? true : undefined"/);
-  assert.match(css, /\.desktop-folder-trigger\.is-hidden \{[^}]*visibility:hidden[^}]*pointer-events:none/);
-  assert.match(css, /not\(\.is-desktop-sidebar-expanded\) \.dock-folder-host \{[^}]*max-height:0[^}]*visibility:hidden[^}]*pointer-events:none/);
-  assert.doesNotMatch(css, /not\(\.is-desktop-sidebar-expanded\) \.dock-folder-host \{ display:none/);
+  assert.match(css, /\.desktop-folder-trigger\.is-hidden \{[^}]*visibility: hidden[^}]*pointer-events: none/);
+  assert.match(css, /not\(\.is-desktop-sidebar-expanded\) \.dock-folder-host \{[^}]*max-height: 0[^}]*visibility: hidden[^}]*pointer-events: none/);
+  assert.doesNotMatch(css, /not\(\.is-desktop-sidebar-expanded\) \.dock-folder-host \{ display: ?none/);
 });
 
 test("文件夹接入继续复用原有管理事件与破坏性操作确认", () => {
@@ -141,15 +141,15 @@ test("文件夹接入继续复用原有管理事件与破坏性操作确认", ()
 test("窄桌面手动展开侧栏时搜索表单会重排，不产生面板内横向滚动", () => {
   const css = readFileSync(new URL("../src/styles/workspace.css", import.meta.url), "utf8");
   assert.match(css, /@media \(min-width: 901px\) and \(max-width: 1179px\)/);
-  assert.match(css, /\.mail-workspace\.is-desktop-sidebar-expanded \.mail-search-form \{ grid-template-columns:repeat\(2,minmax\(0,1fr\)\); \}/);
-  assert.match(css, /\.mail-workspace\.is-desktop-sidebar-expanded \.mail-search-query \{ grid-column:1 \/ -1; \}/);
+  assert.match(css, /\.mail-workspace\.is-desktop-sidebar-expanded \.mail-search-form \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); \}/);
+  assert.match(css, /\.mail-workspace\.is-desktop-sidebar-expanded \.mail-search-query \{ grid-column: 1 \/ -1; \}/);
 });
 
 test("移动端工作区保持单列网格，右侧内容不会因侧栏隐藏而高度坍缩", () => {
   const css = readFileSync(new URL("../src/styles/workspace.css", import.meta.url), "utf8");
   const mobile = css.match(/@media \(max-width: 900px\) \{[\s\S]*?\n\}/)?.[0] ?? "";
-  assert.match(mobile, /\.workspace-body \{ grid-template-columns:minmax\(0,1fr\); \}/);
-  assert.doesNotMatch(mobile, /\.workspace-body \{ display:block; \}/);
+  assert.match(mobile, /\.workspace-body \{ grid-template-columns: minmax\(0, 1fr\); \}/);
+  assert.doesNotMatch(mobile, /\.workspace-body \{ display: ?block; \}/);
 });
 
 test("移动端从悬浮菜单写信前先把焦点交回可见菜单按钮", () => {

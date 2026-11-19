@@ -58,7 +58,7 @@ test("保存栏：未保存提示、放弃修改、恢复默认（带确认）�
 
 test("样式：没有渐变和写死的未知颜色变量，窄屏单列，保存栏吸底，减少动画时无过渡", () => {
   assert.doesNotMatch(style, /gradient/i);
-  assert.match(style, /\.seo-savebar \{[^}]*position: sticky; bottom: 14px/);
+  assert.match(style, /\.seo-savebar \{ position: sticky; z-index: 5; bottom: 14px;/);
   assert.match(style, /@media \(max-width: 700px\)[\s\S]*\.seo-fields \{ grid-template-columns: minmax\(0, 1fr\); \}/);
   assert.match(style, /@media \(max-width: 900px\) \{ \.seo-groups, \.seo-files \{ grid-template-columns: minmax\(0, 1fr\); \} \}/);
   assert.match(style, /prefers-reduced-motion: reduce/);
@@ -117,7 +117,7 @@ test("站点信息：读取页面里的 JSON；格式不对、缺字段或为空
   applySiteInfo({ siteName: "Baka Mail", tagline: "自建邮局的网页端", title: "Baka Mail - 自建邮局的网页邮箱", description: "描述" });
 });
 
-test("品牌名：登录、注册、重置、404、邮箱页头、邮箱侧栏和后台侧栏都读取站点名；固定版权行保持原样", () => {
+test("品牌名：登录、注册、重置、404、邮箱侧栏和后台侧栏都读取站点名；固定版权行保持原样", () => {
   assert.match(source("components/BrandMark.vue"), /\{\{ title \?\? siteInfo\.siteName \}\}/);
   for (const file of ["views/LoginView.vue", "views/admin/AdminLoginView.vue"]) {
     assert.match(source(file), /<span class="login-product-name">\{\{ siteInfo\.siteName \}\}<\/span>/, file);
@@ -126,7 +126,6 @@ test("品牌名：登录、注册、重置、404、邮箱页头、邮箱侧栏�
   }
   assert.match(source("components/ErrorPage.vue"), /<p class="ep-site">\{\{ siteInfo\.siteName \}\}<\/p>/);
   assert.match(source("components/ErrorPage.vue"), /© \{\{ year \}\} saubaka\. BakaMail\./);
-  assert.match(source("components/MailPageHeader.vue"), /<span>\{\{ siteInfo\.siteName \}\}<small>/);
   assert.match(source("components/admin/AdminRail.vue"), /\{\{ siteInfo\.siteName \}\}<\/span>/);
   assert.match(source("components/MailWorkspace.vue"), /© \{\{ new Date\(\)\.getFullYear\(\) \}\} BakaMail<\/footer>/);
 });
@@ -141,5 +140,5 @@ test("首页：品牌、标题文案、示例邮件、页脚品牌都用站点�
   assert.match(body, /v-for="\(item, index\) in faq"/);
   assert.match(intro, /const features = INTRO_FEATURES;/);
   assert.match(intro, /const faq = INTRO_FAQ;/);
-  assert.match(body, /\{\{ siteInitial \}\}/);
+  assert.doesNotMatch(body, /siteInitial|intro-envelope|intro-postmark|<svg|<img/);
 });

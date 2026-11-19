@@ -418,4 +418,7 @@ onBeforeUnmount(() => { active = false; });
 .admin-inline-filter {
   width: min(280px, 100%);
 }
+@media (max-width: 560px) {
+  .panel-heading > .admin-inline-filter { max-width: none; }
+}
 </style>

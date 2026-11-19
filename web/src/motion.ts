@@ -1,5 +1,5 @@
 import type { Directive, DirectiveBinding } from "vue";
-import { applyOutline } from "./outlineGeometry.ts";
+import { ENTER_EASING, ENTER_MS, enterFrames, withScrollHold } from "./enterMotion.ts";
 import { stagger } from "./stagger.ts";
 import { playCardParts } from "./cardParts.ts";
 import { loaderGate } from "./admin/loader.ts";
@@ -24,7 +24,6 @@ type MotionRecord = {
 
 const records = new WeakMap<HTMLElement, MotionRecord>();
 const mountedElements = new Set<HTMLElement>();
-const SVG_NS = "http://www.w3.org/2000/svg";
 let preferencesInitialized = false;
 
 export type MotionPreference = "system" | "reduce";
@@ -108,34 +107,13 @@ export function applyMotionPreferences(
 
 function optionsOf(binding: DirectiveBinding<MotionOptions | MotionKind | undefined>): Required<MotionOptions> {
   if (typeof binding.value === "string") {
-    return { kind: binding.value, delay: 0, reversible: true };
+    return { kind: binding.value, delay: 0, reversible: false };
   }
   return {
     kind: binding.value?.kind ?? "compact",
     delay: Math.max(0, Math.min(1200, binding.value?.delay ?? 0)),
-    reversible: binding.value?.reversible ?? true,
+    reversible: false,
   };
-}
-
-function createOutline(element: HTMLElement): { outline: SVGSVGElement; path: SVGRectElement } {
-  const outline = document.createElementNS(SVG_NS, "svg");
-  outline.classList.add("motion-outline");
-  outline.setAttribute("aria-hidden", "true");
-  outline.setAttribute("focusable", "false");
-  outline.setAttribute("preserveAspectRatio", "none");
-
-  const path = document.createElementNS(SVG_NS, "rect");
-  path.classList.add("motion-outline__path");
-  path.setAttribute("vector-effect", "non-scaling-stroke");
-  path.setAttribute("pathLength", "1");
-  path.style.setProperty("--motion-path-length", "1");
-  outline.append(path);
-  element.prepend(outline);
-  return { outline, path };
-}
-
-function configureGeometry(element: HTMLElement, outline: SVGSVGElement, path: SVGRectElement): void {
-  applyOutline(outline, [path], element, element, 1);
 }
 
 function entranceDelay(element: HTMLElement): number {
@@ -148,11 +126,12 @@ function entranceDelay(element: HTMLElement): number {
 }
 
 function play(record: MotionRecord, forward: boolean, element: HTMLElement): void {
-  if (record.disabled) return;
+  if (record.disabled || !forward) return;
   if (reducedMotion()) {
     settleInstantly(element);
     return;
   }
+  if (element.dataset.motionState === "settled" || element.dataset.motionState === "drawing") return;
   window.clearTimeout(record.delayTimer);
   const version = ++record.version;
   const run = (): void => {
@@ -162,23 +141,25 @@ function play(record: MotionRecord, forward: boolean, element: HTMLElement): voi
       return;
     }
     element.classList.add("is-motion-active");
-    element.dataset.motionState = forward ? "drawing" : "reversing";
+    element.dataset.motionState = "drawing";
     record.startedAt = performance.now();
-    prepare(record, forward);
+    prepare(record, true);
     for (const animation of record.animations) animation.play();
-    if (forward && element.dataset.motionKind !== "control") playCardParts(element, 0);
+    if (element.dataset.motionKind !== "control") playCardParts(element, 0);
     const anchor = record.animations[0];
     anchor.finished
       .then(() => {
         if (record.disabled || record.version !== version) return;
         element.classList.remove("is-motion-active");
-        element.classList.toggle("is-revealed", forward);
-        element.dataset.motionState = forward ? "settled" : "idle";
-        if (forward) releaseEffects(record);
+        element.classList.add("is-revealed");
+        element.dataset.motionState = "settled";
+        releaseEffects(record);
       })
       .catch(() => undefined);
   };
-  record.delayTimer = window.setTimeout(run, forward ? entranceDelay(element) : 0);
+  const delay = entranceDelay(element);
+  withScrollHold(element, () => record.animations, delay);
+  record.delayTimer = window.setTimeout(run, delay);
 }
 
 export function settleStalledMotion(now = performance.now()): number {
@@ -226,39 +207,15 @@ export const motionDirective: Directive<HTMLElement, MotionOptions | MotionKind 
   mounted(element, binding) {
     const options = optionsOf(binding);
     mountedElements.add(element);
-    element.classList.add("motion-line-target");
+    element.classList.add("motion-enter-target");
     element.dataset.motionKind = options.kind;
     element.dataset.motionState = "idle";
     element.dataset.motionDelay = String(options.delay);
-    element.dataset.motionOutline = "true";
 
-    const { outline, path } = createOutline(element);
-    configureGeometry(element, outline, path);
-    element.classList.add("is-outline-ready");
-
-    const duration = options.kind === "feature" ? 620 : options.kind === "control" ? 360 : 500;
-    const timing: KeyframeAnimationOptions = {
-      duration,
-      easing: "cubic-bezier(.2,.78,.22,1)",
-      fill: "both",
-    };
-    const animations = [
-      path.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], timing),
-      outline.animate(
-        [
-          { opacity: 0.2, filter: "blur(.7px)", transform: "scale(.988)" },
-          { opacity: 1, filter: "none", transform: "none" },
-        ],
-        timing,
-      ),
-      element.animate(
-        [
-          { opacity: 0, transform: "translate3d(0, 8px, 0) scale(.992)" },
-          { opacity: 1, transform: "none" },
-        ],
-        timing,
-      ),
-    ];
+    const duration = options.kind === "feature" ? ENTER_MS : options.kind === "control" ? 520 : 760;
+    const animations = withScrollHold(element, () => [
+      element.animate(enterFrames({ distance: options.kind === "control" ? 8 : 20, blur: options.kind !== "control" }), { duration, easing: ENTER_EASING, fill: "both" }),
+    ]);
     for (const animation of animations) {
       animation.pause();
       animation.currentTime = 0;
@@ -276,16 +233,19 @@ export const motionDirective: Directive<HTMLElement, MotionOptions | MotionKind 
     };
     records.set(element, record);
 
-    if ("ResizeObserver" in window) {
-      record.resizeObserver = new ResizeObserver(() => configureGeometry(element, outline, path));
+    if (typeof ResizeObserver !== "undefined") {
+      let shown = false;
+      record.resizeObserver = new ResizeObserver(([entry]) => {
+        const visible = entry.contentRect.width > 0 || entry.contentRect.height > 0;
+        if (visible && !shown && element.dataset.motionState === "idle" && !record.disabled) withScrollHold(element, () => record.animations, 1500);
+        shown = visible;
+      });
       record.resizeObserver.observe(element);
     }
-
     if ("IntersectionObserver" in window) {
       record.observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) play(record, true, element);
-          else if (options.reversible && element.dataset.motionState !== "idle") play(record, false, element);
         },
         { threshold: 0.08, rootMargin: "0px 0px -6%" },
       );

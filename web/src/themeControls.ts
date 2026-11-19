@@ -1,5 +1,4 @@
 import type { ObjectDirective } from "vue";
-import { attachSurfaceLines } from './surfaceLines.ts';
 
 type NativeControl = HTMLSelectElement | HTMLInputElement;
 type Controller = { sync(): void; destroy(): void };
@@ -41,14 +40,12 @@ function enhance(native: NativeControl): Controller {
   native.tabIndex = -1;
   native.after(trigger);
   let popup: HTMLDivElement | null = null;
-  let disposeLines: (() => void) | undefined;
   let shownMonth = new Date();
   let typed = "";
   let typedAt = 0;
   let destroyed = false;
 
   function close(focus = false) {
-    disposeLines?.(); disposeLines=undefined;
     popup?.remove(); popup = null;
     trigger.setAttribute("aria-expanded", "false");
     document.removeEventListener("pointerdown", outside);
@@ -96,7 +93,6 @@ function enhance(native: NativeControl): Controller {
       grid.append(button);
     }
     popup.append(grid, makeButton("清除日期", () => choose(""), "themed-calendar__clear"));
-    if(popup.isConnected) disposeLines=attachSurfaceLines(popup);
   }
   function open() {
     if (trigger.disabled || popup) return;
@@ -116,7 +112,6 @@ function enhance(native: NativeControl): Controller {
       shownMonth = Number.isNaN(value.getTime()) ? new Date() : value; renderCalendar();
     }
     document.body.append(popup);
-    disposeLines=attachSurfaceLines(popup);
     const rect = trigger.getBoundingClientRect();
     const width = Math.min(Math.max(rect.width, isSelect ? 180 : 292), window.innerWidth - 24);
     popup.style.width = `${width}px`;

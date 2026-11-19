@@ -3,9 +3,6 @@
     <main id="main-content" class="login-main" tabindex="-1">
       <section v-motion="{ kind: 'feature', reversible: false }" class="login-card card" aria-labelledby="login-title">
         <header class="login-heading">
-          <span class="login-logo" aria-hidden="true">
-            <svg viewBox="0 0 40 40" fill="none"><rect x="5" y="9" width="30" height="23" rx="5" /><path d="m7 12 10 8a5 5 0 0 0 6 0l10-8M7 29l8-8m18 8-8-8" /></svg>
-          </span>
           <span class="login-product-name">{{ siteInfo.siteName }}</span>
           <h1 id="login-title">登录邮箱</h1>
           <p>输入账号和密码，进入你的邮箱。</p>

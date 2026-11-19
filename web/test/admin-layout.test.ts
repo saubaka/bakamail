@@ -87,15 +87,15 @@ test("堆叠表格指令：按表头给每个单元格补列名，保留已有�
 
 test("页面版式规则：多卡片页面有统一间距，管理卡片按内容定高，窄屏表格堆叠，按钮不再被拉伸", () => {
   const css = source("styles/admin.css");
-  const tail = css.slice(css.indexOf(".admin-page-stack {"));
-  assert.match(tail, /\.admin-page-stack \{ display: grid; gap: 20px;/);
-  assert.match(tail, /\.admin-route-panel \{ display: grid; gap: 20px;/);
-  assert.match(tail, /\.admin-main \.managed-page-card \{ grid-template-rows: none; grid-auto-rows: auto; align-content: start; min-height: 0; height: auto; \}/);
-  assert.match(tail, /\.admin-main :is\(\.form-grid, \.managed-page-card, \.admin-panel\) > \.button \{ justify-self: start;/);
-  assert.match(tail, /\.admin-main \.compose-grid__row > \.button \{[^}]*height: 48px/);
-  assert.match(tail, /\.admin-table td \.button \{ min-height: 34px;/);
-  assert.match(tail, /\.baka-confirm-dialog \.app-system-dialog__field \{ margin-bottom: 0; \}/);
-  assert.match(css, /@media \(max-width: 700px\) \{\s*\n\s*\.table-scroll:has\(> \.is-stackable\)/);
+  const tail = css.slice(css.indexOf(".admin-route-panel {"));
+  assert.match(tail, /\.admin-route-panel \{ display: grid; grid-template-columns: minmax\(0, 1fr\); align-content: start; gap: 18px;/);
+  assert.match(tail, /\.admin-page-stack \{ display: grid; grid-template-columns: minmax\(0, 1fr\); align-content: start; gap: 18px;/);
+  assert.match(source("styles/theme/primitives.css"), /\.managed-page-card \{ display: grid; grid-template-columns: minmax\(0, 1fr\); gap: 14px; align-content: start; \}/);
+  assert.match(tail, /\.admin-main :is\(\.form-grid, \.managed-page-card, \.admin-panel\) > \.button \{ align-self: start; justify-self: start; width: auto; \}/);
+  assert.match(tail, /\.admin-main \.compose-grid__row > \.button \{[^}]*height: 44px/);
+  assert.match(tail, /\.admin-table td \.button \{ min-height: 32px;/);
+  assert.match(source("styles/dialogs.css"), /\.baka-confirm-dialog \.app-system-dialog__field \{ margin-bottom: 0; \}/);
+  assert.match(css, /@media \(max-width: 700px\) \{[^@]*\.table-scroll:has\(> \.is-stackable\)/);
   assert.match(css, /\.is-stackable td::before \{ content: attr\(data-label\)/);
   assert.doesNotMatch(tail, /gradient/i);
   assert.doesNotMatch(css, /#[\da-f]{3,8}\b|rgba?\(/i);
@@ -109,8 +109,8 @@ test("页面版式规则：多卡片页面有统一间距，管理卡片按内�
 
 test("邀请码表格：短内容不换行、只有长文字格子折行；撤销只给还能使用的邀请码", () => {
   const invites = source("views/admin/InvitesView.vue");
-  assert.match(invites, /\.invite-table td \{ vertical-align:middle; white-space:nowrap;/);
-  assert.match(invites, /td\[data-label="绑定"\][^{]*\{ min-width:140px; max-width:240px; white-space:normal; overflow-wrap:anywhere; \}/);
+  assert.match(invites, /\.invite-table td \{ line-height: 1\.7; white-space: nowrap; vertical-align: middle; \}/);
+  assert.match(invites, /td\[data-label="绑定"\][^{]*\{ min-width: 140px; max-width: 240px; white-space: normal; overflow-wrap: anywhere; \}/);
   assert.match(invites, /v-if="canWrite && \(statusKey\(row\) === 'available' \|\| statusKey\(row\) === 'reserved'\)"/);
   assert.doesNotMatch(invites, /!row\.revoked_at"/);
 });
